@@ -4,7 +4,6 @@
 from typing import TYPE_CHECKING, Literal
 from bpy.types import ShaderNodeTree
 from nodebpy import TreeBuilder
-from nodebpy import geometry as g
 from nodebpy import shader as s
 from nodebpy.builder import (
     AssetShaderGroup,
@@ -112,29 +111,23 @@ class ColorAO(AssetShaderGroup):
         menu_switch = s.MenuSwitch.float(
             ao_space,
             {
-                "Global": s.AmbientOcclusion(
-                    color=color, distance=distance, samples=16
-                ).o.ao,
+                "Global": s.AmbientOcclusion(color=color, distance=distance).o.ao,
                 "Local": s.AmbientOcclusion(
-                    color=color, distance=distance, samples=16, only_local=True
+                    color=color, distance=distance, only_local=True
                 ).o.ao,
             },
         )
         menu_switch_1 = s.MenuSwitch.float(
             menu,
             {
-                "AO": g.Math.subtract(
+                "AO": s.Math.subtract(
                     1.0, menu_switch.o.output**exponent, use_clamp=True
                 ),
                 "None": 0.0,
             },
         )
-        mix = g.Mix.color(
-            menu_switch_1.o.output,
-            color,
-            (0.0, 0.0, 0.0, 1.0),
-            blend_type="MULTIPLY",
-            clamp_factor=True,
+        mix = s.Mix.color(
+            menu_switch_1.o.output, color, (0.0, 0.0, 0.0, 1.0), blend_type="MULTIPLY"
         )
 
         mix.o.result_color >> result

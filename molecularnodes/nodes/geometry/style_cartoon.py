@@ -366,7 +366,7 @@ class SplitCurves(CustomGeometryGroup):
         )
         g.SetHandleType(curve=set_spline_type) >> curve
         viewer = g.Viewer()
-        capture_1.o.geometry >> viewer
+        viewer.items.geometry(capture_1.o.geometry, "Geometry")
 
 
 class NodeGroup(CustomGeometryGroup):
@@ -399,7 +399,7 @@ class NodeGroup(CustomGeometryGroup):
         scale = tree.inputs.vector("Scale", (1.0, 2.5, 1.0), subtype="XYZ")
         geometry = tree.outputs.geometry("Geometry")
 
-        mix = g.Mix.float(b=1.0, clamp_factor=True)
+        mix = g.Mix.float(b=1.0)
         multiply_matrices = g.MultiplyMatrices(
             matrix=g.CombineTransform(rotation=rotation, scale=scale),
             matrix_001=g.CombineTransform(rotation=(0.0, 0.0, math.pi / 4)),
@@ -417,10 +417,7 @@ class NodeGroup(CustomGeometryGroup):
         rotation_2 = capture_1.items.rotation(sample_curve.o.value, "Rotation")
         position = capture_1.items.vector(sample_curve.o.position, "Position")
         mix_1 = g.Mix.rotation(
-            0.0,
-            rotation_2.output,
-            OffsetRotation(rotation=rotation_2.output, offset=1),
-            clamp_factor=True,
+            0.0, rotation_2.output, OffsetRotation(rotation=rotation_2.output, offset=1)
         )
         switch = g.EndpointSelection(end_size=0).o.selection.switch.rotation(
             rotation_2.output, mix_1.o.result_rotation
@@ -446,10 +443,7 @@ class NodeGroup(CustomGeometryGroup):
         fillet_curve = g.SetHandleType(
             curve=g.SetSplineType.bezier(transform_geometry)
         ) >> g.FilletCurve(
-            radius=g.Mix.float(
-                mix.o.result_float, 0.001, 0.05, clamp_factor=True
-            ).o.result_float,
-            limit_radius=True,
+            radius=mix.o.result_float.mix.float(0.001, 0.05), limit_radius=True
         )
         menu_switch = g.MenuSwitch.geometry(
             menu,
@@ -766,7 +760,7 @@ class CAToHelix(CustomGeometryGroup):
         _evaluate_closure = g.EvaluateClosure()
         join_geometry = g.JoinGeometry(geometry=(curve_custom_profile_1, curve_to_mesh))
         viewer = g.Viewer()
-        curve_split_splines >> viewer
+        viewer.items.geometry(curve_split_splines.o.curve, "Curve")
 
         join_geometry >> geometry
 
@@ -954,7 +948,7 @@ class MN_utils_style_cartoon(CustomGeometryGroup):
             >> cartoon_mesh
         )
         viewer = g.Viewer()
-        split_curves >> viewer
+        viewer.items.geometry(split_curves, "Curve")
 
         atoms_to_ca_curves >> ca_splines
 

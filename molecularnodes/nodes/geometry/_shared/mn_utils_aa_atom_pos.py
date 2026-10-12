@@ -105,7 +105,6 @@ class MN_utils_aa_atom_pos(CustomGeometryGroup):
                 0.5,
                 utils_group_field_at_selection_1.o.vector,
                 utils_group_field_at_selection_2.o.vector,
-                clamp_factor=True,
             )
             (
                 g.Compare.integer.not_equal(atom_name, 0).o.result.switch.vector(

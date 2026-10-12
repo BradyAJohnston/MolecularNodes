@@ -6,7 +6,6 @@ import math
 from typing import TYPE_CHECKING
 from bpy.types import ShaderNodeTree
 from nodebpy import TreeBuilder
-from nodebpy import geometry as g
 from nodebpy import shader as s
 from nodebpy.builder import CustomShaderGroup, FloatSocket, SocketAccessor
 from nodebpy.types import InputFloat
@@ -72,21 +71,21 @@ class EdgeDetection(CustomShaderGroup):
 
         geometry = s.Geometry()
         geometry_1 = s.Geometry()
-        repeat_zone = g.RepeatZone(8)
+        repeat_zone = s.RepeatZone(8)
         max_distance = repeat_zone.items.float(name="Max Distance")
         max_normal_delta = repeat_zone.items.float(name="Max Normal Delta")
         object_edge_1 = repeat_zone.items.float(name="Object Edge")
-        map_range = g.WhiteNoiseTexture(
+        map_range = s.WhiteNoiseTexture(
             vector=s.Geometry().o.position, noise_dimensions="4D"
         ).o.value.map_range(to_max=360.0)
-        vector_rotate = g.VectorRotate.z_axis(
-            g.CombineXYZ(x=1.0), angle=repeat_zone.iteration * 45.0 + map_range
+        vector_rotate = s.VectorRotate.z_axis(
+            s.CombineXYZ(x=1.0), angle=repeat_zone.iteration * 45.0 + map_range
         )
         vector = vector_rotate.o.vector * offset
         offset_raycast = OffsetRaycast(
             x_offset=vector.x, y_offset=vector.y, length=10.0
         )
-        math_1 = g.Math.greater_than(offset_raycast.o.hit_distance, 0.0)
+        math_1 = s.Math.greater_than(offset_raycast.o.hit_distance, 0.0)
         _math_2 = 1.0 - offset_raycast.o.self_hit
         vector_math = geometry.o.normal.dot(
             geometry.o.position
@@ -95,10 +94,10 @@ class EdgeDetection(CustomShaderGroup):
         vector_math_1 = offset_raycast.o.hit_normal.dot(
             geometry_1.o.normal * geometry_1.o.backfacing.mix.float(1.0, -1.0)
         )
-        mix = g.Mix.float(
-            math_1,
-            b=vector_math_1.acos().map_range(from_max=math.pi),
-            clamp_factor=True,
+        math_3 = max_normal_delta.current.max(
+            math_1.o.value.mix.float(
+                0.0, vector_math_1.acos().map_range(from_max=math.pi)
+            )
         )
         (
             (geometry.o.position.dot(geometry.o.normal) - vector_math).max(
@@ -106,11 +105,9 @@ class EdgeDetection(CustomShaderGroup):
             )
             >> max_distance.next
         )
-        max_normal_delta.current.max(mix.o.result_float) >> max_normal_delta.next
+        math_3 >> max_normal_delta.next
         (
-            g.Mix.float(math_1, clamp_factor=True).o.result_float.max(
-                object_edge_1.current
-            )
+            math_1.o.value.mix.float(0.0, 0.0).max(object_edge_1.current)
             >> object_edge_1.next
         )
 

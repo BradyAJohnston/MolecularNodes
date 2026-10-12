@@ -173,11 +173,11 @@ class AssemblyInstance(AssetGeometryGroup):
             )
         with g.Frame("Mix Transform values"):
             attribute = g.NamedAttribute.matrix("transform").o.attribute
-            mix = g.Mix.rotation(rotation, b=attribute.rotation, clamp_factor=True)
-            mix_1 = g.Mix.vector(position, b=attribute.translation, clamp_factor=True)
+            mix = rotation.mix.rotation((0.0, 0.0, 0.0), attribute.rotation)
+            mix_1 = position.mix.vector((0.0, 0.0, 0.0), attribute.translation)
         capture = g.CaptureAttribute.point(geometry=separate_geometry.o.selection)
-        position_1 = capture.items.vector(mix_1.o.result_vector, "Position")
-        rotation_1 = capture.items.rotation(mix.o.result_rotation, "Rotation")
+        position_1 = capture.items.vector(mix_1, "Position")
+        rotation_1 = capture.items.rotation(mix, "Rotation")
         sym_id = capture.items.integer(SymmetryID(), "sym_id")
         instance_on_points = (
             capture.o.geometry

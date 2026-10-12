@@ -4,7 +4,6 @@
 from typing import TYPE_CHECKING, Literal
 from bpy.types import ShaderNodeTree
 from nodebpy import TreeBuilder
-from nodebpy import geometry as g
 from nodebpy import shader as s
 from nodebpy.builder import (
     AssetShaderGroup,
@@ -101,7 +100,7 @@ class TransparentOutlineInternal(AssetShaderGroup):
         shader = tree.outputs.shader("Shader")
 
         mix_shader = s.MixShader(
-            fac=g.Math.greater_than(s.LightPath().o.transparent_depth, 0.0).o.value
+            fac=s.Math.greater_than(s.LightPath().o.transparent_depth, 0.0).o.value
             + transparency,
             shader=s.DiffuseBSDF(color=MNColor().o.color),
             shader_001=s.TransparentBSDF(),

@@ -4,7 +4,6 @@
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
 from nodebpy import TreeBuilder
-from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
     ColorSocket,
@@ -87,12 +86,7 @@ class ColorOKLabMix(AssetGeometryGroup):
 
         (
             OKLabToColor(
-                oklab=g.Mix.vector(
-                    factor,
-                    ColorToOKLab(color=a),
-                    ColorToOKLab(color=b),
-                    clamp_factor=True,
-                ).o.result_vector
+                oklab=factor.mix.vector(ColorToOKLab(color=a), ColorToOKLab(color=b))
             )
             >> result
         )

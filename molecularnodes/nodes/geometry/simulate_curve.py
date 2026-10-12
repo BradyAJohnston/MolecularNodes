@@ -75,9 +75,7 @@ class XPBDSolveCurve(CustomGeometryGroup):
             repeat_zone_1.iteration, (integer_math, -integer_math)
         )
         switch = (repeat_zone.iteration > 0).switch.float(
-            integer_math,
-            integer_math
-            * g.Mix.float(straightness, 0.5, 1.0, clamp_factor=True).o.result_float,
+            integer_math, integer_math * straightness.mix.float(0.5, 1.0)
         )
         constraint_distance = ConstraintDistance(
             target=OffsetVector(offset=index_switch_1),

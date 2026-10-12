@@ -75,13 +75,13 @@ class BackboneNH(AssetGeometryGroup):
 
         backbone_n = BackboneN(method="Read")
         backbone_n_1 = BackboneN()
-        mix = g.Mix.vector(
-            0.5,
-            BackboneCA(),
-            OffsetVector(vector=BackboneC(), offset=-1),
-            clamp_factor=True,
-        )
         string = g.String(string="backbone_NH")
+        vector_direction = VectorDirection(
+            to=backbone_n_1,
+            from_=g.Mix.vector(
+                0.5, BackboneCA(), OffsetVector(vector=BackboneC(), offset=-1)
+            ).o.result_vector,
+        )
         vector_math = (
             VectorDirection(to=backbone_n, from_=BackboneCA(method="Read")).o.direction
             + VectorDirection(to=backbone_n, from_=BackboneC(method="Read")).o.direction
@@ -89,15 +89,18 @@ class BackboneNH(AssetGeometryGroup):
         _vector_math_1 = vector_math.normalize().mul_add(
             AngstromToWorld(angstrom=1.01), BackboneN(method="Read")
         )
-        vector_math_2 = VectorDirection(
-            to=backbone_n_1, from_=mix.o.result_vector
-        ).o.direction.mul_add(AngstromToWorld(angstrom=1.01), backbone_n_1)
+        fallback_vector = FallbackVector(
+            name=string,
+            fallback=vector_direction.o.direction.mul_add(
+                AngstromToWorld(angstrom=1.01), backbone_n_1
+            ),
+        )
         (
             g.MenuSwitch.vector(
                 menu,
                 {
                     "Read": g.NamedAttribute.vector(string).o.attribute,
-                    "Compute": FallbackVector(name=string, fallback=vector_math_2),
+                    "Compute": fallback_vector,
                 },
             )
             >> nh

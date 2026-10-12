@@ -5,7 +5,6 @@
 from typing import TYPE_CHECKING
 from bpy.types import ShaderNodeTree
 from nodebpy import TreeBuilder
-from nodebpy import geometry as g
 from nodebpy import shader as s
 from nodebpy.builder import CustomShaderGroup, FloatSocket, SocketAccessor
 from nodebpy.types import InputFloat
@@ -75,8 +74,4 @@ class MNFresnel(CustomShaderGroup):
         value = tree.outputs.float("Value")
 
         fresnel = s.Fresnel(ior=ior)
-        mix = g.Mix.float(
-            factor, MN_mask_transparent(value=fresnel), fresnel, clamp_factor=True
-        )
-
-        mix >> value
+        factor.mix.float(MN_mask_transparent(value=fresnel), fresnel) >> value

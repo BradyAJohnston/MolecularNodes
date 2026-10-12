@@ -3,7 +3,6 @@
 # The class is a recipe for the material's shader tree — build recreates the material and runs it into material.node_tree.
 from bpy.types import ShaderNodeTree
 from nodebpy import TreeBuilder
-from nodebpy import geometry as g
 from nodebpy import shader as s
 from nodebpy.builder import CustomShaderGroup
 from ..shader._shared.mn_fresnel import MNFresnel
@@ -15,11 +14,10 @@ class FlatOutline(CustomShaderGroup):
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         with s.Frame("Shade the Flat Colors with Ambient Occlusion"):
-            mix = g.Mix.color(
-                a=g.ColorRamp(fac=s.AmbientOcclusion(samples=16).o.ao ** 1.5).o.color,
+            mix = s.Mix.color(
+                a=s.ColorRamp(fac=s.AmbientOcclusion().o.ao ** 1.5).o.color,
                 b=MNColor().o.color,
                 blend_type="MULTIPLY",
-                clamp_factor=True,
             )
         with s.Frame("Stops colors as lights in Cycles"):
             mix_shader = s.MixShader(
@@ -33,7 +31,7 @@ class FlatOutline(CustomShaderGroup):
                 shader=mix_shader,
                 shader_001=s.Color(),
             )
-        _material_output = s.MaterialOutput(surface=mix_shader_1, is_active_output=True)
+        _material_output = s.MaterialOutput(surface=mix_shader_1)
 
 
 MATERIAL = FlatOutline

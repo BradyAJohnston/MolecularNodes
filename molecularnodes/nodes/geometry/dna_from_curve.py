@@ -2573,12 +2573,7 @@ class DNAFromCurve(AssetGeometryGroup):
                 integer_math_1, abs(integer_math_1 - 3)
             )
         with g.Frame("Base distances"):
-            math_1 = (
-                integer_math
-                * g.Mix.float(
-                    wind, g.Value(0.63), g.Value(0.34), clamp_factor=True
-                ).o.result_float
-            )
+            math_1 = integer_math * wind.mix.float(g.Value(0.63), g.Value(0.34))
         math_2 = wind * (g.Value(math.tau).o.value / g.Value(10.5) * integer_math)
         axis_angle_to_rotation = g.AxisAngleToRotation(
             axis=g.CurveTangent(),
@@ -2657,12 +2652,13 @@ class DNAFromCurve(AssetGeometryGroup):
             pick_instance=True,
         )
         with g.Frame("Rotate individual base nucleotides"):
-            transform_local_axis = TransformLocalAxis(
-                axis=normal_1.output,
-                angle=g.Mix.float(wind, math.pi / 4, clamp_factor=True).o.result_float,
-            )
             capture_3 = g.CaptureAttribute.instance(geometry=instance_on_points)
-            transform = capture_3.items.matrix(transform_local_axis, "Transform")
+            transform = capture_3.items.matrix(
+                TransformLocalAxis(
+                    axis=normal_1.output, angle=wind.mix.float(math.pi / 4, 0.0)
+                ),
+                "Transform",
+            )
             set_position = (
                 capture_3.o.geometry
                 >> g.RealizeInstances(depth=1)

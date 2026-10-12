@@ -446,7 +446,7 @@ class SurfaceToRadius(CustomGeometryGroup):
         )
         set_position = capture_1.o.geometry >> g.SetPosition(
             position=g.Mix.vector(
-                0.0, value_001.output + vector_math, g.Position(), clamp_factor=True
+                0.0, value_001.output + vector_math, g.Position()
             ).o.result_vector
         )
         set_position >> geometry_1.input
@@ -790,7 +790,7 @@ class StyleSurface(AssetGeometryGroup):
                 atoms_4 = closure_zone_3.inputs.geometry("Atoms")
                 geometry_4 = closure_zone_3.outputs.geometry("Geometry")
                 with g.Frame("SES Subdivisions"):
-                    integer_1 = g.Integer(integer=0)
+                    integer_1 = g.Integer()
                 _string_1 = g.String(
                     string="Experimental, pick 'SES' in the SDF menu switch to try it. The solvent-excluded surface is what a probe sphere (water, ~1.4 A) traces rolling over the atoms: build the grid with atom radius + probe radius (the solvent-accessible surface), then shrink it back by the probe radius, which fills crevices smoothly. Surface to Radius in Mesh processing projects vertices back onto atom spheres and partly undoes the smooth pockets: mute it to see the raw SES."
                 )

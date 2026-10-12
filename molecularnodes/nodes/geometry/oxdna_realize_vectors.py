@@ -113,7 +113,7 @@ class OxDNARealizeVectors(AssetGeometryGroup):
             geometry=(store_named_attribute_3, store_named_attribute_1)
         )
         with g.Frame("Transfer all attrib to new verts to retain thru Merge by Dist"):
-            integer = g.Integer(integer=0)
+            integer = g.Integer()
             transfer_attributes = g.TransferAttributes(
                 target=join_geometry,
                 target_point_id=integer,

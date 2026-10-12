@@ -24,9 +24,7 @@ class Squishy(CustomShaderGroup):
             coat_weight=1.0,
             coat_roughness=0.24545455,
         )
-        _material_output = s.MaterialOutput(
-            surface=principled_bsdf, is_active_output=True
-        )
+        _material_output = s.MaterialOutput(surface=principled_bsdf)
 
 
 MATERIAL = Squishy

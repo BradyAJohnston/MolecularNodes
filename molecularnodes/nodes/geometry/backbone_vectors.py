@@ -94,7 +94,7 @@ class BackboneVectors(AssetGeometryGroup):
         vector_math = (backbone_positions.o.c - backbone_positions.o.n).normalize()
         vector_math_1 = (
             g.Mix.vector(
-                0.45, backbone_positions.o.c, backbone_positions.o.n, clamp_factor=True
+                0.45, backbone_positions.o.c, backbone_positions.o.n
             ).o.result_vector
             - backbone_positions.o.ca
         )
