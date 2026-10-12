@@ -62,11 +62,11 @@ class MN_constants_atom_name_nucleic(CustomGeometryGroup):
         side_chain_upper = tree.outputs.integer("Side Chain Upper")
         side_chain_joint_carbon = tree.outputs.integer("Side Chain Joint Carbon")
 
-        integer = g.Integer(integer=61)
-        integer_1 = g.Integer(integer=77)
-        integer_2 = g.Integer(integer=50)
-        integer_3 = g.Integer(integer=61)
-        integer_4 = g.Integer(integer=54)
+        integer = g.Integer(61)
+        integer_1 = g.Integer(77)
+        integer_2 = g.Integer(50)
+        integer_3 = g.Integer(61)
+        integer_4 = g.Integer(54)
 
         integer_2 >> backbone_lower
         integer_3 >> backbone_upper

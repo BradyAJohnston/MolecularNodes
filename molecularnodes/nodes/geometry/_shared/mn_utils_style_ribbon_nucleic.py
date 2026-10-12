@@ -328,7 +328,7 @@ class MN_utils_style_ribbon_nucleic(CustomGeometryGroup):
                 rotation=axes_to_rotation,
             )
         store_named_attribute_1 = g.StoreNamedAttribute.point.boolean(
-            g.SetCurveNormal(curve=set_curve_radius), name="is_backbone", value=True
+            g.SetCurveNormal(set_curve_radius), name="is_backbone", value=True
         )
         set_position = g.SetPosition(
             geometry=store_named_attribute_1,
@@ -360,7 +360,7 @@ class MN_utils_style_ribbon_nucleic(CustomGeometryGroup):
             >> g.SetMaterial(material=material)
             >> g.RemoveNamedAttribute(pattern_mode="Wildcard", name="tmp_*")
         )
-        join_geometry = g.JoinGeometry(geometry=(cleanup, remove_named_attribute_1))
+        join_geometry = g.JoinGeometry((cleanup, remove_named_attribute_1))
 
         join_geometry >> geometry
         store_named_attribute_1 >> curve

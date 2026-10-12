@@ -145,7 +145,7 @@ class MN_animate_noise_repeat(CustomGeometryGroup):
         _value = g.Value(4.0)
         vector_math = (
             vector
-            + g.CombineXYZ(x=animate_0_1 * speed)
+            + g.CombineXYZ(animate_0_1 * speed)
             + g.RandomValue.vector((-10.0, -10.0, -10.0), (-1.0, 10.0, 10.0), vector)
         )
         vector_1 = vector_math * (math.tau / speed)

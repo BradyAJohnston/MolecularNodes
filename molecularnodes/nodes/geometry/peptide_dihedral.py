@@ -112,7 +112,7 @@ class PeptideDihedral(AssetGeometryGroup):
         )
 
         atom_name = AtomName()
-        boolean = g.Boolean(boolean=True)
+        boolean = g.Boolean(True)
         is_peptide = IsPeptide(and_=selection)
         override_index = OverrideIndex(
             selection=IsSideChain(include_ca=False).o.selection,

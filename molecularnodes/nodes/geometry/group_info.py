@@ -80,9 +80,7 @@ class GroupInfo(AssetGeometryGroup):
         index_of_last = tree.outputs.integer("Index of Last")
 
         index = g.Index()
-        accumulate_field = g.AccumulateField.point.integer(
-            g.Integer(integer=1), group_id
-        )
+        accumulate_field = g.AccumulateField.point.integer(g.Integer(1), group_id)
         switch = g.Compare.integer.equal(
             accumulate_field.o.trailing, 0
         ).o.result.switch.integer(true=index)

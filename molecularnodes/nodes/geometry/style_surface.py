@@ -129,7 +129,7 @@ class Utils_bounding_box(CustomGeometryGroup):
         z = tree.outputs.integer("Z")
 
         mn_world_scale = MN_world_scale()
-        bounding_box = g.BoundingBox(geometry=geometry)
+        bounding_box = g.BoundingBox(geometry)
         math_1 = mn_world_scale.o.world_scale * 2.0
         vector_math = bounding_box.o.min.snap(mn_world_scale) - math_1
         vector_math_1 = bounding_box.o.max.snap(mn_world_scale) + math_1
@@ -157,7 +157,7 @@ class MN_surface_smooth_bumps(CustomGeometryGroup):
                 edge_vertices.o.vertex_index_1
             ) & compare.o.result.point.at(edge_vertices.o.vertex_index_2)
             face_group_boundaries = g.FaceGroupBoundaries(
-                face_set=g.EdgesToFaceGroups(boundary_edges=boolean_math)
+                g.EdgesToFaceGroups(boolean_math)
             )
         (
             geometry
@@ -226,10 +226,9 @@ class MN_utils_style_surface_sdf(CustomGeometryGroup):
         separate_geometry_1 = g.SeparateGeometry.point(
             separate_geometry.o.selection, IsAlphaCarbon().o.selection | compare
         )
-        compare_1 = g.Compare.integer.equal(
-            g.DomainSize(geometry=separate_geometry_1.o.selection).o.point_count, 0
-        )
-        switch = compare_1.o.result.switch.geometry(
+        switch = g.Compare.integer.equal(
+            g.DomainSize(separate_geometry_1.o.selection).o.point_count, 0
+        ).o.result.switch.geometry(
             separate_geometry_1.o.selection, separate_geometry_1.o.inverted
         )
         menu_switch = g.MenuSwitch.geometry(
@@ -273,13 +272,13 @@ class MN_utils_style_surface_sdf(CustomGeometryGroup):
             )
             capture_1 = g.CaptureAttribute.point(geometry=set_position)
             value_1 = capture_1.items.vector(position_1, "Value")
-            vector_math = g.Normal(legacy_corner_normals=True).o.normal * (
-                value_1.output.distance(position_1) * -1.8
-            )
             set_position_1 = (
                 capture_1.o.geometry
                 >> g.SetPosition(position=position_1.o.position.blur(2))
-                >> g.SetPosition(offset=vector_math)
+                >> g.SetPosition(
+                    offset=g.Normal(True).o.normal
+                    * (value_1.output.distance(position_1) * -1.8)
+                )
                 >> g.SetPosition(position=g.Position().o.position.blur(2))
                 >> g.SetPosition(position=blur_attribute)
             )
@@ -388,10 +387,9 @@ class SampleColors(CustomGeometryGroup):
         separate_geometry = g.SeparateGeometry.point(
             atoms, IsAlphaCarbon().o.selection | compare
         )
-        compare_1 = g.Compare.integer.equal(
-            g.DomainSize(geometry=separate_geometry.o.selection).o.point_count, 0
-        )
-        switch = compare_1.o.result.switch.geometry(
+        switch = g.Compare.integer.equal(
+            g.DomainSize(separate_geometry.o.selection).o.point_count, 0
+        ).o.result.switch.geometry(
             separate_geometry.o.selection, separate_geometry.o.inverted
         )
         menu_switch = g.MenuSwitch.geometry(
@@ -764,7 +762,7 @@ class StyleSurface(AssetGeometryGroup):
                 with g.Frame("Coarse Subdivisions"):
                     integer = g.Integer()
                 _string = g.String(
-                    string="Experimental, pick 'SDF Coarse' in the SDF menu switch to try it. Runs the same offset, mean and fillet as 'SDF' but on a grid whose voxels are 'Coarse Voxel Factor' times larger (2 = 8x fewer voxels), meshes that and subdivides the mesh back up (plain Subdivide Mesh: Subdivision Surface costs ~250 ms here). Surface to Radius then projects the vertices onto the atom spheres, which restores detail on the convex parts."
+                    "Experimental, pick 'SDF Coarse' in the SDF menu switch to try it. Runs the same offset, mean and fillet as 'SDF' but on a grid whose voxels are 'Coarse Voxel Factor' times larger (2 = 8x fewer voxels), meshes that and subdivides the mesh back up (plain Subdivide Mesh: Subdivision Surface costs ~250 ms here). Surface to Radius then projects the vertices onto the atom spheres, which restores detail on the convex parts."
                 )
                 with g.Frame("Coarse Voxel Factor"):
                     value = g.Value(2.0)
@@ -792,7 +790,7 @@ class StyleSurface(AssetGeometryGroup):
                 with g.Frame("SES Subdivisions"):
                     integer_1 = g.Integer()
                 _string_1 = g.String(
-                    string="Experimental, pick 'SES' in the SDF menu switch to try it. The solvent-excluded surface is what a probe sphere (water, ~1.4 A) traces rolling over the atoms: build the grid with atom radius + probe radius (the solvent-accessible surface), then shrink it back by the probe radius, which fills crevices smoothly. Surface to Radius in Mesh processing projects vertices back onto atom spheres and partly undoes the smooth pockets: mute it to see the raw SES."
+                    "Experimental, pick 'SES' in the SDF menu switch to try it. The solvent-excluded surface is what a probe sphere (water, ~1.4 A) traces rolling over the atoms: build the grid with atom radius + probe radius (the solvent-accessible surface), then shrink it back by the probe radius, which fills crevices smoothly. Surface to Radius in Mesh processing projects vertices back onto atom spheres and partly undoes the smooth pockets: mute it to see the raw SES."
                 )
                 with g.Frame("Probe Radius (A)"):
                     value_1 = g.Value(1.4)
@@ -848,7 +846,7 @@ class StyleSurface(AssetGeometryGroup):
             geometry_8 = closure_zone_6.inputs.geometry("Geometry")
             geometry_9 = closure_zone_6.outputs.geometry("Geometry")
             join_bundle = g.JoinBundle(
-                bundle=(
+                (
                     SurfaceToRadius(**{"Scale Radii": scale}, Atoms=geometry_8.output),
                     SampleColors(
                         **{"Color Source": color_source},
@@ -878,7 +876,7 @@ class StyleSurface(AssetGeometryGroup):
             group_id_1 = closure_zone_7.inputs.integer("group_id")
             geometry_12 = closure_zone_7.outputs.geometry("Geometry")
             _string_2 = g.String(
-                string="We get better performance if we first orient the structure better inside of a bounding box for more efficient use of grid space & voxels!"
+                "We get better performance if we first orient the structure better inside of a bounding box for more efficient use of grid space & voxels!"
             )
             store_named_attribute = EvaluateWhilePlanar(
                 geometry=geometry_11.output,

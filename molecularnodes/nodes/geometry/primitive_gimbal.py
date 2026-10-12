@@ -137,10 +137,7 @@ class PrimitiveGimbal(AssetGeometryGroup):
             value=g.IndexSwitch.color(integer.current, (x, y, z)),
             material=material,
         ) >> g.TransformGeometry(rotation=index_switch)
-        (
-            g.JoinGeometry(geometry=(geometry_1.current, transform_geometry))
-            >> geometry_1.next
-        )
+        g.JoinGeometry((geometry_1.current, transform_geometry)) >> geometry_1.next
         integer.current + 1.0 >> integer.next
 
         geometry_1.result >> geometry

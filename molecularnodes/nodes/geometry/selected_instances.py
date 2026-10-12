@@ -101,9 +101,7 @@ class SelectedInstances(AssetGeometryGroup):
             description="No points of the Instance's bounding box are selected",
         )
 
-        capture = g.CaptureAttribute.instance(
-            geometry=g.BoundingBox(geometry=instances)
-        )
+        capture = g.CaptureAttribute.instance(geometry=g.BoundingBox(instances))
         index = capture.items.integer(g.Index(), "Index")
         accumulate_field = g.AccumulateField.point.integer(selection, index.output)
         index_1 = g.Index()

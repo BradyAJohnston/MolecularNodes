@@ -145,7 +145,7 @@ class EvaluateOnAtoms(AssetGeometryGroup):
         )
         (
             g.JoinGeometry(
-                geometry=(
+                (
                     get_geometry_atoms.o.geometry,
                     g.IndexSwitch.geometry(
                         menu_switch.o.output, (geometry_2.output, None)
@@ -155,7 +155,7 @@ class EvaluateOnAtoms(AssetGeometryGroup):
             >> geometry_1
         )
         _string = g.String(
-            string="Evaluate the 'Closure' on the 'Atoms' geometry, join the resulting geometry with the input geometry.\n\nIf the input 'Geometry' doesn't contain a 'MN/Atoms' bundle then we treat the input geometry as the 'Atoms'."
+            "Evaluate the 'Closure' on the 'Atoms' geometry, join the resulting geometry with the input geometry.\n\nIf the input 'Geometry' doesn't contain a 'MN/Atoms' bundle then we treat the input geometry as the 'Atoms'."
         )
 
 

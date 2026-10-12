@@ -75,7 +75,7 @@ class BondCount(AssetGeometryGroup):
             "Bonds", description="The number of bonds or edges that a point has"
         )
 
-        edges_of_vertex = g.EdgesOfVertex(vertex_index=index)
+        edges_of_vertex = g.EdgesOfVertex(index)
         (edges_of_vertex.o.total > 0) >> is_bonded
 
         edges_of_vertex.o.total >> bonds

@@ -126,7 +126,7 @@ class PrimitiveArrow(AssetGeometryGroup):
             translation=g.CombineXYZ(z=math_1 / 2.0),
         )
         (
-            g.JoinGeometry(geometry=(transform_geometry, transform_geometry_1))
+            g.JoinGeometry((transform_geometry, transform_geometry_1))
             >> g.StoreNamedAttribute.point.color(name="Color", value=value)
             >> g.SetMaterial(material=material)
             >> geometry

@@ -150,7 +150,7 @@ class VisualizeAngle(AssetGeometryGroup):
             points
             >> g.InstanceOnPoints(
                 selection=selection,
-                instance=g.ResampleCurve(curve=g.CurveLine(end=(0.0, 0.0, 0.0))),
+                instance=g.ResampleCurve(g.CurveLine(end=(0.0, 0.0, 0.0))),
             )
             >> g.RealizeInstances(realize_to_point_domain=True)
             >> g.StoreNamedAttribute.point.float(

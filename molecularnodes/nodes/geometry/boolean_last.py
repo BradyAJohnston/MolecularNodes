@@ -81,7 +81,7 @@ class BooleanLast(AssetGeometryGroup):
         accumulate_field = g.AccumulateField.point.integer(boolean)
         compare = g.Compare.integer.equal(
             g.AccumulateField.point.integer(
-                group_index=accumulate_field.o.leading
+                group_id=accumulate_field.o.leading
             ).o.trailing,
             0,
         )

@@ -97,7 +97,7 @@ class FlatInternal(AssetShaderGroup):
             mn_color.o.color, (0.0, 0.0, 0.0, 1.0)
         )
         emission_1 = s.Emission(
-            color=s.MenuSwitch.color(
+            s.MenuSwitch.color(
                 outline, {"Outline": mix, "None": mn_color.o.color}
             ).o.output
         )

@@ -75,7 +75,7 @@ class BackboneNH(AssetGeometryGroup):
 
         backbone_n = BackboneN(method="Read")
         backbone_n_1 = BackboneN()
-        string = g.String(string="backbone_NH")
+        string = g.String("backbone_NH")
         vector_direction = VectorDirection(
             to=backbone_n_1,
             from_=g.Mix.vector(

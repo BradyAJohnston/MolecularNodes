@@ -163,7 +163,7 @@ class AssemblyInstance(AssetGeometryGroup):
 
         with g.Frame("Select required assemblies"):
             separate_geometry = g.SeparateGeometry.point(
-                g.ObjectInfo(object=data_object).o.geometry,
+                g.ObjectInfo(data_object).o.geometry,
                 g.Compare.integer.equal(assembly_id, AssemblyID()).o.result & selection,
             )
         with g.Frame():

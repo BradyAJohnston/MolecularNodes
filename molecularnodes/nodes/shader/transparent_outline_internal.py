@@ -100,9 +100,9 @@ class TransparentOutlineInternal(AssetShaderGroup):
         shader = tree.outputs.shader("Shader")
 
         mix_shader = s.MixShader(
-            fac=s.Math.greater_than(s.LightPath().o.transparent_depth, 0.0).o.value
+            factor=s.Math.greater_than(s.LightPath().o.transparent_depth, 0.0).o.value
             + transparency,
-            shader=s.DiffuseBSDF(color=MNColor().o.color),
+            shader=s.DiffuseBSDF(MNColor().o.color),
             shader_001=s.TransparentBSDF(),
         )
         (
@@ -111,7 +111,7 @@ class TransparentOutlineInternal(AssetShaderGroup):
                 {
                     "Transparent": mix_shader,
                     "Fresnel": s.MixShader(
-                        fac=MNFresnel(ior=0.95),
+                        factor=MNFresnel(ior=0.95),
                         shader=mix_shader,
                         shader_001=outline_color,
                     ),

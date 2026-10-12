@@ -112,9 +112,7 @@ class CurveToMeshWithUVMap(CustomGeometryGroup):
         index_switch = g.IndexSwitch.float(
             menu_switch.o.output, (spline_parameter.o.factor, spline_parameter.o.length)
         )
-        capture = g.CaptureAttribute.point(
-            geometry=g.CurveCircle(resolution=profile_resolution)
-        )
+        capture = g.CaptureAttribute.point(geometry=g.CurveCircle(profile_resolution))
         factor = capture.items.float(g.SplineParameter().o.factor, "Factor")
         index = capture.items.integer(g.SplineParameter().o.index, "Index")
         capture_1 = g.CaptureAttribute.point(geometry=curve)

@@ -73,7 +73,7 @@ class SelectResIDString(AssetGeometryGroup):
         string_2 = closure_zone_1.inputs.string("String")
         selection_2 = closure_zone_1.outputs.boolean("Selection")
         residue_id = ResidueID()
-        string_3 = g.String(string="-")
+        string_3 = g.String("-")
         (
             g.Compare.integer.equal(string_1.output.to_integer(), ResidueID())
             >> selection_1.input

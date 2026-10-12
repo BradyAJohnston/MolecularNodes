@@ -78,29 +78,31 @@ class EdgeDetection(CustomShaderGroup):
         map_range = s.WhiteNoiseTexture(
             vector=s.Geometry().o.position, noise_dimensions="4D"
         ).o.value.map_range(to_max=360.0)
-        vector_rotate = s.VectorRotate.z_axis(
-            s.CombineXYZ(x=1.0), angle=repeat_zone.iteration * 45.0 + map_range
+        vector_math = (
+            s.VectorRotate.z_axis(
+                s.CombineXYZ(1.0), angle=repeat_zone.iteration * 45.0 + map_range
+            ).o.vector
+            * offset
         )
-        vector = vector_rotate.o.vector * offset
         offset_raycast = OffsetRaycast(
-            x_offset=vector.x, y_offset=vector.y, length=10.0
+            x_offset=vector_math.x, y_offset=vector_math.y, length=10.0
         )
         math_1 = s.Math.greater_than(offset_raycast.o.hit_distance, 0.0)
         _math_2 = 1.0 - offset_raycast.o.self_hit
-        vector_math = geometry.o.normal.dot(
+        vector_math_1 = geometry.o.normal.dot(
             geometry.o.position
             + offset_raycast.o.ray_direction * offset_raycast.o.hit_distance
         )
-        vector_math_1 = offset_raycast.o.hit_normal.dot(
+        vector_math_2 = offset_raycast.o.hit_normal.dot(
             geometry_1.o.normal * geometry_1.o.backfacing.mix.float(1.0, -1.0)
         )
         math_3 = max_normal_delta.current.max(
             math_1.o.value.mix.float(
-                0.0, vector_math_1.acos().map_range(from_max=math.pi)
+                0.0, vector_math_2.acos().map_range(from_max=math.pi)
             )
         )
         (
-            (geometry.o.position.dot(geometry.o.normal) - vector_math).max(
+            (geometry.o.position.dot(geometry.o.normal) - vector_math_1).max(
                 max_distance.current
             )
             >> max_distance.next

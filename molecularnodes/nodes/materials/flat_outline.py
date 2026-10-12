@@ -15,23 +15,23 @@ class FlatOutline(CustomShaderGroup):
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         with s.Frame("Shade the Flat Colors with Ambient Occlusion"):
             mix = s.Mix.color(
-                a=s.ColorRamp(fac=s.AmbientOcclusion().o.ao ** 1.5).o.color,
+                a=s.ColorRamp(s.AmbientOcclusion().o.ao ** 1.5).o.color,
                 b=MNColor().o.color,
                 blend_type="MULTIPLY",
             )
         with s.Frame("Stops colors as lights in Cycles"):
             mix_shader = s.MixShader(
-                fac=s.LightPath().o.is_camera_ray,
+                factor=s.LightPath().o.is_camera_ray,
                 shader=mix.o.result_color,
-                shader_001=s.Emission(color=mix.o.result_color),
+                shader_001=s.Emission(mix.o.result_color),
             )
         with s.Frame("Add Outline"):
             mix_shader_1 = s.MixShader(
-                fac=MNFresnel(ior=0.95, factor=1.0),
+                factor=MNFresnel(ior=0.95, factor=1.0),
                 shader=mix_shader,
                 shader_001=s.Color(),
             )
-        _material_output = s.MaterialOutput(surface=mix_shader_1)
+        _material_output = s.MaterialOutput(mix_shader_1)
 
 
 MATERIAL = FlatOutline
