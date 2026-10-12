@@ -296,7 +296,7 @@ class Flat(PresetMaterial):
 
     def __init__(
         self,
-        outline: bool | None = None,
+        outline: bool = False,
         threshold: float | None = None,
         thickness: float | None = None,
         *,
