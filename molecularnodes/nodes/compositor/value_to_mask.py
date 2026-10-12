@@ -4,7 +4,7 @@
 from typing import TYPE_CHECKING
 from bpy.types import CompositorNodeTree
 from nodebpy import TreeBuilder
-from nodebpy import geometry as g
+from nodebpy import compositor as c
 from nodebpy.builder import (
     AssetCompositorGroup,
     FloatSocket,
@@ -101,7 +101,7 @@ class ValueToMask(AssetCompositorGroup):
         mask = tree.outputs.float("Mask")
         inverse = tree.outputs.float("Inverse")
 
-        math_1 = g.Math.compare(value, target, epsilon)
+        math_1 = c.Math.compare(value, target, epsilon)
         1.0 - math_1 >> inverse
 
         math_1 >> mask

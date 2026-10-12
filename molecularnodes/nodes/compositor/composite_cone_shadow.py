@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 from bpy.types import CompositorNodeTree
 from nodebpy import TreeBuilder
 from nodebpy import compositor as c
-from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetCompositorGroup,
     FloatSocket,
@@ -297,13 +296,13 @@ class CompositeConeShadow(AssetCompositorGroup):
             math_37 = math_36 + ConeShadowSample(
                 depth=depth, radius=math_29, angle=7 * math.pi / 4, threshold=math_30
             )
-            _string = g.String(
-                string="Each sample translates the depth pass by a ring radius in one of eight directions and tests whether that pixel is closer to the camera than the centre by more than the ring's threshold: the larger of Min Gap and the ring's screen distance times the cone slope, all in world units. Occluding samples are counted."
+            _string = c.String(
+                "Each sample translates the depth pass by a ring radius in one of eight directions and tests whether that pixel is closer to the camera than the centre by more than the ring's threshold: the larger of Min Gap and the ring's screen distance times the cone slope, all in world units. Occluding samples are counted."
             )
         with c.Frame("Shadow"):
             (1.0 - math_37 * (strength / 32.0)).max(max_darkening) >> shadow
-            _string_1 = g.String(
-                string="The shadow factor starts at one and loses Strength / 32 per occluding sample, clamped at Max Darkening."
+            _string_1 = c.String(
+                "The shadow factor starts at one and loses Strength / 32 per occluding sample, clamped at Max Darkening."
             )
 
 

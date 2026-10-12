@@ -75,39 +75,41 @@ class EdgeDetection(CustomShaderGroup):
         max_distance = repeat_zone.items.float(name="Max Distance")
         max_normal_delta = repeat_zone.items.float(name="Max Normal Delta")
         object_edge_1 = repeat_zone.items.float(name="Object Edge")
+        vector_math = (
+            geometry_1.o.normal
+            * s.Mix.float(geometry_1.o.backfacing, 1.0, -1.0).o.result_float
+        )
         map_range = s.WhiteNoiseTexture(
             vector=s.Geometry().o.position, noise_dimensions="4D"
         ).o.value.map_range(to_max=360.0)
-        vector_math = (
+        vector_math_1 = (
             s.VectorRotate.z_axis(
                 s.CombineXYZ(1.0), angle=repeat_zone.iteration * 45.0 + map_range
             ).o.vector
             * offset
         )
         offset_raycast = OffsetRaycast(
-            x_offset=vector_math.x, y_offset=vector_math.y, length=10.0
+            x_offset=vector_math_1.x, y_offset=vector_math_1.y, length=10.0
         )
         math_1 = s.Math.greater_than(offset_raycast.o.hit_distance, 0.0)
         _math_2 = 1.0 - offset_raycast.o.self_hit
-        vector_math_1 = geometry.o.normal.dot(
+        vector_math_2 = geometry.o.normal.dot(
             geometry.o.position
             + offset_raycast.o.ray_direction * offset_raycast.o.hit_distance
         )
-        vector_math_2 = offset_raycast.o.hit_normal.dot(
-            geometry_1.o.normal * geometry_1.o.backfacing.mix.float(1.0, -1.0)
-        )
-        math_3 = max_normal_delta.current.max(
-            math_1.o.value.mix.float(
-                0.0, vector_math_2.acos().map_range(from_max=math.pi)
-            )
+        mix = math_1.o.value.mix.float(
+            0.0,
+            offset_raycast.o.hit_normal.dot(vector_math)
+            .acos()
+            .map_range(from_max=math.pi),
         )
         (
-            (geometry.o.position.dot(geometry.o.normal) - vector_math_1).max(
+            (geometry.o.position.dot(geometry.o.normal) - vector_math_2).max(
                 max_distance.current
             )
             >> max_distance.next
         )
-        math_3 >> max_normal_delta.next
+        max_normal_delta.current.max(mix) >> max_normal_delta.next
         (
             math_1.o.value.mix.float(0.0, 0.0).max(object_edge_1.current)
             >> object_edge_1.next

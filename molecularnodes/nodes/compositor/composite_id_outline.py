@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 from bpy.types import CompositorNodeTree
 from nodebpy import TreeBuilder
 from nodebpy import compositor as c
-from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetCompositorGroup,
     CustomCompositorGroup,
@@ -42,8 +41,8 @@ class IDDifferenceSample(CustomCompositorGroup):
             extension_x="Extend",
             extension_y="Extend",
         )
-        math_1 = g.Math.greater_than(
-            abs(g.Math.subtract(translate, id).o.value), min_difference
+        math_1 = c.Math.greater_than(
+            abs(c.Math.subtract(translate, id).o.value), min_difference
         )
 
         math_1 >> differs
@@ -248,8 +247,8 @@ class CompositeIDOutline(AssetCompositorGroup):
                     ID=id, X=2.0, Y=2.0, **{"Min Difference": min_difference}
                 )
             )
-            _string = g.String(
-                string="The 24 pixels of the 5x5 window around each pixel are compared with its ID; the number of pixels in another region is the line strength."
+            _string = c.String(
+                "The 24 pixels of the 5x5 window around each pixel are compared with its ID; the number of pixels in another region is the line strength."
             )
         math_12.map_range(low, high) >> opacity
 

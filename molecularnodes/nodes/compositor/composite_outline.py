@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 from bpy.types import CompositorNodeTree
 from nodebpy import TreeBuilder
 from nodebpy import compositor as c
-from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetCompositorGroup,
     ColorSocket,
@@ -101,14 +100,19 @@ class CompositeOutline(AssetCompositorGroup):
         image_1 = tree.outputs.color("Image", (1.0, 1.0, 1.0, 1.0))
 
         with c.Frame("Draw lines"):
-            alpha_over = c.AlphaOver(background=image, foreground=line_color, fac=mask)
-        with c.Frame("Restore alpha"):
-            math_1 = (mask * c.SeparateColor(image=line_color).o.alpha).max(
-                c.SeparateColor(image=image).o.alpha
+            alpha_over = c.AlphaOver(
+                background=image, foreground=line_color, factor=mask
             )
-            set_alpha = c.SetAlpha(image=alpha_over, alpha=math_1, type="Replace Alpha")
-            _string = g.String(
-                string="Lines drawn over a transparent background would otherwise stay transparent. The alpha is set once, deliberately, to the larger of the line coverage and the image alpha, so lines survive on transparent backgrounds and the image alpha is kept everywhere else."
+        with c.Frame("Restore alpha"):
+            set_alpha = c.SetAlpha(
+                image=alpha_over,
+                alpha=(mask * c.SeparateColor(line_color).o.alpha).max(
+                    c.SeparateColor(image).o.alpha
+                ),
+                type="Replace Alpha",
+            )
+            _string = c.String(
+                "Lines drawn over a transparent background would otherwise stay transparent. The alpha is set once, deliberately, to the larger of the line coverage and the image alpha, so lines survive on transparent backgrounds and the image alpha is kept everywhere else."
             )
 
         set_alpha >> image_1

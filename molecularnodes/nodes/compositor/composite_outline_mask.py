@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 from bpy.types import CompositorNodeTree
 from nodebpy import TreeBuilder
 from nodebpy import compositor as c
-from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetCompositorGroup,
     BooleanSocket,
@@ -164,23 +163,23 @@ class CompositeOutlineMask(AssetCompositorGroup):
         mask = tree.outputs.float("Mask")
 
         with c.Frame("Depth edges"):
-            math_1 = g.Math.greater_than(
+            math_1 = c.Math.greater_than(
                 c.Filter(image=depth.min(10_000.0), type="Sobel"),
                 depth_threshold * world_scale,
             )
-            _string = g.String(
-                string="The depth pass is unbounded where nothing was rendered, so it is clipped before the Sobel filter to keep the gradient finite. Silhouettes against the background still exceed any sensible threshold, so they are outlined."
+            _string = c.String(
+                "The depth pass is unbounded where nothing was rendered, so it is clipped before the Sobel filter to keep the gradient finite. Silhouettes against the background still exceed any sensible threshold, so they are outlined."
             )
         with c.Frame("Normal edges"):
-            math_2 = g.Math.greater_than(
-                g.VectorMath.length(c.Filter(image=normal, type="Sobel")).o.value,
+            math_2 = c.Math.greater_than(
+                c.VectorMath.length(c.Filter(image=normal, type="Sobel")).o.value,
                 normal_threshold,
             )
             math_3 = math_1.o.value.max(math_2.o.value * use_normals)
         with c.Frame("Line weight"):
             anti_aliasing = c.AntiAliasing(
-                image=c.DilateErode(
-                    mask=c.AntiAliasing(image=math_3), size=size - 1.0, type="Distance"
+                c.DilateErode(
+                    mask=c.AntiAliasing(math_3), size=size - 1.0, type="Distance"
                 )
             )
 

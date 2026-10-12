@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 from bpy.types import CompositorNodeTree
 from nodebpy import TreeBuilder
 from nodebpy import compositor as c
-from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetCompositorGroup,
     BooleanSocket,
@@ -113,28 +112,26 @@ class CompositeContourOutline(AssetCompositorGroup):
         opacity = tree.outputs.float("Opacity")
 
         with c.Frame("Laplacian"):
-            math_1 = g.Math.greater_than(c.Filter(image=depth, type="Sobel"), value)
+            math_1 = c.Math.greater_than(c.Filter(image=depth, type="Sobel"), value)
         with c.Frame("Smoothing"):
-            math_2 = g.Math.greater_than(
+            math_2 = c.Math.greater_than(
                 c.Blur(
-                    image=g.Math.greater_than(math_1, 0.0), size=(1.0, 1.0), type="Flat"
+                    image=c.Math.greater_than(math_1, 0.0), size=(1.0, 1.0), type="Flat"
                 ),
                 0.6,
             )
-            mix = g.Mix.float(
-                smooth,
+            mix = c.Mix.float(
+                math_2,
                 math_1,
-                math_2.o.value.mix.float(
-                    math_1, c.Blur(image=math_1, size=(1.0, 1.0), type="Flat")
-                ),
+                c.Blur(image=math_1, size=(1.0, 1.0), type="Flat"),
+                clamp_factor=False,
             )
-            dilate_erode = c.DilateErode(
-                mask=c.AntiAliasing(image=mix.o.result_float),
-                size=size,
-                type="Distance",
+            anti_aliasing = c.AntiAliasing(
+                c.Mix.float(smooth, math_1, mix.o.result_float).o.result_float
             )
-            _string = g.String(
-                string="Illustrate averages the 3x3 neighbourhood when at least six of its pixels carry signal. A flat blur of radius one is that average, and the same blur of the signal mask is the fraction of pixels that carry it."
+            dilate_erode = c.DilateErode(mask=anti_aliasing, size=size, type="Distance")
+            _string = c.String(
+                "Illustrate averages the 3x3 neighbourhood when at least six of its pixels carry signal. A flat blur of radius one is that average, and the same blur of the signal mask is the fraction of pixels that carry it."
             )
 
         dilate_erode >> opacity

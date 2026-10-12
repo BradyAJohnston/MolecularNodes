@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING
 from bpy.types import CompositorNodeTree
 from nodebpy import TreeBuilder
 from nodebpy import compositor as c
-from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetCompositorGroup,
     ColorSocket,
@@ -173,8 +172,8 @@ class CompositeDepthFog(AssetCompositorGroup):
                 alpha=1.0
                 - (front_fog - depth.map_range(near, far) * (front_fog - back_fog)),
             )
-            _string = g.String(
-                string="The fog factor is Front Fog at Near and Back Fog at Far, linear in depth between them and clamped outside. The colour is mixed towards Fog Color by one minus that factor, and the image alpha is kept."
+            _string = c.String(
+                "The fog factor is Front Fog at Near and Back Fog at Far, linear in depth between them and clamped outside. The colour is mixed towards Fog Color by one minus that factor, and the image alpha is kept."
             )
 
         set_alpha >> image_1

@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Literal
 from bpy.types import CompositorNodeTree
 from nodebpy import TreeBuilder
 from nodebpy import compositor as c
-from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetCompositorGroup,
     BooleanSocket,
@@ -40,7 +39,7 @@ class IDMask(CustomCompositorGroup):
         outline = tree.outputs.float("Outline")
 
         anti_aliasing = c.AntiAliasing(
-            image=g.Math.greater_than(c.Filter(image=id, type=type), threshold)
+            c.Math.greater_than(c.Filter(image=id, type=type), threshold)
         )
 
         anti_aliasing >> outline
@@ -55,7 +54,7 @@ class WorldToAngstrom2(CustomCompositorGroup):
         )
         world = tree.outputs.float("World")
 
-        angstrom / g.Value(0.1) >> world
+        angstrom / c.Value(0.1) >> world
 
 
 class CompositeIllustrate(AssetCompositorGroup):
@@ -535,8 +534,8 @@ class CompositeIllustrate(AssetCompositorGroup):
                 type="Replace Alpha",
             )
             alpha_convert = c.AlphaConvert(image=set_alpha, type="To Straight")
-            _string = g.String(
-                string="The base colour is given the render alpha and converted to straight alpha, so the shadow, fog and outlines act on the true colour of partly covered edge pixels. The alpha is replaced once at the end."
+            _string = c.String(
+                "The base colour is given the render alpha and converted to straight alpha, so the shadow, fog and outlines act on the true colour of partly covered edge pixels. The alpha is replaced once at the end."
             )
         with c.Frame("Shadow"):
             composite_cone_shadow = CompositeConeShadow(
@@ -554,8 +553,10 @@ class CompositeIllustrate(AssetCompositorGroup):
                 "Kuwahara",
                 {"None": math_1, "Kuwahara": c.Kuwahara(image=math_1, size=20.2)},
             )
-            mix = g.Mix.color(
-                a=alpha_convert, b=menu_switch.o.output, blend_type="MULTIPLY"
+            mix = c.Mix.color(
+                a=alpha_convert,
+                b=menu_switch.o.output,
+                blend_type="MULTIPLY",
             )
         with c.Frame("Fog"):
             composite_depth_fog = CompositeDepthFog(
@@ -586,8 +587,8 @@ class CompositeIllustrate(AssetCompositorGroup):
                 IDMask(ID=chain_id, Threshold=chain_difference).o.outline
                 * chain_outline
             )
-            _string_1 = g.String(
-                string="Contour and residue outlines are combined by their maximum and darken the colour; the chain outline darkens it again separately. All three extend the alpha so lines survive on the background."
+            _string_1 = c.String(
+                "Contour and residue outlines are combined by their maximum and darken the colour; the chain outline darkens it again separately. All three extend the alpha so lines survive on the background."
             )
             composite_contour_outline = CompositeContourOutline(
                 depth=WorldToAngstrom2(Angstrom=composite_depth_fog_1),
@@ -595,16 +596,19 @@ class CompositeIllustrate(AssetCompositorGroup):
                 value=outline_depth,
             )
             math_4 = composite_contour_outline.o.opacity * contour_outline
-            set_alpha_1 = c.SetAlpha(
-                image=g.Mix.color(
-                    math_4.max(math_2) + math_3,
-                    switch,
-                    outline_color,
-                    blend_type="MULTIPLY",
-                ).o.result_color,
-                alpha=alpha.max(math_4.max(math_2).max(math_3)),
+            mix_1 = c.Mix.color(
+                math_4.max(math_2) + math_3,
+                switch,
+                outline_color,
+                blend_type="MULTIPLY",
             )
-            anti_aliasing = c.AntiAliasing(image=c.AlphaConvert(image=set_alpha_1))
+            alpha_convert_1 = c.AlphaConvert(
+                c.SetAlpha(
+                    image=mix_1.o.result_color,
+                    alpha=alpha.max(math_4.max(math_2).max(math_3)),
+                )
+            )
+            anti_aliasing = c.AntiAliasing(alpha_convert_1)
 
         anti_aliasing >> image_1
 

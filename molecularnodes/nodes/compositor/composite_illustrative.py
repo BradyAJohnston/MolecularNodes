@@ -5,7 +5,6 @@ from typing import TYPE_CHECKING, Literal
 from bpy.types import CompositorNodeTree
 from nodebpy import TreeBuilder
 from nodebpy import compositor as c
-from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetCompositorGroup,
     BooleanSocket,
@@ -461,10 +460,10 @@ class CompositeIllustrative(AssetCompositorGroup):
             math_3 = depth.map_range(
                 math_1 + math_2, math_1 - math_2, interpolation_type="SMOOTHERSTEP"
             ) ** alpha_power.max(0.001)
-            _string = g.String(
-                string="Alpha is kept in front of Alpha Distance minus Alpha Falloff and fades to zero by Alpha Distance plus Alpha Falloff with a smootherstep ramp raised to Alpha Power. It never exceeds the render's own alpha."
+            _string = c.String(
+                "Alpha is kept in front of Alpha Distance minus Alpha Falloff and fades to zero by Alpha Distance plus Alpha Falloff with a smootherstep ramp raised to Alpha Power. It never exceeds the render's own alpha."
             )
-            switch = c.Switch(switch=depth_fade, off=alpha, on=math_3.min(alpha))
+            switch = c.Switch.color(depth_fade, alpha, math_3.min(alpha))
         with c.Frame("Base colour"):
             menu_switch = c.MenuSwitch.color(
                 base_color, {"Image": image, "Diffuse Color": diffuse_color}
@@ -484,13 +483,15 @@ class CompositeIllustrative(AssetCompositorGroup):
                     "Blur": c.Blur(image=menu_switch_1.o.output, size=smoothing_size),
                 },
             )
-            mix = (
-                shading_intensity * c.InvertColor(color=menu_switch_2.o.output)
-            ).mix.color(menu_switch.o.output, (0.0, 0.0, 0.0, 1.0))
-            _string_1 = g.String(
-                string="The chosen pass is smoothed, inverted to an occlusion amount, scaled by the intensity and used to mix the base colour towards black."
+            mix = c.Mix.color(
+                shading_intensity * c.InvertColor(menu_switch_2.o.output),
+                menu_switch.o.output,
+                (0.0, 0.0, 0.0, 1.0),
             )
-            switch_1 = c.Switch(switch=shading, off=menu_switch.o.output, on=mix)
+            _string_1 = c.String(
+                "The chosen pass is smoothed, inverted to an occlusion amount, scaled by the intensity and used to mix the base colour towards black."
+            )
+            switch_1 = c.Switch.color(shading, menu_switch.o.output, mix.o.result_color)
         with c.Frame("Outline"):
             composite_outline_mask = CompositeOutlineMask(
                 depth=depth,
@@ -501,31 +502,32 @@ class CompositeIllustrative(AssetCompositorGroup):
                 size=outline_size,
                 world_scale=world_scale,
             )
-            _string_2 = g.String(
-                string="The alpha is replaced once here: the Diffuse Color pass has no alpha and mixing keeps only the first input's, so the render alpha (or its depth fade) is restored before the lines are drawn on top."
+            _string_2 = c.String(
+                "The alpha is replaced once here: the Diffuse Color pass has no alpha and mixing keeps only the first input's, so the render alpha (or its depth fade) is restored before the lines are drawn on top."
             )
             set_alpha = c.SetAlpha(image=switch_1, alpha=switch, type="Replace Alpha")
-            switch_2 = c.Switch(
-                switch=outline,
-                off=set_alpha,
-                on=CompositeOutline(
+            switch_2 = c.Switch.color(
+                outline,
+                set_alpha,
+                CompositeOutline(
                     image=set_alpha,
                     mask=composite_outline_mask,
                     line_color=outline_color,
                 ),
             )
         with c.Frame("Background"):
-            switch_3 = c.Switch(
-                switch=background,
-                off=switch_2,
-                on=c.AlphaOver(
-                    background=background_color,
-                    foreground=switch_2,
-                    straight_alpha=True,
-                ),
+            (
+                c.Switch.color(
+                    background,
+                    switch_2,
+                    c.AlphaOver(
+                        background=background_color,
+                        foreground=switch_2,
+                        straight_alpha=True,
+                    ),
+                )
+                >> image_1
             )
-
-        switch_3 >> image_1
 
 
 ASSET = CompositeIllustrative

@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 from bpy.types import CompositorNodeTree
 from nodebpy import TreeBuilder
 from nodebpy import compositor as c
-from nodebpy import geometry as g
 from nodebpy.builder import CustomCompositorGroup, FloatSocket, SocketAccessor
 from nodebpy.types import InputFloat
 
@@ -116,6 +115,6 @@ class ConeShadowSample(CustomCompositorGroup):
             extension_x="Extend",
             extension_y="Extend",
         )
-        math_2 = g.Math.greater_than(math_1 - translate, threshold)
+        math_2 = c.Math.greater_than(math_1 - translate, threshold)
 
         math_2 >> occluded
