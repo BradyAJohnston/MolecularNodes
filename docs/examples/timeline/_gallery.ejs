@@ -1,0 +1,17 @@
+```{=html}
+<div class="grid">
+<% for (const item of items) { %>
+<div class="g-col-12 g-col-sm-6 g-col-lg-4">
+<div class="card h-100">
+<video class="card-img-top" muted loop autoplay playsinline preload="metadata">
+  <source src="<%= item.video %>" type="video/mp4">
+</video>
+<div class="card-body">
+<h5 class="card-title no-anchor"><a href="<%- item.path %>"><%= item.title %></a></h5>
+<p class="card-text"><%= item.description %></p>
+</div>
+</div>
+</div>
+<% } %>
+</div>
+```

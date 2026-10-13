@@ -1,0 +1,85 @@
+---
+title: "Storyboards"
+description: "Animations written as storyboards with the Canvas timeline, one per ProteinMotion example."
+listing:
+  id: storyboards
+  contents: "*.qmd"
+  template: _gallery.ejs
+  sort: "order"
+  sort-ui: false
+  filter-ui: false
+  page-size: 40
+# the listing template and video shortcodes reference the clips as HTML, which
+# Quarto does not follow when copying resources, so declare them
+resources:
+  - videos/*.mp4
+---
+
+These are animations written against `Canvas.timeline()`: a script reads as a
+storyboard of clips, and the timeline compiles them into ordinary keyframes on
+the camera rig, node inputs, entity properties and annotations. There is one
+storyboard for each example in
+[ProteinMotion's `examples/`](https://github.com/pdpppd/proteinmotion/tree/main/examples),
+so the two can be compared scene for scene. Each page shows the render and the
+script that made it; the scripts live in `docs/examples/timeline/scripts/` and
+are not run when the documentation is built.
+
+::: {.callout-note}
+This is a proof of concept of the timeline API. Several ProteinMotion effects
+need nodes that Molecular Nodes does not have yet; each page says where its
+storyboard stops short, and the list at the bottom collects them.
+:::
+
+::: {#storyboards}
+:::
+
+## Running a storyboard
+
+Every script is stand-alone and writes an MP4, a few still frames and a
+contact sheet into the directory it is given:
+
+```bash
+uv run python docs/examples/timeline/scripts/quickstart.py out_dir
+MN_EXAMPLES_QUICK=1 uv run python docs/examples/timeline/scripts/quickstart.py out_dir   # small and fast
+MN_EXAMPLES_ENGINE=CYCLES uv run python docs/examples/timeline/scripts/quickstart.py out_dir   # no GPU
+```
+
+Structures are fetched into the Molecular Nodes download cache on first use.
+`_common.py` holds the shared setup and the few helpers the scripts need:
+painting a selection's colour, a transparent context material, cutting between
+style nodes, titles and callouts, spinning an object about its centre.
+
+## What maps onto what
+
+| ProteinMotion | Molecular Nodes |
+| --- | --- |
+| `self.play(..., run_time=)`, `self.wait()` | `t.play(..., run_time=)`, `t.wait()` |
+| `camera.animate.orbit(theta=)`, `Rotate(protein, a)` | `canvas.camera.orbit(deg)`, `spin(mol, deg)` |
+| `self.focus(region)`, `Focus(camera, region)` | `canvas.camera.look_at(view, margin=)` |
+| `camera.set_focus(...)`, `FocusPull(camera, region, fstop=)` | `canvas.camera.focus(view, fstop=)` |
+| `camera.zoom(f)` | `canvas.camera.zoom(lens)` |
+| `Representation(p, name)` | `show_only(t, styles, [style])`: a cut, keyed on the style's `Selection` input |
+| `region.set_color(c)`, `Colorize(region, c)` | `paint(mol, selection, c)` into the `Color` attribute (static) |
+| `SetOpacity(region, x)` | a second style on the region with `mn.material.Transparent`, its `transparency` socket tweened |
+| `ColorByProperty(p, values)` | `color=lambda: mg.ColorAttributeMap(name=, min=, max=)` |
+| `PlayTrajectory(p, start=, end=)` | `mol.play(start, end)` |
+| `Text(...)`, `region.callout(...)` | `title(mol, ...)` (2D label), `callout(mol, selection, ...)` (3D label at the selection's centre with a pointer) |
+| `Distance(a, b)` | `mol.annotations.add_com_distance(...)` |
+| `Trajectory.aligned(indices=)` | `align_frames(mol, selection)` (MDAnalysis `AlignTraj`, in memory) |
+| `DensityMap.from_file`, `isosurface`, `slice` | `Grids.load(..., style="density_iso_surface")`, `threshold` and `slice_center` inputs |
+
+## Not there yet
+
+- **Opacity per atom** (`FadeIn`/`FadeOut`, `SetOpacity` with `residue_delay`): needs a `Set Opacity` node. The `Default` material already reads the `Color` attribute's alpha, so a static opacity can be painted.
+- **Staggered per-residue changes** (`residue_delay=` on colour, opacity, morphs): needs the `Animate Stagger` node.
+- **Morphs and deformations** (`Morph`, `BackboneMorph`, `Deform`, `ContactMatch`): need `Morph To Attribute`. The morph storyboards cut between the two structures.
+- **3D highlights** (`region.highlight(style="sphere" | "box" | "atoms")`): a `Style Highlight` node. The regions are painted instead.
+- **Hydrogen bonds and electrostatics** (`HydrogenBonds`, `Electrostatics`): analysis nodes plus a dashed-bond style. One pair is drawn with a distance annotation where it matters.
+- **Write-on text** (`Write`, `Unwrite`): a `progress` property on text annotations. Labels are cut in and out.
+- **Plots and legends** (`ContactMap`, `TimeSeriesPlot`, `SequenceTrack`, `ColorLegend`): plot annotations.
+- **Cross-fading representations**: needs opacity; representation changes are cuts.
+- **Depth cue**: no shortcut for a mist pass.
+- ProteinMotion's `contact_report.py` has no counterpart: it is a matplotlib report on its own contact-matching output, not a scene.
+
+The design notes for the timeline are in `docs/dev/canvas-timeline.md`, and the
+survey these storyboards follow from is `docs/dev/protein-motion-comparison.md`.

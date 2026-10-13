@@ -1,0 +1,26 @@
+---
+title: "Calmodulin in focus"
+description: "A 68-second camera study: orbits, focus pulls, representation cuts and a B-factor surface."
+video: videos/calmodulin_in_focus.mp4
+order: 17
+---
+
+{{< video videos/calmodulin_in_focus.mp4 >}}
+
+The longest storyboard, following ProteinMotion's film chapter by chapter: a wide reveal,
+     the helix isolated with a translucent context, the backbone atoms, two focus targets, a
+     continuous focus pull between them, the surface coloured by B factor, a ribbon and a
+     last pull onto the helix. Captions swap with each chapter.
+
+     The backbone hydrogen-bond network and the colour legend are not available yet.
+
+After ProteinMotion's [`calmodulin_in_focus.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/calmodulin_in_focus.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/calmodulin_in_focus.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/calmodulin_in_focus.py"}
+{{< include scripts/calmodulin_in_focus.py >}}
+```
