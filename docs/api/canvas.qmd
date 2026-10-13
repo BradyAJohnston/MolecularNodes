@@ -222,26 +222,23 @@ renders from the render passes, inserted between the Render Layers node and the
 output. Each helper below enables the passes its node needs and returns the node
 handle, whose inputs can be tweaked afterwards through `node.i`.
 
-`Composite Illustrative` shades the rendered image (or the flat `Diffuse Color`
-pass with `flat=True`) by the ambient occlusion or shadow pass and draws outlines
-where the depth changes, through
-[](`~molecularnodes.scene.compositor.CompositorTree.illustrative`).
+`Illustrate` shades the rendered image by the ambient occlusion or shadow pass
+and draws outlines where the depth changes, through
+[](`~molecularnodes.scene.compositor.CompositorTree.illustrate`).
 
 ```{python}
 canvas.compositor.device = "CPU"
 canvas.transparent = True
 canvas.look_at(t1, viewpoint="front")
-node = canvas.compositor.illustrative(outline=True, shading="ao")
+node = canvas.compositor.illustrate(shading="ao", outline=True)
 node.i.outline_size.default_value = 2
 canvas.snapshot()
 ```
 
-[](`~molecularnodes.scene.compositor.CompositorTree.illustrate`) is David
-Goodsell's *Illustrate* renderer as a compositor: no lighting at all, with form
-from a conical soft shadow computed from the depth pass, contour outlines from a
-depth Laplacian, and chain or residue outlines from `chain_id` / `res_id` AOV
-passes that the helper adds to the Molecular Nodes materials. It is meant for the
-`Flat` material, which renders the atom colours unlit.
+The default `shading="cone"` follows David Goodsell's *Illustrate* renderer: no
+lighting at all, with form from a conical soft shadow that a `Cone Shadow` node
+computes from the depth pass. It is meant for the `Flat` material, which renders
+the atom colours unlit.
 
 ```{python}
 canvas.clear()
@@ -249,7 +246,7 @@ flat = mn.material.Flat()
 t3 = mn.Molecule.load(PSF, DCD)
 t3.add_style("cartoon", material=flat)
 canvas.look_at(t3, viewpoint="front")
-node = canvas.compositor.illustrate(shadow=True, contour=True, chain_outline=True)
+node = canvas.compositor.illustrate(shading="cone")
 canvas.snapshot()
 ```
 
@@ -265,8 +262,7 @@ from nodebpy import compositor as c
 from molecularnodes.nodes import compositor as mc
 
 canvas.add_aov("chain_id")
-if not mn.material.has_aov(flat.material, "chain_id"):  # illustrate() added it above
-    flat.add_aov("chain_id", offset=1.0)
+flat.add_aov("chain_id", offset=1.0)
 with canvas.compositor.reset() as (image, output):
     render = c.RenderLayers()
     mask = mc.ValueToMask(value=render.o.chain_id, target=1.0)

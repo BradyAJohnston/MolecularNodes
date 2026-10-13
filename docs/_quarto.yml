@@ -45,10 +45,6 @@ website:
       contents:
         - href: nodes/index.qmd
           text: Overview
-        - href: nodes/compositor.qmd
-          text: Compositor
-        - href: nodes/materials.qmd
-          text: Materials
         - href: nodes/general.qmd
           text: General
         - href: nodes/animate.qmd
@@ -57,6 +53,8 @@ website:
           text: Attributes
         - href: nodes/color.qmd
           text: Color
+        - href: nodes/compositor.qmd
+          text: Compositor
         - href: nodes/curves.qmd
           text: Curves
         - href: nodes/dna.qmd
@@ -67,6 +65,8 @@ website:
           text: Ensemble
         - href: nodes/geometry.qmd
           text: Geometry
+        - href: nodes/materials.qmd
+          text: Materials
         - href: nodes/select.qmd
           text: Select
         - href: nodes/simulation.qmd
@@ -87,24 +87,24 @@ website:
           text: Utilities / Fields
         - href: nodes/generated_nodes.qmd
           text: Generated Node Groups
-    # -- end generated nodes sidebar --
-    - id: attributes
-      contents:
-        - section: "Tutorials"
+        # -- end generated nodes sidebar --
+        - id: attributes
           contents:
-            - tutorials/index.qmd
-            - tutorials/installation.qmd
-            - tutorials/interface.qmd
-            - tutorials/importing.qmd
-            - tutorials/selections.qmd
-            - tutorials/trajectories.qmd
-            - tutorials/streaming-trajectories.qmd
-            - tutorials/cryoem.qmd
-            - tutorials/simulation.qmd
-        - section: "Reference"
-          contents:
-            - attributes.qmd
-            - data_table.qmd
+            - section: "Tutorials"
+              contents:
+                - tutorials/index.qmd
+                - tutorials/installation.qmd
+                - tutorials/interface.qmd
+                - tutorials/importing.qmd
+                - tutorials/selections.qmd
+                - tutorials/trajectories.qmd
+                - tutorials/streaming-trajectories.qmd
+                - tutorials/cryoem.qmd
+                - tutorials/simulation.qmd
+            - section: "Reference"
+              contents:
+                - attributes.qmd
+                - data_table.qmd
 
   page-footer:
     left: "This site is built with ❤️ and [Quarto](https://quarto.org/)."
@@ -233,65 +233,18 @@ quartodoc:
 
     # -- begin generated node sections (docs/generate.py) --
     - title: Nodes
-      desc: The node groups included with Molecular Nodes, grouped by the same categories as the add menu inside of Geometry Nodes. Each node group is also available as a typed Python class for scripting.
+      desc:
+        The node groups included with Molecular Nodes, grouped by the same categories as the
+        add menu inside of Geometry Nodes. Each node group is also available as a typed Python
+        class for scripting.
       contents:
-        - kind: page
-          path: nodes.compositor
-          summary:
-            name: Compositor
-            desc:
-              "Compositor node groups for post-processing renders: outlines, illustrative shading
-              and masks from AOV passes"
-          contents:
-            - name: nodes.compositor.CompositeConeShadow
-              children: embedded
-            - name: nodes.compositor.CompositeContourOutline
-              children: embedded
-            - name: nodes.compositor.CompositeDepthFog
-              children: embedded
-            - name: nodes.compositor.CompositeIDOutline
-              children: embedded
-            - name: nodes.compositor.CompositeIllustrate
-              children: embedded
-            - name: nodes.compositor.CompositeIllustrative
-              children: embedded
-            - name: nodes.compositor.CompositeOutline
-              children: embedded
-            - name: nodes.compositor.CompositeOutlineMask
-              children: embedded
-            - name: nodes.compositor.MaskPixels
-              children: embedded
-            - name: nodes.compositor.ValueToMask
-              children: embedded
-        - kind: page
-          path: nodes.materials
-          summary:
-            name: Materials
-            desc: Shader node groups for the pre-built materials
-          contents:
-            - name: nodes.shader.OutlineMask
-              children: embedded
-            - name: nodes.shader.TransparentOutlineInternal
-              children: embedded
         - kind: page
           path: nodes.general
           summary:
             name: General
             desc: ""
           contents:
-            - name: nodes.geometry.AssemblyID
-              children: embedded
             - name: nodes.geometry.EdgeLength
-              children: embedded
-            - name: nodes.geometry.ImageID
-              children: embedded
-            - name: nodes.geometry.SymmetryID
-              children: embedded
-            - name: nodes.shader.AmbientOcclusionInternal
-              children: embedded
-            - name: nodes.shader.ColorAO
-              children: embedded
-            - name: nodes.shader.FlatInternal
               children: embedded
         - kind: page
           path: nodes.animate
@@ -321,6 +274,8 @@ quartodoc:
             name: Attributes
             desc: Read attributes from structures
           contents:
+            - name: nodes.geometry.AssemblyID
+              children: embedded
             - name: nodes.geometry.AtomID
               children: embedded
             - name: nodes.geometry.AtomName
@@ -339,6 +294,8 @@ quartodoc:
               children: embedded
             - name: nodes.geometry.FrameID
               children: embedded
+            - name: nodes.geometry.ImageID
+              children: embedded
             - name: nodes.geometry.Mass
               children: embedded
             - name: nodes.geometry.ResidueID
@@ -348,6 +305,8 @@ quartodoc:
             - name: nodes.geometry.SecondaryStructure
               children: embedded
             - name: nodes.geometry.SegmentID
+              children: embedded
+            - name: nodes.geometry.SymmetryID
               children: embedded
             - name: nodes.geometry.UResID
               children: embedded
@@ -396,6 +355,30 @@ quartodoc:
             - name: nodes.geometry.SetColor
               children: embedded
             - name: nodes.shader.MNColor
+              children: embedded
+        - kind: page
+          path: nodes.compositor
+          summary:
+            name: Compositor
+            desc:
+              "Compositor node groups for post-processing renders: outlines, illustrative shading
+              and masks from AOV passes"
+          contents:
+            - name: nodes.compositor.CompositeDepthFog
+              children: embedded
+            - name: nodes.compositor.ConeShadow
+              children: embedded
+            - name: nodes.compositor.DepthOutline
+              children: embedded
+            - name: nodes.compositor.IDOutline
+              children: embedded
+            - name: nodes.compositor.Illustrate
+              children: embedded
+            - name: nodes.compositor.MaskPixels
+              children: embedded
+            - name: nodes.compositor.Outline
+              children: embedded
+            - name: nodes.compositor.ValueToMask
               children: embedded
         - kind: page
           path: nodes.curves
@@ -528,6 +511,22 @@ quartodoc:
             - name: nodes.geometry.VisualizeAngle
               children: embedded
             - name: nodes.geometry.VisualizePoints
+              children: embedded
+        - kind: page
+          path: nodes.materials
+          summary:
+            name: Materials
+            desc: Shader node groups for the pre-built materials
+          contents:
+            - name: nodes.shader.AmbientOcclusionInternal
+              children: embedded
+            - name: nodes.shader.ColorAO
+              children: embedded
+            - name: nodes.shader.FlatInternal
+              children: embedded
+            - name: nodes.shader.OutlineMask
+              children: embedded
+            - name: nodes.shader.TransparentOutlineInternal
               children: embedded
         - kind: page
           path: nodes.select
@@ -925,4 +924,4 @@ quartodoc:
               children: embedded
             - name: nodes.geometry.SubGroupInfo
               children: embedded
-  # -- end generated node sections --
+    # -- end generated node sections --

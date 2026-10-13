@@ -15,6 +15,7 @@ failure the received and difference images are written to
 """
 
 from itertools import product
+import bpy
 import pytest
 from nodebpy.nodes.geometry import RandomValue, StoreNamedAttribute
 import molecularnodes as mn
@@ -115,14 +116,45 @@ def test_render_selection_atomgroup(fetch, golden_canvas, tmp_path, image_snapsh
     assert image_snapshot == _render(golden_canvas, tmp_path)
 
 
-def _outline_only(canvas):
+def _outline(canvas, **inputs):
     from nodebpy import compositor as c
 
     canvas.passes = ["combined", "z", "normal"]
     with canvas.compositor.reset() as (image, output):
         render = c.RenderLayers()
-        mask = mc.CompositeOutlineMask(depth=render.o.depth, normal=render.o.normal)
-        mc.CompositeOutline(image=image, mask=mask) >> output
+        mask = mc.DepthOutline(
+            depth=render.o.depth, normals_pass=render.o.normal, **inputs
+        )
+        mc.Outline(image=image, mask=mask) >> output
+
+
+def _chain_outline(canvas):
+    from nodebpy import compositor as c
+
+    canvas.passes = ["combined"]
+    canvas.add_aov("chain_id")
+    for mat in bpy.data.materials:
+        if mat.name.startswith("Flat"):
+            mn.material.add_aov(mat, "chain_id", offset=1.0)
+    with canvas.compositor.reset() as (image, output):
+        render = c.RenderLayers()
+        mask = mc.IDOutline(id=render.o.chain_id)
+        mc.Outline(image=image, mask=mask) >> output
+
+
+def _fog(canvas, image, depth, output):
+    near, far = mn.scene.compositor._depth_range(canvas.scene)
+    (
+        mc.CompositeDepthFog(
+            image=image,
+            depth=depth,
+            near=near,
+            far=far,
+            back_fog=0.2,
+            fog_color=(0.2, 0.3, 0.8, 1.0),
+        )
+        >> output
+    )
 
 
 def _fog_only(canvas):
@@ -131,59 +163,64 @@ def _fog_only(canvas):
     canvas.passes = ["combined", "z"]
     with canvas.compositor.reset() as (image, output):
         render = c.RenderLayers()
-        near, far = mn.scene.compositor._depth_range(canvas.scene)
-        (
-            mc.CompositeDepthFog(
-                image=image,
+        _fog(canvas, image, render.o.depth, output)
+
+
+def _illustrate_fog(canvas):
+    from nodebpy import compositor as c
+
+    canvas.passes = ["combined", "z"]
+    with canvas.compositor.reset() as (image, output):
+        render = c.RenderLayers()
+        node = mc.Illustrate(
+            image=image,
+            alpha=render.o.alpha,
+            depth=render.o.depth,
+            shadow=mc.ConeShadow(
                 depth=render.o.depth,
-                near=near,
-                far=far,
-                back_fog=0.2,
-                fog_color=(0.2, 0.3, 0.8, 1.0),
-            )
-            >> output
+                pixel_size=mn.scene.compositor._pixel_size_angstrom(canvas.scene)
+                * mn.scene.compositor.WORLD_SCALE,
+            ),
         )
+        _fog(canvas, node, render.o.depth, output)
 
 
-def _illustrative_shadow_eevee(canvas):
+def _illustrate_shadow_eevee(canvas):
     canvas.engine = mn.scene.EEVEE(samples=16)
-    canvas.compositor.illustrative(outline=True, shading="shadow")
+    canvas.compositor.illustrate(shading="shadow")
 
 
 # name -> (material, compositor setup applied after the camera is framed)
 COMPOSITOR_CASES = {
     "plain": ("Default", lambda canvas: None),
-    "outline": ("Default", _outline_only),
-    "illustrative_ao": (
+    # the two Depth Outline methods, then the normal edges and dilation
+    "outline": ("Flat", _outline),
+    "outline_goodsell": ("Flat", lambda canvas: _outline(canvas, method="Goodsell")),
+    "outline_normals": (
         "Default",
-        lambda canvas: canvas.compositor.illustrative(outline=True, shading="ao"),
+        lambda canvas: _outline(canvas, normals=True, size=2),
     ),
-    # the Shadow pass only exists in EEVEE, so this case renders with EEVEE
-    "illustrative_shadow": ("Default", _illustrative_shadow_eevee),
-    "illustrate_shadow_contour": (
-        "Flat",
-        lambda canvas: canvas.compositor.illustrate(shadow=True, contour=True),
-    ),
-    "illustrate_chain": (
-        "Flat",
-        lambda canvas: canvas.compositor.illustrate(
-            shadow=True, contour=True, chain_outline=True
-        ),
-    ),
-    "illustrate_residue": (
-        "Flat",
-        lambda canvas: canvas.compositor.illustrate(
-            shadow=True, contour=True, residue_outline=True
-        ),
-    ),
+    "chain_outline": ("Flat", _chain_outline),
     "fog": ("Default", _fog_only),
+    "illustrate_cone": ("Flat", lambda canvas: canvas.compositor.illustrate()),
+    "illustrate_goodsell": (
+        "Flat",
+        lambda canvas: canvas.compositor.illustrate(outline_method="Goodsell"),
+    ),
+    "illustrate_ao": (
+        "Default",
+        lambda canvas: canvas.compositor.illustrate(shading="ao", outline_normals=True),
+    ),
+    "illustrate_fog": ("Flat", _illustrate_fog),
+    # the Shadow pass only exists in EEVEE, so this case renders with EEVEE
+    "illustrate_shadow": ("Default", _illustrate_shadow_eevee),
 }
 
 
 @pytest.mark.parametrize("case", list(COMPOSITOR_CASES))
 def test_render_compositor(case, fetch, golden_canvas, tmp_path, image_snapshot):
-    # the compositor node assets: outlines, illustrative shading, Goodsell's
-    # Illustrate and depth fog, each through the Canvas plumbing
+    # the compositor node assets: depth and chain outlines, depth
+    # fog and the Illustrate composite with each of its shading sources
     material, setup = COMPOSITOR_CASES[case]
     golden_canvas.transparent = True
     mol = _fetch_molecule(fetch)

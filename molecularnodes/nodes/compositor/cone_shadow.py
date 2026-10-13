@@ -74,7 +74,7 @@ class ConeShadow(AssetCompositorGroup):
     pixel_radius : InputFloat
         Radius of the sampled neighbourhood in pixels; the four rings of samples sit at a quarter, half, three quarters and the full radius
     pixel_size : InputFloat
-        Width of one pixel in Angstrom at the structure, which relates screen distance to depth for the cone test. canvas.compositor.illustrate() sets it from the camera
+        Width of one pixel in world units at the structure, like the depth pass, which relates screen distance to depth for the cone test. canvas.compositor.illustrate() sets it from the camera
     angle : InputFloat
         Tightness of the shadow cone: a sample casts shadow only when it is closer to the camera by more than its screen distance times this slope. Higher values keep shadows local to crevices
     threshold : InputFloat
@@ -91,7 +91,7 @@ class ConeShadow(AssetCompositorGroup):
     i.pixel_radius : FloatSocket
         Radius of the sampled neighbourhood in pixels; the four rings of samples sit at a quarter, half, three quarters and the full radius
     i.pixel_size : FloatSocket
-        Width of one pixel in Angstrom at the structure, which relates screen distance to depth for the cone test. canvas.compositor.illustrate() sets it from the camera
+        Width of one pixel in world units at the structure, like the depth pass, which relates screen distance to depth for the cone test. canvas.compositor.illustrate() sets it from the camera
     i.angle : FloatSocket
         Tightness of the shadow cone: a sample casts shadow only when it is closer to the camera by more than its screen distance times this slope. Higher values keep shadows local to crevices
     i.threshold : FloatSocket
@@ -121,7 +121,7 @@ class ConeShadow(AssetCompositorGroup):
         pixel_radius: FloatSocket
         """Radius of the sampled neighbourhood in pixels; the four rings of samples sit at a quarter, half, three quarters and the full radius"""
         pixel_size: FloatSocket
-        """Width of one pixel in Angstrom at the structure, which relates screen distance to depth for the cone test. canvas.compositor.illustrate() sets it from the camera"""
+        """Width of one pixel in world units at the structure, like the depth pass, which relates screen distance to depth for the cone test. canvas.compositor.illustrate() sets it from the camera"""
         angle: FloatSocket
         """Tightness of the shadow cone: a sample casts shadow only when it is closer to the camera by more than its screen distance times this slope. Higher values keep shadows local to crevices"""
         threshold: FloatSocket
@@ -183,7 +183,7 @@ class ConeShadow(AssetCompositorGroup):
             pixel_size = tree.inputs.float(
                 "Pixel Size",
                 0.1,
-                description="Width of one pixel in Angstrom at the structure, which relates screen distance to depth for the cone test. canvas.compositor.illustrate() sets it from the camera",
+                description="Width of one pixel in world units at the structure, like the depth pass, which relates screen distance to depth for the cone test. canvas.compositor.illustrate() sets it from the camera",
                 min_value=0.0,
                 max_value=10_000.0,
             )
@@ -338,7 +338,7 @@ class ConeShadow(AssetCompositorGroup):
                 "Each sample translates the depth pass by a ring radius in one of eight directions and tests whether that pixel is closer to the camera than the centre by more than the ring's threshold: the larger of Min Gap and the ring's screen distance times the cone slope, all in world units. Occluding samples are counted."
             )
         with c.Frame("Shadow"):
-            (1.0 - math_36 * (shadow_strength / 3.2)).max(shadow_max) >> shadow
+            (1.0 - math_36 * (shadow_strength / 32.0)).max(shadow_max) >> shadow
             _string_1 = c.String(
                 "The shadow factor starts at one and loses Strength / 32 per occluding sample, clamped at Max Darkening."
             )

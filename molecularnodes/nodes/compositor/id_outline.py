@@ -41,9 +41,7 @@ class IDDifferenceSample(CustomCompositorGroup):
             extension_x="Extend",
             extension_y="Extend",
         )
-        math_1 = c.Math.greater_than(
-            abs(c.Math.subtract(translate, id).o.value), min_difference
-        )
+        math_1 = c.Math.greater_than(abs(id - translate), min_difference)
 
         math_1 >> differs
 

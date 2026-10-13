@@ -60,12 +60,22 @@ class Illustrate(AssetCompositorGroup):
         Colour of the lines
     outline_size : InputInteger
         Line thickness in pixels
+    outline_method : InputMenu | Literal["Sobel", "Goodsell"]
+        Sobel draws hard lines wherever the depth gradient passes Depth Threshold; Goodsell draws soft lines on the nearer side of each depth step, as in Illustrate
     depth_threshold : InputFloat
-        Depth difference between neighbouring pixels, in Nanometres, above which a line is drawn
+        Depth gradient, in world units, above which a line is drawn, for the Sobel method
+    outline_low : InputFloat
+        Weighted sum of the clamped depth steps, in world units, at which a line starts to appear
+    outline_high : InputFloat
+        Weighted sum of the clamped depth steps, in world units, at which a line is fully opaque
+    outline_max_diff : InputFloat
+        Depth steps larger than this, in world units, count as this much; a wider range emphasises larger features
+    outline_smooth : InputBoolean
+        Average the outline over the 3x3 neighbourhood where most pixels carry line signal
     outline_normals : InputBoolean
         Also draw lines where the surface normal changes sharply, catching creases between surfaces at the same depth
     outline_normal_threshold : InputFloat
-        Change in normal between neighbouring pixels above which a line is drawn, when Use Normals is enabled
+        Change in normal between neighbouring pixels above which a line is drawn, when Outline Normals is enabled
     background : InputBoolean
         Composite the result over a flat background colour
     background_color : InputColor
@@ -99,12 +109,22 @@ class Illustrate(AssetCompositorGroup):
         Colour of the lines
     i.outline_size : IntegerSocket
         Line thickness in pixels
+    i.outline_method : MenuSocket
+        Sobel draws hard lines wherever the depth gradient passes Depth Threshold; Goodsell draws soft lines on the nearer side of each depth step, as in Illustrate
     i.depth_threshold : FloatSocket
-        Depth difference between neighbouring pixels, in Nanometres, above which a line is drawn
+        Depth gradient, in world units, above which a line is drawn, for the Sobel method
+    i.outline_low : FloatSocket
+        Weighted sum of the clamped depth steps, in world units, at which a line starts to appear
+    i.outline_high : FloatSocket
+        Weighted sum of the clamped depth steps, in world units, at which a line is fully opaque
+    i.outline_max_diff : FloatSocket
+        Depth steps larger than this, in world units, count as this much; a wider range emphasises larger features
+    i.outline_smooth : BooleanSocket
+        Average the outline over the 3x3 neighbourhood where most pixels carry line signal
     i.outline_normals : BooleanSocket
         Also draw lines where the surface normal changes sharply, catching creases between surfaces at the same depth
     i.outline_normal_threshold : FloatSocket
-        Change in normal between neighbouring pixels above which a line is drawn, when Use Normals is enabled
+        Change in normal between neighbouring pixels above which a line is drawn, when Outline Normals is enabled
     i.background : BooleanSocket
         Composite the result over a flat background colour
     i.background_color : ColorSocket
@@ -151,12 +171,22 @@ class Illustrate(AssetCompositorGroup):
         """Colour of the lines"""
         outline_size: IntegerSocket
         """Line thickness in pixels"""
+        outline_method: MenuSocket
+        """Sobel draws hard lines wherever the depth gradient passes Depth Threshold; Goodsell draws soft lines on the nearer side of each depth step, as in Illustrate"""
         depth_threshold: FloatSocket
-        """Depth difference between neighbouring pixels, in Nanometres, above which a line is drawn"""
+        """Depth gradient, in world units, above which a line is drawn, for the Sobel method"""
+        outline_low: FloatSocket
+        """Weighted sum of the clamped depth steps, in world units, at which a line starts to appear"""
+        outline_high: FloatSocket
+        """Weighted sum of the clamped depth steps, in world units, at which a line is fully opaque"""
+        outline_max_diff: FloatSocket
+        """Depth steps larger than this, in world units, count as this much; a wider range emphasises larger features"""
+        outline_smooth: BooleanSocket
+        """Average the outline over the 3x3 neighbourhood where most pixels carry line signal"""
         outline_normals: BooleanSocket
         """Also draw lines where the surface normal changes sharply, catching creases between surfaces at the same depth"""
         outline_normal_threshold: FloatSocket
-        """Change in normal between neighbouring pixels above which a line is drawn, when Use Normals is enabled"""
+        """Change in normal between neighbouring pixels above which a line is drawn, when Outline Normals is enabled"""
         background: BooleanSocket
         """Composite the result over a flat background colour"""
         background_color: ColorSocket
@@ -188,7 +218,12 @@ class Illustrate(AssetCompositorGroup):
         outline: InputBoolean = True,
         outline_color: InputColor = None,
         outline_size: InputInteger = 1,
+        outline_method: InputMenu | Literal["Sobel", "Goodsell"] = "Sobel",
         depth_threshold: InputFloat = 1.0,
+        outline_low: InputFloat = 0.3,
+        outline_high: InputFloat = 1.0,
+        outline_max_diff: InputFloat = 0.5,
+        outline_smooth: InputBoolean = True,
         outline_normals: InputBoolean = False,
         outline_normal_threshold: InputFloat = 3.0,
         background: InputBoolean = False,
@@ -209,7 +244,12 @@ class Illustrate(AssetCompositorGroup):
                 "Outline": outline,
                 "Outline Color": outline_color,
                 "Outline Size": outline_size,
+                "Outline Method": outline_method,
                 "Depth Threshold": depth_threshold,
+                "Outline Low": outline_low,
+                "Outline High": outline_high,
+                "Outline Max Diff": outline_max_diff,
+                "Outline Smooth": outline_smooth,
                 "Outline Normals": outline_normals,
                 "Outline Normal Threshold": outline_normal_threshold,
                 "Background": background,
@@ -300,13 +340,43 @@ class Illustrate(AssetCompositorGroup):
                 min_value=1,
                 max_value=20,
             )
+            outline_method = tree.inputs.menu(
+                "Outline Method",
+                "Sobel",
+                description="Sobel draws hard lines wherever the depth gradient passes Depth Threshold; Goodsell draws soft lines on the nearer side of each depth step, as in Illustrate",
+            )
             depth_threshold = tree.inputs.float(
                 "Depth Threshold",
                 1.0,
-                description="Depth difference between neighbouring pixels, in Nanometres, above which a line is drawn",
+                description="Depth gradient, in world units, above which a line is drawn, for the Sobel method",
                 min_value=0.0,
                 max_value=10_000.0,
-                subtype="DISTANCE",
+            )
+            outline_low = tree.inputs.float(
+                "Outline Low",
+                0.3,
+                description="Weighted sum of the clamped depth steps, in world units, at which a line starts to appear",
+                min_value=0.0,
+                max_value=10_000.0,
+            )
+            outline_high = tree.inputs.float(
+                "Outline High",
+                1.0,
+                description="Weighted sum of the clamped depth steps, in world units, at which a line is fully opaque",
+                min_value=0.0,
+                max_value=10_000.0,
+            )
+            outline_max_diff = tree.inputs.float(
+                "Outline Max Diff",
+                0.5,
+                description="Depth steps larger than this, in world units, count as this much; a wider range emphasises larger features",
+                min_value=0.0,
+                max_value=10_000.0,
+            )
+            outline_smooth = tree.inputs.boolean(
+                "Outline Smooth",
+                True,
+                description="Average the outline over the 3x3 neighbourhood where most pixels carry line signal",
             )
             outline_normals = tree.inputs.boolean(
                 "Outline Normals",
@@ -316,7 +386,7 @@ class Illustrate(AssetCompositorGroup):
             outline_normal_threshold = tree.inputs.float(
                 "Outline Normal Threshold",
                 3.0,
-                description="Change in normal between neighbouring pixels above which a line is drawn, when Use Normals is enabled",
+                description="Change in normal between neighbouring pixels above which a line is drawn, when Outline Normals is enabled",
                 min_value=0.0,
                 max_value=10_000.0,
             )
@@ -360,10 +430,15 @@ class Illustrate(AssetCompositorGroup):
         with c.Frame("Outline"):
             depth_outline = DepthOutline(
                 depth=depth,
+                method=outline_method,
                 size=outline_size,
-                depth_threshold=depth_threshold,
-                socket_3=outline_normals,
-                socket_1=normal,
+                threshold=depth_threshold,
+                low=outline_low,
+                high=outline_high,
+                max_diff=outline_max_diff,
+                smooth=outline_smooth,
+                normals=outline_normals,
+                normals_pass=normal,
                 normals_threshold=outline_normal_threshold,
             )
             _string_1 = c.String(

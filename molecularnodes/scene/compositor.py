@@ -1,12 +1,11 @@
 import math
 from contextlib import contextmanager
-from typing import Iterable, Iterator, Literal, NamedTuple
+from typing import Iterator, Literal, NamedTuple
 import bpy
 from bpy.types import CompositorNodeTree
 from nodebpy import compositor as c
 from nodebpy.builder import ColorSocket, TreeBuilder
-from .. import material as _material
-from ..nodes.compositor import CompositeIllustrate, CompositeIllustrative
+from ..nodes.compositor import ConeShadow, Illustrate
 from ..session import get_session
 
 annotations_image = "mn_annotations"
@@ -24,21 +23,8 @@ def add_view_layer_aov(
     if aov is None:
         aov = view_layer.aovs.add()
         aov.name = name
-    aov.type = type  # ty: ignore[invalid-assignment]
+    aov.type = type
     return aov
-
-
-def _mn_materials() -> list[bpy.types.Material]:
-    """The materials built from the Molecular Nodes presets ("Flat",
-    "Flat.001", ...), which are the ones the styles use."""
-    prefixes = tuple(_material.MATERIAL_NAMES)
-    return [
-        mat
-        for mat in bpy.data.materials
-        if mat.library is None
-        and mat.node_tree is not None
-        and (mat.name in prefixes or mat.name.rsplit(".", 1)[0] in prefixes)
-    ]
 
 
 def _entity_corner_depths(scene: bpy.types.Scene) -> list[float]:
@@ -99,15 +85,13 @@ def _pixel_size_angstrom(scene: bpy.types.Scene) -> float:
     return width / pixels / WORLD_SCALE
 
 
-# the composites `illustrative()` and `illustrate()` insert; a new call replaces
-# whichever of them is already in the tree
-_COMPOSITE_ASSETS = {CompositeIllustrative._asset_name, CompositeIllustrate._asset_name}
-
-# shading source for `CompositorTree.illustrative()` -> (view layer pass
-# attribute, Render Layers output accessor, group menu item)
+# shading source for `CompositorTree.illustrate()` -> (view layer pass
+# attribute, Render Layers output accessor); "cone" is computed from the depth
+# pass by a Cone Shadow node instead
 _SHADING_SOURCES = {
-    "ao": ("use_pass_ambient_occlusion", "ambient_occlusion", "Ambient Occlusion"),
-    "shadow": ("use_pass_shadow", "shadow", "Shadow"),
+    "cone": ("use_pass_z", "depth"),
+    "ao": ("use_pass_ambient_occlusion", "ambient_occlusion"),
+    "shadow": ("use_pass_shadow", "shadow"),
 }
 
 
@@ -309,107 +293,25 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
             annotations = c.Image(image=_annotations_image())
             c.AlphaOver(self._wrap(source), annotations, 1.0) >> output
 
-    def illustrative(
-        self,
-        *,
-        outline: bool = True,
-        shading: Literal["ao", "shadow"] | None = "ao",
-        flat: bool = False,
-        **inputs,
-    ) -> CompositeIllustrative:
-        """Insert a ``Composite Illustrative`` node between Render Layers and
-        whatever currently consumes the rendered image.
-
-        Enables the render passes the node reads (depth, normal, diffuse
-        colour and the chosen shading pass) on the view layer, adds the node
-        group with its inputs linked to the Render Layers node, and re-routes
-        every existing consumer of the rendered image (the annotation overlay,
-        or the output itself) to read from it instead. Calling it again, or
-        calling :meth:`illustrate`, replaces the node.
-
-        ```python
-        node = canvas.compositor.illustrative(outline=True, shading="ao")
-        node.i.outline_size.default_value = 3
-        node.i.outline_color.default_value = (0.1, 0.1, 0.2, 1.0)
-        ```
-
-        Parameters
-        ----------
-        outline : bool, default True
-            Draw lines where the depth (and optionally the normal) changes
-            sharply, from the ``Composite Outline Mask`` node inside the group.
-        shading : {"ao", "shadow"} or None, default "ao"
-            Which pass darkens the base colour: the ambient occlusion pass, the
-            shadow pass (EEVEE only; Cycles has no Shadow pass), or ``None``
-            for no shading at all.
-        flat : bool, default False
-            Shade the flat ``Diffuse Color`` pass, which ignores lighting and
-            materials, instead of the rendered image.
-        **inputs
-            Any other input of the node by its Python name, for example
-            ``outline_size=3`` or ``depth_threshold=4.0`` (Angstrom).
-
-        Returns
-        -------
-        CompositeIllustrative
-            The node handle; tweak its inputs afterwards through ``node.i``.
-        """
-        if shading is not None and shading not in _SHADING_SOURCES:
-            raise ValueError(
-                f"Unknown shading source {shading!r}; "
-                f"expected one of {sorted(_SHADING_SOURCES)} or None."
-            )
-        view_layer = self._scene.view_layers[0]
-        view_layer.use_pass_z = True
-        view_layer.use_pass_normal = True
-        view_layer.use_pass_diffuse_color = True
-        links: dict[str, object] = {}
-        if shading is not None:
-            pass_attr, accessor, menu_item = _SHADING_SOURCES[shading]
-            setattr(view_layer, pass_attr, True)
-            inputs.setdefault("shading_source", menu_item)
-
-        with self:
-            self._remove_composites()
-            rl_node = self._render_layers_node()
-            render = c.RenderLayers._from_node(rl_node)
-            if shading is not None:
-                if accessor not in {
-                    s.name.lower().replace(" ", "_")
-                    for s in rl_node.outputs
-                    if s.enabled
-                }:
-                    raise ValueError(
-                        f"The {shading!r} shading pass is not available with the "
-                        f"{self._scene.render.engine} engine; the Shadow pass is EEVEE only."
-                    )
-                links[accessor] = getattr(render.o, accessor)
-            node = CompositeIllustrative(
-                image=render.o.image,
-                alpha=render.o.alpha,
-                depth=render.o.depth,
-                normal=render.o.normal,
-                diffuse_color=render.o.diffuse_color,
-                base_color="Diffuse Color" if flat else "Image",
-                shading=shading is not None,
-                outline=outline,
-                **links,
-                **inputs,
-            )
-            self._insert_after_render(node)
-        return node
-
     def _remove_composites(self) -> None:
-        """Remove any ``Composite Illustrative`` / ``Composite Illustrate``
-        node already in the tree, handing its consumers back the rendered
-        image, so the helpers replace rather than stack. Call inside
+        """Remove any ``Illustrate`` node already in the tree, along with the
+        ``Cone Shadow`` feeding it, handing its consumers back the rendered
+        image, so :meth:`illustrate` replaces rather than stacks. Call inside
         ``with self``."""
         rl_node = self._render_layers_node()
         for node in list(self.tree.nodes):
             if node.bl_idname != "CompositorNodeGroup" or node.node_tree is None:
                 continue
-            if node.node_tree.name not in _COMPOSITE_ASSETS:
+            if node.node_tree.name != Illustrate._asset_name:
                 continue
+            for link in node.inputs["Shadow"].links:
+                upstream = link.from_node
+                if (
+                    upstream.bl_idname == "CompositorNodeGroup"
+                    and upstream.node_tree is not None
+                    and upstream.node_tree.name == ConeShadow._asset_name
+                ):
+                    self.tree.nodes.remove(upstream)
             consumers = [
                 link.to_socket for output in node.outputs for link in output.links
             ]
@@ -436,110 +338,99 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
     def illustrate(
         self,
         *,
-        shadow: bool = True,
-        fog: bool = False,
-        contour: bool = True,
-        chain_outline: bool = False,
-        residue_outline: bool = False,
-        flat: bool = False,
-        materials: Iterable[bpy.types.Material] | None = None,
+        shading: Literal["cone", "ao", "shadow"] | None = "cone",
+        outline: bool = True,
+        outline_normals: bool = False,
         **inputs,
-    ) -> CompositeIllustrate:
-        """Insert a ``Composite Illustrate`` node, David Goodsell's Illustrate
-        composition, between Render Layers and whatever consumes the image.
+    ) -> Illustrate:
+        """Insert an ``Illustrate`` node between Render Layers and whatever
+        currently consumes the rendered image.
 
-        Illustrate has no lighting model: form comes from a conical soft
-        shadow computed from the depth pass, depth fog and outlines, on flat
-        per-atom colour. Use it with the ``Flat`` material
-        (``mol.add_style("cartoon", material=mn.material.Flat())``), which
-        renders the atom colours unlit; the node reads the ``Diffuse Color``
-        pass by default, so any material gives flat colour, but the Flat
-        material also keeps the rendered image consistent with it.
+        Enables the render passes the node reads (depth, plus the normal pass
+        for ``outline_normals`` and the chosen shading pass) on the view
+        layer, adds the node group with its inputs linked to the Render Layers
+        node, and re-routes every existing consumer of the rendered image (the
+        annotation overlay, or the output itself) to read from it instead.
+        Calling it again replaces the node.
 
-        Enables the depth and diffuse colour passes, and for the chain and
-        residue outlines declares ``chain_id`` / ``res_id`` AOV passes on the
-        view layer and adds an ``AOV Output`` writing that attribute (offset
-        by one so the first ID differs from the empty background) to every
-        Molecular Nodes material in the file that does not write it yet. The
-        cone shadow's ``Pixel Size`` is set from the camera and the fog's
-        ``Near``/``Far`` from the camera depth of the entities' bounds, unless
-        given in ``inputs``.
+        With ``shading="cone"`` the shading comes from a ``Cone Shadow`` node,
+        David Goodsell's conical soft shadow computed from the depth pass
+        alone, whose ``Pixel Size`` is set from the camera. It needs no
+        lighting, so pair it with the ``Flat`` material
+        (``mol.add_style("cartoon", material=mn.material.Flat())``) for
+        Illustrate-style renders.
 
         ```python
-        node = canvas.compositor.illustrate(shadow=True, contour=True, chain_outline=True)
-        node.i.max_darkening.default_value = 0.3
+        node = canvas.compositor.illustrate(shading="cone", outline=True)
+        node.i.outline_size.default_value = 3
+        node.i.outline_color.default_value = (0.1, 0.1, 0.2, 1.0)
         ```
 
         Parameters
         ----------
-        shadow : bool, default True
-            Conical soft shadow (``Composite Cone Shadow``).
-        fog : bool, default False
-            Depth fog towards ``fog_color`` (``Composite Depth Fog``); set
-            ``back_fog`` below 1 to see it.
-        contour : bool, default True
-            Contour outlines on depth steps (``Composite Contour Outline``).
-        chain_outline : bool, default False
-            Outlines between chains from a ``chain_id`` AOV.
-        residue_outline : bool, default False
-            Outlines between residues from a ``res_id`` AOV.
-        flat : bool, default False
-            Use the ``Diffuse Color`` pass as the base colour instead of the
-            rendered image: flat, unlit colour from any material. With the
-            Flat material the rendered image is already flat, and emission
-            shaders leave the diffuse pass empty, so the image is the default.
-        materials : iterable of bpy.types.Material, optional
-            Materials to add the AOV outputs to; defaults to every material
-            built from a Molecular Nodes preset.
+        shading : {"cone", "ao", "shadow"} or None, default "cone"
+            What darkens the image: a ``Cone Shadow`` from the depth pass, the
+            ambient occlusion pass, the shadow pass (EEVEE only; Cycles has no
+            Shadow pass), or ``None`` for no shading at all.
+        outline : bool, default True
+            Draw lines where the depth changes sharply, from the ``Depth
+            Outline`` node inside the group.
+        outline_normals : bool, default False
+            Also draw lines where the surface normal changes sharply; enables
+            the normal pass.
         **inputs
             Any other input of the node by its Python name, for example
-            ``radius=30.0`` or ``back_fog=0.4``.
+            ``outline_size=3`` or ``background=True``.
 
         Returns
         -------
-        CompositeIllustrate
+        Illustrate
             The node handle; tweak its inputs afterwards through ``node.i``.
         """
+        if shading is not None and shading not in _SHADING_SOURCES:
+            raise ValueError(
+                f"Unknown shading source {shading!r}; "
+                f"expected one of {sorted(_SHADING_SOURCES)} or None."
+            )
         view_layer = self._scene.view_layers[0]
         view_layer.use_pass_z = True
-        view_layer.use_pass_diffuse_color = True
-        aovs = {
-            "chain_id": (chain_outline, "chain_id"),
-            "res_id": (residue_outline, "residue_id"),
-        }
-        targets = list(materials) if materials is not None else _mn_materials()
-        for aov, (enabled, _) in aovs.items():
-            if not enabled:
-                continue
-            add_view_layer_aov(view_layer, aov, "VALUE")
-            for mat in targets:
-                if not _material.has_aov(mat, aov):
-                    _material.add_aov(mat, aov, offset=1.0)
-        inputs.setdefault("pixel_size", _pixel_size_angstrom(self._scene))
-        if fog and not ({"near", "far"} <= set(inputs)):
-            near, far = _depth_range(self._scene)
-            inputs.setdefault("near", near)
-            inputs.setdefault("far", far)
+        if outline_normals:
+            view_layer.use_pass_normal = True
+        if shading is not None:
+            pass_attr, accessor = _SHADING_SOURCES[shading]
+            setattr(view_layer, pass_attr, True)
 
         with self:
             self._remove_composites()
-            render = c.RenderLayers._from_node(self._render_layers_node())
-            links = {
-                key: getattr(render.o, aov)
-                for aov, (enabled, key) in aovs.items()
-                if enabled
-            }
-            node = CompositeIllustrate(
+            rl_node = self._render_layers_node()
+            render = c.RenderLayers._from_node(rl_node)
+            links: dict[str, object] = {}
+            if outline_normals:
+                links["normal"] = render.o.normal
+            if shading == "cone":
+                links["shadow"] = ConeShadow(
+                    depth=render.o.depth,
+                    # the cone test compares against the depth pass, in world units
+                    pixel_size=_pixel_size_angstrom(self._scene) * WORLD_SCALE,
+                )
+            elif shading is not None:
+                if accessor not in {
+                    s.name.lower().replace(" ", "_")
+                    for s in rl_node.outputs
+                    if s.enabled
+                }:
+                    raise ValueError(
+                        f"The {shading!r} shading pass is not available with the "
+                        f"{self._scene.render.engine} engine; the Shadow pass is EEVEE only."
+                    )
+                links["shadow"] = getattr(render.o, accessor)
+            node = Illustrate(
                 image=render.o.image,
                 alpha=render.o.alpha,
                 depth=render.o.depth,
-                diffuse_color=render.o.diffuse_color,
-                base_color="Diffuse Color" if flat else "Image",
-                shadow=shadow,
-                fog=fog,
-                contour_outline=contour,
-                chain_outline=chain_outline,
-                residue_outline=residue_outline,
+                shading=shading is not None,
+                outline=outline,
+                outline_normals=outline_normals,
                 **links,
                 **inputs,
             )
