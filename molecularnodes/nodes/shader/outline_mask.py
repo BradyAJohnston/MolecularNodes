@@ -77,13 +77,19 @@ class OutlineMask(AssetShaderGroup):
         )
         outline = tree.outputs.float("Outline")
 
+        attribute = s.Attribute(
+            attribute_type="VIEW_LAYER", attribute_name="camera.data.angle"
+        )
         camera_data = s.CameraData()
+        mix = g.Math.greater_than(attribute.o.factor, 0.0).o.value.mix.float(
+            1.0, (attribute.o.factor * 0.5).tan() / 0.36
+        )
         edge_detection = EdgeDetection(
-            offset=camera_data.o.view_distance * (thickness / 100.0)
+            offset=camera_data.o.view_distance * mix * (thickness / 100.0)
         )
         math_1 = s.Math.less_than(
             edge_detection.o.co_planar_delta,
-            camera_data.o.view_distance * (threshold / 100.0),
+            camera_data.o.view_distance * mix * (threshold / 100.0),
         )
         math_2 = math_1.o.value.min(
             s.Math.less_than(edge_detection.o.normal_delta, 0.55)
