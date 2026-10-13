@@ -482,6 +482,7 @@ class CompositeIllustrate(AssetCompositorGroup):
             outline_depth = tree.inputs.float(
                 "Outline Depth", 45.1, min_value=-10_000.0, max_value=10_000.0
             )
+
             smooth = tree.inputs.boolean(
                 "Smooth",
                 True,
