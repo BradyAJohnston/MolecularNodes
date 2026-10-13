@@ -124,12 +124,12 @@ mol.add_style(
   boolean socket (`lambda: mg.IsPeptide() & mg.IsSideChain()`).
 - **`assembly=True`** instances the style over the file's biological assembly.
 - **Materials.** Presets in `mn.material`: `Default(roughness, ao_distance, ao_exponent)`,
-  `AmbientOcclusion(distance, exponent)`, `Flat(outline, threshold, thickness)`,
+  `AmbientOcclusion(distance, exponent)`, `Flat(outline, threshold, thickness)` (no outline unless `outline=True`),
   `Squishy(subsurface_scale, roughness)`, `Transparent(transparency, fresnel, outline_color)`.
   Each instantiation builds an independent datablock (`"Flat.001"`), and its parameters
   are live: `mat.distance = 0.15` changes the next render. Passing the string
   `material="Flat"` reuses one shared datablock, so edits affect every style using it.
-  `"Flat Outline"` exists only as `mn.material.append_material("Flat Outline")`.
+  `"Fresnel Outline"` exists only as `mn.material.append_material("Fresnel Outline")`.
   `Transparent` needs the blended surface method, which its recipe sets. To swap the
   material on an existing style: `style.i.material.default_value = mat.material`.
 - **Colour.** `color=` takes `"common"`/`"default"` (elements, carbons random per
