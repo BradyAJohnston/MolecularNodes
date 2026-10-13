@@ -95,9 +95,11 @@ def add_aov(
     """
     Write a named attribute of the geometry to an AOV render pass.
 
-    Appends an ``Attribute`` node reading ``attribute`` and an ``AOV Output``
+    Appends ``Attribute`` nodes reading ``attribute`` and an ``AOV Output``
     node named ``name`` to the material's shader tree, leaving the rest of the
-    tree untouched. The pass itself is declared on the view layer with
+    tree untouched. Like the ``MN Color`` node, the attribute is read from the
+    instancer instead of the geometry where the instancer's ``is_instanced``
+    attribute is set, so styles drawn through instances write their IDs too. The pass itself is declared on the view layer with
     :meth:`molecularnodes.Canvas.add_aov`; it then appears as an output of the
     compositor's Render Layers node, where the ``Value to Mask`` node turns a
     float AOV such as ``chain_id`` into a mask.
@@ -131,11 +133,21 @@ def add_aov(
     """
     tree = material.node_tree
     assert tree is not None
+    attribute = attribute or name
     with TreeBuilder(tree):
-        source = sh.Attribute(attribute_name=attribute or name)
+        # like the MN Color node: read the attribute from the instancer instead
+        # of the geometry when the geometry is drawn through instances
+        geometry = sh.Attribute(attribute_name=attribute)
+        instancer = sh.Attribute(attribute_type="INSTANCER", attribute_name=attribute)
+        is_instanced = sh.Attribute(
+            attribute_type="INSTANCER", attribute_name="is_instanced"
+        ).o.factor
         if type == "COLOR":
-            return sh.AOVOutput(color=source.o.color, aov_name=name)
-        value = source.o.fac + offset if offset else source.o.fac
+            color = is_instanced.mix.color(geometry.o.color, instancer.o.color)
+            return sh.AOVOutput(color=color, aov_name=name)
+        value = is_instanced.mix.float(geometry.o.factor, instancer.o.factor)
+        if offset:
+            value = value + offset
         return sh.AOVOutput(value=value, aov_name=name)
 
 

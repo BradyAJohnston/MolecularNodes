@@ -162,23 +162,90 @@ def test_add_aov(canvas):
         assert "chain_id" in [s.name for s in render_layers.outputs]
 
 
+def _mix_sources(mix) -> tuple:
+    "(factor, A, B) source sockets of a Mix node's linked inputs, in order."
+    return tuple(
+        sock.links[0].from_socket for sock in mix.inputs if sock.enabled and sock.links
+    )
+
+
+def _assert_instancer_mix(mix, attribute: str, output: str) -> None:
+    "A Mix that reads `attribute` from the instancer where `is_instanced` is set."
+    assert mix.bl_idname == "ShaderNodeMix"
+    factor, geometry, instancer = _mix_sources(mix)
+    assert factor.node.attribute_type == "INSTANCER"
+    assert factor.node.attribute_name == "is_instanced"
+    assert factor.name == "Factor"
+    assert geometry.node.attribute_type == "GEOMETRY"
+    assert geometry.node.attribute_name == attribute
+    assert geometry.name == output
+    assert instancer.node.attribute_type == "INSTANCER"
+    assert instancer.node.attribute_name == attribute
+    assert instancer.name == output
+
+
 def test_material_add_aov():
     mat = mn.material.Flat()
-    n_before = len(mat.material.node_tree.nodes)
     node = mat.add_aov("chain_id")
-    tree = mat.material.node_tree
-    assert len(tree.nodes) == n_before + 2
     assert node.node.bl_idname == "ShaderNodeOutputAOV"
     assert node.node.aov_name == "chain_id"
     (link,) = node.node.inputs["Value"].links
-    assert link.from_node.bl_idname == "ShaderNodeAttribute"
-    assert link.from_node.attribute_name == "chain_id"
-    assert link.from_socket.name == "Factor"
+    _assert_instancer_mix(link.from_node, "chain_id", "Factor")
+
+    # the offset is added after the mix, so instanced IDs are offset too
+    node = mat.add_aov("res_id", attribute="res_id", offset=1.0)
+    (link,) = node.node.inputs["Value"].links
+    add = link.from_node
+    assert add.bl_idname == "ShaderNodeMath" and add.operation == "ADD"
+    assert add.inputs[1].default_value == pytest.approx(1.0)
+    _assert_instancer_mix(add.inputs[0].links[0].from_node, "res_id", "Factor")
 
     colour = mn.material.add_aov(mat.material, "tint", attribute="Color", type="COLOR")
     (link,) = colour.node.inputs["Color"].links
-    assert link.from_node.attribute_name == "Color"
-    assert link.from_socket.name == "Color"
+    _assert_instancer_mix(link.from_node, "Color", "Color")
+
+
+def _render_chain_ids(canvas, path) -> tuple[np.ndarray, np.ndarray]:
+    "(chain_id AOV, alpha) of a render, read from a linear EXR so IDs stay exact."
+    canvas.snapshot(path, file_format="OPEN_EXR")
+    image = bpy.data.images.load(str(path))
+    try:
+        pixels = np.array(image.pixels[:]).reshape(image.size[1], image.size[0], 4)
+    finally:
+        bpy.data.images.remove(image)
+    return np.round(pixels[..., 0]), pixels[..., 3]
+
+
+def test_aov_reads_instancer(tmp_path):
+    """The bases of a cartoon are instances, so their chain_id comes from the
+    instancer: the AOV must match the same render with the instances realised."""
+    from nodebpy import compositor as c
+    from nodebpy import geometry as g
+    import molecularnodes.nodes.geometry as mg
+
+    canvas = mn.Canvas(resolution=(64, 64), transparent=True)
+    canvas.engine = mn.scene.Cycles(samples=1, device="CPU", denoise=False)
+    canvas.compositor.device = "CPU"
+    mol = mn.Molecule.fetch("1BNA", cache=data_dir, format="bcif")
+    mat = mn.material.Flat()
+    mol.add_style("cartoon", material=mat)
+    canvas.look_at(mol, viewpoint="front")
+    canvas.add_aov("chain_id")
+    mat.add_aov("chain_id", offset=1.0)
+    with canvas.compositor.reset() as (image, output):
+        render = c.RenderLayers()
+        c.SetAlpha(image=render.o.chain_id, alpha=render.o.alpha) >> output
+
+    instanced, alpha = _render_chain_ids(canvas, tmp_path / "instanced.exr")
+    with mol.tree.reset() as (atoms, join):
+        atoms >> mg.StyleCartoon(material=mat.material) >> g.RealizeInstances() >> join
+    realised, alpha_realised = _render_chain_ids(canvas, tmp_path / "realised.exr")
+
+    covered = (alpha > 0.99) & (alpha_realised > 0.99)
+    assert covered.sum() > 500
+    # the two strands, offset by one so neither matches the empty background
+    assert set(np.unique(instanced[covered])) == {1.0, 2.0}
+    assert (instanced[covered] == realised[covered]).mean() > 0.99
 
 
 def _render_pixels(canvas, path) -> np.ndarray:

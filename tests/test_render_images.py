@@ -217,13 +217,19 @@ COMPOSITOR_CASES = {
 }
 
 
+# cases rendered on another structure than 4ozs: the bases of 1BNA's cartoon are
+# instances, so its chain outline only separates the two strands when the AOV is
+# read from the instancer
+CASE_STRUCTURES = {"chain_outline": "1BNA"}
+
+
 @pytest.mark.parametrize("case", list(COMPOSITOR_CASES))
 def test_render_compositor(case, fetch, golden_canvas, tmp_path, image_snapshot):
     # the compositor node assets: depth and chain outlines, depth
     # fog and the Illustrate composite with each of its shading sources
     material, setup = COMPOSITOR_CASES[case]
     golden_canvas.transparent = True
-    mol = _fetch_molecule(fetch)
+    mol = fetch(CASE_STRUCTURES.get(case, "4ozs"), format="bcif")
     mol.add_style("cartoon", material=getattr(mn.material, material)())
     golden_canvas.look_at(mol, viewpoint="front")
     setup(golden_canvas)
