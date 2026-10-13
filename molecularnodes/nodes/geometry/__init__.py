@@ -172,6 +172,7 @@ from .oklab_to_color import OKLabToColor
 from .oklab_to_lch import OKLabToLCh
 from .oxdna_realize_vectors import OxDNARealizeVectors
 from .oxdna_recover_vectors import OxDNARecoverVectors
+from .oxdna_style_classic import OxDNAStyleClassic
 from .oxdna_vectors import OxDNAVectors
 from .peptide_chi import PeptideChi
 from .peptide_dihedral import PeptideDihedral
@@ -441,6 +442,7 @@ __all__ = (
     "OffsetVector",
     "OxDNARealizeVectors",
     "OxDNARecoverVectors",
+    "OxDNAStyleClassic",
     "OxDNAVectors",
     "PeptideChi",
     "PeptideDihedral",

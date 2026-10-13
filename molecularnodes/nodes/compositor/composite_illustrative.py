@@ -463,7 +463,7 @@ class CompositeIllustrative(AssetCompositorGroup):
             _string = c.String(
                 "Alpha is kept in front of Alpha Distance minus Alpha Falloff and fades to zero by Alpha Distance plus Alpha Falloff with a smootherstep ramp raised to Alpha Power. It never exceeds the render's own alpha."
             )
-            switch = c.Switch.color(depth_fade, alpha, math_3.min(alpha))
+            switch = depth_fade.switch.color(alpha, math_3.min(alpha))
         with c.Frame("Base colour"):
             menu_switch = c.MenuSwitch.color(
                 base_color, {"Image": image, "Diffuse Color": diffuse_color}
@@ -483,15 +483,13 @@ class CompositeIllustrative(AssetCompositorGroup):
                     "Blur": c.Blur(image=menu_switch_1.o.output, size=smoothing_size),
                 },
             )
-            mix = c.Mix.color(
-                shading_intensity * c.InvertColor(menu_switch_2.o.output),
-                menu_switch.o.output,
-                (0.0, 0.0, 0.0, 1.0),
+            mix = (shading_intensity * c.InvertColor(menu_switch_2.o.output)).mix.color(
+                menu_switch.o.output, (0.0, 0.0, 0.0, 1.0)
             )
             _string_1 = c.String(
                 "The chosen pass is smoothed, inverted to an occlusion amount, scaled by the intensity and used to mix the base colour towards black."
             )
-            switch_1 = c.Switch.color(shading, menu_switch.o.output, mix.o.result_color)
+            switch_1 = shading.switch.color(menu_switch.o.output, mix)
         with c.Frame("Outline"):
             composite_outline_mask = CompositeOutlineMask(
                 depth=depth,
@@ -506,8 +504,7 @@ class CompositeIllustrative(AssetCompositorGroup):
                 "The alpha is replaced once here: the Diffuse Color pass has no alpha and mixing keeps only the first input's, so the render alpha (or its depth fade) is restored before the lines are drawn on top."
             )
             set_alpha = c.SetAlpha(image=switch_1, alpha=switch, type="Replace Alpha")
-            switch_2 = c.Switch.color(
-                outline,
+            switch_2 = outline.switch.color(
                 set_alpha,
                 CompositeOutline(
                     image=set_alpha,
@@ -517,8 +514,7 @@ class CompositeIllustrative(AssetCompositorGroup):
             )
         with c.Frame("Background"):
             (
-                c.Switch.color(
-                    background,
+                background.switch.color(
                     switch_2,
                     c.AlphaOver(
                         background=background_color,

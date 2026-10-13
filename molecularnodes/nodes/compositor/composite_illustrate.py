@@ -482,7 +482,6 @@ class CompositeIllustrate(AssetCompositorGroup):
             outline_depth = tree.inputs.float(
                 "Outline Depth", 45.1, min_value=-10_000.0, max_value=10_000.0
             )
-
             smooth = tree.inputs.boolean(
                 "Smooth",
                 True,
@@ -555,9 +554,7 @@ class CompositeIllustrate(AssetCompositorGroup):
                 {"None": math_1, "Kuwahara": c.Kuwahara(image=math_1, size=20.2)},
             )
             mix = c.Mix.color(
-                a=alpha_convert,
-                b=menu_switch.o.output,
-                blend_type="MULTIPLY",
+                a=alpha_convert, b=menu_switch.o.output, blend_type="MULTIPLY"
             )
         with c.Frame("Fog"):
             composite_depth_fog = CompositeDepthFog(
@@ -597,19 +594,16 @@ class CompositeIllustrate(AssetCompositorGroup):
                 value=outline_depth,
             )
             math_4 = composite_contour_outline.o.opacity * contour_outline
-            mix_1 = c.Mix.color(
-                math_4.max(math_2) + math_3,
-                switch,
-                outline_color,
-                blend_type="MULTIPLY",
+            set_alpha_1 = c.SetAlpha(
+                image=c.Mix.color(
+                    math_4.max(math_2) + math_3,
+                    switch,
+                    outline_color,
+                    blend_type="MULTIPLY",
+                ).o.result_color,
+                alpha=alpha.max(math_4.max(math_2).max(math_3)),
             )
-            alpha_convert_1 = c.AlphaConvert(
-                c.SetAlpha(
-                    image=mix_1.o.result_color,
-                    alpha=alpha.max(math_4.max(math_2).max(math_3)),
-                )
-            )
-            anti_aliasing = c.AntiAliasing(alpha_convert_1)
+            anti_aliasing = c.AntiAliasing(c.AlphaConvert(set_alpha_1))
 
         anti_aliasing >> image_1
 

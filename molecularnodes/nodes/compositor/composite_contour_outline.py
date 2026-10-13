@@ -126,10 +126,13 @@ class CompositeContourOutline(AssetCompositorGroup):
                 c.Blur(image=math_1, size=(1.0, 1.0), type="Flat"),
                 clamp_factor=False,
             )
-            anti_aliasing = c.AntiAliasing(
-                c.Mix.float(smooth, math_1, mix.o.result_float).o.result_float
+            dilate_erode = c.DilateErode(
+                mask=c.AntiAliasing(
+                    c.Mix.float(smooth, math_1, mix.o.result_float).o.result_float
+                ),
+                size=size,
+                type="Distance",
             )
-            dilate_erode = c.DilateErode(mask=anti_aliasing, size=size, type="Distance")
             _string = c.String(
                 "Illustrate averages the 3x3 neighbourhood when at least six of its pixels carry signal. A flat blur of radius one is that average, and the same blur of the signal mask is the fraction of pixels that carry it."
             )
