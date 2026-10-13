@@ -541,7 +541,7 @@ class CAToSheet(CustomGeometryGroup):
             )
             axis_angle_to_rotation = g.AxisAngleToRotation(
                 axis=g.CurveTangent(),
-                angle=math_1.o.value.wrap(0.0, 2.0) * 3.14159 + g.Math.to_radians(30.0),
+                angle=math_1.o.value.wrap(max=2.0) * 3.14159 + g.Math.to_radians(30.0),
             )
             blur_attribute = (
                 g.Normal(True).o.normal.rotate(axis_angle_to_rotation).blur()

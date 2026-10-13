@@ -50,7 +50,7 @@ class MN_utils_curve_resample(CustomGeometryGroup):
         value = capture.items.integer(g.Index(), "Value")
         accumulate_field = length.point.trailing(value.output)
         switch = g.Compare.float.equal(offset, 0.0, 0.001).o.result.switch.float(
-            (accumulate_field + offset).wrap(0.0, g.SplineLength().o.length),
+            (accumulate_field + offset).wrap(max=g.SplineLength().o.length),
             accumulate_field,
         )
         sample_curve = g.SampleCurve.length.float(
