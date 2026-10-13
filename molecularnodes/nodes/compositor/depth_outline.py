@@ -284,25 +284,26 @@ class DepthOutline(AssetCompositorGroup):
             _string = c.String(
                 "Each of the eight neighbours contributes how much farther it is than the centre pixel, clamped to [Min Diff, Max Diff], weighted 1.0 on the edges and 0.8 on the corners, so the line lands on the nearer side of a depth step. Illustrate then averages the 3x3 neighbourhood when at least six of its pixels carry signal: a flat blur of radius one is that average, and the same blur of the signal mask is the fraction of pixels that carry it."
             )
-        with c.Frame("Sobel"):
+        with c.Frame("Normal edges"):
             math_6 = c.Math.greater_than(
+                c.VectorMath.length(c.Filter(image=normals_pass, type="Sobel")).o.value,
+                normals_threshold,
+            )
+            math_7 = math_6.o.value * normals
+        with c.Frame("Sobel"):
+            math_8 = c.Math.greater_than(
                 c.Filter(image=depth.min(10_000.0), type="Sobel"), threshold
             )
             _string_1 = c.String(
                 "The depth pass is unbounded where nothing was rendered, so it is clipped before the Sobel filter to keep the gradient finite. Silhouettes against the background still exceed any sensible threshold, so they are outlined."
             )
-        with c.Frame("Normal edges"):
-            math_7 = c.Math.greater_than(
-                c.VectorMath.length(c.Filter(image=normals_pass, type="Sobel")).o.value,
-                normals_threshold,
-            )
-            math_8 = c.MenuSwitch.float(
-                method, {"Sobel": math_6, "Goodsell": mix_1.o.result_float}
-            ).o.output.max(math_7.o.value * normals)
         with c.Frame("Line weight"):
+            math_9 = c.MenuSwitch.float(
+                method, {"Sobel": math_8, "Goodsell": mix_1.o.result_float}
+            ).o.output.max(math_7)
             anti_aliasing = c.AntiAliasing(
                 c.DilateErode(
-                    mask=c.AntiAliasing(math_8),
+                    mask=c.AntiAliasing(math_9),
                     size=(size - 1.0).max(0.0),
                     type="Distance",
                 )
