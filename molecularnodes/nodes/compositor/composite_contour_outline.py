@@ -144,5 +144,5 @@ ASSET = CompositeContourOutline
 
 ASSET_METADATA = {
     "description": "Depth Laplacian contour outlines after Goodsell's Illustrate",
-    "catalog_id": "441e6ca5-e514-4e77-a3cd-25fc1a2e08ae",
+    "catalog_id": "874a72a6-7cf2-456a-ab07-e79f5a1e4294",
 }

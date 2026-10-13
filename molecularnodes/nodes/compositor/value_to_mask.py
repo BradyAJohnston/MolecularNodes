@@ -111,5 +111,5 @@ ASSET = ValueToMask
 
 ASSET_METADATA = {
     "description": "Mask of the pixels where a float pass matches a value",
-    "catalog_id": "441e6ca5-e514-4e77-a3cd-25fc1a2e08ae",
+    "catalog_id": "874a72a6-7cf2-456a-ab07-e79f5a1e4294",
 }

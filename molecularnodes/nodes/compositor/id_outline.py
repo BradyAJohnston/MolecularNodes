@@ -1,4 +1,4 @@
-# Node-group asset "Composite ID Outline" (CompositorNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "ID Outline" (CompositorNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -48,7 +48,7 @@ class IDDifferenceSample(CustomCompositorGroup):
         math_1 >> differs
 
 
-class CompositeIDOutline(AssetCompositorGroup):
+class IDOutline(AssetCompositorGroup):
     """
     Outline opacity between regions of an ID pass after Goodsell's Illustrate: counts, over the 5x5 neighbourhood, the pixels whose ID differs from the centre by more than Min Difference and ramps the count from Low to High into an opacity. Feed it a float AOV such as chain_id or res_id (canvas.add_aov and mn.material.add_aov) for chain or residue outlines
 
@@ -80,8 +80,8 @@ class CompositeIDOutline(AssetCompositorGroup):
         Opacity
     """
 
-    _name = "Composite ID Outline"
-    _asset_name = "Composite ID Outline"
+    _name = "ID Outline"
+    _asset_name = "ID Outline"
     _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "FILTER"
     _tree_properties = {
@@ -253,9 +253,9 @@ class CompositeIDOutline(AssetCompositorGroup):
         math_12.map_range(low, high) >> opacity
 
 
-ASSET = CompositeIDOutline
+ASSET = IDOutline
 
 ASSET_METADATA = {
     "description": "Outlines between regions of an ID pass, for chain and residue outlines",
-    "catalog_id": "441e6ca5-e514-4e77-a3cd-25fc1a2e08ae",
+    "catalog_id": "874a72a6-7cf2-456a-ab07-e79f5a1e4294",
 }

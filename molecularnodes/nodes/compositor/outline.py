@@ -1,4 +1,4 @@
-# Node-group asset "Composite Outline" (CompositorNodeTree), dumped by nodebpy.assets.dump_library.
+# Node-group asset "Outline" (CompositorNodeTree), dumped by nodebpy.assets.dump_library.
 # Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -15,7 +15,7 @@ from nodebpy.builder import (
 from nodebpy.types import InputColor, InputFloat
 
 
-class CompositeOutline(AssetCompositorGroup):
+class Outline(AssetCompositorGroup):
     """
     Draw a line mask over an image in a flat colour, keeping the lines visible over a transparent background
 
@@ -25,7 +25,7 @@ class CompositeOutline(AssetCompositorGroup):
         Image to draw the lines over
     mask : InputFloat
         Where to draw lines, such as the output of Composite Outline Mask
-    line_color : InputColor
+    color : InputColor
         Colour of the lines
 
     Inputs
@@ -34,7 +34,7 @@ class CompositeOutline(AssetCompositorGroup):
         Image to draw the lines over
     i.mask : FloatSocket
         Where to draw lines, such as the output of Composite Outline Mask
-    i.line_color : ColorSocket
+    i.color : ColorSocket
         Colour of the lines
 
     Outputs
@@ -43,8 +43,8 @@ class CompositeOutline(AssetCompositorGroup):
         Image
     """
 
-    _name = "Composite Outline"
-    _asset_name = "Composite Outline"
+    _name = "Outline"
+    _asset_name = "Outline"
     _library = PackageLibrary(__file__, "../../assets/nodes.blend")
     _color_tag = "FILTER"
     _tree_properties = {
@@ -56,7 +56,7 @@ class CompositeOutline(AssetCompositorGroup):
         """Image to draw the lines over"""
         mask: FloatSocket
         """Where to draw lines, such as the output of Composite Outline Mask"""
-        line_color: ColorSocket
+        color: ColorSocket
         """Colour of the lines"""
 
     class _Outputs(SocketAccessor):
@@ -74,9 +74,9 @@ class CompositeOutline(AssetCompositorGroup):
         self,
         image: InputColor = None,
         mask: InputFloat = 0.0,
-        line_color: InputColor = None,
+        color: InputColor = None,
     ):
-        super().__init__(**{"Image": image, "Mask": mask, "Line Color": line_color})
+        super().__init__(**{"Image": image, "Mask": mask, "Color": color})
 
     def _build_group(self, tree: TreeBuilder[CompositorNodeTree]) -> None:
         image = tree.inputs.color(
@@ -94,19 +94,17 @@ class CompositeOutline(AssetCompositorGroup):
             hide_value=True,
             subtype="FACTOR",
         )
-        line_color = tree.inputs.color(
-            "Line Color", (0.0, 0.0, 0.0, 1.0), description="Colour of the lines"
+        color = tree.inputs.color(
+            "Color", (0.0, 0.0, 0.0, 1.0), description="Colour of the lines"
         )
         image_1 = tree.outputs.color("Image", (1.0, 1.0, 1.0, 1.0))
 
         with c.Frame("Draw lines"):
-            alpha_over = c.AlphaOver(
-                background=image, foreground=line_color, factor=mask
-            )
+            alpha_over = c.AlphaOver(background=image, foreground=color, factor=mask)
         with c.Frame("Restore alpha"):
             set_alpha = c.SetAlpha(
                 image=alpha_over,
-                alpha=(mask * c.SeparateColor(line_color).o.alpha).max(
+                alpha=(mask * c.SeparateColor(color).o.alpha).max(
                     c.SeparateColor(image).o.alpha
                 ),
                 type="Replace Alpha",
@@ -118,9 +116,9 @@ class CompositeOutline(AssetCompositorGroup):
         set_alpha >> image_1
 
 
-ASSET = CompositeOutline
+ASSET = Outline
 
 ASSET_METADATA = {
     "description": "Draw a line mask over an image in a flat colour",
-    "catalog_id": "441e6ca5-e514-4e77-a3cd-25fc1a2e08ae",
+    "catalog_id": "874a72a6-7cf2-456a-ab07-e79f5a1e4294",
 }
