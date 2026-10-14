@@ -16,6 +16,7 @@ from ..converters import universe_from_atoms
 from ..download import StructureDownloader
 from .base import EntityType, MolecularEntity
 from .density.grids import Grids
+from .ensemble.bentopy import Bentopy
 from .ensemble.cellpack import CellPack
 from .ensemble.star import StarFile
 from .molecule import OXDNA, Molecule
@@ -91,6 +92,15 @@ def _reload_ensemble_cellpack(obj: bpy.types.Object) -> CellPack:
     return entity
 
 
+def _reload_ensemble_bentopy(obj: bpy.types.Object) -> Bentopy:
+    mn = obj.mn
+    if not mn.filepath:
+        raise ValueError("No source file recorded for this ensemble")
+    entity = Bentopy(path_resolve(mn.filepath))
+    entity.object = obj
+    return entity
+
+
 # streaming trajectories are backed by a live IMD connection with no source file,
 # so they are intentionally absent and cannot be reloaded
 _RELOADERS = {
@@ -99,6 +109,7 @@ _RELOADERS = {
     EntityType.DENSITY.value: _reload_density,
     EntityType.ENSEMBLE_STAR.value: _reload_ensemble_star,
     EntityType.ENSEMBLE_CELLPACK.value: _reload_ensemble_cellpack,
+    EntityType.ENSEMBLE_BENTOPY.value: _reload_ensemble_bentopy,
 }
 
 

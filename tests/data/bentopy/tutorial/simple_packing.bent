@@ -1,0 +1,20 @@
+[ general ]
+title "Proteins in a box"
+seed 0
+
+[ space ]
+# All dimensions in bentopy are given in nanometers.
+dimensions 40, 40, 40
+resolution 0.5
+
+[ includes ]
+"topology/martini_v3.0.0.itp"
+"topology/martini_v3.0.0_ions_v1.itp"
+"topology/martini_v3.0.0_solvents_v1.itp"
+"topology/lysozyme.itp"
+
+[ compartments ]
+system is all
+
+[ segments ]
+LYZ 650 from "structures/lysozyme.pdb" in system

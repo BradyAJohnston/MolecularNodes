@@ -1,10 +1,11 @@
 from . import molecule
 from .density import Density
-from .ensemble import CellPack, Ensemble, StarFile
+from .ensemble import Bentopy, CellPack, Ensemble, StarFile
 from .molecule import OXDNA, Molecule, StreamingTrajectory
 
 __all__ = [
     "molecule",
+    "Bentopy",
     "CellPack",
     "Ensemble",
     "StarFile",

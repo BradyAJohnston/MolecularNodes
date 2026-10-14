@@ -31,6 +31,7 @@ class EntityType(StrEnum):
     DENSITY = "density"
     ENSEMBLE_STAR = "ensemble-star"
     ENSEMBLE_CELLPACK = "ensemble-cellpack"
+    ENSEMBLE_BENTOPY = "ensemble-bentopy"
 
 
 class ResetSockets(NamedTuple):
