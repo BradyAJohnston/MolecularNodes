@@ -545,13 +545,16 @@ ENSEMBLE_TYPES = (
         "Import a .star mapback file or CryoET .ndjson point annotations",
     ),
     ("cellpack", "CellPack", "Import a CellPack .cif / .bcif model"),
+    ("bentopy", "Bentopy", "Import a bentopy .json placement list"),
 )
 
 
 class MN_OT_Import_Ensemble(bpy.types.Operator):
     bl_idname = "mn.import_ensemble"
     bl_label = "Import Ensemble"
-    bl_description = "Import an ensemble as a Starfile or CellPack model"
+    bl_description = (
+        "Import an ensemble as a Starfile, CellPack model or bentopy packing"
+    )
     bl_options = {"REGISTER", "UNDO"}
 
     ensemble_type: EnumProperty(  # type: ignore
@@ -589,6 +592,12 @@ class MN_OT_Import_Ensemble(bpy.types.Operator):
                 ensemble.CellPack.load(
                     file_path=file_path,
                     name=file_path.name,
+                    node_setup=self.node_setup,
+                )
+            elif self.ensemble_type == "bentopy":
+                ensemble.Bentopy.load(
+                    file_path=file_path,
+                    name=file_path.stem,
                     node_setup=self.node_setup,
                 )
             else:

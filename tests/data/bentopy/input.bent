@@ -1,0 +1,14 @@
+[ general ]
+title "Molecular Nodes bentopy test"
+seed 1234
+
+[ space ]
+dimensions 20, 20, 20
+resolution 0.5
+
+[ compartments ]
+ball as sphere at center with radius 9
+
+[ segments ]
+lyso 8 from "../1l58.pdb" in ball
+dna 4 from "1BNA.gro" in ball

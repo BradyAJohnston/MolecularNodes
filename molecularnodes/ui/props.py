@@ -33,6 +33,7 @@ ENTITY_ITEMS = (
     ),
     ("ensemble-star", "Star Ensemble", "A starfile ensemble"),
     ("ensemble-cellpack", "CellPack Ensemble", "A CellPack model ensemble"),
+    ("ensemble-bentopy", "Bentopy Ensemble", "A bentopy packed system"),
 )
 
 

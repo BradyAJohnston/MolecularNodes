@@ -9,6 +9,7 @@ title: "Changelog"
 - Added a general handler that triggers after nodes are added to the tree in the GUI. Sets the default material of style nodes and generates data objects for biological assemblies. [#1191](https://github.com/BradyAJohnston/MolecularNodes/pull/1191)
 - `Charge` attribute input node under Attributes, reading the `charge` attribute with a fallback of `0.0`. [#1216](https://github.com/BradyAJohnston/MolecularNodes/issues/1216)
 - `Ease Value` and `Stagger Value` nodes under Animate: Penner easing curves (In / Out / In Out) for any 0..1 value or field, and a per-point stagger that gives each ID its own equal-length 0..1 transition.
+- Import [bentopy](https://github.com/marrink-lab/bentopy) packed systems from the `placements.json` written by `bentopy-pack`, before they are rendered out to a `.gro`: `mn.entities.ensemble.Bentopy.load()` or the `Bentopy` tab of Import Ensemble. Each segment's `.pdb`/`.gro` is loaded once and instanced at every placement, matching the positions `bentopy-render` writes.
 - `Symmetry Cubic` node under Ensemble: builds tetrahedral (12), octahedral (24) or icosahedral (60) assemblies from one copy, with an `Orientation` to match a deposited structure.
 - `Symmetry Helical` takes an `Axial Symmetry` input for filaments with Cn symmetry about the helix axis, such as amyloid built from two protofilaments.
 
