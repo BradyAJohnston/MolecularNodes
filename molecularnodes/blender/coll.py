@@ -29,6 +29,9 @@ def frames(name: str = "") -> Collection:
 
 
 def cellpack(name: str = "") -> Collection:
-    "Return a collection for storing the instances for a CellPack Ensemble"
-    full_name = f"cellpack_{name}"
-    return create_collection(full_name, parent=data())
+    "Return a new collection for storing the instances for a CellPack Ensemble"
+    # always a new collection: reusing one by name would mix the instances of
+    # separate imports
+    collection = bpy.data.collections.new(f"cellpack_{name}")
+    data().children.link(collection)
+    return collection
