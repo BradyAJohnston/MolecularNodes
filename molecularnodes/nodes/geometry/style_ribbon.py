@@ -453,7 +453,12 @@ class StyleRibbon(AssetGeometryGroup):
             )
         )
         join_geometry >> geometry_1.input
-        EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
+        (
+            EvaluateOnAtoms(
+                geometry=atoms, closure=closure_zone.closure, result="Representation"
+            )
+            >> geometry
+        )
         _join_geometry_1 = g.JoinGeometry(
             (
                 mn_utils_style_ribbon_peptide.o.curve,

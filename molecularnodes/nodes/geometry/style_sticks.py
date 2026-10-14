@@ -208,7 +208,12 @@ class StyleSticks(AssetGeometryGroup):
             material=material,
         )
         g.JoinGeometry((style_spheres, mn_utils_style_sticks)) >> geometry_1.input
-        EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
+        (
+            EvaluateOnAtoms(
+                geometry=atoms, closure=closure_zone.closure, result="Representation"
+            )
+            >> geometry
+        )
 
 
 ASSET = StyleSticks

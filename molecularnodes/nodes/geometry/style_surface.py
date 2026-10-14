@@ -895,7 +895,10 @@ class StyleSurface(AssetGeometryGroup):
         evaluate_per_group >> geometry_5.input
         (
             EvaluateOnAtoms(
-                geometry=atoms, selection=selection, closure=closure_zone_4.closure
+                geometry=atoms,
+                selection=selection,
+                closure=closure_zone_4.closure,
+                result="Representation",
             )
             >> geometry
         )

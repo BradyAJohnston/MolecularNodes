@@ -32,8 +32,8 @@ class EvaluateOnAtoms(AssetGeometryGroup):
         The parts of the geometry that go into the first output
     closure : InputClosure
         Closure
-    result : InputMenu | Literal["Geometry", "Bundle"]
-        Where to store the result of the closure. Bundle overwrite the existing `MN/Atoms` bundle. Geometry passes along the bundle and joins the resulting geometry into the output.
+    result : InputMenu | Literal["Atoms", "Representation"]
+        What the closure returns. 'Atoms': the closure runs on the input geometry and its result is the output. 'Representation' (styles): the closure runs on the `MN/Atoms` bundle if the input has one, its result is joined to the input's existing representation, and the atoms are stored in the `MN/Atoms` bundle so later styles can still get them
 
     Inputs
     ------
@@ -44,7 +44,7 @@ class EvaluateOnAtoms(AssetGeometryGroup):
     i.closure : ClosureSocket
         Closure
     i.result : MenuSocket
-        Where to store the result of the closure. Bundle overwrite the existing `MN/Atoms` bundle. Geometry passes along the bundle and joins the resulting geometry into the output.
+        What the closure returns. 'Atoms': the closure runs on the input geometry and its result is the output. 'Representation' (styles): the closure runs on the `MN/Atoms` bundle if the input has one, its result is joined to the input's existing representation, and the atoms are stored in the `MN/Atoms` bundle so later styles can still get them
 
     Outputs
     -------
@@ -65,7 +65,7 @@ class EvaluateOnAtoms(AssetGeometryGroup):
         closure: ClosureSocket
         """Closure"""
         result: MenuSocket
-        """Where to store the result of the closure. Bundle overwrite the existing `MN/Atoms` bundle. Geometry passes along the bundle and joins the resulting geometry into the output."""
+        """What the closure returns. 'Atoms': the closure runs on the input geometry and its result is the output. 'Representation' (styles): the closure runs on the `MN/Atoms` bundle if the input has one, its result is joined to the input's existing representation, and the atoms are stored in the `MN/Atoms` bundle so later styles can still get them"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -83,7 +83,7 @@ class EvaluateOnAtoms(AssetGeometryGroup):
         geometry: InputGeometry = None,
         selection: InputBoolean = True,
         closure: InputClosure = None,
-        result: InputMenu | Literal["Geometry", "Bundle"] = "Geometry",
+        result: InputMenu | Literal["Atoms", "Representation"] = "Atoms",
     ):
         super().__init__(
             **{
@@ -107,17 +107,20 @@ class EvaluateOnAtoms(AssetGeometryGroup):
         closure = tree.inputs.closure("Closure")
         result = tree.inputs.menu(
             "Result",
-            "Geometry",
-            description="Where to store the result of the closure. Bundle overwrite the existing `MN/Atoms` bundle. Geometry passes along the bundle and joins the resulting geometry into the output.",
+            "Atoms",
+            description="What the closure returns. 'Atoms': the closure runs on the input geometry and its result is the output. 'Representation' (styles): the closure runs on the `MN/Atoms` bundle if the input has one, its result is joined to the input's existing representation, and the atoms are stored in the `MN/Atoms` bundle so later styles can still get them",
             expanded=True,
             optional_label=True,
         )
         geometry_1 = tree.outputs.geometry("Geometry")
 
         get_geometry_atoms = GetGeometryAtoms(geometry=geometry)
+        menu_switch = g.MenuSwitch.integer(result, {"Atoms": 0, "Representation": 1})
         with g.Frame("Evaluate the closure on the 'Atoms'"):
             check_geometry = CheckGeometry(
-                geometry=get_geometry_atoms.o.atoms,
+                geometry=g.IndexSwitch.geometry(
+                    menu_switch.o.output, (geometry, get_geometry_atoms.o.atoms)
+                ),
                 message="'Atoms' contains no geometry, check your node connections.",
             )
             evaluate_closure = g.EvaluateClosure(closure)
@@ -129,33 +132,20 @@ class EvaluateOnAtoms(AssetGeometryGroup):
                 "Atoms",
             )
             geometry_2 = evaluate_closure.outputs.geometry("Geometry")
-        menu_switch = g.MenuSwitch.integer(result, {"Geometry": 0, "Bundle": 1})
-        index_switch = g.IndexSwitch.geometry(
-            menu_switch.o.output, (get_geometry_atoms.o.atoms, geometry_2.output)
+        store_bundle_item = g.StoreBundleItem.geometry(
+            get_geometry_atoms.o.bundle, "MN/Atoms", get_geometry_atoms.o.atoms
         )
-        index_switch_1 = g.IndexSwitch.bundle(
-            menu_switch.o.output,
-            (
-                get_geometry_atoms.o.bundle,
-                g.StoreBundleItem.geometry(
-                    get_geometry_atoms.o.bundle, "MN/Atoms", index_switch
-                ),
-                None,
-            ),
-        )
+        set_geometry_bundle = g.JoinGeometry(
+            (get_geometry_atoms.o.geometry, geometry_2.output)
+        ).o.geometry.set_bundle(store_bundle_item)
         (
-            g.JoinGeometry(
-                (
-                    get_geometry_atoms.o.geometry,
-                    g.IndexSwitch.geometry(
-                        menu_switch.o.output, (geometry_2.output, None)
-                    ),
-                )
-            ).o.geometry.set_bundle(index_switch_1)
+            g.IndexSwitch.geometry(
+                menu_switch.o.output, (geometry_2.output, set_geometry_bundle)
+            )
             >> geometry_1
         )
         _string = g.String(
-            "Evaluate the 'Closure' on the 'Atoms' geometry, join the resulting geometry with the input geometry.\n\nIf the input 'Geometry' doesn't contain a 'MN/Atoms' bundle then we treat the input geometry as the 'Atoms'."
+            "'Atoms' result: the closure runs on the input geometry and its result is the output.\n\n'Representation' result (styles): the 'Atoms' are the input's 'MN/Atoms' bundle, or the input geometry when it has none. The result is joined to the input's representation and the 'Atoms' are stored in the 'MN/Atoms' bundle, so styles can be stacked."
         )
 
 
