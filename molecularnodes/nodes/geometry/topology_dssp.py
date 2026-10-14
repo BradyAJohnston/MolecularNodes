@@ -406,12 +406,7 @@ class TopologyDSSP(AssetGeometryGroup):
             ),
         )
         store_named_attribute_1 >> geometry.input
-        (
-            EvaluateOnAtoms(
-                geometry=atoms, closure=closure_zone.closure, result="Bundle"
-            )
-            >> atoms_1
-        )
+        EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> atoms_1
 
 
 ASSET = TopologyDSSP

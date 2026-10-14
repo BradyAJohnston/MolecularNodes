@@ -756,6 +756,36 @@ def test_style_keeps_atoms_in_bundle(fetch, style):
     np.testing.assert_array_equal(mol.named_attribute("res_id", evaluate=True), res_id)
 
 
+def _evaluated_counts(mol):
+    mesh = mol.object.evaluated_get(bpy.context.evaluated_depsgraph_get()).data
+    return len(mesh.vertices), len(mesh.edges)
+
+
+def test_styles_stack(fetch):
+    """
+    A style joins its result to the representation of earlier styles, so styles
+    can be stacked (e.g. as separate modifiers) and each still reads the atoms
+    from the 'MN/Atoms' bundle.
+    """
+    mol = fetch("4ozs")
+
+    counts = {}
+    for name, styles in [
+        ("sticks", [StyleSticks]),
+        ("cartoon", [StyleCartoon]),
+        ("both", [StyleSticks, StyleCartoon]),
+    ]:
+        with mol.tree.reset() as (atoms, join):
+            geometry = atoms
+            for style in styles:
+                geometry = geometry >> style()
+            geometry >> join
+        counts[name] = _evaluated_counts(mol)[0]
+
+    assert counts["sticks"] > 0 and counts["cartoon"] > 0
+    assert counts["both"] == counts["sticks"] + counts["cartoon"]
+
+
 # Robert Penner's easing functions as listed on https://easings.net, ported
 # separately for In, Out and In Out so the node's shared-curve construction
 # (Out = 1 - f(1 - t), In Out from f(2t) and f(2 - 2t)) is checked against the

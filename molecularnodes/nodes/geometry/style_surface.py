@@ -898,7 +898,7 @@ class StyleSurface(AssetGeometryGroup):
                 geometry=atoms,
                 selection=selection,
                 closure=closure_zone_4.closure,
-                keep_atoms=True,
+                result="Representation",
             )
             >> geometry
         )

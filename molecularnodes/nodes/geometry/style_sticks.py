@@ -210,7 +210,7 @@ class StyleSticks(AssetGeometryGroup):
         g.JoinGeometry((style_spheres, mn_utils_style_sticks)) >> geometry_1.input
         (
             EvaluateOnAtoms(
-                geometry=atoms, closure=closure_zone.closure, keep_atoms=True
+                geometry=atoms, closure=closure_zone.closure, result="Representation"
             )
             >> geometry
         )
