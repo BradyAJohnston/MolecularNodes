@@ -27,7 +27,11 @@ class CellPack(Ensemble):
         node_setup: bool = True,
     ) -> bpy.types.Object:
         self._create_data_object(name=name)
-        collection = self._create_object_instances(name=name, node_setup=node_setup)
+        # Blender may have renamed the object to avoid a clash (`name.001`), so
+        # name the instances after the object rather than the requested name
+        collection = self._create_object_instances(
+            name=self.object.name, node_setup=node_setup
+        )
 
         with self.tree.reset() as (atoms, join):
             (atoms >> geometry.EnsembleInstance(instances=collection) >> join)
@@ -42,7 +46,12 @@ class CellPack(Ensemble):
         # a single node group is shared by every instanced molecule rather than
         # building an identical tree per-object
         if node_setup:
-            with TreeBuilder.geometry(f"MN_pack_instance_{name}") as instance_tree:
+            # a new group rather than `TreeBuilder.geometry(name)`, which would
+            # build into an existing group of the same name from an earlier import
+            tree = bpy.data.node_groups.new(
+                f"MN_pack_instance_{name}", "GeometryNodeTree"
+            )
+            with TreeBuilder.geometry(tree) as instance_tree:
                 atoms = instance_tree.inputs.geometry("Atoms")
                 style = geometry.StyleSpheres(
                     material=material.AmbientOcclusion().material
