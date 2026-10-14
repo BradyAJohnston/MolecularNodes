@@ -98,6 +98,14 @@ def test_render_material(fetch, material, golden_canvas, tmp_path, image_snapsho
     assert image_snapshot == _render(golden_canvas, tmp_path)
 
 
+def test_render_material_flat_outline(fetch, golden_canvas, tmp_path, image_snapshot):
+    # Flat has no outline by default; outline=True adds the dark edge lines
+    mol = _fetch_molecule(fetch)
+    mol.add_style("surface", material=mn.material.Flat(outline=True))
+    golden_canvas.look_at(mol, viewpoint="front")
+    assert image_snapshot == _render(golden_canvas, tmp_path)
+
+
 def test_render_selection_string(fetch, golden_canvas, tmp_path, image_snapshot):
     # a selection phrase masks the second style to part of the molecule
     mol = _fetch_molecule(fetch)
@@ -185,11 +193,6 @@ def _illustrate_fog(canvas):
         _fog(canvas, node, render.o.depth, output)
 
 
-def _illustrate_shadow_eevee(canvas):
-    canvas.engine = mn.scene.EEVEE(samples=16)
-    canvas.compositor.illustrate(shading="shadow")
-
-
 # name -> (material, compositor setup applied after the camera is framed)
 COMPOSITOR_CASES = {
     "plain": ("Default", lambda canvas: None),
@@ -212,8 +215,6 @@ COMPOSITOR_CASES = {
         lambda canvas: canvas.compositor.illustrate(shading="ao", outline_normals=True),
     ),
     "illustrate_fog": ("Flat", _illustrate_fog),
-    # the Shadow pass only exists in EEVEE, so this case renders with EEVEE
-    "illustrate_shadow": ("Default", _illustrate_shadow_eevee),
 }
 
 

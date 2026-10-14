@@ -9,7 +9,7 @@ from .nodes.materials import (
     ambient_occlusion,
     default,
     flat,
-    flat_outline,
+    fresnel_outline,
     squishy,
     transparent,
 )
@@ -26,7 +26,7 @@ RECIPES: dict[str, ModuleType] = {
     for module in (
         default,
         flat,
-        flat_outline,
+        fresnel_outline,
         squishy,
         transparent,
         ambient_occlusion,
@@ -364,13 +364,13 @@ class AmbientOcclusion(PresetMaterial):
 
 class Flat(PresetMaterial):
     """
-    Flat cartoon-like shading with an optional dark outline.
+    Flat cartoon-like shading, with an optional dark outline.
 
     Parameters
     ----------
     outline : bool, optional
-        Whether to render the dark outline around the object. Defaults to the
-        recipe's value.
+        Whether to render the dark outline around the object. Off unless set:
+        ``Flat(outline=True)`` adds it.
     threshold : float, optional
         Threshold for the edge detection that forms the outline. Defaults to
         the recipe's value.
