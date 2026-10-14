@@ -34,6 +34,7 @@ from molecularnodes.nodes.geometry import (
     EaseValue,
     FadeGeometry,
     FindBonds,
+    GetGeometryAtoms,
     NucleicChi,
     NucleicDihedral,
     OKLabToColor,
@@ -44,7 +45,12 @@ from molecularnodes.nodes.geometry import (
     SetColor,
     SimulateElasticNetwork,
     StaggerValue,
+    StyleBallAndStick,
     StyleCartoon,
+    StyleRibbon,
+    StyleSpheres,
+    StyleSticks,
+    StyleSurface,
     SymmetryCubic,
     SymmetryCyclic,
     SymmetryDihedral,
@@ -716,6 +722,38 @@ def test_evaluate_on_atoms_bundle(fetch):
 
     gs = GeometrySet(mol.object)
     assert gs.pointcloud is None or len(gs.pointcloud.points) == 0
+
+
+@pytest.mark.parametrize(
+    "style",
+    [
+        StyleSpheres,
+        StyleCartoon,
+        StyleRibbon,
+        StyleSticks,
+        StyleBallAndStick,
+        StyleSurface,
+    ],
+)
+def test_style_keeps_atoms_in_bundle(fetch, style):
+    """
+    A style replaces the atoms with display geometry, but keeps the atoms in the
+    'MN/Atoms' bundle so later nodes (and other add-ons reading the evaluated
+    molecule) can still get them with `Get Geometry Atoms`. Previously the first
+    style applied to plain atoms dropped them, as `Evaluate on Atoms` only stored
+    the bundle in 'Bundle' mode.
+    """
+    mol = fetch("4ozs")
+    positions = mol.named_attribute("position")
+    res_id = mol.named_attribute("res_id")
+
+    with mol.tree.reset() as (atoms, join):
+        (atoms >> style() >> GetGeometryAtoms()).o.atoms >> join
+
+    np.testing.assert_allclose(
+        mol.named_attribute("position", evaluate=True), positions
+    )
+    np.testing.assert_array_equal(mol.named_attribute("res_id", evaluate=True), res_id)
 
 
 # Robert Penner's easing functions as listed on https://easings.net, ported

@@ -204,7 +204,12 @@ class StyleSpheres(AssetGeometryGroup):
             },
         )
         menu_switch >> geometry_1.input
-        EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
+        (
+            EvaluateOnAtoms(
+                geometry=atoms, closure=closure_zone.closure, keep_atoms=True
+            )
+            >> geometry
+        )
 
 
 ASSET = StyleSpheres

@@ -277,7 +277,12 @@ class StyleBallAndStick(AssetGeometryGroup):
             material=material,
         )
         set_material >> geometry_1.input
-        EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
+        (
+            EvaluateOnAtoms(
+                geometry=atoms, closure=closure_zone.closure, keep_atoms=True
+            )
+            >> geometry
+        )
 
 
 ASSET = StyleBallAndStick
