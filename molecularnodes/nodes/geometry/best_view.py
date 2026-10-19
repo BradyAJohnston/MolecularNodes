@@ -242,10 +242,12 @@ class BestView(AssetGeometryGroup):
         with g.Frame("Selected points only"):
             angstrom_to_world = AngstromToWorld(angstrom=offset)
             separate_geometry = g.SeparateGeometry.point(target, selection)
+            separate_components = g.SeparateComponents(separate_geometry.o.selection)
             join_geometry = g.JoinGeometry(
                 (
                     g.MeshToPoints(separate_geometry.o.selection),
-                    g.SeparateComponents(separate_geometry.o.selection).o.point_cloud,
+                    separate_components.o.point_cloud,
+                    g.InstancesToPoints(separate_components.o.instances),
                 )
             )
             domain_size = g.DomainSize(geometry=join_geometry, component="POINTCLOUD")

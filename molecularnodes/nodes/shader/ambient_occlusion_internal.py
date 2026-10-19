@@ -126,21 +126,16 @@ class AmbientOcclusionInternal(AssetShaderGroup):
             description="Emission of the occluded color, mixed towards transparent by the alpha of the `Color` attribute",
         )
 
-        mn_color = MNColor()
         color_ao = ColorAO(
-            color=mn_color.o.color,
+            color=MNColor().o.color,
             menu=menu,
             ao_space=ao_space,
             distance=distance,
             exponent=exponent,
         )
-        mix_shader = s.MixShader(
-            factor=mn_color.o.alpha,
-            shader=s.TransparentBSDF(),
-            shader_001=s.Emission(color_ao),
-        )
+        emission = s.Emission(color_ao)
 
-        mix_shader >> shader
+        emission >> shader
 
 
 ASSET = AmbientOcclusionInternal

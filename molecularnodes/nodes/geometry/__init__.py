@@ -74,6 +74,7 @@ from .curve_rotation import CurveRotation
 from .curve_transform import CurveTransform
 from .curve_vectors import CurveVectors
 from .curve_visualize import CurveVisualize
+from .decay import Decay
 from .density_style_iso_surface import DensityStyleISOSurface
 from .density_style_surface import DensityStyleSurface
 from .density_style_wire import DensityStyleWire
@@ -97,6 +98,7 @@ from .evaluate_while_planar import EvaluateWhilePlanar
 from .expand_boolean import ExpandBoolean
 from .fade_geometry import FadeGeometry
 from .fallback_boolean import FallbackBoolean
+from .fallback_camera import FallbackCamera
 from .fallback_color import FallbackColor
 from .fallback_float import FallbackFloat
 from .fallback_geometry import FallbackGeometry
@@ -347,6 +349,7 @@ __all__ = (
     "CurveVectors",
     "CurveVisualize",
     "DNAFromCurve",
+    "Decay",
     "DensityStyleISOSurface",
     "DensityStyleSurface",
     "DensityStyleWire",
@@ -369,6 +372,7 @@ __all__ = (
     "ExpandBoolean",
     "FadeGeometry",
     "FallbackBoolean",
+    "FallbackCamera",
     "FallbackColor",
     "FallbackFloat",
     "FallbackGeometry",
