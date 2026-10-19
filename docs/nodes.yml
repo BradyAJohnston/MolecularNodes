@@ -530,6 +530,26 @@ Centre on Selection:
     towards the calculation of the centroid, but all points are still moved
   videos:
     - https://imgur.com/xSOH4Tr
+Best View:
+  description: >-
+    Finds the direction from which the most selected points can be seen past the occluding meshes. Directions spread
+    over a sphere are scored by casting a ray from each selected point back towards the camera and counting the rays
+    that hit nothing, then refined on shrinking rings around the best. Ties go to the direction that shows the selection
+    broadest. Plug a style's output into `Occluders::Geometry` so the view is judged against what will render; point
+    clouds and instances do not block rays. `Transform::Matrix` is a camera transform at the centre of the selection,
+    looking down its local -Z along `Direction::Vector`. `Stickiness::Float` and `Previous Direction::Vector`
+    penalise turning away from a direction already on screen, which is always scored as a candidate.
+Orient to Best View:
+  description: >-
+    Rotates the geometry about the centre of the selection so the camera sees the selection from its `Best View::Node`.
+    The meshes of `Geometry::Geometry` are the occluders, so put it after the styles. The node follows the camera:
+    orbiting the camera turns the geometry with it, and `Factor::Float` blends from the original orientation.
+    Turn on `Smooth::Boolean` to ease towards each new best view instead of jumping, for trajectories or an animated
+    camera: every simulation step moves the translation and rotation separately by `a = lerp(a, b, 1 - 2^(-dt / Half Life))`,
+    so the remaining gap halves every `Half Life::Float` seconds at any frame rate. Smoothing only advances during playback.
+    `Stickiness::Float` makes the search favour views near the one on screen: each direction loses that share of the
+    selected atoms, scaled by (1 - cos θ) / 2 of its angle θ from the current view, so turning around must gain the
+    whole share. It works with or without smoothing and also only advances during playback.
 Separate First Point:
   description: Separate out the first point for each group in the `Group ID`
 Selected Instances:

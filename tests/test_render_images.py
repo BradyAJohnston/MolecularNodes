@@ -249,3 +249,25 @@ def test_render_faded_geometry(
 
     golden_canvas.look_at(mol)
     assert assembly_image_snapshot == _render(golden_canvas, tmp_path)
+
+
+@pytest.mark.parametrize(
+    "viewpoint",
+    ["front", "pca", "unobstructed", "visible_area", "raycast", "entropy"],
+)
+def test_render_viewpoint(fetch, golden_canvas, tmp_path, image_snapshot, viewpoint):
+    # retinoic acid sits inside a beta barrel: the front view sees it through
+    # a strand, the occlusion-aware viewpoints should look in through the
+    # opening; entropy picks a direction for the whole protein
+    mol = fetch("1cbs")
+    mol.add_style("cartoon", selection="protein", color=(0.6, 0.6, 0.65, 1.0))
+    mol.add_style("ball_and_stick", selection="resname REA")
+    ligand = mol.get_view("resname REA")
+    golden_canvas.look_at(
+        mol if viewpoint == "entropy" else ligand, viewpoint=viewpoint
+    )
+    # keep the chosen direction, frame the ligand and its pocket
+    golden_canvas.look_at(
+        mol.get_view("resname REA or (protein and around 6 resname REA)")
+    )
+    assert image_snapshot == _render(golden_canvas, tmp_path)

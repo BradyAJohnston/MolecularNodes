@@ -6,9 +6,13 @@ from enum import StrEnum
 from pathlib import Path
 from typing import Literal, Sequence, Tuple
 import bpy
+import numpy as np
 import numpy.typing as npt
+from mathutils import Vector
+from mathutils.bvhtree import BVHTree
 from tqdm.auto import tqdm
-from .. import assets
+from .. import assets, framing
+from .. import viewpoint as _viewpoint
 from ..assets.template import list_templates
 from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
@@ -786,6 +790,11 @@ class Canvas:
         target: MolecularEntity | bpy.types.Object | npt.ArrayLike,
         viewpoint: Viewpoint | str | Sequence[float] | None = None,
         margin: float = 0.05,
+        occluders: MolecularEntity
+        | bpy.types.Object
+        | npt.ArrayLike
+        | Sequence[MolecularEntity | bpy.types.Object]
+        | None = None,
     ) -> None:
         """
         Position the camera to look at and contain a target.
@@ -809,10 +818,22 @@ class Canvas:
             Viewing direction along a principal axis — one of
             {"default", "front", "back", "top", "bottom", "left", "right"} —
             or a custom XYZ Euler rotation as three angles in degrees.
+
+            Or a direction chosen from the target itself, one of
+            [](`molecularnodes.viewpoint.METHODS`) or ``"raycast"``:
+            ``"pca"`` looks along the target's thinnest axis, ``"unobstructed"``
+            and ``"visible_area"`` find the view in which the least of the
+            target is hidden behind ``occluders``, ``"raycast"`` does the same
+            against the rendered meshes, and ``"entropy"`` the view showing the
+            most of the target's parts at similar sizes. Experimental.
         margin : float, default 0.05
             Fraction of the frame to leave empty around the target. ``0`` fits
             the target exactly to the frame, ``0.1`` leaves a ten percent
             border, and a negative value crops in past its edges.
+        occluders : MolecularEntity | bpy.types.Object | array_like | list, optional
+            What could hide the target, for ``"unobstructed"``,
+            ``"visible_area"`` and ``"raycast"``. Defaults to every visible
+            object in the scene other than the camera.
 
         Examples
         --------
@@ -836,16 +857,59 @@ class Canvas:
         --------
         molecularnodes.scene.camera.Camera.frame_points : The underlying solve.
         """
-        # set the camera viewpoint if specified
-        if viewpoint is not None:
-            self.camera.set_viewpoint(viewpoint)
         if isinstance(target, MolecularEntity):
             target = target.object
         if isinstance(target, bpy.types.Object):
             points = blender_utils.evaluated_points(target)
         else:
             points = target
+        # set the camera viewpoint if specified
+        if isinstance(viewpoint, str) and viewpoint in (*_viewpoint.METHODS, "raycast"):
+            self.camera.set_basis(self._choose_view(points, viewpoint, occluders))
+        elif viewpoint is not None:
+            self.camera.set_viewpoint(viewpoint)
         self.camera.frame_points(points, margin=margin, scene=self.scene)
+
+    def _occluder_objects(self, occluders) -> list[bpy.types.Object]:
+        if occluders is None:
+            return [
+                obj
+                for obj in self.scene.objects
+                if obj.type in {"MESH", "POINTCLOUD", "CURVES"}
+                and obj.visible_get()
+                and not obj.hide_render
+            ]
+        if isinstance(occluders, (MolecularEntity, bpy.types.Object)):
+            occluders = [occluders]
+        return [o.object if isinstance(o, MolecularEntity) else o for o in occluders]
+
+    def _choose_view(self, points, method: str, occluders):
+        """The camera basis the given viewpoint method picks for ``points``."""
+        points = framing.as_points(points)
+        if method == "raycast":
+            trees = [
+                _WorldBVH(obj, bpy.context.evaluated_depsgraph_get())
+                for obj in self._occluder_objects(occluders)
+                if obj.type == "MESH"
+            ]
+            scorer = _viewpoint.ray_scorer(trees, points)
+            return _viewpoint.look_along(_viewpoint.search(scorer, resolution=128))
+        if method in ("unobstructed", "visible_area"):
+            if occluders is not None and not isinstance(
+                occluders, (MolecularEntity, bpy.types.Object, list, tuple)
+            ):
+                blockers = framing.as_points(occluders)
+            else:
+                objects = self._occluder_objects(occluders)
+                chunks = [blender_utils.evaluated_points(obj) for obj in objects]
+                chunks = [c for c in chunks if len(c)]
+                blockers = np.concatenate(chunks) if chunks else None
+            if blockers is not None:
+                # rendered geometry is far denser than the spheres standing in for it
+                blockers = _viewpoint.thin(blockers, _viewpoint.DEFAULT_RADIUS)
+                blockers = _viewpoint.without_near(blockers, points, 0.2)
+            return _viewpoint.best_view(points, method, occluders=blockers)
+        return _viewpoint.best_view(points, method)
 
     def clear(self) -> None:
         """
@@ -1286,3 +1350,17 @@ class Canvas:
         if Image is None:
             return None
         return Image(data=data, format="gif")
+
+
+class _WorldBVH:
+    """A BVH of an object's evaluated mesh that takes rays in world space."""
+
+    def __init__(self, obj: bpy.types.Object, depsgraph) -> None:
+        self.tree = BVHTree.FromObject(obj, depsgraph)
+        self.to_local = obj.matrix_world.inverted()
+        self.rotate = self.to_local.to_3x3()
+
+    def ray_cast(self, origin, direction):
+        return self.tree.ray_cast(
+            self.to_local @ Vector(origin), self.rotate @ Vector(direction)
+        )
