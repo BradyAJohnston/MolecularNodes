@@ -1,0 +1,26 @@
+---
+title: "Molecular tools"
+description: "Painted regions, callouts, local transparency, a live Cα ruler and a surface."
+video: videos/molecular_tools_styling.mp4
+order: 10
+---
+
+{{< video videos/molecular_tools_styling.mp4 >}}
+
+Residue colours and callouts on 2K39, the context faded through a transparent material,
+     a `com_distance` ruler between two Cα atoms that updates as the ensemble plays, and a
+     surface that follows the coordinates.
+
+     ProteinMotion's second scene, hydrogen-bond rulers and screened electrostatic contacts,
+     needs the planned `Hydrogen Bonds` and `Coulomb Contacts` nodes and is left as a comment.
+
+After ProteinMotion's [`molecular_tools.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/molecular_tools.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/molecular_tools.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/molecular_tools.py"}
+{{< include scripts/molecular_tools.py >}}
+```

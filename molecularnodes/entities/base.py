@@ -8,7 +8,7 @@ from databpy import (
     BlenderObject,
 )
 from nodebpy import geometry as g
-from nodebpy.builder import GeometrySocket, TreeBuilder
+from nodebpy.builder import BaseNode, GeometrySocket, TreeBuilder
 from ..blender import utils as blender_utils
 from ..material import add_all_materials
 from ..nodes._utils import custom_boolean_iswitch, custom_color_iswitch
@@ -143,6 +143,68 @@ class MolecularTree(TreeBuilder[GeometryNodeTree]):
         self.tree.interface.clear()
 
 
+class Styles:
+    """
+    The style nodes of an entity's tree, by position or by node name.
+
+    Each item is the node wrapped for nodebpy, so its inputs are reachable as
+    ``mol.styles[0].i.quality`` for animating or editing without rebuilding the
+    tree. A style node is any node with "Style" in its name, matching the
+    Styles list in the panel.
+    """
+
+    def __init__(self, entity: "MolecularEntity") -> None:
+        self._entity = entity
+
+    def _nodes(self) -> list[bpy.types.Node]:
+        return [
+            node
+            for node in self._entity.modifier_node_tree.nodes
+            if "Style" in node.name
+        ]
+
+    def _wrap(self, node: bpy.types.Node) -> g.Group:
+        # a nodebpy node is only made inside a tree context; the tree is
+        # activated directly rather than entered, so nothing is rearranged
+        builder = self._entity.tree
+        builder.activate_tree()
+        try:
+            wrapped = g.Group.__new__(g.Group)
+            BaseNode.__init__(wrapped, node=node)
+        finally:
+            builder.deactivate_tree()
+        return wrapped
+
+    def __len__(self) -> int:
+        return len(self._nodes())
+
+    def __iter__(self) -> Iterator[g.Group]:
+        return (self._wrap(node) for node in self._nodes())
+
+    def __getitem__(self, key: int | str) -> g.Group:
+        nodes = self._nodes()
+        if isinstance(key, int):
+            try:
+                return self._wrap(nodes[key])
+            except IndexError:
+                raise IndexError(
+                    f"{self._entity.name} has {len(nodes)} styles; no index {key}."
+                ) from None
+        for node in nodes:
+            if node.name == key:
+                return self._wrap(node)
+        for node in nodes:
+            if node.label == key:
+                return self._wrap(node)
+        raise KeyError(
+            f"{self._entity.name} has no style '{key}'. "
+            f"Styles: {[node.name for node in nodes]}."
+        )
+
+    def __repr__(self) -> str:
+        return f"<Styles {[node.name for node in self._nodes()]}>"
+
+
 class MolecularEntity(
     BlenderObject,
     metaclass=ABCMeta,
@@ -238,6 +300,20 @@ class MolecularEntity(
         mod.node_group = value
         value.is_modifier = True
         self._tree = None
+
+    @property
+    def styles(self) -> Styles:
+        """
+        The style nodes in this entity's tree, by index or by node name.
+
+        Gives the node [](`~mn.Molecule.add_style`) added without rebuilding
+        the tree, for tweaking an input or animating it from a timeline::
+
+            mol.add_style("cartoon")
+            mol.styles["Style Cartoon"].i.loop_radius.default_value = 0.6
+            t.tween(mol.styles[0].i.quality, 4)
+        """
+        return Styles(self)
 
     @property
     def modifier_node_tree(self) -> bpy.types.GeometryNodeTree:

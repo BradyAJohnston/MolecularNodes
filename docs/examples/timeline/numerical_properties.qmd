@@ -1,0 +1,26 @@
+---
+title: "Numerical properties"
+description: "B factors mapped to colour across cartoon, ball-and-stick and surface."
+video: videos/numerical_properties.mp4
+order: 2
+---
+
+{{< video videos/numerical_properties.mp4 >}}
+
+Ubiquitin's Cα B factors drive the colour of every representation through the
+     `Color Attribute Map` node, with the loop radius thickening as the structure turns.
+
+     ProteinMotion maps the same values onto per-residue cartoon thickness and reveals them
+     with a staggered delay, and draws a colour legend. Thickness by field, the staggered
+     reveal (`Animate Stagger`) and the legend annotation are not available yet.
+
+After ProteinMotion's [`numerical_properties.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/numerical_properties.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/numerical_properties.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/numerical_properties.py"}
+{{< include scripts/numerical_properties.py >}}
+```

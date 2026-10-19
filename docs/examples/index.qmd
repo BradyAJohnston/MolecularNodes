@@ -9,13 +9,17 @@ listing:
     grid-columns: 2
     filter-ui: true
     # template: template.ejs
+# listing cards reference local media as HTML, which Quarto does not follow
+# when copying resources, so declare the folder
+resources:
+  - images/*
 
 # css: styles.css
-
-
 ---
 
 Some examples of projects that have used Molecular Nodes in their production.
+For animations written as scripts with the `Canvas` timeline, see the
+[storyboard gallery](timeline/index.qmd).
 
 ::: {#listing-examples}
 :::

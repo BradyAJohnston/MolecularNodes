@@ -1,0 +1,26 @@
+---
+title: "NMR ensemble with RMSF"
+description: "The 2K39 ensemble aligned on its core and coloured by RMSF."
+video: videos/synchronized_plots.mp4
+order: 12
+---
+
+{{< video videos/synchronized_plots.mp4 >}}
+
+The ensemble is aligned in memory, the per-residue RMSF is computed with MDAnalysis and
+     stored as an attribute, and the cartoon reads it through `Color Attribute Map` while all
+     116 models play.
+
+     The contact map, sequence track, distance trace and legend that ProteinMotion draws beside
+     the structure are plot annotations Molecular Nodes does not have yet.
+
+After ProteinMotion's [`synchronized_plots.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/synchronized_plots.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/synchronized_plots.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/synchronized_plots.py"}
+{{< include scripts/synchronized_plots.py >}}
+```

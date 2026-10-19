@@ -1,0 +1,26 @@
+---
+title: "Electron density"
+description: "The PDBe map for 1UBQ with an animated contour level and a moving slice."
+video: videos/density_maps.mp4
+order: 14
+---
+
+{{< video videos/density_maps.mp4 >}}
+
+The 1UBQ map from PDBe, loaded as a density entity and styled with
+     `Density Style ISO Surface`. The timeline tweens the contour threshold, in sigma of the
+     map, and moves the node's built-in slice through the box.
+
+     ProteinMotion crops the map around the helix; without a crop node the whole unit cell is
+     shown, which is why the contour is busy.
+
+After ProteinMotion's [`density_maps.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/density_maps.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/density_maps.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/density_maps.py"}
+{{< include scripts/density_maps.py >}}
+```

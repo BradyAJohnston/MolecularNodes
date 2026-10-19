@@ -1,0 +1,26 @@
+---
+title: "Showcase"
+description: "Representations, a synthetic trajectory played from memory, and a three-copy gallery."
+video: videos/showcase_gallery.mp4
+order: 13
+---
+
+{{< video videos/showcase_gallery.mp4 >}}
+
+Ubiquitin turns through cartoon, ribbon and ball-and-stick, then plays a synthetic
+     sine-wave motion built as an in-memory MDAnalysis trajectory. A second storyboard places
+     three copies side by side, each spinning about its own centre.
+
+     ProteinMotion's deformation and morph back to the original coordinates need
+     `Morph To Attribute`.
+
+After ProteinMotion's [`showcase.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/showcase.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/showcase.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/showcase.py"}
+{{< include scripts/showcase.py >}}
+```
