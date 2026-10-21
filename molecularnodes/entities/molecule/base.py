@@ -734,6 +734,9 @@ class Molecule(MolecularEntity):
             source = "ts.positions"
         elif name in TIMESTEP_ATTRIBUTES:
             source = f"ts.{TIMESTEP_ATTRIBUTES[name][0]}"
+        elif ts_keys.get(name) in getattr(self.universe.trajectory, "_frame_data", {}):
+            # read from each model of a structure file (see ModelMemoryReader)
+            source = "per-model values from the file"
         elif name in ts_keys:
             source = f'ts.data["{ts_keys[name]}"]'
         elif name.startswith("ts_") and name not in getattr(self, "_att_names", ()):

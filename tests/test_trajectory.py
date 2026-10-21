@@ -936,6 +936,9 @@ class TestTrajectory:
         mol = mn.Molecule.load(path)
         assert mol.object.mn.frame_attributes == "position,occupancy,b_factor"
         self._assert_models_follow_frames(mol, b_factors, occupancies)
+        for name in ["b_factor", "occupancy"]:
+            info = mol.frame_attribute_info(name)
+            assert info["source"] == "per-model values from the file"
 
         mol.subframes = 1
         mol.interpolate = True
