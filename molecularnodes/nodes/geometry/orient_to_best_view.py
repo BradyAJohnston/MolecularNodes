@@ -308,7 +308,9 @@ class OrientToBestView(AssetGeometryGroup):
         _string_1 = g.String(
             "The camera looks down its -Z. Undoing the rotation applied so far gives the direction it currently sees the unrotated geometry from, which Stickiness favours. With Stickiness, its +Y undone the same way is the Up for the next view, so the view rolls as little as it can. World Up would flip the roll each time the held view crosses near Up."
         )
-        switch = (~smoothing).switch.matrix(transform_4.result, transform_3.output)
+        switch = (~smoothing | (stickiness > 0.0)).switch.matrix(
+            transform_4.result, transform_3.output
+        )
         geometry >> g.TransformGeometry(transform=switch, mode="Matrix") >> geometry_1
 
         switch >> transform
