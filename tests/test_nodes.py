@@ -1385,7 +1385,6 @@ def test_orient_to_best_view_faces_the_camera(fetch, factor):
             geometry=StyleCartoon(atoms),
             atoms=atoms,
             selection=NamedAttribute.boolean("is_ligand"),
-            active_camera=False,
             camera=camera,
             factor=factor,
         )
@@ -1440,9 +1439,8 @@ def test_orient_to_best_view_smooths_with_half_life(fetch):
                 geometry=cartoon,
                 atoms=atoms,
                 selection=NamedAttribute.boolean("is_ligand"),
-                active_camera=False,
                 camera=camera,
-                smooth=smooth,
+                smoothing=smooth,
                 half_life=frames_per_half_life * dt,
             ).o.transform
         probed = cartoon
@@ -1487,3 +1485,125 @@ def test_orient_to_best_view_smooths_with_half_life(fetch):
     first_gap_t = np.linalg.norm(start_t - target_t)
     assert first_gap_t > 0.1
     assert np.allclose(gaps_t, first_gap_t * halving, rtol=1e-3, atol=1e-4)
+
+
+def test_orient_to_best_view_moves_a_camera_instead(fetch):
+    mol = fetch("1cbs")
+    ligand = _flag_ligand(mol)
+    scene = bpy.context.scene
+
+    def camera(name):
+        obj = bpy.data.objects.new(name, bpy.data.cameras.new(name))
+        scene.collection.objects.link(obj)
+        return obj
+
+    # Orient reads `aim` and `shot` follows the result: one camera can't be both
+    aim, shot = camera("aim"), camera("shot")
+    aim.location = (0.5, -3.0, 1.0)
+    aim.rotation_euler = (1.2, 0.3, 2.5)
+    follow = shot.constraints.new("GEOMETRY_ATTRIBUTE")
+    follow.target = mol.object
+    follow.attribute_name = "camera_transform"
+    follow.data_type = "FLOAT4X4"
+    follow.apply_target_transform = True
+
+    with mol.tree.reset() as (atoms, join):
+        cartoon = StyleCartoon(atoms)
+        orient = OrientToBestView(
+            geometry=cartoon,
+            atoms=atoms,
+            selection=NamedAttribute.boolean("is_ligand"),
+            camera=aim,
+            move_geometry=False,
+        )
+        # the constraint samples index 0, so the marker vertex goes first
+        marker = (
+            MeshLine(count=1)
+            >> StoreNamedAttribute.point.matrix(
+                name="camera_transform", value=orient.o.camera_transform
+            )
+            >> StoreNamedAttribute.point.matrix(
+                name="transform", value=orient.o.transform
+            )
+        )
+        JoinGeometry([marker, orient.o.geometry]) >> join
+    bpy.context.view_layer.update()
+
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    mesh = mol.object.evaluated_get(depsgraph).data
+    oriented = np.array([v.co for v in mesh.vertices][1:])
+    # read row-major through the mesh, the way the constraint does
+    transform = np.array(mesh.attributes["transform"].data[0].value)
+    world, aim_world = np.array(mol.object.matrix_world), np.array(aim.matrix_world)
+    shot_world = np.array(shot.matrix_world)
+    forward = -shot_world[:3, 2] / np.linalg.norm(shot_world[:3, 2])
+    positions = mol.named_attribute("position")
+    clear = _clear_atoms(mol.object, positions[ligand], forward)
+    clear_from_aim = _clear_atoms(mol.object, positions[ligand], -aim_world[:3, 2])
+
+    # the same tree without Orient, to compare the geometry against
+    with mol.tree.reset() as (atoms, join):
+        JoinGeometry([MeshLine(count=1), StyleCartoon(atoms)]) >> join
+    bpy.context.view_layer.update()
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    vertices = mol.object.evaluated_get(depsgraph).data.vertices
+    unmoved = np.array([v.co for v in vertices][1:])
+    # removing the cameras re-evaluates the tree, so only after measuring
+    bpy.data.objects.remove(aim)
+    bpy.data.objects.remove(shot)
+
+    assert not np.allclose(transform, np.eye(4), atol=1e-3)
+    assert np.allclose(oriented, unmoved, atol=1e-5)
+    # moving the camera by the inverse of Transform gives the view that moving
+    # the geometry by Transform would
+    expected = world @ np.linalg.inv(transform) @ np.linalg.inv(world) @ aim_world
+    assert np.allclose(shot_world, expected, atol=1e-4)
+    assert clear_from_aim < ligand.sum()
+    assert clear == ligand.sum()
+
+
+def test_best_view_hysteresis_holds_the_previous_direction(fetch):
+    mol = fetch("1cbs")
+    ligand = _flag_ligand(mol)
+
+    def best_view(previous, hysteresis):
+        with mol.tree.reset() as (atoms, join):
+            cartoon = StyleCartoon(atoms)
+            view = BestView(
+                target=atoms,
+                selection=NamedAttribute.boolean("is_ligand"),
+                occluders=cartoon,
+                previous_direction=tuple(previous),
+                hysteresis=hysteresis,
+            )
+            (
+                cartoon
+                >> StoreNamedAttribute.point.vector(
+                    name="direction", value=view.o.direction
+                )
+                >> StoreNamedAttribute.point.integer(
+                    name="visible", value=view.o.visible
+                )
+                >> join
+            )
+        return (
+            mol.named_attribute("direction", evaluate=True)[0],
+            int(mol.named_attribute("visible", evaluate=True)[0]),
+        )
+
+    best, best_visible = best_view((0.0, 0.0, 0.0), 0.0)
+    # a previous direction 20° away from the best one, which sees fewer atoms
+    axis = np.cross(best, (0.0, 0.0, 1.0))
+    axis /= np.linalg.norm(axis)
+    angle = np.radians(20)
+    previous = best * np.cos(angle) + np.cross(axis, best) * np.sin(angle)
+    _, previous_visible = best_view(previous, 1.0)
+    assert previous_visible < best_visible
+    gap = (best_visible - previous_visible) / ligand.sum()
+
+    # leaves the previous direction only when the gain is more than the margin
+    moved, _ = best_view(previous, gap * 0.5)
+    held, held_visible = best_view(previous, gap * 1.5)
+    assert np.degrees(np.arccos(np.clip(moved @ best, -1, 1))) < 1.0
+    assert np.allclose(held, previous, atol=1e-5)
+    assert held_visible == previous_visible

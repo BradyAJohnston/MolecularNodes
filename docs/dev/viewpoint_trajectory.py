@@ -6,8 +6,8 @@ Render Orient to Best View over the AdK open-to-closed transition (MDAnalysisDat
 
 Renders the same playback with a fixed front view and with Orient to Best View
 under the settings in VARIANTS: jumping to each frame's best view, eased with a
-half life, held near the current view with stickiness, or both, and a sweep of
-stickiness levels. The target is the active-site residues, which the LID and NMP
+half life, held near the current view with stickiness and hysteresis, or
+combinations, and a sweep of stickiness levels. The target is the active-site residues, which the LID and NMP
 domains close over. The protein is drawn as a cartoon, as a surface, or as a
 cartoon with the side chains near the site, and that drawing is what can block
 the view.
@@ -86,6 +86,24 @@ LABELS = {
     },
 }
 # each grid tiles its variants, in order, into OUT_DIR/<grid>.mp4
+VARIANTS.update(
+    {
+        "hyst_0.1": dict(orient=True, hysteresis=0.1),
+        "sticky_hyst_0.05": dict(orient=True, stickiness=0.25, hysteresis=0.05),
+        "sticky_hyst_0.1": dict(orient=True, stickiness=0.25, hysteresis=0.1),
+        "sticky_smooth_hyst": dict(
+            orient=True, smooth=True, half_life=0.5, stickiness=0.25, hysteresis=0.05
+        ),
+    }
+)
+LABELS.update(
+    {
+        "hyst_0.1": "orient, hysteresis 0.1",
+        "sticky_hyst_0.05": "stickiness 0.25, hysteresis 0.05",
+        "sticky_hyst_0.1": "stickiness 0.25, hysteresis 0.1",
+        "sticky_smooth_hyst": "stickiness 0.25, hyst. 0.05, half life 0.5 s",
+    }
+)
 GRIDS = {
     "side_by_side": ["fixed", "jump", "smooth", "smooth_1s", "sticky", "sticky_smooth"],
     "stickiness": [
@@ -95,6 +113,14 @@ GRIDS = {
         "sticky",
         "sticky_0.5",
         "sticky_1.0",
+    ],
+    "hysteresis": [
+        "sticky",
+        "sticky_hyst_0.05",
+        "sticky_hyst_0.1",
+        "hyst_0.1",
+        "sticky_smooth",
+        "sticky_smooth_hyst",
     ],
     "styles": [
         "fixed",
@@ -120,7 +146,15 @@ def turn(a, b):
     return float(np.degrees(np.arccos(np.clip((np.trace(r) - 1) / 2, -1, 1))))
 
 
-def build(mol, orient, smooth=False, half_life=0.5, stickiness=0.0, style="cartoon"):
+def build(
+    mol,
+    orient,
+    smooth=False,
+    half_life=0.5,
+    stickiness=0.0,
+    hysteresis=0.0,
+    style="cartoon",
+):
     material = mn.material.Default().material
     with mol.tree.reset() as (atoms, join):
         is_site = g.NamedAttribute.boolean("is_site")
@@ -151,9 +185,10 @@ def build(mol, orient, smooth=False, half_life=0.5, stickiness=0.0, style="carto
                 geometry=styled,
                 atoms=atoms,
                 selection=g.NamedAttribute.boolean("is_site"),
-                smooth=smooth,
+                smoothing=smooth,
                 half_life=half_life,
                 stickiness=stickiness,
+                hysteresis=hysteresis,
             )
             styled = node.o.geometry
             moved = atoms >> g.TransformGeometry(

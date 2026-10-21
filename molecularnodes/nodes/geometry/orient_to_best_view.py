@@ -54,6 +54,14 @@ class StickyTransform(CustomGeometryGroup):
             max_value=1.0,
             subtype="FACTOR",
         )
+        hysteresis = tree.inputs.float(
+            "Hysteresis",
+            0.0,
+            description="Hold the view shown until a new best view sees this share of the selected atoms more. Works with or without Smooth, and only advances during playback",
+            min_value=0.0,
+            max_value=1.0,
+            subtype="FACTOR",
+        )
         delta_time = tree.inputs.float("Delta Time", 0.0)
         factor = tree.inputs.float(
             "Factor",
@@ -77,7 +85,7 @@ class StickyTransform(CustomGeometryGroup):
         switch = smooth.switch.float(
             1.0, Decay(delta_time=delta_time, half_life=half_life)
         )
-        switch_1 = (stickiness > 0.0).switch.vector(
+        switch_1 = ((stickiness > 0.0) | (hysteresis > 0.0)).switch.vector(
             (0.0, 0.0, 1.0),
             g.Vector((0.0, 1.0, 0.0))
             .o.vector.rotate(camera_transform)
@@ -92,6 +100,7 @@ class StickyTransform(CustomGeometryGroup):
             previous_direction=g.Vector((0.0, 0.0, -1.0))
             .o.vector.rotate(camera_transform)
             .rotate(invert_rotation),
+            hysteresis=hysteresis,
         )
         mix = factor.mix.rotation(
             g.Rotation((0.0, 0.0, 0.0)),
@@ -123,12 +132,16 @@ class OrientToBestView(AssetGeometryGroup):
         Object to orient towards
     factor : InputFloat
         Blend from the original orientation to the best view
+    move_geometry : InputBoolean
+        Rotate the geometry to the best view. Turn off to leave it in place and move a camera with Camera Transform instead
     smoothing : InputBoolean
         Ease towards each new best view over the simulation instead of jumping. Only advances during playback
     half_life : InputFloat
         Seconds for the remaining gap to the best view to halve
     stickiness : InputFloat
         Favour best views near the one shown: the share of the selected atoms a turn of 180° must gain to be taken. Works with or without Smooth, and only advances during playback
+    hysteresis : InputFloat
+        Hold the view shown until a new best view sees this share of the selected atoms more. Works with or without Smooth, and only advances during playback
 
     Inputs
     ------
@@ -142,12 +155,16 @@ class OrientToBestView(AssetGeometryGroup):
         Object to orient towards
     i.factor : FloatSocket
         Blend from the original orientation to the best view
+    i.move_geometry : BooleanSocket
+        Rotate the geometry to the best view. Turn off to leave it in place and move a camera with Camera Transform instead
     i.smoothing : BooleanSocket
         Ease towards each new best view over the simulation instead of jumping. Only advances during playback
     i.half_life : FloatSocket
         Seconds for the remaining gap to the best view to halve
     i.stickiness : FloatSocket
         Favour best views near the one shown: the share of the selected atoms a turn of 180° must gain to be taken. Works with or without Smooth, and only advances during playback
+    i.hysteresis : FloatSocket
+        Hold the view shown until a new best view sees this share of the selected atoms more. Works with or without Smooth, and only advances during playback
 
     Outputs
     -------
@@ -155,6 +172,8 @@ class OrientToBestView(AssetGeometryGroup):
         Geometry
     o.transform : MatrixSocket
         Transform applied to the geometry
+    o.camera_transform : MatrixSocket
+        Where the camera goes, relative to this object, to see the unmoved geometry from the best view. Store it on a point and copy it to another camera with a Geometry Attribute constraint
     """
 
     _name = "Orient to Best View"
@@ -176,18 +195,24 @@ class OrientToBestView(AssetGeometryGroup):
         """Object to orient towards"""
         factor: FloatSocket
         """Blend from the original orientation to the best view"""
+        move_geometry: BooleanSocket
+        """Rotate the geometry to the best view. Turn off to leave it in place and move a camera with Camera Transform instead"""
         smoothing: BooleanSocket
         """Ease towards each new best view over the simulation instead of jumping. Only advances during playback"""
         half_life: FloatSocket
         """Seconds for the remaining gap to the best view to halve"""
         stickiness: FloatSocket
         """Favour best views near the one shown: the share of the selected atoms a turn of 180° must gain to be taken. Works with or without Smooth, and only advances during playback"""
+        hysteresis: FloatSocket
+        """Hold the view shown until a new best view sees this share of the selected atoms more. Works with or without Smooth, and only advances during playback"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
         """Geometry"""
         transform: MatrixSocket
         """Transform applied to the geometry"""
+        camera_transform: MatrixSocket
+        """Where the camera goes, relative to this object, to see the unmoved geometry from the best view. Store it on a point and copy it to another camera with a Geometry Attribute constraint"""
 
     if TYPE_CHECKING:
 
@@ -203,9 +228,11 @@ class OrientToBestView(AssetGeometryGroup):
         selection: InputBoolean = True,
         camera: InputObject = None,
         factor: InputFloat = 1.0,
+        move_geometry: InputBoolean = True,
         smoothing: InputBoolean = False,
         half_life: InputFloat = 0.25,
         stickiness: InputFloat = 0.0,
+        hysteresis: InputFloat = 0.0,
     ):
         super().__init__(
             **{
@@ -214,9 +241,11 @@ class OrientToBestView(AssetGeometryGroup):
                 "Selection": selection,
                 "Camera": camera,
                 "Factor": factor,
+                "Move Geometry": move_geometry,
                 "Smoothing": smoothing,
                 "Half Life": half_life,
                 "Stickiness": stickiness,
+                "Hysteresis": hysteresis,
             }
         )
 
@@ -245,6 +274,11 @@ class OrientToBestView(AssetGeometryGroup):
             max_value=1.0,
             subtype="FACTOR",
         )
+        move_geometry = tree.inputs.boolean(
+            "Move Geometry",
+            True,
+            description="Rotate the geometry to the best view. Turn off to leave it in place and move a camera with Camera Transform instead",
+        )
         with tree.inputs.panel("Smoothing", default_closed=True):
             smoothing = tree.inputs.boolean(
                 "Smoothing",
@@ -267,15 +301,28 @@ class OrientToBestView(AssetGeometryGroup):
                 max_value=1.0,
                 subtype="FACTOR",
             )
+            hysteresis = tree.inputs.float(
+                "Hysteresis",
+                0.0,
+                description="Hold the view shown until a new best view sees this share of the selected atoms more. Works with or without Smooth, and only advances during playback",
+                min_value=0.0,
+                max_value=1.0,
+                subtype="FACTOR",
+            )
         geometry_1 = tree.outputs.geometry("Geometry")
         transform = tree.outputs.matrix(
             "Transform", description="Transform applied to the geometry"
+        )
+        camera_transform = tree.outputs.matrix(
+            "Camera Transform",
+            description="Where the camera goes, relative to this object, to see the unmoved geometry from the best view. Store it on a point and copy it to another camera with a Geometry Attribute constraint",
         )
 
         closure_zone = g.ClosureZone()
         transform_1 = closure_zone.inputs.matrix("Transform")
         delta_time = closure_zone.inputs.float("Delta Time")
         transform_2 = closure_zone.outputs.matrix("Transform")
+        fallback_camera = FallbackCamera(camera=camera)
         sticky_transform = StickyTransform(
             Smooth=smoothing,
             Target=atoms,
@@ -283,12 +330,10 @@ class OrientToBestView(AssetGeometryGroup):
             Occluders=geometry,
             Transform=transform_1.output,
             Stickiness=stickiness,
+            Hysteresis=hysteresis,
             **{"Delta Time": delta_time.output},
             Factor=factor,
-            **{
-                "Half Life": half_life,
-                "Camera Transform": FallbackCamera(camera=camera).o.transform,
-            },
+            **{"Half Life": half_life, "Camera Transform": fallback_camera.o.transform},
         )
         sticky_transform >> transform_2.input
         evaluate_closure = g.EvaluateClosure(closure_zone.closure)
@@ -306,14 +351,27 @@ class OrientToBestView(AssetGeometryGroup):
             "Each simulation step moves a = lerp(a, b, 1 - 2^(-dt / Half Life)) towards the target, so the gap halves every Half Life seconds whatever the frame rate. Translation and rotation are mixed separately, the rotation by slerp. Without Smooth each step lands on the target. The first frame starts on the target: outside the simulation the step is given a Delta Time long enough for the gap to close."
         )
         _string_1 = g.String(
-            "The camera looks down its -Z. Undoing the rotation applied so far gives the direction it currently sees the unrotated geometry from, which Stickiness favours. With Stickiness, its +Y undone the same way is the Up for the next view, so the view rolls as little as it can. World Up would flip the roll each time the held view crosses near Up."
+            "The camera looks down its -Z. Undoing the rotation applied so far gives the direction it currently sees the unrotated geometry from, which Stickiness and Hysteresis favour. With either, its +Y undone the same way is the Up for the next view, so the view rolls as little as it can. World Up would flip the roll each time the held view crosses near Up."
         )
-        switch = (~smoothing | (stickiness > 0.0)).switch.matrix(
-            transform_4.result, transform_3.output
+        _string_2 = g.String(
+            "Moving the geometry by Transform in front of a fixed camera looks the same as moving the camera by the inverse of Transform around fixed geometry. A Geometry Attribute constraint on a camera can read Camera Transform from a point of this object's geometry; that camera must not also be the Camera input, or the two depend on each other."
         )
-        geometry >> g.TransformGeometry(transform=switch, mode="Matrix") >> geometry_1
+        switch = (smoothing | (stickiness > 0.0) | (hysteresis > 0.0)).switch.matrix(
+            transform_3.output, transform_4.result
+        )
+        multiply_matrices = g.MultiplyMatrices(
+            matrix=switch.invert(), matrix_001=fallback_camera.o.transform
+        )
+        (
+            move_geometry.switch.geometry(
+                geometry,
+                g.TransformGeometry(geometry=geometry, transform=switch, mode="Matrix"),
+            )
+            >> geometry_1
+        )
 
         switch >> transform
+        multiply_matrices >> camera_transform
 
 
 ASSET = OrientToBestView

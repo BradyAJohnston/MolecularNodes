@@ -47,6 +47,8 @@ class BestView(AssetGeometryGroup):
         Share of the selected points a turn of 180° away from Previous Direction must gain to be worth it. Shorter turns cost proportionally less
     previous_direction : InputVector
         Direction currently looked along, which Stickiness favours and which is always scored. Zero for none
+    hysteresis : InputFloat
+        Share of the selected points the best view must see beyond Previous Direction before leaving it
     directions : InputInteger
         Directions spread evenly over the sphere in the first pass
     refine : InputInteger
@@ -68,6 +70,8 @@ class BestView(AssetGeometryGroup):
         Share of the selected points a turn of 180° away from Previous Direction must gain to be worth it. Shorter turns cost proportionally less
     i.previous_direction : VectorSocket
         Direction currently looked along, which Stickiness favours and which is always scored. Zero for none
+    i.hysteresis : FloatSocket
+        Share of the selected points the best view must see beyond Previous Direction before leaving it
     i.directions : IntegerSocket
         Directions spread evenly over the sphere in the first pass
     i.refine : IntegerSocket
@@ -112,6 +116,8 @@ class BestView(AssetGeometryGroup):
         """Share of the selected points a turn of 180° away from Previous Direction must gain to be worth it. Shorter turns cost proportionally less"""
         previous_direction: VectorSocket
         """Direction currently looked along, which Stickiness favours and which is always scored. Zero for none"""
+        hysteresis: FloatSocket
+        """Share of the selected points the best view must see beyond Previous Direction before leaving it"""
         directions: IntegerSocket
         """Directions spread evenly over the sphere in the first pass"""
         refine: IntegerSocket
@@ -148,6 +154,7 @@ class BestView(AssetGeometryGroup):
         up: InputVector = None,
         stickiness: InputFloat = 0.0,
         previous_direction: InputVector = None,
+        hysteresis: InputFloat = 0.0,
         directions: InputInteger = 256,
         refine: InputInteger = 3,
         offset: InputFloat = 1.7,
@@ -160,6 +167,7 @@ class BestView(AssetGeometryGroup):
                 "Up": up,
                 "Stickiness": stickiness,
                 "Previous Direction": previous_direction,
+                "Hysteresis": hysteresis,
                 "Directions": directions,
                 "Refine": refine,
                 "Offset": offset,
@@ -199,6 +207,14 @@ class BestView(AssetGeometryGroup):
             "Previous Direction",
             (0.0, 0.0, 0.0),
             description="Direction currently looked along, which Stickiness favours and which is always scored. Zero for none",
+        )
+        hysteresis = tree.inputs.float(
+            "Hysteresis",
+            0.0,
+            description="Share of the selected points the best view must see beyond Previous Direction before leaving it",
+            min_value=0.0,
+            max_value=1.0,
+            subtype="FACTOR",
         )
         with tree.inputs.panel("Search", default_closed=True):
             directions = tree.inputs.integer(
@@ -340,17 +356,41 @@ class BestView(AssetGeometryGroup):
                 )
                 >> visible_1.next
             )
+        with g.Frame("Hold the previous direction"):
+            _string_2 = g.String(
+                "Scores Previous Direction on its own and keeps it unless the best direction's score beats it by Hysteresis of the selected points, so small differences in the search do not move the view."
+            )
+            score_view_directions_2 = ScoreViewDirections(
+                directions=g.Points(position=previous_direction.normalize()),
+                target=points,
+                occluders=occluders,
+                offset=angstrom_to_world,
+                previous=previous_direction,
+                stickiness=stickiness,
+            )
+            boolean_math = (previous_direction.length() > 0.5) & (
+                score.result - score_view_directions_2.o.score
+                < hysteresis * domain_size.o.point_count
+            )
+            (
+                boolean_math.switch.integer(
+                    visible_1.result, score_view_directions_2.o.visible
+                )
+                >> visible
+            )
+            switch_1 = boolean_math.switch.vector(
+                direction_1.result, previous_direction.normalize()
+            )
         with g.Frame("Camera looking along the direction"):
             sample_index = g.SampleIndex.point.vector(
                 points, g.Position().o.position.point.mean()
             )
             vector_math_3 = up.normalize()
-            switch_1 = (
-                abs(direction_1.result.dot(vector_math_3)) > 0.95
-            ).switch.vector(vector_math_3, (0.0, 1.0, 0.0))
             axes_to_rotation = g.AxesToRotation(
-                primary_axis=direction_1.result * -1.0,
-                secondary_axis=switch_1,
+                primary_axis=switch_1 * -1.0,
+                secondary_axis=(abs(switch_1.dot(vector_math_3)) > 0.95).switch.vector(
+                    vector_math_3, (0.0, 1.0, 0.0)
+                ),
                 secondary="Y",
             )
             combine_transform = g.CombineTransform(
@@ -359,9 +399,8 @@ class BestView(AssetGeometryGroup):
 
         combine_transform >> transform
         axes_to_rotation >> rotation
-        direction_1.result >> direction
+        switch_1 >> direction
         sample_index >> centre
-        visible_1.result >> visible
         domain_size >> count
 
 

@@ -233,7 +233,10 @@ class AmbientOcclusion(PresetMaterial):
     Colors shaded only by ambient occlusion.
 
     An emission shader that ignores scene lighting entirely, so it is cheap to
-    render and looks similar in Cycles and EEVEE.
+    render and looks similar in Cycles and EEVEE. It is always opaque and
+    ignores the alpha of the `Color` attribute, so it does not fade with
+    `Fade Geometry`: ambient occlusion does not work alongside a Transparent
+    BSDF, so the material can have one or the other, not both.
 
     Parameters
     ----------
