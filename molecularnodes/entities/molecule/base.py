@@ -876,13 +876,16 @@ class Molecule(MolecularEntity):
         Parameters
         ----------
         code : str
-            The database accession code (e.g. a PDB id).
+            The database accession code (e.g. a PDB id), or for ``"pubchem"`` a
+            compound CID (e.g. ``"2244"``) or name (e.g. ``"aspirin"``).
         format : str, optional
-            File format to download, by default ``".bcif"``.
+            File format to download, by default ``".bcif"``. Ignored for
+            ``"pubchem"``, which always downloads the 3D conformer as SDF.
         cache : Path | str | None, optional
             Directory to cache downloads in.
         database : str, optional
-            The database to fetch from, by default ``"rcsb"``.
+            The database to fetch from: ``"rcsb"`` (default), ``"alphafold"`` or
+            ``"pubchem"``.
 
         Returns
         -------

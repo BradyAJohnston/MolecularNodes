@@ -134,6 +134,11 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                 "AlphaFold",
                 "The AlphaFold computational structure database",
             ),
+            (
+                "pubchem",
+                "PubChem",
+                "3D conformers of small molecules from PubChem, by CID or name",
+            ),
         ),
     )
     code: StringProperty(  # type: ignore
@@ -250,7 +255,7 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                 row = layout.row().split(factor=0.7)
                 row.prop(self, "code")
                 # file format only applies to wwPDB downloads; others pick their own
-                if self.method == "fetch":
+                if self.method == "fetch" and self.database != "pubchem":
                     row.prop(self, "file_format", text="")
                 if "," in self.code:
                     layout.prop(self, "share_node_group")
@@ -406,7 +411,7 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                     message = f"Downloaded {len(mols)} structures: {', '.join(codes)}"
         except FileDownloadPDBError as e:
             self.report({"ERROR"}, str(e))
-            if self.file_format == "pdb":
+            if self.file_format == "pdb" and self.database != "pubchem":
                 self.report(
                     {"ERROR"},
                     "There may not be a `.pdb` formatted file available - try a different download format.",

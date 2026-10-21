@@ -37,6 +37,23 @@ def test_op_fetch(fetch, snapshot_custom: NumpySnapshotExtension, code):
         np.testing.assert_allclose(test1.position, test2.position)
 
 
+def test_op_fetch_pubchem():
+    # tests/data/2244.sdf is the cached PubChem download, so no network is used;
+    # file_format is ignored for PubChem
+    with ObjectTracker() as o:
+        res = bpy.ops.mn.import_molecule(
+            code="2244",
+            database="pubchem",
+            file_format="bcif",
+            style="ball_and_stick",
+            cache_dir=str(data_dir),
+        )
+        mol = bpy.context.scene.MNSession.match(o.latest())
+    assert res == {"FINISHED"}
+    assert mol.props.database == "pubchem"
+    assert len(mol) == 21
+
+
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("file_format", ["bcif", "cif", "pdb"])
 def test_op_local(snapshot_custom, code, file_format):

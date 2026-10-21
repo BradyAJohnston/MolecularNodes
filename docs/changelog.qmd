@@ -15,6 +15,7 @@ title: "Changelog"
 - `Best View` and `Orient to Best View` nodes under Geometry: find the direction from which the most selected atoms can be seen past a style's meshes, and rotate the geometry so the camera looks from there. For trajectories, views can ease with a half-life, favour the view on screen (`Stickiness`) and hold it until a better one gains a margin (`Hysteresis`). `Camera Transform` gives the equivalent camera pose, to move a camera with a Geometry Attribute constraint and leave the geometry in place. [#1171](https://github.com/BradyAJohnston/MolecularNodes/issues/1171)
 - `Canvas.look_at(viewpoint=...)` accepts `"pca"`, `"unobstructed"`, `"visible_area"`, `"raycast"` and `"entropy"` to choose the camera direction from the target, with `occluders` for what could hide it. Experimental. [#1171](https://github.com/BradyAJohnston/MolecularNodes/issues/1171)
 - `Symmetry Helical` takes an `Axial Symmetry` input for filaments with Cn symmetry about the helix axis, such as amyloid built from two protofilaments.
+- Fetch small molecules from PubChem by CID or name: `mn.Molecule.fetch("aspirin", database="pubchem")` downloads the 3D conformer as SDF, and the import panel has a `Fetch from PubChem` button.
 
 ## Changed
 - The `Ambient Occlusion` material is always opaque and no longer fades with `Fade Geometry`, because ambient occlusion does not work alongside a Transparent BSDF. Its default exponent is now 1.5, for slightly lighter crevices.

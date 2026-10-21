@@ -2,6 +2,7 @@ import gzip
 import io
 import os
 from pathlib import Path
+from urllib.parse import quote
 import requests
 from biotite.database import afdb
 
@@ -60,10 +61,11 @@ class StructureDownloader:
             and new format codes with 'pdb_' prefix (e.g., 'pdb_00009bdt').
         format : str, optional
             The format of the file. Must be one of ['cif', 'pdb', 'bcif'].
-            Defaults to "cif".
+            Defaults to "cif". Ignored for 'pubchem', which always downloads SDF.
         database : str, optional
-            The database to fetch the file from. Must be one of ['rcsb', 'pdb', 'wwpdb', 'alphafold'].
-            Defaults to 'rcsb'.
+            The database to fetch the file from. Must be one of ['rcsb', 'pdb', 'wwpdb', 'alphafold', 'pubchem'].
+            Defaults to 'rcsb'. For 'pubchem' the code is a compound CID (e.g. '2244')
+            or a compound name (e.g. 'aspirin'), and the 3D conformer is downloaded.
 
         Returns
         -------
@@ -89,6 +91,8 @@ class StructureDownloader:
         """
         code = code.strip()
         format = format.strip(".")
+        if database == "pubchem":
+            return self._download_pubchem(code)
         supported_formats = ["cif", "pdb", "bcif"]
         if format not in supported_formats:
             raise ValueError(f"File format '{format}' not in: {supported_formats=}")
@@ -138,6 +142,12 @@ class StructureDownloader:
         else:
             content = r.text
 
+        return self._store(content, file, _is_binary)
+
+    def _store(
+        self, content: str | bytes, file: Path | None, _is_binary: bool
+    ) -> Path | io.BytesIO | io.StringIO:
+        """Write downloaded content to the cache file, or wrap it in memory."""
         if file:
             mode = "wb+" if _is_binary else "w+"
             # write then rename, so another process reading the cache (such as a
@@ -162,6 +172,54 @@ class StructureDownloader:
                 file = io.StringIO(content)
 
         return file
+
+    def _download_pubchem(self, code: str) -> Path | io.StringIO:
+        """Download the 3D conformer of a PubChem compound as SDF.
+
+        Parameters
+        ----------
+        code : str
+            A PubChem compound CID (all digits, e.g. '2244') or a compound name
+            (e.g. 'aspirin').
+
+        Returns
+        -------
+        Path or io.StringIO
+            The cached `.sdf` file, or the SDF text when caching is disabled.
+
+        Raises
+        ------
+        FileDownloadPDBError
+            If the compound is not found, or PubChem has no 3D conformer for it.
+        """
+        namespace = "cid" if code.isdigit() else "name"
+        file = self.cache / f"{code}.sdf" if self.cache else None
+        if file and file.exists():
+            return file
+
+        url = (
+            "https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/"
+            f"{namespace}/{quote(code, safe='')}/record/SDF?record_type=3d"
+        )
+        r = requests.get(url, timeout=60)
+        if r.status_code == 404:
+            if "No CID found" in r.text:
+                raise FileDownloadPDBError(
+                    f"No PubChem compound found with the name '{code}'."
+                )
+            # PubChem returns the same 404 for a CID with no 3D record and for a
+            # CID that does not exist
+            raise FileDownloadPDBError(
+                f"PubChem has no 3D conformer for '{code}', or no such compound. "
+                "PubChem only computes 3D conformers for some compounds (not for "
+                "salts, mixtures or very large or flexible molecules)."
+            )
+        try:
+            r.raise_for_status()
+        except requests.HTTPError as e:
+            raise FileDownloadPDBError(f"Error downloading from PubChem: {e}")
+
+        return self._store(r.text, file, _is_binary=False)
 
     def _url(self, code: str, format: str, database: str = "rcsb") -> str:
         """Get the URL for downloading the given file from a particular database.
