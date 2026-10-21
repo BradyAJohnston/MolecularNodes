@@ -211,8 +211,9 @@ class StructureDownloader:
             # CID that does not exist
             raise FileDownloadPDBError(
                 f"PubChem has no 3D conformer for '{code}', or no such compound. "
-                "PubChem only computes 3D conformers for some compounds (not for "
-                "salts, mixtures or very large or flexible molecules)."
+                "PubChem only computes 3D conformers for single molecules (not salts "
+                "or mixtures) of at most 50 heavy atoms and 15 rotatable bonds, made "
+                "only of H, C, N, O, F, Si, P, S, Cl, Br and I (so no metals)."
             )
         try:
             r.raise_for_status()

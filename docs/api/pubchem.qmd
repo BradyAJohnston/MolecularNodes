@@ -58,10 +58,14 @@ canvas.snapshot()
 
 ## Compounds Without a 3D Conformer
 
-PubChem only computes 3D conformers for some compounds: not for salts, mixtures, many
-metal complexes, or very large or flexible molecules. For those, the fetch raises an error
-rather than falling back to a flat 2D structure. Heme is one of them, while its
-metal-free ring, protoporphyrin IX, has a 3D conformer.
+PubChem only computes 3D conformers for compounds that are a single molecule (not a
+salt or mixture), have at most 50 non-hydrogen atoms and 15 rotatable bonds, contain
+only H, C, N, O, F, Si, P, S, Cl, Br and I, use only atom types the MMFF94s force field
+recognises, and have at most five undefined stereocentres
+([Kim et al. 2013](https://doi.org/10.1186/1758-2946-5-1)). For any other compound
+the fetch raises an error rather than falling back to a flat 2D structure. Heme is one
+of them because of its iron, while its metal-free ring, protoporphyrin IX, has a 3D
+conformer.
 
 ```{python}
 from molecularnodes.download import FileDownloadPDBError
