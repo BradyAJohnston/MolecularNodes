@@ -5,12 +5,14 @@ synchronization, and attribute metadata collection.
 """
 
 import logging
+import struct
 from collections import OrderedDict
 from typing import Callable, Optional
 import databpy as db
 import numpy as np
 import numpy.typing as npt
 from MDAnalysis import AtomGroup
+from MDAnalysis.coordinates.TRR import TRRReader
 from ...utils import (
     correct_periodic_positions,
     fraction,
@@ -161,6 +163,38 @@ TIMESTEP_ATTRIBUTES = {
 }
 
 
+def trr_frames_with_data(reader: TRRReader) -> dict[str, npt.NDArray[np.int64]]:
+    """Find the frames of a TRR file that have velocities and forces.
+
+    GROMACS writes velocities and forces at their own strides (`nstvout`,
+    `nstfout`), so only some frames of a TRR file can have them. This reads
+    just the header of each frame, which holds the size of each array.
+
+    Parameters
+    ----------
+    reader : TRRReader
+        The trajectory reader of the universe
+
+    Returns
+    -------
+    dict[str, np.ndarray]
+        The frames that have each of the TIMESTEP_ATTRIBUTES
+    """
+    has = {"velocity": [], "force": []}
+    with open(reader.filename, "rb") as file:
+        for offset in reader._xdr.offsets:
+            file.seek(offset)
+            header = file.read(128)
+            # magic number, string length, then the padded version string
+            _, _, n_chars = struct.unpack(">3i", header[:12])
+            start = 12 + (n_chars + 3) // 4 * 4
+            # ir, e, box, vir, pres, top, sym, x, v, f sizes, natoms, step, nre
+            sizes = struct.unpack(">13i", header[start : start + 52])
+            has["velocity"].append(sizes[8] > 0)
+            has["force"].append(sizes[9] > 0)
+    return {name: np.flatnonzero(values) for name, values in has.items()}
+
+
 class FrameManager:
     """Frame updates, position caching, interpolation, and periodic corrections.
 
@@ -199,11 +233,21 @@ class FrameManager:
             self.attribute_caches = {
                 name: PositionCache() for name in att_names if name in ts.data
             }
-        # velocities and forces are optional on any MDAnalysis Timestep
+        # velocities and forces are optional on any MDAnalysis Timestep. A TRR
+        # file can have them on only some frames, so its frame headers are
+        # scanned for them; other readers have them on all frames or none
+        reader = trajectory.universe.trajectory
+        self._frames_with = {}
+        if isinstance(reader, TRRReader):
+            self._frames_with = trr_frames_with_data(reader)
         for name, (ts_attribute, _) in TIMESTEP_ATTRIBUTES.items():
-            if name not in self.attribute_caches and getattr(
-                ts, f"has_{ts_attribute}", False
-            ):
+            if name in self.attribute_caches:
+                continue
+            if name in self._frames_with:
+                has_data = len(self._frames_with[name]) > 0
+            else:
+                has_data = getattr(ts, f"has_{ts_attribute}", False)
+            if has_data:
                 self.attribute_caches[name] = PositionCache()
 
     @property
@@ -499,18 +543,47 @@ class FrameManager:
             attributes sorted by name
         """
 
-        self.trajectory.uframe = frame
-        ts = self.trajectory.universe.trajectory.ts
         world_scale = self.trajectory.world_scale
         attributes = {}
         for name in self.attribute_caches:
+            # reading a held value can move the universe off this frame
+            self.trajectory.uframe = frame
+            ts = self.trajectory.universe.trajectory.ts
             if name in ts.data:
                 attributes[name] = ts.data[name] * world_scale
             else:
-                ts_attribute, scaled = TIMESTEP_ATTRIBUTES[name]
-                data = getattr(ts, ts_attribute)
-                attributes[name] = data * world_scale if scaled else data.copy()
+                attributes[name] = self._timestep_attribute(name, frame)
+        self.trajectory.uframe = frame
         return attributes
+
+    def _timestep_attribute(self, name: str, frame: int) -> np.ndarray:
+        """Get velocities or forces at a universe frame.
+
+        A frame of a TRR file without them holds the values of the most recent
+        frame that has them, or of the first frame that has them for frames
+        before it.
+
+        Parameters
+        ----------
+        name : str
+            Name of the attribute in TIMESTEP_ATTRIBUTES
+        frame : int
+            Universe frame number
+
+        Returns
+        -------
+        np.ndarray
+            The values, scaled by world_scale for velocities
+        """
+        ts_attribute, scaled = TIMESTEP_ATTRIBUTES[name]
+        frames = self._frames_with.get(name)
+        if frames is not None:
+            i = np.searchsorted(frames, frame, side="right") - 1
+            self.trajectory.uframe = int(frames[max(i, 0)])
+        data = getattr(self.trajectory.universe.trajectory.ts, ts_attribute)
+        if scaled:
+            return data * self.trajectory.world_scale
+        return data.copy()
 
     def update_attribute_caches(self, frame: int, cache_ahead: bool = True) -> None:
         """Update the per-frame attribute caches for the current frame.

@@ -775,6 +775,59 @@ class TestTrajectory:
         )
         assert np.allclose(traj.named_attribute("force"), expected_force)
 
+    def _write_trr(self, path, velocity_frames=(), force_frames=()) -> mda.Universe:
+        # GROMACS writes velocities and forces at their own strides, so a TRR
+        # file can have them on only some frames
+        source = self._universe_in_memory(True, True)
+        with mda.Writer(str(path), n_atoms=source.atoms.n_atoms) as writer:
+            for ts in source.trajectory:
+                ts.has_velocities = ts.frame in velocity_frames
+                ts.has_forces = ts.frame in force_frames
+                writer.write(source)
+        return mda.Universe(data_dir / "md_ppr/box.gro", str(path))
+
+    def test_velocity_force_trr_gaps(self, tmp_path):
+        # the first frame has neither, so the attributes must still be found
+        u = self._write_trr(tmp_path / "gaps.trr", (1, 3), (2,))
+        reference = mda.Universe(
+            data_dir / "md_ppr/box.gro", str(tmp_path / "gaps.trr")
+        )
+        vel = {f: reference.trajectory[f].velocities.copy() for f in (1, 3)}
+        force = reference.trajectory[2].forces.copy()
+
+        traj = mn.entities.Molecule(u)
+        assert "velocity" in traj.list_attributes()
+        assert "force" in traj.list_attributes()
+
+        # frames without them hold the most recent frame that has them, or the
+        # first frame that has them for frames before it
+        held_vel = {0: 1, 1: 1, 2: 1, 3: 3, 4: 3}
+        for frame in range(5):
+            bpy.context.scene.frame_set(frame)
+            assert traj.uframe == frame
+            assert np.allclose(
+                traj.named_attribute("velocity"),
+                vel[held_vel[frame]] * traj.world_scale,
+            )
+            assert np.allclose(traj.named_attribute("force"), force)
+
+        # subframes interpolate between the held values
+        traj.subframes = 1
+        traj.interpolate = True
+        bpy.context.scene.frame_set(5)
+        # float32 rounding of the lerp is ~1e-8, above allclose's default atol
+        assert np.allclose(
+            traj.named_attribute("velocity"),
+            databpy.lerp(vel[1], vel[3], t=0.5) * traj.world_scale,
+            atol=1e-6,
+        )
+
+    def test_velocity_force_trr_positions_only(self, tmp_path):
+        traj = mn.entities.Molecule(self._write_trr(tmp_path / "x.trr"))
+        bpy.context.scene.frame_set(1)
+        assert "velocity" not in traj.list_attributes()
+        assert "force" not in traj.list_attributes()
+
 
 @pytest.mark.parametrize("topology", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
 def test_martini(snapshot, topology):

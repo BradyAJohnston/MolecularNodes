@@ -141,10 +141,12 @@ How the integer is assigned depends on the attribute. For the dynamic ones the s
 | `is_carb`                | `Bool::Bool`           | Whether the atom is part of a carbohydrate, based on its residue name.                                                                                                               |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `velocity`               | `Vector::Vector`       | The velocity of the atom on the current frame, only present when the trajectory has velocities (such as `.trr` files). Scaled by the world scale like positions, so it is in Blender |
-|                          |                        | units per ps (Å/ps × `0.1::Float`), and `position + velocity` gives where the atom heads in 1 ps. Interpolated and averaged between frames like positions.                           |
+|                          |                        | units per ps (Å/ps × `0.1::Float`), and `position + velocity` gives where the atom heads in 1 ps. Interpolated and averaged between frames like positions. A `.trr` file can have    |
+|                          |                        | velocities on only some frames (GROMACS `nstvout`); the frames between hold the velocities last written, and frames before the first written velocities use those.                   |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `force`                  | `Vector::Vector`       | The force on the atom on the current frame, only present when the trajectory has forces (such as `.trr` files). Kept in the MDAnalysis units of kJ/(mol·Å) and not scaled by the     |
-|                          |                        | world scale, as a force is not a length. Interpolated and averaged between frames like positions.                                                                                    |
+|                          |                        | world scale, as a force is not a length. Interpolated and averaged between frames like positions. Frames of a `.trr` file without forces (GROMACS `nstfout`) hold them the same way  |
+|                          |                        | as `velocity`.                                                                                                                                                                       |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ### Edge Attributes
