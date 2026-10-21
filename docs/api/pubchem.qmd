@@ -1,0 +1,73 @@
+---
+title: Small Molecules from PubChem
+description: "Fetching 3D conformers of small molecules from PubChem"
+jupyter: python3
+execute:
+  daemon: false
+---
+
+Small molecules can be fetched from [PubChem](https://pubchem.ncbi.nlm.nih.gov/) with
+[](`~mn.Molecule.fetch`) and `database="pubchem"`. The code is either a compound CID or a
+compound name, and the compound's 3D conformer is downloaded as an `.sdf` file, with its
+hydrogens and bonds. Like other downloads, the file is cached and reused on later fetches.
+
+## Setup
+
+```{python}
+import molecularnodes as mn
+
+canvas = mn.Canvas(mn.scene.Cycles(samples=32), resolution=(800, 600), transparent=True)
+```
+
+## Fetch by CID or Name
+
+A code made only of digits is a CID, anything else is looked up by name. Aspirin is CID
+`2244`, so both of these fetch the same structure.
+
+```{python}
+aspirin = mn.Molecule.fetch("2244", database="pubchem")
+aspirin.object.hide_render = True
+aspirin = mn.Molecule.fetch("aspirin", database="pubchem")
+aspirin.add_style("ball_and_stick")
+canvas.look_at(aspirin, viewpoint="pca")
+canvas.snapshot()
+```
+
+## Several Molecules
+
+Each fetched molecule is its own object, so it can be moved to sit beside the others in
+a grid. Combine their views with `+` to frame all of them at once.
+
+```{python}
+aspirin.object.hide_render = True
+
+names = ["caffeine", "dopamine", "ATP", "protoporphyrin IX"]
+mols = []
+for i, name in enumerate(names):
+    mol = mn.Molecule.fetch(name, database="pubchem")
+    mol.add_style("sticks" if name == "ATP" else "ball_and_stick")
+    mol.object.location = ((i % 2) * 1.9, -(i // 2) * 1.3, 0)
+    mols.append(mol)
+
+view = mols[0].get_view()
+for mol in mols[1:]:
+    view = view + mol.get_view()
+canvas.look_at(view, viewpoint="top")
+canvas.snapshot()
+```
+
+## Compounds Without a 3D Conformer
+
+PubChem only computes 3D conformers for some compounds: not for salts, mixtures, many
+metal complexes, or very large or flexible molecules. For those, the fetch raises an error
+rather than falling back to a flat 2D structure. Heme is one of them, while its
+metal-free ring, protoporphyrin IX, has a 3D conformer.
+
+```{python}
+from molecularnodes.download import FileDownloadPDBError
+
+try:
+    mn.Molecule.fetch("heme", database="pubchem")
+except FileDownloadPDBError as e:
+    print(e)
+```
