@@ -487,7 +487,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     )
     correct_periodic: BoolProperty(  # type: ignore
         name="Correct",
-        description="Correct for periodic boundary crossing when using interpolation or averaging. Assumes cubic dimensions and only works if the unit cell is orthorhombic",
+        description="Correct for periodic boundary crossing when using interpolation or averaging, moving atoms to the nearest periodic image. Works with orthorhombic and triclinic unit cells",
         default=False,
         update=_update_entities,
     )

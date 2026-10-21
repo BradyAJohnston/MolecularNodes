@@ -12,10 +12,11 @@ import numpy.typing as npt
 from MDAnalysis import AtomGroup
 from MDAnalysis.exceptions import NoDataError
 from ...utils import (
-    correct_periodic_positions,
     fraction,
     frame_mapper,
     frames_to_average,
+    is_periodic_box,
+    minimum_image_positions,
 )
 
 logger = logging.getLogger(__name__)
@@ -92,6 +93,9 @@ class FrameManager:
         # attribute name -> universe frame -> values, for positions and any
         # other per-frame attribute a frame has (see `_read_frame`)
         self.caches: dict[str, dict[int, np.ndarray]] = {}
+        # universe frame -> unit cell dimensions (Å, degrees) of the frames in
+        # the caches, or None for a frame without a box
+        self._boxes: dict[int, Optional[np.ndarray]] = {}
         # attributes Molecular Nodes creates itself, which other `ts.data`
         # keys must not overwrite (`bond_type` is stored on the edges)
         self._builtin_names = {
@@ -142,12 +146,26 @@ class FrameManager:
         self.trajectory.uframe = frame
         return self.trajectory._scaled_position
 
+    def _box_at_frame(self, frame: Optional[int]) -> Optional[np.ndarray]:
+        """Unit cell dimensions of a universe frame, read when it was cached.
+
+        Falls back to the box of the frame the universe is on for a frame that
+        is not cached, or when `frame` is None.
+        """
+        if frame in self._boxes:
+            return self._boxes[frame]
+        return self.trajectory.universe.dimensions
+
     def adjust_periodic_positions(
-        self, pos1: np.ndarray, pos2: np.ndarray
+        self, pos1: np.ndarray, pos2: np.ndarray, frame: Optional[int] = None
     ) -> np.ndarray:
         """Apply periodic boundary correction to positions.
 
-        Corrects for atoms crossing periodic boundaries, ensuring smooth interpolation.
+        Shifts each atom of `pos2` to its periodic image nearest to it in
+        `pos1` (the minimum image convention), so that interpolation and
+        averaging take the short way across a boundary. Works for orthorhombic
+        boxes and, via `MDAnalysis.lib.distances.minimize_vectors`, triclinic
+        ones (see `minimum_image_positions`).
 
         Parameters
         ----------
@@ -155,20 +173,24 @@ class FrameManager:
             Reference positions
         pos2 : np.ndarray
             Positions to correct
+        frame : int, optional
+            Universe frame whose box to use. When the box changes between
+            frames (NPT), the box of the current frame is used.
 
         Returns
         -------
         np.ndarray
-            Corrected positions (unchanged if correction not needed)
+            Corrected positions (unchanged if correction is off or the frame
+            has no usable box)
         """
-        if self.trajectory.correct_periodic and self.trajectory._is_orthorhombic:
-            return correct_periodic_positions(
-                pos1,
-                pos2,
-                self.trajectory.universe.dimensions[:3] * self.trajectory.world_scale,
-            )
-        else:
+        if not self.trajectory.correct_periodic:
             return pos2
+        box = self._box_at_frame(frame)
+        if not is_periodic_box(box):
+            return pos2
+        box = np.array(box, dtype=np.float64)
+        box[:3] *= self.trajectory.world_scale
+        return minimum_image_positions(pos1, pos2, box)
 
     def _frame_range(self, frame: int) -> npt.NDArray[np.int64]:
         """Get frame numbers to average over.
@@ -281,7 +303,7 @@ class FrameManager:
     def _trim_cache(self, frames_to_keep) -> None:
         """Drop cached frames other than these, once more than 2 are held."""
         if len(self.caches.get("position", {})) > 2:
-            for cache in self.caches.values():
+            for cache in (*self.caches.values(), self._boxes):
                 for f in [f for f in cache if f not in frames_to_keep]:
                     del cache[f]
 
@@ -306,6 +328,8 @@ class FrameManager:
         """
         values = {"position": self._position_at_frame(frame)}
         ts = self.trajectory.universe.trajectory.ts
+        dimensions = ts.dimensions
+        self._boxes[frame] = None if dimensions is None else np.array(dimensions)
         world_scale = self.trajectory.world_scale
         att_names = getattr(self.trajectory, "_att_names", ())
         for name in att_names:
@@ -419,11 +443,7 @@ class FrameManager:
                 continue
             cache = self.caches[name]
             array = np.stack([cache[f] for f in window if f in cache])
-            if (
-                name == "position"
-                and self.trajectory.correct_periodic
-                and self.trajectory._is_orthorhombic
-            ):
+            if name == "position" and self.trajectory.correct_periodic:
                 # correct each frame against its (corrected) predecessor:
                 # consecutive frames are where the nearest-image assumption
                 # holds. Correcting everything against the window's first frame
@@ -432,7 +452,9 @@ class FrameManager:
                 # crossing, and the windows of neighbouring frames then disagree
                 # by a whole box
                 for i in range(1, len(array)):
-                    array[i] = self.adjust_periodic_positions(array[i - 1], array[i])
+                    array[i] = self.adjust_periodic_positions(
+                        array[i - 1], array[i], frame
+                    )
             means[name] = np.mean(array, axis=0)
         return means
 
@@ -478,7 +500,9 @@ class FrameManager:
                     # only corrects within each window, so two averaged
                     # endpoints can still sit on opposite sides of the box — the
                     # correction applies to them just the same
-                    value_next = self.adjust_periodic_positions(value, value_next)
+                    value_next = self.adjust_periodic_positions(
+                        value, value_next, uframe_current
+                    )
                 values[name] = db.lerp(value, value_next, t=t)
             return values
         elif self.trajectory.average > 0:
