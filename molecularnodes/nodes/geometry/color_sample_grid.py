@@ -24,7 +24,7 @@ class ColorSampleGrid(AssetGeometryGroup):
     Parameters
     ----------
     object : InputObject
-        Volume object holding the grid to sample, such as a density loaded with Molecular Nodes
+        Object holding the grid to sample: a density loaded with Molecular Nodes, styled or not, or any volume object
     grid_name : InputString
         Name of the float grid inside the volume. Densities loaded with Molecular Nodes store theirs as `density`
     min : InputFloat
@@ -41,7 +41,7 @@ class ColorSampleGrid(AssetGeometryGroup):
     Inputs
     ------
     i.object : ObjectSocket
-        Volume object holding the grid to sample, such as a density loaded with Molecular Nodes
+        Object holding the grid to sample: a density loaded with Molecular Nodes, styled or not, or any volume object
     i.grid_name : StringSocket
         Name of the float grid inside the volume. Densities loaded with Molecular Nodes store theirs as `density`
     i.min : FloatSocket
@@ -70,7 +70,7 @@ class ColorSampleGrid(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         object: ObjectSocket
-        """Volume object holding the grid to sample, such as a density loaded with Molecular Nodes"""
+        """Object holding the grid to sample: a density loaded with Molecular Nodes, styled or not, or any volume object"""
         grid_name: StringSocket
         """Name of the float grid inside the volume. Densities loaded with Molecular Nodes store theirs as `density`"""
         min: FloatSocket
@@ -122,7 +122,7 @@ class ColorSampleGrid(AssetGeometryGroup):
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         object = tree.inputs.object(
             "Object",
-            description="Volume object holding the grid to sample, such as a density loaded with Molecular Nodes",
+            description="Object holding the grid to sample: a density loaded with Molecular Nodes, styled or not, or any volume object",
         )
         grid_name = tree.inputs.string(
             "Grid Name",
@@ -165,12 +165,20 @@ class ColorSampleGrid(AssetGeometryGroup):
             description="Grid value at each point, trilinearly interpolated. Zero outside the grid",
         )
 
-        get_named_grid = g.GetNamedGrid.float(
-            g.ObjectInfo(object=object, transform_space="RELATIVE").o.geometry,
-            grid_name,
-            False,
-        )
-        sample_grid = get_named_grid.o.grid.sample(g.Position())
+        object_info = g.ObjectInfo(object=object, transform_space="RELATIVE")
+        with g.Frame("A styled density keeps its volume in the 'MN/Volume' bundle"):
+            get_bundle_item = g.GetBundleItem.geometry(
+                object_info.o.geometry.bundle(), "MN/Volume"
+            )
+            _string = g.String(
+                "Density styles turn the volume into a mesh and keep the source volume in the 'MN/Volume' bundle of their output. Sample that volume if it is there, otherwise the object's own geometry (an unstyled density)."
+            )
+            switch = get_bundle_item.o.exists.switch.geometry(
+                object_info.o.geometry, get_bundle_item.o.item
+            )
+        sample_grid = (
+            switch >> g.GetNamedGrid.float(name=grid_name, remove=False)
+        ).o.grid.sample(g.Position())
         map_range = sample_grid.map_range(min, max)
         (
             (map_range * 2.0 - 1.0).mix.color(

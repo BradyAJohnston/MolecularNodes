@@ -2,6 +2,7 @@ import gzip
 import os
 from pathlib import Path
 import bpy
+import databpy
 import numpy as np
 from gridData import Grid
 from ...blender import coll
@@ -11,9 +12,6 @@ from ...nodes.geometry import (
     DensityStyleWire,
 )
 from .base import Density
-
-#: ID property on a density object pointing at its hidden companion grid object
-GRID_OBJECT_PROPERTY = "mn_grid_object"
 
 
 def cell_vectors(lengths, angles) -> np.ndarray:
@@ -298,16 +296,9 @@ class Grids(Density):
         """
         # import and ensure object is at world origin to get corect alignment with
         # structures
-        volume = bpy.data.volumes.new(Path(self.file_vdb).stem)
-        volume.filepath = self.file_vdb
-        # the hidden companion that keeps the unstyled grid is created first, so the
-        # density object is the newest object the import creates
-        grid_object = self._new_grid_object(volume, name or volume.name)
-        self.object = bpy.data.objects.new(volume.name, volume)
-        coll.mn().objects.link(self.object)
+        self.object = databpy.import_vdb(self.file_vdb, collection=coll.mn())
         self.object.location = (0, 0, 0)
         self.object.mn.entity_type = self._entity_type.value
-        self._link_grid_object(grid_object)
 
         threshold = float(np.quantile(self.grid.grid, 0.995))
 
@@ -327,42 +318,6 @@ class Grids(Density):
                 )
 
         return self.object
-
-    @property
-    def grid_object(self) -> bpy.types.Object:
-        """
-        Hidden, unstyled companion object that holds this density's grid.
-
-        Density styles turn the volume into a mesh, so the density object's
-        evaluated geometry has no grid left to sample. The companion shares the
-        density's volume data, has no modifiers, sits in the excluded ``.MN_data``
-        collection and is parented to the density object so it follows its
-        transform. Point a `Color Sample Grid` node at it (in the GUI, type
-        ``.data`` in the node's Object field to find ``.data_<name>_grid``).
-
-        It is created when the density loads, and again on access if it was
-        deleted (or the density comes from a file saved before it existed).
-        """
-        grid_object = self.object.get(GRID_OBJECT_PROPERTY)
-        if isinstance(grid_object, bpy.types.Object) and grid_object.name in (
-            bpy.data.objects
-        ):
-            return grid_object
-        grid_object = self._new_grid_object(self.object.data, self.name)
-        self._link_grid_object(grid_object)
-        return grid_object
-
-    @staticmethod
-    def _new_grid_object(volume: bpy.types.Volume, name: str) -> bpy.types.Object:
-        grid_object = bpy.data.objects.new(f".data_{name}_grid", volume)
-        coll.data().objects.link(grid_object)
-        grid_object.hide_viewport = True
-        grid_object.hide_render = True
-        return grid_object
-
-    def _link_grid_object(self, grid_object: bpy.types.Object) -> None:
-        grid_object.parent = self.object
-        self.object[GRID_OBJECT_PROPERTY] = grid_object
 
     def grid_to_vdb(
         self,

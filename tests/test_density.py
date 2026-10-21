@@ -194,7 +194,7 @@ def _sample_grid_at(density, points_angstrom):
     with TreeBuilder(tree) as t:
         geometry = t.inputs.geometry("Geometry")
         result = t.outputs.geometry("Geometry")
-        node = ColorSampleGrid(object=density.grid_object)
+        node = ColorSampleGrid(object=density.object)
         (
             geometry
             >> g.StoreNamedAttribute.point.float(name="value", value=node.o.value)
@@ -408,31 +408,64 @@ def _ramp_around(mol, tmp_path, name):
     return _write_dx(tmp_path / name, data, origin, np.eye(3)), x0
 
 
-def test_density_grid_object(tmp_path):
-    path = _write_dx(tmp_path / "grid.dx", np.ones((4, 4, 4)), [0, 0, 0], np.eye(3))
-    density = mn.entities.density.Grids.load(path, style="density_surface")
-    grid_object = density.grid_object
+def _ramp_density(tmp_path, style, shape=(8, 8, 8)):
+    "A linear field on a 1 Å grid at the origin, loaded with the given style."
+    path = _write_dx(tmp_path / "ramp.dx", _linear_field(shape), [0, 0, 0], np.eye(3))
+    return mn.entities.density.Grids.load(path, style=style)
 
-    assert grid_object.name.startswith(".data_")
-    assert grid_object.data == density.object.data
-    assert grid_object.parent == density.object
-    assert len(grid_object.modifiers) == 0
-    assert grid_object.hide_render and grid_object.hide_viewport
-    assert grid_object.users_collection[0] == mn.blender.coll.data()
-    # not drawn or rendered: its collection is excluded from the view layer
-    assert grid_object not in list(bpy.context.view_layer.objects)
-    # the same object on every access
-    assert density.grid_object == grid_object
-    # while the styled density itself no longer holds a grid
+
+RAMP_POINTS = np.array([[1.5, 2.25, 3.0], [4.0, 4.0, 4.0], [0.5, 6.0, 2.0]])
+RAMP_VALUES = RAMP_POINTS @ [1.0, 10.0, 100.0]
+
+
+def test_styled_density_keeps_volume_in_bundle(tmp_path):
+    density = _ramp_density(tmp_path, "density_iso_surface")
+    # the styled output is a mesh: the bundled volume is not a rendered component
+    geometry = databpy.GeometrySet(density.object)
+    assert geometry.volume is None
+    assert geometry.mesh is not None
+    # but the grid is still there to sample, through the `MN/Volume` bundle
+    values, _ = _sample_grid_at(density, RAMP_POINTS)
+    assert np.allclose(values, RAMP_VALUES, atol=1e-3)
+
+
+def test_unstyled_density_samples_its_own_volume(tmp_path):
+    density = _ramp_density(tmp_path, None)
+    assert databpy.GeometrySet(density.object).volume is not None
+    values, _ = _sample_grid_at(density, RAMP_POINTS)
+    assert np.allclose(values, RAMP_VALUES, atol=1e-3)
+
+
+def test_density_styles_joined_keep_volume(tmp_path):
+    from molecularnodes.nodes.geometry import (
+        DensityStyleISOSurface,
+        DensityStyleSurface,
+        SetGeometryVolume,
+    )
+
+    density = _ramp_density(tmp_path, None)
+    with density.tree.reset(input="Volume") as (volume, join):
+        volume >> DensityStyleISOSurface(threshold=300.0) >> join
+        volume >> DensityStyleSurface(threshold=500.0) >> join
+    # a third style added to the existing tree goes into the same join
+    with density.tree as tree:
+        tree.atoms >> DensityStyleSurface(threshold=200.0) >> tree.join
+
+    nodes = density.modifier_node_tree.nodes
+    keep = [
+        n
+        for n in nodes
+        if n.bl_idname == "GeometryNodeGroup"
+        and n.node_tree.name.startswith(SetGeometryVolume._name)
+    ]
+    joins = [n for n in nodes if n.bl_idname == "GeometryNodeJoinGeometry"]
+    assert len(keep) == 1 and len(joins) == 1
+    assert len(joins[0].inputs[0].links) == 3
+    assert len(get_final_style_nodes(density.modifier_node_tree)) == 3
+
     assert databpy.GeometrySet(density.object).volume is None
-
-
-def test_density_grid_object_removed_with_density(tmp_path):
-    path = _write_dx(tmp_path / "grid.dx", np.ones((4, 4, 4)), [0, 0, 0], np.eye(3))
-    density = mn.entities.density.Grids.load(path)
-    name = density.grid_object.name
-    mn.session.get_session().remove(density.uuid)
-    assert name not in bpy.data.objects
+    values, _ = _sample_grid_at(density, RAMP_POINTS)
+    assert np.allclose(values, RAMP_VALUES, atol=1e-3)
 
 
 def test_add_style_color_by_styled_density(fetch, tmp_path):
@@ -450,7 +483,7 @@ def test_add_style_color_by_styled_density(fetch, tmp_path):
             >> StyleSurface()
             >> g.StoreNamedAttribute.point.float(
                 name="value",
-                value=ColorSampleGrid(object=density.grid_object).o.value,
+                value=ColorSampleGrid(object=density.object).o.value,
             )
             >> join
         )

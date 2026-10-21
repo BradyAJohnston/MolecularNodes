@@ -433,6 +433,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.DensityStyleWire
         children: embedded
+      - name: nodes.geometry.SetGeometryVolume
+        children: embedded
     - kind: page
       path: nodes.ensemble
       summary:

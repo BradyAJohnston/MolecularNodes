@@ -227,6 +227,7 @@ from .separate_first_point import SeparateFirstPoint
 from .separate_polymers import SeparatePolymers
 from .set_chi_angle import SetChiAngle
 from .set_color import SetColor
+from .set_geometry_volume import SetGeometryVolume
 from .set_nucleic_dihedral import SetNucleicDihedral
 from .set_phi_psi_angle import SetPhiPsiAngle
 from .set_ures_id import SetUResID
@@ -502,6 +503,7 @@ __all__ = (
     "SeparatePolymers",
     "SetChiAngle",
     "SetColor",
+    "SetGeometryVolume",
     "SetNucleicDihedral",
     "SetPhiPsiAngle",
     "SetUResID",

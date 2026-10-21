@@ -40,7 +40,7 @@ with esp.tree.reset(input="Volume") as (volume, join):
 
 ## Colour the surface
 
-Passing the density as `color` samples the potential at every vertex of the surface, from -5 kT/e (red) to 5 kT/e (blue). The grid is read from a hidden copy of the density, so the density keeps its own style. The coordinates of 1BRS line up with the grid because pdb2pqr keeps the input coordinates.
+Passing the density as `color` samples the potential at every vertex of the surface, from -5 kT/e (red) to 5 kT/e (blue). The density keeps its source volume in the `MN/Volume` bundle of its styled output, so it can be sampled while it shows its own style. The coordinates of 1BRS line up with the grid because pdb2pqr keeps the input coordinates.
 
 ```{python}
 mol = mn.Molecule.fetch("1BRS")

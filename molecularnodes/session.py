@@ -260,11 +260,7 @@ class MNSession:
         entity = self.entities[uuid]
         obj = self.get_object(uuid)
         if obj is not None:
-            # a density's hidden companion object that holds its unstyled grid
-            grid_object = obj.get("mn_grid_object")
             bpy.data.objects.remove(obj, do_unlink=True)
-            if isinstance(grid_object, bpy.types.Object):
-                bpy.data.objects.remove(grid_object, do_unlink=True)
         if hasattr(entity, "annotations"):
             bob = entity.annotations.bob
             if bob is not None and self.get_object(bob.uuid) is not None:

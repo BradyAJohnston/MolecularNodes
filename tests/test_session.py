@@ -105,30 +105,42 @@ def test_reload_density_from_file():
     assert session.get(obj.uuid) is reloaded
 
 
-def test_density_grid_object_survives_save_and_reload(tmp_path, isolated_density_file):
-    "The hidden grid object is kept, not duplicated, by a .blend round trip and Reload."
+def test_color_by_styled_density_survives_save_and_reload(fetch, tmp_path):
+    "Colours sampled from a styled density's bundled volume after a .blend round trip."
+    import numpy as np
+    from gridData import Grid
     from molecularnodes.entities.reload import reload_entity
 
     session = mn.session.get_session()
     session.clear()
+    mol = fetch("1cbs")
+    positions = mol.named_attribute("position") / mol.world_scale
+    origin = np.floor(positions.min(axis=0)) - 10.0
+    shape = tuple(np.ceil(np.ptp(positions, axis=0) + 20).astype(int))
+    # potential rising along x from -10 to +10 across the molecule
+    x = origin[0] + np.arange(shape[0]) - positions[:, 0].mean()
+    data = np.broadcast_to((x * 20 / np.ptp(x))[:, None, None], shape).copy()
+    Grid(data, origin=origin, delta=1.0).export(str(tmp_path / "ramp.dx"))
     density = mn.entities.density.Grids.load(
-        isolated_density_file(data_dir / "emd_24805.map.gz")
+        tmp_path / "ramp.dx", style="density_iso_surface"
     )
-    uuid = density.uuid
-    grid_name = density.grid_object.name
+    mol.add_style("surface", color=density)
+    before = mol.named_attribute("Color", evaluate=True)
+    # a spread of colours, not a flat result from a missing grid
+    assert np.ptp(before[:, 0]) > 0.3
 
-    filepath = tmp_path / "density.blend"
+    filepath = tmp_path / "colored.blend"
     bpy.ops.wm.save_as_mainfile(filepath=str(filepath))
     session.clear()
     bpy.ops.wm.open_mainfile(filepath=str(filepath))
 
-    restored = session.get(uuid)
-    assert isinstance(restored, mn.entities.density.Grids)
-    assert restored.grid_object.name == grid_name
-    session.remove_entity(uuid)
-    reloaded = reload_entity(restored.object)
-    assert reloaded.grid_object.name == grid_name
-    assert sum(o.name.startswith(".data_") for o in bpy.data.objects) == 1
+    restored = session.get(mol.uuid)
+    assert np.allclose(restored.named_attribute("Color", evaluate=True), before)
+
+    density_obj = bpy.data.objects[density.name]
+    session.remove_entity(density_obj.uuid)
+    reload_entity(density_obj)
+    assert np.allclose(restored.named_attribute("Color", evaluate=True), before)
 
 
 def test_reload_ensemble_star_from_file():
