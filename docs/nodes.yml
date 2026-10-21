@@ -280,7 +280,8 @@ Color Sample Grid:
     densities loaded with Molecular Nodes name their grid `density`. Values from `Min::Float` to `Max::Float`
     blend linearly from `A::Color` through `Intermediate::Color` to `B::Color`, and values outside the range
     take the end colors. The default -5 to 5 suits an APBS potential in kT/e. `Value::Float` outputs the sampled
-    value, trilinearly interpolated, and is zero outside the grid.
+    value, trilinearly interpolated, and is zero outside the grid. Densities are stored as 32-bit float grids, as
+    Blender's grid nodes return zero for 64-bit (`DOUBLE`) grids.
     Place it in a `Set Color` after a style to color the style's own points (each surface vertex), or before
     a style to color the atoms by the value at their centres. The grid is read from the object's evaluated
     geometry, so the volume object must still hold it: load the density with `style=None` and hide it from

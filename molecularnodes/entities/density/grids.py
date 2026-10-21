@@ -79,6 +79,10 @@ class Grids(Density):
 
     It utilises `GridDataFormats` for file parsing, which is then converted into `openvdb` grids,
     that can be written as `.vdb` files and the imported into Blender as volumetric objects.
+
+    Float64 data, which includes every `.dx` file, is written as a 32-bit float grid:
+    Blender loads 64-bit grids as `DOUBLE` grids, which its grid nodes (Get Named Grid,
+    Sample Grid) cannot read. Values therefore carry float32 precision in Blender.
     """
 
     def __init__(
@@ -126,6 +130,12 @@ class Grids(Density):
         -------
         Grids
             The loaded density entity.
+
+        Notes
+        -----
+        Float64 grids, including every ``.dx`` file, are stored as 32-bit floats,
+        because Blender's grid nodes (Get Named Grid, Sample Grid) return 0 for
+        64-bit ``DOUBLE`` grids.
         """
         density = cls(
             file_path=file_path, center=center, invert=invert, overwrite=overwrite
@@ -392,8 +402,9 @@ class Grids(Density):
         elif dataType == "float32":
             vdb_grid = vdb.FloatGrid()
         elif dataType == "float64":
-            # Blender's grid nodes (Get Named Grid, Sample Grid) can't read double
-            # grids, so store float64 data, such as every .dx file, as float
+            # Blender loads a float64 VDB grid as a DOUBLE grid, and Get Named Grid /
+            # Sample Grid return 0 for it, so store float64 data (every .dx file) as
+            # float32 to keep the grid usable in geometry nodes
             grid = grid.astype("float32")
             vdb_grid = vdb.FloatGrid()
         else:
