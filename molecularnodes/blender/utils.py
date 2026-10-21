@@ -195,9 +195,7 @@ def _instance_points(instances, references) -> np.ndarray:
             continue
         corners = _reference_corners(reference)
         corners = np.hstack([corners, np.ones((len(corners), 1))])
-        # the transforms are stored row-vector style, with the translation in
-        # the last row rather than the last column
-        placed = np.einsum("kj,nji->nki", corners, placements)[..., :3]
+        placed = np.einsum("nij,kj->nki", placements, corners)[..., :3]
         chunks.append(placed.reshape(-1, 3))
 
     if not chunks:

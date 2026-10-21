@@ -37,11 +37,6 @@ def create_data_object(
         if np.issubdtype(data.dtype, str):
             data = np.unique(data, return_inverse=True)[1]
 
-        # Blender stores float4x4 attributes column-major, so the row-major
-        # numpy matrices must be transposed or GN sees the inverse rotation
-        if type == AttributeTypes.FLOAT4X4:
-            data = data.transpose(0, 2, 1)
-
         bob.store_named_attribute(data=data, name=column, atype=type)
 
     return bob.object
