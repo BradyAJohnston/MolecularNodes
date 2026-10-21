@@ -787,7 +787,7 @@ class TestTrajectory:
         return mda.Universe(data_dir / "md_ppr/box.gro", str(path))
 
     def test_velocity_force_trr_gaps(self, tmp_path):
-        # the first frame has neither, so the attributes must still be found
+        # velocities on frames 1 and 3, forces on frame 2, neither on frame 0
         u = self._write_trr(tmp_path / "gaps.trr", (1, 3), (2,))
         reference = mda.Universe(
             data_dir / "md_ppr/box.gro", str(tmp_path / "gaps.trr")
@@ -796,31 +796,32 @@ class TestTrajectory:
         force = reference.trajectory[2].forces.copy()
 
         traj = mn.entities.Molecule(u)
-        assert "velocity" in traj.list_attributes()
-        assert "force" in traj.list_attributes()
+        bpy.context.scene.frame_set(0)
+        assert "velocity" not in traj.list_attributes()
+        assert "force" not in traj.list_attributes()
 
-        # frames without them hold the most recent frame that has them, or the
-        # first frame that has them for frames before it
-        held_vel = {0: 1, 1: 1, 2: 1, 3: 3, 4: 3}
-        for frame in range(5):
+        # an attribute appears on the first frame that has it, and frames
+        # without it keep the values last stored
+        shown_vel = {1: 1, 2: 1, 3: 3, 4: 3, 0: 3}
+        for frame in [1, 2, 3, 4, 0]:
             bpy.context.scene.frame_set(frame)
             assert traj.uframe == frame
             assert np.allclose(
                 traj.named_attribute("velocity"),
-                vel[held_vel[frame]] * traj.world_scale,
+                vel[shown_vel[frame]] * traj.world_scale,
             )
-            assert np.allclose(traj.named_attribute("force"), force)
+            if frame == 1:
+                assert "force" not in traj.list_attributes()
+            else:
+                assert np.allclose(traj.named_attribute("force"), force)
 
-        # subframes interpolate between the held values
+        # interpolating towards a frame without velocities uses this frame's:
+        # scene frame 2 is halfway from frame 1 to frame 2
         traj.subframes = 1
         traj.interpolate = True
-        bpy.context.scene.frame_set(5)
-        # float32 rounding of the lerp is ~1e-8, above allclose's default atol
-        assert np.allclose(
-            traj.named_attribute("velocity"),
-            databpy.lerp(vel[1], vel[3], t=0.5) * traj.world_scale,
-            atol=1e-6,
-        )
+        bpy.context.scene.frame_set(2)
+        assert np.allclose(traj.named_attribute("velocity"), vel[1] * traj.world_scale)
+        assert np.allclose(traj.named_attribute("force"), force)
 
     def test_velocity_force_trr_positions_only(self, tmp_path):
         traj = mn.entities.Molecule(self._write_trr(tmp_path / "x.trr"))

@@ -5,14 +5,13 @@ synchronization, and attribute metadata collection.
 """
 
 import logging
-import struct
 from collections import OrderedDict
 from typing import Callable, Optional
 import databpy as db
 import numpy as np
 import numpy.typing as npt
 from MDAnalysis import AtomGroup
-from MDAnalysis.coordinates.TRR import TRRReader
+from MDAnalysis.exceptions import NoDataError
 from ...utils import (
     correct_periodic_positions,
     fraction,
@@ -153,7 +152,7 @@ class PositionCache:
 # ============================================================================
 
 
-# per-frame vector attributes stored when the MDAnalysis Timestep has them:
+# vector attributes stored on frames whose MDAnalysis Timestep has them:
 # attribute name -> (Timestep attribute, whether to scale by world_scale).
 # Velocities are lengths per time so they scale like positions; forces are not
 # lengths and keep MDAnalysis units (kJ/(mol*Å))
@@ -161,38 +160,6 @@ TIMESTEP_ATTRIBUTES = {
     "velocity": ("velocities", True),
     "force": ("forces", False),
 }
-
-
-def trr_frames_with_data(reader: TRRReader) -> dict[str, npt.NDArray[np.int64]]:
-    """Find the frames of a TRR file that have velocities and forces.
-
-    GROMACS writes velocities and forces at their own strides (`nstvout`,
-    `nstfout`), so only some frames of a TRR file can have them. This reads
-    just the header of each frame, which holds the size of each array.
-
-    Parameters
-    ----------
-    reader : TRRReader
-        The trajectory reader of the universe
-
-    Returns
-    -------
-    dict[str, np.ndarray]
-        The frames that have each of the TIMESTEP_ATTRIBUTES
-    """
-    has = {"velocity": [], "force": []}
-    with open(reader.filename, "rb") as file:
-        for offset in reader._xdr.offsets:
-            file.seek(offset)
-            header = file.read(128)
-            # magic number, string length, then the padded version string
-            _, _, n_chars = struct.unpack(">3i", header[:12])
-            start = 12 + (n_chars + 3) // 4 * 4
-            # ir, e, box, vir, pres, top, sym, x, v, f sizes, natoms, step, nre
-            sizes = struct.unpack(">13i", header[start : start + 52])
-            has["velocity"].append(sizes[8] > 0)
-            has["force"].append(sizes[9] > 0)
-    return {name: np.flatnonzero(values) for name, values in has.items()}
 
 
 class FrameManager:
@@ -222,33 +189,20 @@ class FrameManager:
         """
         self.trajectory = trajectory
         self.cache = PositionCache()
+        # velocities and forces of the cached frames, for those frames that
+        # have them, filled alongside the position cache
+        self.timestep_cache = PositionCache()
         # entities can declare extra per-frame vector attributes (e.g. oxDNA
         # base vectors) via `_att_names`. Only names the reader actually found
         # in the file get a cache — trailing columns such as velocities are
         # optional in oxDNA configurations
         self.attribute_caches = {}
-        ts = trajectory.universe.trajectory.ts
         att_names = getattr(trajectory, "_att_names", ())
         if att_names:
+            ts_data = trajectory.universe.trajectory.ts.data
             self.attribute_caches = {
-                name: PositionCache() for name in att_names if name in ts.data
+                name: PositionCache() for name in att_names if name in ts_data
             }
-        # velocities and forces are optional on any MDAnalysis Timestep. A TRR
-        # file can have them on only some frames, so its frame headers are
-        # scanned for them; other readers have them on all frames or none
-        reader = trajectory.universe.trajectory
-        self._frames_with = {}
-        if isinstance(reader, TRRReader):
-            self._frames_with = trr_frames_with_data(reader)
-        for name, (ts_attribute, _) in TIMESTEP_ATTRIBUTES.items():
-            if name in self.attribute_caches:
-                continue
-            if name in self._frames_with:
-                has_data = len(self._frames_with[name]) > 0
-            else:
-                has_data = getattr(ts, f"has_{ts_attribute}", False)
-            if has_data:
-                self.attribute_caches[name] = PositionCache()
 
     @property
     def n_frames(self) -> Optional[int]:
@@ -439,11 +393,13 @@ class FrameManager:
         # Only cleanup the cache if we have more than 2 frames stored
         if len(self.cache.keys()) > 2:
             self.cache.remove_frames_except(frames_to_cache)
+            self.timestep_cache.remove_frames_except(frames_to_cache)
 
         # Update the cache with any frames that are not yet cached
         for f in frames_to_cache:
-            if f not in self.cache:
+            if f not in self.cache or f not in self.timestep_cache:
                 self.cache[f] = self._position_at_frame(f)
+                self.timestep_cache[f] = self.timestep_attributes()
 
     def position_cache_mean(self, frame: int) -> np.ndarray:
         """Get mean position from cached frames.
@@ -529,8 +485,96 @@ class FrameManager:
             # Just return current positions
             return self._position_at_frame(uframe_current)
 
+    def timestep_attributes(self) -> dict[str, np.ndarray]:
+        """Get the velocities and forces of the current Timestep.
+
+        Only those the Timestep has are returned: most trajectories have
+        neither, and a TRR file can have them on only some frames.
+
+        Returns
+        -------
+        dict[str, np.ndarray]
+            Velocities (scaled by world_scale) and forces, by attribute name
+        """
+        ts = self.trajectory.universe.trajectory.ts
+        attributes = {}
+        for name, (ts_attribute, scaled) in TIMESTEP_ATTRIBUTES.items():
+            if not getattr(ts, f"has_{ts_attribute}", False):
+                continue
+            try:
+                data = getattr(ts, ts_attribute)
+            except NoDataError:
+                continue
+            attributes[name] = (
+                data * self.trajectory.world_scale if scaled else data.copy()
+            )
+        return attributes
+
+    def timestep_cache_mean(self, frame: int) -> dict[str, np.ndarray]:
+        """Get the mean velocities and forces from cached frames.
+
+        An attribute that a frame in the averaging window lacks is not
+        averaged, and takes the value of this frame.
+
+        Parameters
+        ----------
+        frame : int
+            Center frame number
+
+        Returns
+        -------
+        dict[str, np.ndarray]
+            Mean velocities and forces that this frame has, by attribute name
+        """
+        self.update_position_cache(frame)
+        current = self.timestep_cache[frame]
+        if self.trajectory.average == 0:
+            return current
+
+        window = [self.timestep_cache[f] for f in self._frame_range(frame)]
+        return {
+            name: np.mean([w[name] for w in window], axis=0)
+            if all(name in w for w in window)
+            else values
+            for name, values in current.items()
+        }
+
+    def get_timestep_attributes_at_frame(self, frame: int) -> dict[str, np.ndarray]:
+        """Get velocities and forces for a given frame, as positions are.
+
+        Interpolates and averages the same way as positions, falling back to
+        the current frame's values when a neighbouring frame lacks them. An
+        attribute the current frame lacks is left out.
+
+        Parameters
+        ----------
+        frame : int
+            Scene frame number, or the manual frame when not updating with the
+            scene
+
+        Returns
+        -------
+        dict[str, np.ndarray]
+            Velocities and forces that the current frame has, by attribute name
+        """
+        uframe_current, uframe_next = self._mapped_uframes(frame)
+
+        if self.trajectory.subframes > 0 and self.trajectory.interpolate:
+            current = self.timestep_cache_mean(uframe_current)
+            after = self.timestep_cache_mean(uframe_next)
+            t = fraction(frame, self.trajectory.subframes + 1)
+            return {
+                name: db.lerp(values, after[name], t=t) if name in after else values
+                for name, values in current.items()
+            }
+        elif self.trajectory.average > 0:
+            return self.timestep_cache_mean(uframe_current)
+        else:
+            self.trajectory.uframe = uframe_current
+            return self.timestep_attributes()
+
     def _attributes_at_frame(self, frame: int) -> dict[str, np.ndarray]:
-        """Get per-frame vector attributes at a specific universe frame.
+        """Get oxDNA attributes at a specific universe frame.
 
         Parameters
         ----------
@@ -540,53 +584,18 @@ class FrameManager:
         Returns
         -------
         dict[str, np.ndarray]
-            attributes sorted by name
+            oxDNA attributes sorted by name
         """
 
-        world_scale = self.trajectory.world_scale
-        attributes = {}
-        for name in self.attribute_caches:
-            # reading a held value can move the universe off this frame
-            self.trajectory.uframe = frame
-            ts = self.trajectory.universe.trajectory.ts
-            if name in ts.data:
-                attributes[name] = ts.data[name] * world_scale
-            else:
-                attributes[name] = self._timestep_attribute(name, frame)
         self.trajectory.uframe = frame
-        return attributes
-
-    def _timestep_attribute(self, name: str, frame: int) -> np.ndarray:
-        """Get velocities or forces at a universe frame.
-
-        A frame of a TRR file without them holds the values of the most recent
-        frame that has them, or of the first frame that has them for frames
-        before it.
-
-        Parameters
-        ----------
-        name : str
-            Name of the attribute in TIMESTEP_ATTRIBUTES
-        frame : int
-            Universe frame number
-
-        Returns
-        -------
-        np.ndarray
-            The values, scaled by world_scale for velocities
-        """
-        ts_attribute, scaled = TIMESTEP_ATTRIBUTES[name]
-        frames = self._frames_with.get(name)
-        if frames is not None:
-            i = np.searchsorted(frames, frame, side="right") - 1
-            self.trajectory.uframe = int(frames[max(i, 0)])
-        data = getattr(self.trajectory.universe.trajectory.ts, ts_attribute)
-        if scaled:
-            return data * self.trajectory.world_scale
-        return data.copy()
+        ts_data = self.trajectory.universe.trajectory.ts.data
+        return {
+            name: ts_data[name] * self.trajectory.world_scale
+            for name in self.attribute_caches
+        }
 
     def update_attribute_caches(self, frame: int, cache_ahead: bool = True) -> None:
-        """Update the per-frame attribute caches for the current frame.
+        """Update the oxDNA attribute caches for the current frame.
 
         Intelligently caches based on averaging and interpolation settings,
         prefetching the next frame when needed.
@@ -615,7 +624,7 @@ class FrameManager:
                     cache[f] = attributes_at_frame[name]
 
     def attribute_cache_means(self, frame: int) -> dict[str, np.ndarray]:
-        """Get mean per-frame vector attributes from cached frames.
+        """Get mean oxDNA attributes from cached frames.
 
         Computes average over the averaging window.
 
@@ -644,7 +653,7 @@ class FrameManager:
         }
 
     def get_attributes_at_frame(self, frame) -> dict[str, np.ndarray]:
-        """Get per-frame vector attributes for a given frame with all processing applied.
+        """Get oxDNA attributes for a given frame with all processing applied.
 
         Main entry point for position retrieval. Handles frame mapping, interpolation,
         and averaging.
@@ -658,7 +667,7 @@ class FrameManager:
         Returns
         -------
         dict[str, np.ndarray]
-            Processed attributes sorted by name
+            Processed oxDNA attributes sorted by name
         """
         if not self.attribute_caches:
             return {}

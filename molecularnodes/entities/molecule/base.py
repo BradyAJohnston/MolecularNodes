@@ -674,7 +674,23 @@ class Molecule(MolecularEntity):
 
     def _store_extra_attributes(self) -> None:
         # TODO: enable adding of arbitrary mda.Universe attirbutes not currently applied
-        self._update_attributes(0)
+        self._store_timestep_attributes(self.frame_manager.timestep_attributes())
+
+    def _store_timestep_attributes(self, attributes: dict[str, np.ndarray]) -> None:
+        """Store velocities and forces as point attributes.
+
+        Only the attributes given are stored. One that a frame lacks is not
+        given, so an existing attribute keeps the values it was last given.
+
+        Parameters
+        ----------
+        attributes : dict[str, np.ndarray]
+            Values by attribute name
+        """
+        for name, values in attributes.items():
+            self.store_named_attribute(
+                data=values, name=name, atype=db.AttributeTypes.FLOAT_VECTOR
+            )
 
     def _create_object(self, name: str = "NewUniverseObject") -> None:
         """Create Blender mesh object (internal).
@@ -1093,27 +1109,9 @@ class Molecule(MolecularEntity):
             Scene frame number
         """
         self.position = self.frame_manager.get_positions_at_frame(frame)
-        self._update_attributes(frame)
-
-    def _update_attributes(self, frame: int) -> None:
-        """Store the per-frame vector attributes for the given scene frame.
-
-        These are the `velocity` and `force` of the atoms when the trajectory
-        has them, and any `_att_names` of the entity (such as oxDNA base
-        vectors). They are interpolated and averaged the same way as positions.
-
-        Parameters
-        ----------
-        frame : int
-            Scene frame number
-        """
-        attributes = self.frame_manager.get_attributes_at_frame(frame)
-        for name, values in attributes.items():
-            self.store_named_attribute(
-                data=values,
-                name=name,
-                atype=db.AttributeTypes.FLOAT_VECTOR,
-            )
+        self._store_timestep_attributes(
+            self.frame_manager.get_timestep_attributes_at_frame(frame)
+        )
 
     def _update_box(self) -> None:
         """Update any Periodic Box nodes in the geometry node tree."""
