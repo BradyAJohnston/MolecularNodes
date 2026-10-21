@@ -7,8 +7,10 @@ import databpy
 import MDAnalysis as mda
 import numpy as np
 import pytest
+from nodebpy.nodes.geometry import SetPosition
 from numpy.testing import assert_almost_equal
 import molecularnodes as mn
+from molecularnodes.nodes.geometry import Force, Velocity
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
 
@@ -774,6 +776,24 @@ class TestTrajectory:
             traj.named_attribute("velocity"), expected * traj.world_scale
         )
         assert np.allclose(traj.named_attribute("force"), expected_force)
+
+    @pytest.mark.parametrize("name", ["velocity", "force"])
+    def test_velocity_force_nodes(self, name: str):
+        traj = mn.entities.Molecule(self._universe_in_memory(True, True))
+        bpy.context.scene.frame_set(2)
+        with traj.tree.reset() as (atoms, join):
+            node = Force().o.force if name == "force" else Velocity().o.velocity
+            atoms >> SetPosition(position=node) >> join
+        assert np.allclose(
+            traj.named_attribute("position", evaluate=True),
+            traj.named_attribute(name),
+        )
+
+    def test_force_node_fallback(self, universe):
+        traj = mn.entities.Molecule(universe)
+        with traj.tree.reset() as (atoms, join):
+            atoms >> SetPosition(position=Force().o.force) >> join
+        assert np.allclose(traj.named_attribute("position", evaluate=True), 0.0)
 
     def _write_trr(self, path, velocity_frames=(), force_frames=()) -> mda.Universe:
         # GROMACS writes velocities and forces at their own strides, so a TRR

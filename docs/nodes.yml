@@ -365,6 +365,12 @@ Mass:
   description: The `mass` attribute of the point, used for centre of mass calculations
 B Factor:
   description: The `b_factor` attribute of the point, how well resolved the individual atoms are
+Force:
+  description: >-
+    The `force` attribute of the point, the force on each atom from a trajectory with forces (such as frames of `.trr`
+    files), in MDAnalysis units of kJ/(mol·Å) and not scaled by the world scale. Interpolated and averaged between frames like
+    positions. Not related to the `Force Gravity::Node` and other simulation forces. `(0, 0, 0)` if the geometry has no
+    `force` attribute
 Charge:
   description: >-
     The `charge` attribute of the point, which is only present when the file or topology provided charges (partial
