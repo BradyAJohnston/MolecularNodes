@@ -679,7 +679,7 @@ class Molecule(MolecularEntity):
         self._store_frame_attributes(values)
 
     def _store_frame_attributes(self, values: dict[str, np.ndarray]) -> None:
-        """Store per-frame vector attributes other than positions.
+        """Store per-frame attributes other than positions.
 
         Only the attributes given are stored. One that a frame lacks is not
         given, so an existing attribute keeps the values it was last given.
@@ -690,9 +690,12 @@ class Molecule(MolecularEntity):
             Values by attribute name
         """
         for name, value in values.items():
-            self.store_named_attribute(
-                data=value, name=name, atype=db.AttributeTypes.FLOAT_VECTOR
-            )
+            try:
+                # an existing attribute keeps its type, a new one gets the type
+                # of its values
+                self.store_named_attribute(data=value, name=name)
+            except ValueError as e:
+                logger.debug(f"Skipping per-frame attribute '{name}': {e}")
 
     def _create_object(self, name: str = "NewUniverseObject") -> None:
         """Create Blender mesh object (internal).

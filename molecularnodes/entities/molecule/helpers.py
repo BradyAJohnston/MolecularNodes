@@ -56,6 +56,11 @@ TIMESTEP_ATTRIBUTES = {
     "force": ("forces", False),
 }
 
+# names of the existing attributes that per-atom `ts.data` arrays update: the
+# B-factors of each model of a PDB file, and LAMMPS dump charges. Other keys
+# keep their name
+TS_DATA_NAMES = {"tempfactor": "b_factor", "q": "charge"}
+
 
 class FrameManager:
     """Frame updates, position caching, interpolation, and periodic corrections.
@@ -276,7 +281,8 @@ class FrameManager:
         Positions are always read. The entity's `_att_names` (e.g. oxDNA base
         vectors) are read when the frame's `ts.data` has them, and velocities
         and forces when the Timestep has them: most trajectories have neither,
-        and a TRR file can have them on only some frames.
+        and a TRR file can have them on only some frames. Other per-atom arrays
+        in `ts.data` are read under their MN names (see `TS_DATA_NAMES`).
 
         Parameters
         ----------
@@ -291,7 +297,8 @@ class FrameManager:
         values = {"position": self._position_at_frame(frame)}
         ts = self.trajectory.universe.trajectory.ts
         world_scale = self.trajectory.world_scale
-        for name in getattr(self.trajectory, "_att_names", ()):
+        att_names = getattr(self.trajectory, "_att_names", ())
+        for name in att_names:
             if name in ts.data:
                 values[name] = ts.data[name] * world_scale
         for name, (ts_attribute, scaled) in TIMESTEP_ATTRIBUTES.items():
@@ -302,6 +309,17 @@ class FrameManager:
             except NoDataError:
                 continue
             values[name] = data * world_scale if scaled else data.copy()
+        # any other per-atom array the reader put in `ts.data`, such as PDB
+        # occupancies and B-factors per model, LAMMPS dump `additional_columns`
+        # or TNG `additional_blocks`. Single-frame structures keep the values
+        # from import
+        if self.n_frames != 1:
+            for key, data in ts.data.items():
+                name = TS_DATA_NAMES.get(key, key)
+                if key in att_names or name in values:
+                    continue
+                if isinstance(data, np.ndarray) and data.shape[:1] == (ts.n_atoms,):
+                    values[name] = data.copy()
         return values
 
     def read_and_cache(self, frame: int) -> dict[str, np.ndarray]:
@@ -383,6 +401,10 @@ class FrameManager:
         window = self._frame_range(frame)
         means = {}
         for name in current:
+            if current[name].dtype.kind != "f":
+                # integer and boolean values are not averaged
+                means[name] = current[name]
+                continue
             cache = self.caches[name]
             array = np.stack([cache[f] for f in window if f in cache])
             if (
@@ -434,7 +456,8 @@ class FrameManager:
             t = fraction(frame, self.trajectory.subframes + 1)
             values = {}
             for name, value in current.items():
-                if name not in after:
+                # integer and boolean values are not interpolated
+                if name not in after or value.dtype.kind != "f":
                     values[name] = value
                     continue
                 value_next = after[name]

@@ -88,11 +88,13 @@ How the integer is assigned depends on the attribute. For the dynamic ones the s
 +:=========================+:=======================+:=====================================================================================================================================================================================+
 | `Position`               | `Vector::Vector`       | Coordinates in 3D space of the points, read from the molecular data file. They are scaled by the world scale `0.1::Float` on import so that 1 nm == 1 m.                             |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| `b_factor`               | `Float::Float`         | The temperature factor for the atom on import. If importing an AlphaFold structure this corresponds to the `pLDDT::Float` value.                                                     |
+| `b_factor`               | `Float::Float`         | The temperature factor for the atom on import. If importing an AlphaFold structure this corresponds to the `pLDDT::Float` value. For a trajectory whose frames have their own        |
+|                          |                        | B-factors, such as the models of a multi-model `.pdb` file read as a trajectory, it is updated on each frame.                                                                        |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| `occupancy`              | `Float::Float`         | The crystallographic occupancy of the atom, or `0.0::Float` if the file has none.                                                                                                    |
+| `occupancy`              | `Float::Float`         | The crystallographic occupancy of the atom, or `0.0::Float` if the file has none. Updated on each frame when the frames have their own occupancies, as for `b_factor`.               |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| `charge`                 | `Float::Float`         | The charge of the atom, only present when the file or topology provides charges: partial charges from simulation topologies, formal charges from structure files.                    |
+| `charge`                 | `Float::Float`         | The charge of the atom, only present when the file or topology provides charges: partial charges from simulation topologies, formal charges from structure files. Updated on each    |
+|                          |                        | frame from the `q` column of a LAMMPS dump read with `additional_columns`.                                                                                                           |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `vdw_radii`              | `Float::Float`         | The radii of the atom, stored in world space (\~`0.15::Float`). Values sourced from [Wikipedia](https://en.wikipedia.org/wiki/Atomic_radii_of_the_elements_(data_page)).             |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -199,6 +201,9 @@ The others vary:
 
 Simulation topologies differ in what they contain, so the MD column is for typical topologies such as `.psf` and `.gro`.
 Trajectories also get `velocity` and `force` once a frame that has them is shown; most trajectory formats, such as `.xtc` and `.dcd`, store neither.
+Other per-atom values that MDAnalysis reads for each frame into `ts.data` are stored as attributes too: the B-factors and occupancies of each model of a `.pdb` file (as `b_factor` and `occupancy`), the `additional_columns` of a LAMMPS dump (`q` as `charge`, others by their column name) and the `additional_blocks` of a `.tng` file (by block name).
+Float values are interpolated and averaged between frames like positions; integer and boolean values take the current frame's values.
+Single-frame structures keep the values from import.
 `mol.list_attributes()` lists the attributes on a molecule, and `mol.named_attribute()` raises an error for one that was not created.
 In the node tree there is no error: reading a missing attribute gives `0::Int` (or `False::Bool`) for every atom, so selecting by `entity_id` on a `.pdb` file treats every atom as entity `0::Int`.
 

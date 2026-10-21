@@ -829,6 +829,93 @@ class TestTrajectory:
         assert "velocity" not in traj.list_attributes()
         assert "force" not in traj.list_attributes()
 
+    def test_ts_data_pdb_models(self, tmp_path):
+        # each model of a multi-model PDB file has its own B-factors and
+        # occupancies, which MDAnalysis reads into ts.data
+        source = mda.Universe(
+            data_dir / "md_ppr/box.gro", data_dir / "md_ppr/first_5_frames.xtc"
+        )
+        atoms = source.atoms[:50]
+        source.add_TopologyAttr("tempfactors")
+        source.add_TopologyAttr("occupancies")
+        path = tmp_path / "models.pdb"
+        rng = np.random.default_rng(0)
+        b_factors = rng.uniform(0, 100, size=(3, 50)).round(2)
+        occupancies = rng.uniform(0, 1, size=(3, 50)).round(2)
+        with mda.Writer(str(path), multiframe=True) as writer:
+            for i, _ in enumerate(source.trajectory[:3]):
+                atoms.tempfactors = b_factors[i]
+                atoms.occupancies = occupancies[i]
+                writer.write(atoms)
+
+        traj = mn.entities.Molecule(mda.Universe(str(path)))
+        for frame in range(3):
+            bpy.context.scene.frame_set(frame)
+            assert np.allclose(traj.named_attribute("b_factor"), b_factors[frame])
+            assert np.allclose(traj.named_attribute("occupancy"), occupancies[frame])
+
+        traj.subframes = 1
+        traj.interpolate = True
+        bpy.context.scene.frame_set(1)
+        assert np.allclose(
+            traj.named_attribute("b_factor"), b_factors[:2].mean(axis=0), atol=1e-4
+        )
+        assert np.allclose(
+            traj.named_attribute("occupancy"),
+            occupancies[:2].mean(axis=0),
+            atol=1e-4,
+        )
+
+    def test_ts_data_lammps_dump(self, tmp_path):
+        # extra columns of a LAMMPS dump are read into ts.data, and `q` updates
+        # the charges
+        charges = np.array([[0.1, -0.2, 0.3, -0.4], [0.5, -0.6, 0.7, -0.8]])
+        lines = []
+        for step, q in enumerate(charges):
+            lines += [
+                "ITEM: TIMESTEP",
+                str(step),
+                "ITEM: NUMBER OF ATOMS",
+                "4",
+                "ITEM: BOX BOUNDS pp pp pp",
+                "0 10",
+                "0 10",
+                "0 10",
+                "ITEM: ATOMS id type x y z q",
+            ]
+            lines += [f"{i + 1} 1 {i + step} 1.0 1.0 {q[i]}" for i in range(4)]
+        path = tmp_path / "charges.lammpsdump"
+        path.write_text("\n".join(lines) + "\n")
+
+        u = mda.Universe(str(path), format="LAMMPSDUMP", additional_columns=["q"])
+        traj = mn.entities.Molecule(u)
+        for frame in range(2):
+            bpy.context.scene.frame_set(frame)
+            assert np.allclose(traj.named_attribute("charge"), charges[frame])
+        assert "q" not in traj.list_attributes()
+
+    def test_ts_data_integer_not_interpolated(self):
+        # per-atom integer values hold the current frame's values on subframes
+        # a file reader, as the MemoryReader applies transformations once up front
+        u = mda.Universe(
+            data_dir / "md_ppr/box.gro", data_dir / "md_ppr/first_5_frames.xtc"
+        )
+        n_atoms = u.atoms.n_atoms
+
+        def add_flag(ts):
+            ts.data["flag"] = np.full(n_atoms, ts.frame * 10, dtype=np.int32)
+            return ts
+
+        u.trajectory.add_transformations(add_flag)
+        traj = mn.entities.Molecule(u)
+        traj.subframes = 1
+        traj.interpolate = True
+        # scene frame 3 is halfway from frame 1 (10) to frame 2 (20)
+        bpy.context.scene.frame_set(3)
+        assert np.all(traj.named_attribute("flag") == 10)
+        bpy.context.scene.frame_set(4)
+        assert np.all(traj.named_attribute("flag") == 20)
+
 
 @pytest.mark.parametrize("topology", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
 def test_martini(snapshot, topology):
