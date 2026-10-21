@@ -343,6 +343,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.ColorResName
         children: embedded
+      - name: nodes.geometry.ColorSampleGrid
+        children: embedded
       - name: nodes.geometry.ColorSecondaryStructure
         children: embedded
       - name: nodes.geometry.ColorToLCh

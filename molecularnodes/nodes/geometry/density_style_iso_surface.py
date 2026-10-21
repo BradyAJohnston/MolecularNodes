@@ -38,7 +38,7 @@ class DensityStyleISOSurface(AssetGeometryGroup):
     visible : InputBoolean
         Visibility of style
     threshold : InputFloat
-        ISO value
+        ISO value. Surfaces are meshed at +Threshold and, for signed grids such as potentials or orbitals, at -Threshold
     show_contours : InputBoolean
         Whether to show surface contours
     only_contours : InputBoolean
@@ -67,7 +67,7 @@ class DensityStyleISOSurface(AssetGeometryGroup):
     i.visible : BooleanSocket
         Visibility of style
     i.threshold : FloatSocket
-        ISO value
+        ISO value. Surfaces are meshed at +Threshold and, for signed grids such as potentials or orbitals, at -Threshold
     i.show_contours : BooleanSocket
         Whether to show surface contours
     i.only_contours : BooleanSocket
@@ -106,7 +106,7 @@ class DensityStyleISOSurface(AssetGeometryGroup):
         visible: BooleanSocket
         """Visibility of style"""
         threshold: FloatSocket
-        """ISO value"""
+        """ISO value. Surfaces are meshed at +Threshold and, for signed grids such as potentials or orbitals, at -Threshold"""
         show_contours: BooleanSocket
         """Whether to show surface contours"""
         only_contours: BooleanSocket
@@ -181,9 +181,7 @@ class DensityStyleISOSurface(AssetGeometryGroup):
         threshold = tree.inputs.float(
             "Threshold",
             0.00959343,
-            description="ISO value",
-            min_value=0.0,
-            max_value=1.0,
+            description="ISO value. Surfaces are meshed at +Threshold and, for signed grids such as potentials or orbitals, at -Threshold",
         )
         with tree.inputs.panel("Contours", default_closed=True):
             show_contours = tree.inputs.boolean(
@@ -244,6 +242,7 @@ class DensityStyleISOSurface(AssetGeometryGroup):
 
         bounding_box = g.BoundingBox(volume)
         math_1 = contour_thickness * 0.001
+        math_2 = abs(threshold)
         switch = visible.switch.geometry(true=volume)
         between_vector = BetweenVector(
             value=g.Position().o.position.map_range(
@@ -253,12 +252,13 @@ class DensityStyleISOSurface(AssetGeometryGroup):
             upper=slice_center + slice_width,
         )
         set_material = (
-            g.VolumeToMesh(volume=switch, threshold=threshold * -1.0)
+            g.VolumeToMesh(volume=switch, threshold=math_2 * -1.0)
+            >> g.FlipFaces()
             >> g.StoreNamedAttribute.point.color(name="Color", value=negative_color)
             >> g.SetMaterial(material=material)
         )
         set_material_1 = (
-            g.VolumeToMesh(volume=switch, threshold=threshold)
+            g.VolumeToMesh(volume=switch, threshold=math_2)
             >> g.StoreNamedAttribute.point.color(name="Color", value=positive_color)
             >> g.SetMaterial(material=material)
         )

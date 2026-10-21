@@ -61,6 +61,7 @@ from .color_oklab_offset import ColorOKLabOffset
 from .color_plddt import ColorPLDDT
 from .color_rainbow import ColorRainbow
 from .color_res_name import ColorResName
+from .color_sample_grid import ColorSampleGrid
 from .color_secondary_structure import ColorSecondaryStructure
 from .color_to_lch import ColorToLCh
 from .color_to_oklab import ColorToOKLab
@@ -335,6 +336,7 @@ __all__ = (
     "ColorPLDDT",
     "ColorRainbow",
     "ColorResName",
+    "ColorSampleGrid",
     "ColorSecondaryStructure",
     "ColorToLCh",
     "ColorToOKLab",

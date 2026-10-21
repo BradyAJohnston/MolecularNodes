@@ -12,7 +12,7 @@ import logging
 import re
 import warnings
 from pathlib import Path
-from typing import Callable, Dict, Sequence
+from typing import TYPE_CHECKING, Callable, Dict, Sequence
 import bpy
 import databpy as db
 import MDAnalysis as mda
@@ -42,6 +42,9 @@ from .annotations import MoleculeAnnotationManager
 from .dssp import DSSPManager
 from .helpers import FrameManager, _ag_to_bool, _isin
 from .selections import SelectionManager
+
+if TYPE_CHECKING:
+    from ..density import Density
 
 logger = logging.getLogger(__name__)
 
@@ -1213,7 +1216,7 @@ class Molecule(MolecularEntity):
         | MaterialBuilder
         | str
         | None = _UNSET,
-        color: str | Sequence[float] | Callable | None = None,
+        color: "str | Sequence[float] | Callable | Density | None" = None,
         assembly: bool = False,
         name: str | None = None,
         **kwargs,
@@ -1270,6 +1273,17 @@ class Molecule(MolecularEntity):
               node tree context, e.g. ``lambda: mg.ColorRainbow()``. This is the way
               to reach the full set of ``Color*`` nodes without writing out a whole
               node tree.
+            - a density entity (e.g. an APBS potential loaded with
+              ``mn.entities.density.Grids.load``) to color the styled geometry by
+              sampling its grid, through a ``Color Sample Grid`` node. Unlike the
+              other options this is applied *after* the style, at every point of
+              its output (each surface vertex for ``"surface"``), so instanced
+              geometry such as instanced spheres is not colored. The range is the
+              node's default of -5 to 5 (red through light grey to blue); change
+              ``Min`` and ``Max`` on the node for other grids. Load the density
+              with ``style=None``, as a density style replaces its grid with a
+              mesh, and set ``density.object.hide_render = True`` so the volume
+              itself is not rendered.
             - None (default) to add no color node, leaving the baked ``Color``
               attribute in use.
 
@@ -1311,8 +1325,19 @@ class Molecule(MolecularEntity):
         """
 
         from ...nodes import geometry as g
+        from ..density import Density
         from . import OXDNA
 
+        color_by_density = isinstance(color, Density)
+        if color_by_density and db.GeometrySet(color.object).volume is None:
+            warnings.warn(
+                f"Density '{color.name}' has style nodes that turn its grid into a "
+                "mesh, so there is no grid left to sample and the color will be "
+                "flat. Load the density used for coloring with `style=None`, and "
+                "set `density.object.hide_render = True` so its volume is not "
+                "rendered.",
+                category=UserWarning,
+            )
         style_is_callable = callable(style)
         if not style_is_callable and style not in STYLE_NODE_MAPPING:
             raise ValueError(
@@ -1369,6 +1394,7 @@ class Molecule(MolecularEntity):
                 None if style_is_callable else style_mapping[style],
                 g.SetColor if color is not None else None,
                 *self._style_color_groups(color),
+                g.ColorSampleGrid if color_by_density else None,
                 g.AssemblyInstance if assembly else None,
             ]
         )
@@ -1390,11 +1416,20 @@ class Molecule(MolecularEntity):
                 )
             if name:
                 style_node.node.label = name
-            color_input = self._style_color_input(color) if color is not None else None
+            color_input = (
+                self._style_color_input(color)
+                if color is not None and not color_by_density
+                else None
+            )
             (
                 tree.atoms
                 >> (g.SetColor(color=color_input) if color_input is not None else None)
                 >> style_node
+                >> (
+                    g.SetColor(color=g.ColorSampleGrid(object=color.object).o.color)
+                    if color_by_density
+                    else None
+                )
                 >> (
                     g.AssemblyInstance(data_object=self.create_data_object())
                     if assembly

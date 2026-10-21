@@ -273,6 +273,19 @@ Color Attribute Map:
     _Attribute Name_ that is used for the inerpolation, specifying the start and end values of the interpolation
   videos:
     - https://imgur.com/ZWCSx19
+Color Sample Grid:
+  description: >-
+    Color each point by the value of a float grid at its position, such as an electrostatic potential from APBS
+    on a `Style Surface`. Pick the volume object with `Object::Object` and the grid with `Grid Name::String`;
+    densities loaded with Molecular Nodes name their grid `density`. Values from `Min::Float` to `Max::Float`
+    blend linearly from `A::Color` through `Intermediate::Color` to `B::Color`, and values outside the range
+    take the end colors. The default -5 to 5 suits an APBS potential in kT/e. `Value::Float` outputs the sampled
+    value, trilinearly interpolated, and is zero outside the grid.
+    Place it in a `Set Color` after a style to color the style's own points (each surface vertex), or before
+    a style to color the atoms by the value at their centres. The grid is read from the object's evaluated
+    geometry, so the volume object must still hold it: load the density with `style=None` and hide it from
+    renders, as a density style replaces the grid with a mesh. The grid is sampled in world space, so moving
+    either object moves the molecule through the grid.
 Color Attribute Random:
   description: >-
     Generate a random color, based on the given attribute. Control the lightness and saturation of the color with

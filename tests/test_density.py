@@ -135,3 +135,270 @@ def test_fallback_transforms(isolated_density_file):
     )
 
     assert np.allclose(pos_default, pos_chimerax)
+
+
+# signed grids, affine transforms and sampling a grid ------------------------------
+
+
+def _write_dx(path, data, origin, axes):
+    """Write a .dx file with a full `delta` matrix (rows are the voxel axes, in Å)."""
+    nx, ny, nz = data.shape
+    values = np.asarray(data, dtype=float).ravel()  # z fastest, as OpenDX expects
+    lines = [
+        f"object 1 class gridpositions counts {nx} {ny} {nz}",
+        "origin " + " ".join(f"{v:.8g}" for v in origin),
+        *("delta " + " ".join(f"{v:.8g}" for v in row) for row in axes),
+        f"object 2 class gridconnections counts {nx} {ny} {nz}",
+        f"object 3 class array type double rank 0 items {values.size} data follows",
+        *(
+            " ".join(f"{v:.10g}" for v in values[i : i + 3])
+            for i in range(0, values.size, 3)
+        ),
+        'object "density" class field',
+    ]
+    path.write_text("\n".join(lines) + "\n")
+    return path
+
+
+def _linear_field(shape):
+    i, j, k = np.indices(shape, dtype=float)
+    # trilinear interpolation reproduces a linear field exactly
+    return i + 10 * j + 100 * k
+
+
+def _input_default(group_name, socket_name):
+    tree = bpy.data.node_groups[group_name]
+    return np.array(
+        next(
+            item.default_value
+            for item in tree.interface.items_tree
+            if item.item_type == "SOCKET"
+            and item.in_out == "INPUT"
+            and item.name == socket_name
+        )
+    )
+
+
+def _sample_grid_at(density, points_angstrom):
+    """Evaluate `Color Sample Grid` at points (Å) on a separate mesh object."""
+    from nodebpy import TreeBuilder
+    from nodebpy import geometry as g
+    from molecularnodes.nodes.geometry import ColorSampleGrid
+
+    points = np.asarray(points_angstrom, dtype=float) * 0.1
+    obj = bpy.data.objects.new("sample_points", bpy.data.meshes.new("sample_points"))
+    bpy.context.scene.collection.objects.link(obj)
+    obj.data.from_pydata(points.tolist(), [], [])
+    tree = bpy.data.node_groups.new("sample_points", "GeometryNodeTree")
+    obj.modifiers.new("sample", "NODES").node_group = tree
+    with TreeBuilder(tree) as t:
+        geometry = t.inputs.geometry("Geometry")
+        result = t.outputs.geometry("Geometry")
+        node = ColorSampleGrid(object=density.object)
+        (
+            geometry
+            >> g.StoreNamedAttribute.point.float(name="value", value=node.o.value)
+            >> g.StoreNamedAttribute.point.color(name="sampled", value=node.o.color)
+            >> result
+        )
+    geometry_set = databpy.GeometrySet(obj)
+    return (
+        geometry_set.named_attribute("value"),
+        geometry_set.named_attribute("sampled"),
+    )
+
+
+@pytest.mark.parametrize("threshold", [1.5, -1.5])
+def test_iso_surface_signed_threshold(tmp_path, threshold):
+    from nodebpy import geometry as g
+    from molecularnodes.nodes.geometry import DensityStyleISOSurface
+
+    # +3 and -3 Gaussian lobes centred at x = +4 and x = -4 Å
+    x = (np.arange(41) - 20) * 0.5
+    X, Y, Z = np.meshgrid(x, x, x, indexing="ij")
+    centres = {"positive": np.array([4.0, 0, 0]), "negative": np.array([-4.0, 0, 0])}
+
+    def blob(c):
+        return np.exp(-((X - c[0]) ** 2 + (Y - c[1]) ** 2 + (Z - c[2]) ** 2) / 4.0)
+
+    data = 3.0 * blob(centres["positive"]) - 3.0 * blob(centres["negative"])
+    path = _write_dx(tmp_path / "signed.dx", data, [x[0]] * 3, np.eye(3) * 0.5)
+    density = mn.entities.density.Grids.load(path, style=None)
+    with density.tree.reset(input="Volume") as (volume, join):
+        (
+            volume
+            >> DensityStyleISOSurface(threshold=threshold)
+            >> g.StoreNamedAttribute.point.vector(name="normal", value=g.Normal())
+            >> join
+        )
+    # outside the old 0-1 clamp
+    style = next(
+        node
+        for node in density.modifier_node_tree.nodes
+        if node.bl_idname == "GeometryNodeGroup"
+        and node.node_tree.name.startswith(DensityStyleISOSurface._name)
+    )
+    assert style.inputs["Threshold"].default_value == pytest.approx(threshold)
+
+    positions = density.named_attribute("position") / 0.1
+    normals = density.named_attribute("normal")
+    # 3 exp(-r^2 / 4) = 1.5 at r = sqrt(4 ln 2) = 1.67 Å; a threshold clamped to 1
+    # would give sqrt(4 ln 3) = 2.10 Å
+    expected_radius = np.sqrt(4 * np.log(2))
+    for side, selection in [
+        ("positive", positions[:, 0] > 0),
+        ("negative", positions[:, 0] < 0),
+    ]:
+        assert selection.sum() > 50, side
+        radial = positions[selection] - centres[side]
+        distance = np.linalg.norm(radial, axis=1)
+        assert distance.mean() == pytest.approx(expected_radius, abs=0.05), side
+        # both lobes are closed surfaces with outward normals
+        outward = np.sum(radial / distance[:, None] * normals[selection], axis=1)
+        assert outward.min() > 0.9, side
+
+
+def test_density_orthogonal_transform_unchanged(tmp_path):
+    shape = (6, 7, 8)
+    origin = np.array([1.5, -2.0, 3.25])
+    delta = np.array([0.5, 0.75, 1.25])
+    path = _write_dx(
+        tmp_path / "ortho.dx", _linear_field(shape), origin, np.diag(delta)
+    )
+    density = mn.entities.density.Grids.load(path, style=None)
+    assert np.array_equal(density.axes, np.diag(delta))
+
+    density.object.data.grids.load()
+    grid = density.object.data.grids["density"]
+    expected = np.eye(4)
+    expected[:3, :3] = np.diag(delta * 0.1)
+    expected[:3, 3] = origin * 0.1
+    assert np.allclose(np.array(grid.matrix_object), expected, atol=1e-7)
+
+    bpy.utils.expose_bundled_modules()
+    import openvdb as vdb  # type: ignore
+
+    # written with scale + translate as before, not the affine path
+    metadata = vdb.readAllGridMetadata(density.file_vdb)[0]
+    assert "MN_affine" not in metadata
+    del metadata
+
+    ijk = np.array([[1.5, 2.25, 3.0], [4.0, 4.0, 4.0], [0.0, 6.0, 2.5]])
+    values, _ = _sample_grid_at(density, origin + ijk * delta)
+    assert np.allclose(values, ijk @ [1.0, 10.0, 100.0], atol=1e-3)
+
+
+def test_density_affine_transform_dx(tmp_path):
+    shape = (6, 7, 8)
+    origin = np.array([2.0, -1.0, 3.0])
+    # sheared voxel axes, as rows
+    axes = np.array([[1.0, 0.0, 0.0], [0.5, 1.0, 0.0], [0.2, 0.3, 1.2]])
+    path = _write_dx(tmp_path / "sheared.dx", _linear_field(shape), origin, axes)
+    density = mn.entities.density.Grids.load(path, style=None)
+    assert np.allclose(density.axes, axes)
+
+    density.object.data.grids.load()
+    grid = density.object.data.grids["density"]
+    expected = np.eye(4)
+    expected[:3, :3] = axes.T * 0.1  # Blender's matrix holds the axes as columns
+    expected[:3, 3] = origin * 0.1
+    assert np.allclose(np.array(grid.matrix_object), expected, atol=1e-7)
+
+    # the world position of a (fractional) voxel index holds the value at that index
+    ijk = np.array([[1.5, 2.25, 3.0], [4.0, 4.0, 4.0], [0.5, 6.0, 2.0], [0, 0, 0]])
+    values, _ = _sample_grid_at(density, origin + ijk @ axes)
+    assert np.allclose(values, ijk @ [1.0, 10.0, 100.0], atol=1e-3)
+
+
+def test_density_affine_transform_mrc(isolated_density_file):
+    # monoclinic map (beta = 94.3 deg) with axis order 3, 1, 2 and non-zero start
+    # indices, shipped with the GridDataFormats tests
+    from pathlib import Path
+    import mrcfile
+    from gridData.tests import datafiles
+
+    path = isolated_density_file(Path(datafiles.__file__).parent / "EMD-3001.map.bz2")
+    with mrcfile.open(path, permissive=True) as mrc:
+        h = mrc.header
+        data = mrc.data.copy()  # indexed [section, row, column]
+        lengths = np.array([h.cella.x, h.cella.y, h.cella.z], dtype=float)
+        alpha, beta, gamma = np.radians([h.cellb.alpha, h.cellb.beta, h.cellb.gamma])
+        sampling = np.array([h.mx, h.my, h.mz], dtype=float)
+        # crystal axis along columns, rows and sections, and their start indices
+        order = np.array([h.mapc, h.mapr, h.maps]) - 1
+        starts = np.array([h.nxstart, h.nystart, h.nzstart], dtype=float)
+    assert not np.isclose(np.degrees(beta), 90.0)
+
+    # fractional -> Cartesian with a along x and b in the xy plane
+    cy = (np.cos(alpha) - np.cos(beta) * np.cos(gamma)) / np.sin(gamma)
+    cell = np.array(
+        [
+            [lengths[0], 0, 0],
+            [lengths[1] * np.cos(gamma), lengths[1] * np.sin(gamma), 0],
+            [
+                lengths[2] * np.cos(beta),
+                lengths[2] * cy,
+                lengths[2] * np.sqrt(1 - np.cos(beta) ** 2 - cy**2),
+            ],
+        ]
+    )
+
+    density = mn.entities.density.Grids.load(path, style=None)
+
+    rng = np.random.default_rng(0)
+    indices = np.column_stack([rng.integers(0, n, 12) for n in data.shape])
+    points = []
+    for s, r, c in indices:
+        grid_index = np.zeros(3)
+        grid_index[order] = np.array([c, r, s]) + starts
+        points.append((grid_index / sampling) @ cell)
+    values, _ = _sample_grid_at(density, points)
+    expected = data[indices[:, 0], indices[:, 1], indices[:, 2]]
+    assert np.allclose(values, expected, atol=1e-5)
+
+
+def test_color_sample_grid_values_and_colors(tmp_path):
+    from molecularnodes.nodes.geometry import ColorSampleGrid
+
+    # value -20 + 10 i along x, on a 1 Å grid at the origin
+    data = np.broadcast_to((np.arange(5) * 10.0 - 20.0)[:, None, None], (5, 3, 3))
+    path = _write_dx(tmp_path / "ramp.dx", data, [0, 0, 0], np.eye(3))
+    density = mn.entities.density.Grids.load(path, style=None)
+    points = [[0, 1, 1], [1.75, 1, 1], [2, 1, 1], [2.25, 1, 1], [4, 1, 1], [20, 1, 1]]
+    values, colors = _sample_grid_at(density, points)
+    # trilinear inside the grid, 0 outside it
+    assert np.allclose(values, [-20, -2.5, 0, 2.5, 20, 0], atol=1e-4)
+
+    name = ColorSampleGrid._name
+    assert _input_default(name, "Min") == -5.0
+    assert _input_default(name, "Max") == 5.0
+    a, mid, b = (_input_default(name, n)[:3] for n in ("A", "Intermediate", "B"))
+    # clamped below Min and above Max, linear through the Intermediate color
+    expected = [a, (a + mid) / 2, mid, (mid + b) / 2, b, mid]
+    assert np.allclose(colors[:, :3], expected, atol=1e-4)
+
+
+def test_add_style_color_by_density(fetch, tmp_path):
+    from molecularnodes.nodes.geometry import ColorSampleGrid
+
+    mol = fetch("1cbs")
+    positions = mol.named_attribute("position") / mol.world_scale
+    origin = positions.min(axis=0) - 10.0
+    shape = tuple(np.ceil(np.ptp(positions, axis=0) + 20).astype(int))
+    path = _write_dx(tmp_path / "positive.dx", np.full(shape, 10.0), origin, np.eye(3))
+    density = mn.entities.density.Grids.load(path, style=None)
+
+    mol.add_style("surface", color=density)
+    colors = mol.named_attribute("Color", evaluate=True)
+    # every surface vertex is in the +10 grid, above Max, so gets color B
+    assert len(colors) > 1000
+    b = _input_default(ColorSampleGrid._name, "B")
+    assert np.allclose(colors[:, :3], b[:3], atol=1e-4)
+
+
+def test_add_style_color_by_styled_density_warns(fetch, tmp_path):
+    mol = fetch("1cbs")
+    path = _write_dx(tmp_path / "grid.dx", np.ones((4, 4, 4)), [0, 0, 0], np.eye(3))
+    density = mn.entities.density.Grids.load(path, style="density_surface")
+    with pytest.warns(UserWarning, match="no grid left to sample"):
+        mol.add_style("surface", color=density)
