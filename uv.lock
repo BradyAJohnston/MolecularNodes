@@ -449,14 +449,14 @@ wheels = [
 
 [[package]]
 name = "databpy"
-version = "0.10.1"
+version = "0.12.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/55/f1/46c780b4ab024f342aa416a95b11d4f2cd4f8e657f74efe1bd4d4a40c613/databpy-0.10.1.tar.gz", hash = "sha256:a2937c947671f5ef74fa859e40b052039a03fff83eb5ddb6e7bf0b5d03b7b239", size = 36709, upload-time = "2026-10-08T09:55:28.963Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/30/56/ccbb9734b72fd0cb1617de023367205bf3473e49644755f53a203ccc8280/databpy-0.12.0.tar.gz", hash = "sha256:00275ba0cc17082ea263fe243176b71763b0f4ee7e05e4152e5404de847334a3", size = 39286, upload-time = "2026-10-21T12:43:57.108Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/7c/cd/2fb958499f1778afb42d2ff56966635420cabbc5369ca659ecf3058b71b6/databpy-0.10.1-py3-none-any.whl", hash = "sha256:fdeebbaf38f63d8549a67f54f9d74777510dbf36229ed434e35da81d7dafbcc4", size = 43446, upload-time = "2026-10-08T09:55:27.448Z" },
+    { url = "https://files.pythonhosted.org/packages/9c/dd/5e6d2e32758f62059f569fe4831c7c4125417c0ffe99e5e614abe4383fbe/databpy-0.12.0-py3-none-any.whl", hash = "sha256:3666d0424a1dba90fa5a5af15dcbff7ad3bcc9b12ecbff42ca48f4d25fec3d61", size = 46567, upload-time = "2026-10-21T12:43:55.852Z" },
 ]
 
 [[package]]
@@ -1408,9 +1408,9 @@ jupyter = [
 
 [package.metadata]
 requires-dist = [
-    { name = "biotite", specifier = ">=1.7.1" },
+    { name = "biotite", specifier = ">=1.7.1,<2" },
     { name = "bpy", marker = "extra == 'bpy'", specifier = "==5.2.*" },
-    { name = "databpy", specifier = ">=0.10.1" },
+    { name = "databpy", specifier = ">=0.12.0" },
     { name = "fake-bpy-module", marker = "extra == 'dev'", specifier = ">=20260816" },
     { name = "griddataformats", specifier = ">=1.2.0" },
     { name = "griffe", marker = "extra == 'docs'", specifier = "<2.0" },
@@ -1426,7 +1426,7 @@ requires-dist = [
     { name = "mdanalysistests", marker = "extra == 'dev'", specifier = ">=2.7.0" },
     { name = "mdanalysistests", marker = "extra == 'docs'", specifier = ">=2.7.0" },
     { name = "mrcfile" },
-    { name = "nodebpy", specifier = ">=520.34.1" },
+    { name = "nodebpy", specifier = ">=520.38.0" },
     { name = "numpy", marker = "extra == 'dev'", specifier = ">2.2" },
     { name = "pandas", specifier = "<3.0.0" },
     { name = "pillow", marker = "extra == 'dev'" },
@@ -1566,11 +1566,11 @@ wheels = [
 
 [[package]]
 name = "nodebpy"
-version = "520.34.1"
+version = "520.38.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/7a/b0/6eb7a05072335b75a006035854b275a1c26786183f4d0d313cb908973d7f/nodebpy-520.34.1.tar.gz", hash = "sha256:1a9f0ff78d5f0c7cdf47b54083f420a4f789c5f77d628166364d485f3af1c682", size = 499242, upload-time = "2026-10-07T19:04:57.786Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/02/95/4339e272884e98b96307de1dc0c82cc703ea8a294ef3cc9cebaae709713e/nodebpy-520.38.0.tar.gz", hash = "sha256:0245e090f638ef61d52a10a61f6eced7854e519602630c8c5132feaf10ab467a", size = 531939, upload-time = "2026-10-13T07:30:00.287Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/74/5d/908e5aeb177b342c8861404436c45d4d34b58ea444f1dd397c9c528c2607/nodebpy-520.34.1-py3-none-any.whl", hash = "sha256:2db8745107e2a708b11b484ebbfb0ba8e1b9a95cbaaa1f7f66efb8482428fb46", size = 553255, upload-time = "2026-10-07T19:04:55.723Z" },
+    { url = "https://files.pythonhosted.org/packages/5c/7b/07bf54389c557c8e183eb47d0da114777c467a5c715b9947fec7853ffbc3/nodebpy-520.38.0-py3-none-any.whl", hash = "sha256:3124c712938c607e665f2586ba244dc18bb02f659c28c36d9276faba7735717b", size = 592373, upload-time = "2026-10-13T07:29:58.38Z" },
 ]
 
 [[package]]

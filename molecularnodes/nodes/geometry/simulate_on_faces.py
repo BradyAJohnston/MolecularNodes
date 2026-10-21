@@ -46,7 +46,7 @@ class XPBDSolveOnFaces(CustomGeometryGroup):
         )
         geometry_1 = tree.outputs.geometry("Geometry")
 
-        geometry_proximity = g.GeometryProximity(target=faces)
+        geometry_proximity = g.GeometryProximity(faces)
         constraint_distance = ConstraintDistance(
             target=geometry_proximity.o.position,
             distance=0.0,

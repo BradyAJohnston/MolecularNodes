@@ -141,8 +141,7 @@ class FixLoopAlignmentIntoAH(CustomGeometryGroup):
         selection = capture.items.boolean(IsHelix().o.selection, "Selection")
         with g.Frame("Subdivide the first and last segments going into AH"):
             boolean_math = g.BooleanMath.subtract(
-                g.EndpointSelection(start_size=0, end_size=2),
-                g.EndpointSelection(start_size=0),
+                g.EndpointSelection(start_size=0, end_size=2), g.EndpointSelection(0)
             )
             boolean_math_1 = ExpandBoolean(
                 boolean=selection.output, expand=1
@@ -152,8 +151,7 @@ class FixLoopAlignmentIntoAH(CustomGeometryGroup):
             )
         with g.Frame("Selection for second point and second last point"):
             boolean_math_2 = g.BooleanMath.subtract(
-                g.EndpointSelection(start_size=0, end_size=2),
-                g.EndpointSelection(start_size=0),
+                g.EndpointSelection(start_size=0, end_size=2), g.EndpointSelection(0)
             )
             boolean_math_3 = g.BooleanMath.subtract(
                 g.EndpointSelection(start_size=2, end_size=0),
@@ -269,11 +267,6 @@ class CAToLoops(CustomGeometryGroup):
         switch_3 = endpoint_selection.o.selection.switch.vector(
             sample_from_ca_curve.o.normal, sample_from_ca_curve_1.o.normal
         )
-        vector_in_angstroms = VectorInAngstroms(
-            vector=g.Normal(legacy_corner_normals=True).o.normal,
-            normalize=False,
-            angstrom=2.0,
-        )
         set_position = (
             capture_2.o.geometry
             >> g.SetCurveNormal(
@@ -282,7 +275,9 @@ class CAToLoops(CustomGeometryGroup):
             >> g.SetPosition(
                 selection=is_helix_1.o.selection,
                 position=switch_1,
-                offset=vector_in_angstroms,
+                offset=VectorInAngstroms(
+                    vector=g.Normal(True).o.normal, normalize=False, angstrom=2.0
+                ),
             )
         )
         set_color = SetColor(
@@ -292,7 +287,7 @@ class CAToLoops(CustomGeometryGroup):
         )
         set_curve_radius = (
             g.SetHandleType(
-                curve=FixLoopAlignmentIntoAH(Curve=set_color, Tangent=tangent.output)
+                FixLoopAlignmentIntoAH(Curve=set_color, Tangent=tangent.output)
             )
             >> g.SetCurveNormal()
             >> g.SetCurveRadius(radius=radius_1.output)
@@ -364,9 +359,9 @@ class SplitCurves(CustomGeometryGroup):
             >> g.SetSplineResolution(resolution=resolution)
             >> g.SetSplineType.bezier()
         )
-        g.SetHandleType(curve=set_spline_type) >> curve
+        g.SetHandleType(set_spline_type) >> curve
         viewer = g.Viewer()
-        capture_1.o.geometry >> viewer
+        viewer.items.geometry(capture_1.o.geometry, "Geometry")
 
 
 class NodeGroup(CustomGeometryGroup):
@@ -399,7 +394,7 @@ class NodeGroup(CustomGeometryGroup):
         scale = tree.inputs.vector("Scale", (1.0, 2.5, 1.0), subtype="XYZ")
         geometry = tree.outputs.geometry("Geometry")
 
-        mix = g.Mix.float(b=1.0, clamp_factor=True)
+        mix = g.Mix.float(b=1.0)
         multiply_matrices = g.MultiplyMatrices(
             matrix=g.CombineTransform(rotation=rotation, scale=scale),
             matrix_001=g.CombineTransform(rotation=(0.0, 0.0, math.pi / 4)),
@@ -417,10 +412,7 @@ class NodeGroup(CustomGeometryGroup):
         rotation_2 = capture_1.items.rotation(sample_curve.o.value, "Rotation")
         position = capture_1.items.vector(sample_curve.o.position, "Position")
         mix_1 = g.Mix.rotation(
-            0.0,
-            rotation_2.output,
-            OffsetRotation(rotation=rotation_2.output, offset=1),
-            clamp_factor=True,
+            0.0, rotation_2.output, OffsetRotation(rotation=rotation_2.output, offset=1)
         )
         switch = g.EndpointSelection(end_size=0).o.selection.switch.rotation(
             rotation_2.output, mix_1.o.result_rotation
@@ -444,12 +436,9 @@ class NodeGroup(CustomGeometryGroup):
             rotation=(0.0, 0.0, math.pi / 4),
         )
         fillet_curve = g.SetHandleType(
-            curve=g.SetSplineType.bezier(transform_geometry)
+            g.SetSplineType.bezier(transform_geometry)
         ) >> g.FilletCurve(
-            radius=g.Mix.float(
-                mix.o.result_float, 0.001, 0.05, clamp_factor=True
-            ).o.result_float,
-            limit_radius=True,
+            radius=mix.o.result_float.mix.float(0.001, 0.05), limit_radius=True
         )
         menu_switch = g.MenuSwitch.geometry(
             menu,
@@ -482,20 +471,16 @@ class TweakArrowHeads(CustomGeometryGroup):
         input = tree.inputs.float("Input", 0.0)
         output = tree.outputs.geometry("Output")
 
-        vector_math = g.Normal(legacy_corner_normals=True).o.normal.dot(
-            Tmp_ss_attributes().o.tmp_curve_normal
-        )
-        boolean_math = (input < 1.0) & (
-            g.EvaluateOnDomain.face.float(
-                g.Compare.float.equal(abs(vector_math), 0.0, 0.5)
-            )
-            > 0.44
+        compare = g.Compare.float.equal(
+            abs(g.Normal(True).o.normal.dot(Tmp_ss_attributes().o.tmp_curve_normal)),
+            0.0,
+            0.5,
         )
         capture = g.CaptureAttribute.face(geometry=geometry)
-        boolean = capture.items.boolean(boolean_math, "Boolean")
-        normal = capture.items.vector(
-            g.Normal(legacy_corner_normals=True).o.normal, "Normal"
+        boolean = capture.items.boolean(
+            (input < 1.0) & (g.EvaluateOnDomain.face.float(compare) > 0.44), "Boolean"
         )
+        normal = capture.items.vector(g.Normal(True).o.normal, "Normal")
         extrude_mesh = capture.o.geometry >> g.ExtrudeMesh(
             selection=boolean.output,
             offset=normal.output,
@@ -556,12 +541,10 @@ class CAToSheet(CustomGeometryGroup):
             )
             axis_angle_to_rotation = g.AxisAngleToRotation(
                 axis=g.CurveTangent(),
-                angle=math_1.o.value.wrap(0.0, 2.0) * 3.14159 + g.Math.to_radians(30.0),
+                angle=math_1.o.value.wrap(max=2.0) * 3.14159 + g.Math.to_radians(30.0),
             )
             blur_attribute = (
-                g.Normal(legacy_corner_normals=True)
-                .o.normal.rotate(axis_angle_to_rotation)
-                .blur()
+                g.Normal(True).o.normal.rotate(axis_angle_to_rotation).blur()
             )
         capture = g.CaptureAttribute.point(
             geometry=g.SetCurveNormal(curve=curve, normal=blur_attribute, mode="Free")
@@ -583,9 +566,7 @@ class CAToSheet(CustomGeometryGroup):
             >> g.SetPosition(offset=vector_math)
             >> g.SetSplineType.bezier()
         )
-        capture_1 = g.CaptureAttribute.point(
-            geometry=g.SetHandleType(curve=set_spline_type)
-        )
+        capture_1 = g.CaptureAttribute.point(geometry=g.SetHandleType(set_spline_type))
         arrow_mask = capture_1.items.float(
             (g.SplineLength().o.point_count - 1.0).max(1.0)
             - g.SplineParameter().o.index,
@@ -601,8 +582,7 @@ class CAToSheet(CustomGeometryGroup):
         store_named_attribute = (
             capture_1.o.geometry
             >> g.StoreNamedAttribute.point.vector(
-                name="tmp_curve_normal",
-                value=g.Normal(legacy_corner_normals=True).o.normal,
+                name="tmp_curve_normal", value=g.Normal(True).o.normal
             )
             >> g.StoreNamedAttribute.point.vector(
                 name="tmp_curve_tangent", value=g.CurveTangent()
@@ -689,8 +669,7 @@ class CAToHelix(CustomGeometryGroup):
                 g.SetPosition(
                     geometry=curve_split_splines,
                     offset=VectorInAngstroms(
-                        vector=g.Normal(legacy_corner_normals=True).o.normal,
-                        angstrom=2.4,
+                        vector=g.Normal(True).o.normal, angstrom=2.4
                     ),
                 )
                 >> g.SetSplineType()
@@ -699,12 +678,16 @@ class CAToHelix(CustomGeometryGroup):
                     position=g.Position().o.position.blur(2, boolean_math),
                 )
                 >> g.SetCurveNormal()
-                >> g.ResampleCurve(length=MNUnits(value=2.0).o.angstrom, mode="Length")
+                >> g.ResampleCurve(
+                    length=MNUnits(value=2.0).o.angstrom,
+                    mode="Length",
+                    keep_last_segment=False,
+                )
                 >> g.SetSplineType.bezier()
                 >> g.SetCurveRadius(radius=MNUnits(value=width * 4.0).o.angstrom)
             )
             curve_to_mesh = (
-                g.SetHandleType(curve=set_curve_radius)
+                g.SetHandleType(set_curve_radius)
                 >> g.SetSplineResolution(resolution=subdivisions / 4.0)
                 >> g.CurveToMesh(
                     profile_curve=g.CurveCircle(
@@ -756,7 +739,7 @@ class CAToHelix(CustomGeometryGroup):
                 >> g.SetSplineType.bezier()
             )
             curve_custom_profile_1 = CurveCustomProfile(
-                curve=g.SetHandleType(curve=set_spline_type),
+                curve=g.SetHandleType(set_spline_type),
                 subdivisions=subdivisions,
                 socket_6=align_rotation_to_vector,
                 profile_scale=g.CombineXYZ(x=thickness, y=width),
@@ -764,9 +747,9 @@ class CAToHelix(CustomGeometryGroup):
                 socket_11=0.0,
             )
         _evaluate_closure = g.EvaluateClosure()
-        join_geometry = g.JoinGeometry(geometry=(curve_custom_profile_1, curve_to_mesh))
+        join_geometry = g.JoinGeometry((curve_custom_profile_1, curve_to_mesh))
         viewer = g.Viewer()
-        curve_split_splines >> viewer
+        viewer.items.geometry(curve_split_splines.o.curve, "Curve")
 
         join_geometry >> geometry
 
@@ -908,7 +891,7 @@ class MN_utils_style_cartoon(CustomGeometryGroup):
             )
         )
         _join_geometry = g.JoinGeometry(
-            geometry=(
+            (
                 NodeGroup(Curves=split_curves, Scale=(0.8, 2.5, 1.0)),
                 nodegroup_1,
                 nodegroup,
@@ -940,7 +923,7 @@ class MN_utils_style_cartoon(CustomGeometryGroup):
             Subdivisions=helix_subdivisions,
         )
         store_named_attribute = g.StoreNamedAttribute.edge.boolean(
-            g.JoinGeometry(geometry=(ca_to_helix, ca_to_sheet, ca_to_loops)),
+            g.JoinGeometry((ca_to_helix, ca_to_sheet, ca_to_loops)),
             name="sharp_edge",
             value=~shade_smooth | (g.EdgeAngle().o.signed_angle > math.pi / 3),
         )
@@ -954,7 +937,7 @@ class MN_utils_style_cartoon(CustomGeometryGroup):
             >> cartoon_mesh
         )
         viewer = g.Viewer()
-        split_curves >> viewer
+        viewer.items.geometry(split_curves, "Curve")
 
         atoms_to_ca_curves >> ca_splines
 
@@ -1372,13 +1355,18 @@ class StyleCartoon(AssetGeometryGroup):
             base_resolution=g.IndexSwitch.integer(menu_switch.o.output, (12, 4)),
         )
         join_geometry = g.JoinGeometry(
-            geometry=(
+            (
                 mn_utils_style_cartoon.o.cartoon_mesh,
                 mn_utils_style_ribbon_nucleic.o.geometry,
             )
         )
         join_geometry >> geometry_1.input
-        EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
+        (
+            EvaluateOnAtoms(
+                geometry=atoms, closure=closure_zone.closure, result="Representation"
+            )
+            >> geometry
+        )
 
 
 ASSET = StyleCartoon

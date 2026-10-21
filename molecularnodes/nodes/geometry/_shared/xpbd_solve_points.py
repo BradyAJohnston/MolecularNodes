@@ -138,7 +138,7 @@ class XPBDSolvePoints(CustomGeometryGroup):
         )
         compare_1 = g.Compare.integer.not_equal(
             g.ShortestEdgePaths(
-                end_vertex=g.Compare.integer.equal(evaluate_at_index, g.Index())
+                g.Compare.integer.equal(evaluate_at_index, g.Index())
             ).o.next_vertex_index,
             index.output,
         )

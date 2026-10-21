@@ -47,7 +47,7 @@ class AmbientOcclusionInternal(AssetShaderGroup):
     Outputs
     -------
     o.shader : ShaderSocket
-        Emission of the occluded color, mixed towards transparent by the alpha of the `Color` attribute
+        Emission of the occluded color. Always opaque: ambient occlusion does not work alongside a Transparent BSDF, so the alpha of `Color` is ignored
     """
 
     _name = "Ambient Occlusion Internal"
@@ -67,7 +67,7 @@ class AmbientOcclusionInternal(AssetShaderGroup):
 
     class _Outputs(SocketAccessor):
         shader: ShaderSocket
-        """Emission of the occluded color, mixed towards transparent by the alpha of the `Color` attribute"""
+        """Emission of the occluded color. Always opaque: ambient occlusion does not work alongside a Transparent BSDF, so the alpha of `Color` is ignored"""
 
     if TYPE_CHECKING:
 
@@ -123,24 +123,19 @@ class AmbientOcclusionInternal(AssetShaderGroup):
         )
         shader = tree.outputs.shader(
             "Shader",
-            description="Emission of the occluded color, mixed towards transparent by the alpha of the `Color` attribute",
+            description="Emission of the occluded color. Always opaque: ambient occlusion does not work alongside a Transparent BSDF, so the alpha of `Color` is ignored",
         )
 
-        mn_color = MNColor()
         color_ao = ColorAO(
-            color=mn_color.o.color,
+            color=MNColor().o.color,
             menu=menu,
             ao_space=ao_space,
             distance=distance,
             exponent=exponent,
         )
-        mix_shader = s.MixShader(
-            fac=mn_color.o.alpha,
-            shader=s.TransparentBSDF(),
-            shader_001=s.Emission(color=color_ao),
-        )
+        emission = s.Emission(color_ao)
 
-        mix_shader >> shader
+        emission >> shader
 
 
 ASSET = AmbientOcclusionInternal

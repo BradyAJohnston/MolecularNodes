@@ -25,6 +25,7 @@ from .backbone_o import BackboneO
 from .backbone_positions import BackbonePositions
 from .backbone_vector_list import BackboneVectorList
 from .backbone_vectors import BackboneVectors
+from .best_view import BestView
 from .between_float import BetweenFloat
 from .between_integer import BetweenInteger
 from .between_vector import BetweenVector
@@ -73,6 +74,7 @@ from .curve_rotation import CurveRotation
 from .curve_transform import CurveTransform
 from .curve_vectors import CurveVectors
 from .curve_visualize import CurveVisualize
+from .decay import Decay
 from .density_style_iso_surface import DensityStyleISOSurface
 from .density_style_surface import DensityStyleSurface
 from .density_style_wire import DensityStyleWire
@@ -96,6 +98,7 @@ from .evaluate_while_planar import EvaluateWhilePlanar
 from .expand_boolean import ExpandBoolean
 from .fade_geometry import FadeGeometry
 from .fallback_boolean import FallbackBoolean
+from .fallback_camera import FallbackCamera
 from .fallback_color import FallbackColor
 from .fallback_float import FallbackFloat
 from .fallback_geometry import FallbackGeometry
@@ -170,6 +173,7 @@ from .offset_vector import OffsetVector
 from .oklab_offset_lch import OKLabOffsetLCh
 from .oklab_to_color import OKLabToColor
 from .oklab_to_lch import OKLabToLCh
+from .orient_to_best_view import OrientToBestView
 from .oxdna_realize_vectors import OxDNARealizeVectors
 from .oxdna_recover_vectors import OxDNARecoverVectors
 from .oxdna_style_classic import OxDNAStyleClassic
@@ -295,6 +299,7 @@ __all__ = (
     "BackbonePositions",
     "BackboneVectorList",
     "BackboneVectors",
+    "BestView",
     "BetweenFloat",
     "BetweenInteger",
     "BetweenVector",
@@ -344,6 +349,7 @@ __all__ = (
     "CurveVectors",
     "CurveVisualize",
     "DNAFromCurve",
+    "Decay",
     "DensityStyleISOSurface",
     "DensityStyleSurface",
     "DensityStyleWire",
@@ -366,6 +372,7 @@ __all__ = (
     "ExpandBoolean",
     "FadeGeometry",
     "FallbackBoolean",
+    "FallbackCamera",
     "FallbackColor",
     "FallbackFloat",
     "FallbackGeometry",
@@ -440,6 +447,7 @@ __all__ = (
     "OffsetPointAlongCurve",
     "OffsetRotation",
     "OffsetVector",
+    "OrientToBestView",
     "OxDNARealizeVectors",
     "OxDNARecoverVectors",
     "OxDNAStyleClassic",

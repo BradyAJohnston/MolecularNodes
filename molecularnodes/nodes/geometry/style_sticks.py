@@ -188,7 +188,7 @@ class StyleSticks(AssetGeometryGroup):
         mn_utils_style_sticks = MN_utils_style_sticks(
             atoms=separate_geometry.o.selection,
             radius=scale,
-            resolution=g.Math.multiply(quality, g.Integer(integer=8)),
+            resolution=g.Math.multiply(quality, g.Integer(8)),
             scale_extra_bond_radius=0.37,
             extra_bond_offset=scale / 2.0,
             shade_smooth=shade_smooth,
@@ -207,11 +207,13 @@ class StyleSticks(AssetGeometryGroup):
             shade_smooth=shade_smooth,
             material=material,
         )
+        g.JoinGeometry((style_spheres, mn_utils_style_sticks)) >> geometry_1.input
         (
-            g.JoinGeometry(geometry=(style_spheres, mn_utils_style_sticks))
-            >> geometry_1.input
+            EvaluateOnAtoms(
+                geometry=atoms, closure=closure_zone.closure, result="Representation"
+            )
+            >> geometry
         )
-        EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
 
 
 ASSET = StyleSticks

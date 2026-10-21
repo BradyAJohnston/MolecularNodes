@@ -191,7 +191,7 @@ class SymmetryHelical(AssetGeometryGroup):
                 + index.o.index % axial_symmetry * (math.tau / axial_symmetry),
             )
             _string = g.String(
-                string="Copy k is subunit k div n of the helix, where n is Axial Symmetry: it is twisted that many times about the axis and raised that many times along it, then turned a further (k mod n) / n of a full turn about the axis. Rise is given in Angstrom and converted to world units; the defaults are actin's 27.5 A rise and -166.7 degree twist."
+                "Copy k is subunit k div n of the helix, where n is Axial Symmetry: it is twisted that many times about the axis and raised that many times along it, then turned a further (k mod n) / n of a full turn about the axis. Rise is given in Angstrom and converted to world units; the defaults are actin's 27.5 A rise and -166.7 degree twist."
             )
             vector_math = axis.normalize() * (
                 AngstromToWorld(angstrom=rise).o.world * integer_math
@@ -199,7 +199,7 @@ class SymmetryHelical(AssetGeometryGroup):
         (
             SymmetryInstance(
                 geometry=geometry,
-                points=g.Points(count=count * axial_symmetry),
+                points=g.Points(count * axial_symmetry),
                 rotation=axis_angle_to_rotation,
                 translation=vector_math,
                 centre=centre,

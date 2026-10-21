@@ -187,10 +187,8 @@ class NDJSONDataFrame(EnsembleDataFrame):
             name="image_id",
             atype=AttributeTypes.INT,
         )
-        # Blender stores float4x4 attributes column-major, so the row-major
-        # numpy matrices must be transposed or GN sees the inverse rotation
         bob.store_named_attribute(
-            self.transforms().transpose(0, 2, 1),
+            self.transforms(),
             name="transform",
             atype=AttributeTypes.FLOAT4X4,
         )

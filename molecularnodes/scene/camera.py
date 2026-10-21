@@ -4,7 +4,7 @@ from typing import Sequence
 import bpy
 import numpy as np
 import numpy.typing as npt
-from mathutils import Vector
+from mathutils import Matrix, Vector
 from .. import framing
 
 
@@ -175,6 +175,8 @@ class Camera:
         if scene is None:
             scene = bpy.context.scene
         points = framing.as_points(points)
+        # matrix_world lags a rotation just written until the depsgraph updates
+        bpy.context.view_layer.update()
         bounds = self.frame_bounds(scene)
         basis = self.basis
 
@@ -192,6 +194,17 @@ class Camera:
         furthest = float(np.max((points - location) @ basis[2]))
         if furthest > self.clip_end:
             self.clip_end = furthest * 1.05
+
+    def set_basis(self, basis: npt.ArrayLike) -> None:
+        """
+        Point the camera along a basis given as rows ``(right, up, forward)``.
+
+        The inverse of [](`~molecularnodes.scene.camera.Camera.basis`), and the
+        form [](`molecularnodes.viewpoint`) returns its views in.
+        """
+        right, up, forward = np.asarray(basis, dtype=np.float64)
+        matrix = Matrix(np.column_stack([right, up, -forward]).tolist())
+        self.camera.rotation_euler = matrix.to_euler(self.camera.rotation_mode)
 
     def set_viewpoint(self, viewpoint: Viewpoint | str | Sequence[float]) -> None:
         """

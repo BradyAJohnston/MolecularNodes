@@ -205,22 +205,18 @@ class MN_utils_style_sticks(CustomGeometryGroup):
                 vector_math = edge_vertices.o.position_1 - edge_vertices.o.position_2
                 evaluate_at_index = vector_math.edge.at(
                     g.EdgesOfVertex(
-                        vertex_index=edge_vertices_1.o.vertex_index_1
-                    ).o.edge_index
-                )
-                evaluate_at_index_1 = vector_math.edge.at(
-                    g.EdgesOfVertex(
                         vertex_index=edge_vertices_1.o.vertex_index_2, sort_index=2
                     ).o.edge_index
                 )
-                vector_math_1 = (
-                    evaluate_at_index.normalize()
-                    .cross(evaluate_at_index_1.normalize())
-                    .normalize()
+                vector_math_1 = vector_math.edge.at(
+                    g.EdgesOfVertex(edge_vertices_1.o.vertex_index_1).o.edge_index
+                ).normalize()
+                vector_math_2 = (
+                    vector_math_1.cross(evaluate_at_index.normalize()).normalize()
                     * MNUnits(value=extra_bond_offset).o.angstrom
                 )
             capture = g.CaptureAttribute.edge(geometry=separate_geometry.o.selection)
-            vector = capture.items.vector(vector_math_1, "Vector")
+            vector = capture.items.vector(vector_math_2, "Vector")
         split_edges = capture.o.geometry >> g.SplitEdges()
         with g.Frame("Rotate and offset Extra Bonds"):
             map_bond_type = Map_bond_type()
@@ -269,13 +265,11 @@ class MN_utils_style_sticks(CustomGeometryGroup):
             curve_index = capture_3.items.integer(g.Index(), "Curve Index")
             switch_1 = (
                 resolution
-                < g.AccumulateField.face.integer(
-                    group_index=curve_index.output
-                ).o.leading
+                < g.AccumulateField.face.integer(group_id=curve_index.output).o.leading
             ).switch.integer(first_point.output, last_point.output)
         with g.Frame("curve to mesh"):
             curve_to_mesh = g.CurveToMesh(
-                curve=g.SubdivideCurve(curve=capture_3.o.geometry),
+                curve=g.SubdivideCurve(capture_3.o.geometry),
                 profile_curve=g.CurveCircle(
                     resolution=resolution, radius=MNUnits(value=1.0).o.angstrom
                 ),

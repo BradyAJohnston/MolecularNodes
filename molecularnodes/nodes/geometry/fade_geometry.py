@@ -103,9 +103,7 @@ class FadeGeometry(AssetGeometryGroup):
             get_geometry_component.o.component, name="Color", value=combine_color
         )
         switch = (fade > 0.0).switch.geometry(
-            true=g.JoinGeometry(
-                geometry=(store_named_attribute, store_named_attribute_1)
-            )
+            true=g.JoinGeometry((store_named_attribute, store_named_attribute_1))
         )
         (fade < 1.0).switch.geometry(geometry, switch) >> geometry_1
 

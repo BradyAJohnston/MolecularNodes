@@ -242,7 +242,7 @@ class DensityStyleISOSurface(AssetGeometryGroup):
             "Geometry", description="ISO surface geometry output"
         )
 
-        bounding_box = g.BoundingBox(geometry=volume)
+        bounding_box = g.BoundingBox(volume)
         math_1 = contour_thickness * 0.001
         switch = visible.switch.geometry(true=volume)
         between_vector = BetweenVector(
@@ -263,7 +263,7 @@ class DensityStyleISOSurface(AssetGeometryGroup):
             >> g.SetMaterial(material=material)
         )
         separate_geometry = (
-            g.JoinGeometry(geometry=(set_material_1, set_material))
+            g.JoinGeometry((set_material_1, set_material))
             >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
             >> g.SeparateGeometry.point(selection=between_vector)
         )
@@ -274,7 +274,7 @@ class DensityStyleISOSurface(AssetGeometryGroup):
             >> g.SetMaterial(material=material)
         )
         join_geometry = g.JoinGeometry(
-            geometry=(
+            (
                 only_contours.switch.geometry(separate_geometry.o.selection),
                 set_material_2,
             )

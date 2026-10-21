@@ -213,7 +213,7 @@ class AnimateFrames(AssetGeometryGroup):
             set_ures_id = SetUResID(geometry=set_position)
         _sample_position = SamplePosition()
         with g.Frame("Set Transform to align with structure"):
-            object_info = g.ObjectInfo(object=g.SelfObject())
+            object_info = g.ObjectInfo(g.SelfObject())
             (
                 set_ures_id
                 >> g.TransformGeometry(transform=object_info.o.transform, mode="Matrix")

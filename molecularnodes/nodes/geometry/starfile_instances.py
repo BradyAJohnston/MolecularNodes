@@ -203,11 +203,7 @@ class StarfileInstances(AssetGeometryGroup):
             )
         with g.Frame("Instance"):
             menu_switch = g.MenuSwitch.geometry(
-                menu,
-                {
-                    "Object": g.ObjectInfo(object=object).o.geometry,
-                    "Geometry": geometry,
-                },
+                menu, {"Object": g.ObjectInfo(object).o.geometry, "Geometry": geometry}
             )
             transform_geometry = PrimitiveGimbal(
                 vertices=3, material=material

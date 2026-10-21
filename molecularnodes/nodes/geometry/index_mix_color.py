@@ -109,7 +109,6 @@ class IndexMixColor(AssetGeometryGroup):
             fractionate_float.o.fraction,
             color.point.at(fractionate_float.o.floor),
             color.point.at(fractionate_float.o.ceiling),
-            clamp_factor=True,
             clamp_result=True,
         )
 

@@ -97,9 +97,7 @@ class MN_bs_smooth(CustomGeometryGroup):
             geometry
             >> g.SetPosition(
                 selection=mn_select_sec_struct.o.is_sheet,
-                position=g.Mix.vector(
-                    factor, position, blur_attribute, clamp_factor=True
-                ).o.result_vector,
+                position=factor.mix.vector(position, blur_attribute),
             )
             >> geometry_1
         )

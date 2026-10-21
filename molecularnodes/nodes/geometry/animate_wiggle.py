@@ -145,7 +145,7 @@ class MN_animate_noise_repeat(CustomGeometryGroup):
         _value = g.Value(4.0)
         vector_math = (
             vector
-            + g.CombineXYZ(x=animate_0_1 * speed)
+            + g.CombineXYZ(animate_0_1 * speed)
             + g.RandomValue.vector((-10.0, -10.0, -10.0), (-1.0, 10.0, 10.0), vector)
         )
         vector_1 = vector_math * (math.tau / speed)
@@ -159,13 +159,10 @@ class MN_animate_noise_repeat(CustomGeometryGroup):
             roughness=roughness.clamp(),
             distortion=distortion,
             noise_dimensions="4D",
-            normalize=True,
         )
         noise_texture.o.factor.map_range(to_min=-1.0) * amplitude >> noise_float
         (
-            g.MapRange.vector(
-                noise_texture.o.color, to_min=(-1.0, -1.0, -1.0), clamp=True
-            ).o.vector
+            g.MapRange.vector(noise_texture.o.color, to_min=(-1.0, -1.0, -1.0)).o.vector
             * amplitude
             >> noise_vector
         )
@@ -201,15 +198,13 @@ class MN_utils_rotate_res(CustomGeometryGroup):
         position = tree.outputs.vector("Position")
 
         mn_utils_aa_atom_pos = MN_utils_aa_atom_pos(atom_name=atom_name_rotation)
-        mix = g.Mix.float(
-            scale_b_factor,
+        mix = scale_b_factor.mix.float(
             1.0,
             mn_utils_aa_atom_pos.o.b_factor.map_range(
                 1.0, 100.0, interpolation_type="SMOOTHERSTEP"
             ),
-            clamp_factor=True,
         )
-        math_1 = mix.o.result_float * amplitude
+        math_1 = mix * amplitude
         named_attribute = g.NamedAttribute.integer("atom_name")
         boolean_math = (named_attribute.o.attribute > 4) & (
             (named_attribute.o.attribute > atom_name_rotation) & IsPeptide().o.selection

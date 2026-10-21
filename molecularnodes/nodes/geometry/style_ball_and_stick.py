@@ -273,11 +273,16 @@ class StyleBallAndStick(AssetGeometryGroup):
             material=material,
         )
         set_material = g.SetMaterial(
-            geometry=g.JoinGeometry(geometry=(style_spheres, mn_utils_style_sticks)),
+            geometry=g.JoinGeometry((style_spheres, mn_utils_style_sticks)),
             material=material,
         )
         set_material >> geometry_1.input
-        EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
+        (
+            EvaluateOnAtoms(
+                geometry=atoms, closure=closure_zone.closure, result="Representation"
+            )
+            >> geometry
+        )
 
 
 ASSET = StyleBallAndStick

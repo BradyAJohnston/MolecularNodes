@@ -142,12 +142,12 @@ class SymmetryCyclic(AssetGeometryGroup):
                 axis=axis, angle=g.Index().o.index * (math.tau / order)
             )
             _string = g.String(
-                string="Copy k is rotated k * 360 / n degrees about the axis. The rotation is passed to Symmetry Instance as a field and evaluated on the points."
+                "Copy k is rotated k * 360 / n degrees about the axis. The rotation is passed to Symmetry Instance as a field and evaluated on the points."
             )
         (
             SymmetryInstance(
                 geometry=geometry,
-                points=g.Points(count=order),
+                points=g.Points(order),
                 rotation=axis_angle_to_rotation,
                 centre=centre,
                 animate=animate,

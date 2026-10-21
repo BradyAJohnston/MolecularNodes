@@ -75,9 +75,7 @@ class UResID(AssetGeometryGroup):
         )
 
         attribute_at_index = AttributeAtIndex(index=index, name="ures_id")
-        accumulate_field = g.AccumulateField.point.integer(
-            group_index=attribute_at_index
-        )
+        accumulate_field = g.AccumulateField.point.integer(group_id=attribute_at_index)
 
         attribute_at_index >> ures_id
         accumulate_field.o.total >> size
