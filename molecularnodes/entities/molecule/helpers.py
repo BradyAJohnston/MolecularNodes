@@ -151,6 +151,16 @@ class PositionCache:
 # ============================================================================
 
 
+# per-frame vector attributes stored when the MDAnalysis Timestep has them:
+# attribute name -> (Timestep attribute, whether to scale by world_scale).
+# Velocities are lengths per time so they scale like positions; forces are not
+# lengths and keep MDAnalysis units (kJ/(mol*Å))
+TIMESTEP_ATTRIBUTES = {
+    "velocity": ("velocities", True),
+    "force": ("forces", False),
+}
+
+
 class FrameManager:
     """Frame updates, position caching, interpolation, and periodic corrections.
 
@@ -183,12 +193,18 @@ class FrameManager:
         # in the file get a cache — trailing columns such as velocities are
         # optional in oxDNA configurations
         self.attribute_caches = {}
+        ts = trajectory.universe.trajectory.ts
         att_names = getattr(trajectory, "_att_names", ())
         if att_names:
-            ts_data = trajectory.universe.trajectory.ts.data
             self.attribute_caches = {
-                name: PositionCache() for name in att_names if name in ts_data
+                name: PositionCache() for name in att_names if name in ts.data
             }
+        # velocities and forces are optional on any MDAnalysis Timestep
+        for name, (ts_attribute, _) in TIMESTEP_ATTRIBUTES.items():
+            if name not in self.attribute_caches and getattr(
+                ts, f"has_{ts_attribute}", False
+            ):
+                self.attribute_caches[name] = PositionCache()
 
     @property
     def n_frames(self) -> Optional[int]:
@@ -470,7 +486,7 @@ class FrameManager:
             return self._position_at_frame(uframe_current)
 
     def _attributes_at_frame(self, frame: int) -> dict[str, np.ndarray]:
-        """Get oxDNA attributes at a specific universe frame.
+        """Get per-frame vector attributes at a specific universe frame.
 
         Parameters
         ----------
@@ -480,18 +496,24 @@ class FrameManager:
         Returns
         -------
         dict[str, np.ndarray]
-            oxDNA attributes sorted by name
+            attributes sorted by name
         """
 
         self.trajectory.uframe = frame
-        ts_data = self.trajectory.universe.trajectory.ts.data
-        return {
-            name: ts_data[name] * self.trajectory.world_scale
-            for name in self.attribute_caches
-        }
+        ts = self.trajectory.universe.trajectory.ts
+        world_scale = self.trajectory.world_scale
+        attributes = {}
+        for name in self.attribute_caches:
+            if name in ts.data:
+                attributes[name] = ts.data[name] * world_scale
+            else:
+                ts_attribute, scaled = TIMESTEP_ATTRIBUTES[name]
+                data = getattr(ts, ts_attribute)
+                attributes[name] = data * world_scale if scaled else data.copy()
+        return attributes
 
     def update_attribute_caches(self, frame: int, cache_ahead: bool = True) -> None:
-        """Update the oxDNA attribute caches for the current frame.
+        """Update the per-frame attribute caches for the current frame.
 
         Intelligently caches based on averaging and interpolation settings,
         prefetching the next frame when needed.
@@ -520,7 +542,7 @@ class FrameManager:
                     cache[f] = attributes_at_frame[name]
 
     def attribute_cache_means(self, frame: int) -> dict[str, np.ndarray]:
-        """Get mean oxDNA attributes from cached frames.
+        """Get mean per-frame vector attributes from cached frames.
 
         Computes average over the averaging window.
 
@@ -549,7 +571,7 @@ class FrameManager:
         }
 
     def get_attributes_at_frame(self, frame) -> dict[str, np.ndarray]:
-        """Get oxDNA attributes for a given frame with all processing applied.
+        """Get per-frame vector attributes for a given frame with all processing applied.
 
         Main entry point for position retrieval. Handles frame mapping, interpolation,
         and averaging.
@@ -563,7 +585,7 @@ class FrameManager:
         Returns
         -------
         dict[str, np.ndarray]
-            Processed oxDNA attributes sorted by name
+            Processed attributes sorted by name
         """
         if not self.attribute_caches:
             return {}

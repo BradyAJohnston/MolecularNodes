@@ -1,5 +1,4 @@
 from pathlib import Path
-import databpy as db
 import numpy as np
 from MDAnalysis import Universe
 from MDAnalysis.coordinates.base import ReaderBase
@@ -477,30 +476,6 @@ class OXDNA(Molecule):
             "res_name": self._compute_res_name_int,
             "Color": self._compute_color,
         }
-
-    def _store_extra_attributes(self) -> None:
-        """Seed the per-frame oxDNA vector attributes at object creation."""
-        self._update_attributes(0)
-
-    def _update_positions(self, frame: int) -> None:
-        super()._update_positions(frame)
-        self._update_attributes(frame)
-
-    def _update_attributes(self, frame: int) -> None:
-        """Store the per-frame oxDNA vector attributes for the given scene frame.
-
-        Parameters
-        ----------
-        frame : int
-            Scene frame number
-        """
-        attributes = self.frame_manager.get_attributes_at_frame(frame)
-        for name, data in attributes.items():
-            self.store_named_attribute(
-                data=data,
-                name=name,
-                atype=db.AttributeTypes.FLOAT_VECTOR,
-            )
 
     def _get_annotation_entity_type(self) -> str:
         "Interna: Re-use the annotations for Molecule entity"

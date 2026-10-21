@@ -140,6 +140,12 @@ How the integer is assigned depends on the attribute. For the dynamic ones the s
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `is_carb`                | `Bool::Bool`           | Whether the atom is part of a carbohydrate, based on its residue name.                                                                                                               |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| `velocity`               | `Vector::Vector`       | The velocity of the atom on the current frame, only present when the trajectory has velocities (such as `.trr` files). Scaled by the world scale like positions, so it is in Blender |
+|                          |                        | units per ps (Å/ps × `0.1::Float`), and `position + velocity` gives where the atom heads in 1 ps. Interpolated and averaged between frames like positions.                           |
++--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| `force`                  | `Vector::Vector`       | The force on the atom on the current frame, only present when the trajectory has forces (such as `.trr` files). Kept in the MDAnalysis units of kJ/(mol·Å) and not scaled by the     |
+|                          |                        | world scale, as a force is not a length. Interpolated and averaged between frames like positions.                                                                                    |
++--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 ### Edge Attributes
 
@@ -190,6 +196,7 @@ The others vary:
 | `charge`     | if in the file | if in the file   | if in the file  | if the topology has charges |
 
 Simulation topologies differ in what they contain, so the MD column is for typical topologies such as `.psf` and `.gro`.
+Trajectories also get `velocity` and `force` when the trajectory file stores them; most trajectory formats, such as `.xtc` and `.dcd`, store neither.
 `mol.list_attributes()` lists the attributes on a molecule, and `mol.named_attribute()` raises an error for one that was not created.
 In the node tree there is no error: reading a missing attribute gives `0::Int` (or `False::Bool`) for every atom, so selecting by `entity_id` on a `.pdb` file treats every atom as entity `0::Int`.
 

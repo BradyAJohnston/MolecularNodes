@@ -696,6 +696,85 @@ class TestTrajectory:
 
         assert len(session.entities) == 1
 
+    @staticmethod
+    def _universe_in_memory(velocities: bool, forces: bool) -> mda.Universe:
+        # the test trajectory has neither, so give a copy of it random
+        # per-frame velocities and forces in memory
+        u = mda.Universe(
+            data_dir / "md_ppr/box.gro", data_dir / "md_ppr/first_5_frames.xtc"
+        )
+        coords = np.array([ts.positions.copy() for ts in u.trajectory])
+        rng = np.random.default_rng(0)
+        kwargs = {}
+        if velocities:
+            kwargs["velocities"] = rng.normal(size=coords.shape).astype(np.float32)
+        if forces:
+            kwargs["forces"] = rng.normal(size=coords.shape).astype(np.float32) * 100
+        u.load_new(coords, format=mda.coordinates.memory.MemoryReader, **kwargs)
+        return u
+
+    @pytest.mark.parametrize(
+        "velocities,forces", [(True, True), (True, False), (False, True)]
+    )
+    def test_velocity_force_attributes(self, velocities: bool, forces: bool):
+        traj = mn.entities.Molecule(self._universe_in_memory(velocities, forces))
+        names = traj.list_attributes()
+        assert ("velocity" in names) == velocities
+        assert ("force" in names) == forces
+
+        for frame in [0, 2, 4]:
+            bpy.context.scene.frame_set(frame)
+            ts = traj.universe.trajectory[frame]
+            if velocities:
+                assert np.allclose(
+                    traj.named_attribute("velocity"), ts.velocities * traj.world_scale
+                )
+            if forces:
+                assert np.allclose(traj.named_attribute("force"), ts.forces)
+
+    def test_velocity_force_absent(self, universe):
+        traj = mn.entities.Molecule(universe)
+        bpy.context.scene.frame_set(1)
+        names = traj.list_attributes()
+        assert "velocity" not in names
+        assert "force" not in names
+
+    def test_velocity_force_subframes(self):
+        traj = mn.entities.Molecule(self._universe_in_memory(True, True))
+        traj.subframes = 3
+        traj.interpolate = True
+        u = traj.universe
+        vel_a = u.trajectory[1].velocities * traj.world_scale
+        force_a = u.trajectory[1].forces.copy()
+        vel_b = u.trajectory[2].velocities * traj.world_scale
+        force_b = u.trajectory[2].forces.copy()
+
+        # with 3 subframes, scene frame 6 is halfway from frame 1 to frame 2
+        bpy.context.scene.frame_set(6)
+        assert np.allclose(
+            traj.named_attribute("velocity"), databpy.lerp(vel_a, vel_b, t=0.5)
+        )
+        assert np.allclose(
+            traj.named_attribute("force"), databpy.lerp(force_a, force_b, t=0.5)
+        )
+
+        # without interpolation subframes hold the previous frame's values
+        traj.interpolate = False
+        bpy.context.scene.frame_set(7)
+        assert np.allclose(traj.named_attribute("velocity"), vel_a)
+
+    def test_velocity_force_average(self):
+        traj = mn.entities.Molecule(self._universe_in_memory(True, True))
+        traj.average = 1
+        u = traj.universe
+        expected = np.mean([u.trajectory[f].velocities for f in (1, 2, 3)], axis=0)
+        expected_force = np.mean([u.trajectory[f].forces for f in (1, 2, 3)], axis=0)
+        bpy.context.scene.frame_set(2)
+        assert np.allclose(
+            traj.named_attribute("velocity"), expected * traj.world_scale
+        )
+        assert np.allclose(traj.named_attribute("force"), expected_force)
+
 
 @pytest.mark.parametrize("topology", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
 def test_martini(snapshot, topology):
