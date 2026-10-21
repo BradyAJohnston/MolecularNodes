@@ -192,16 +192,21 @@ def layout_trajectory_playback(
     playback.operator("mn.frames_to_collection", icon="RENDERLAYERS")
 
     # the attributes updated on each frame, read from the object
-    names = [n for n in obj.mn.frame_attributes.split(",") if n]
-    if names:
+    if obj.mn.frame_attributes and obj.type == "MESH":
         header, body = playback.panel(
             idname="layout_frame_attributes", default_closed=True
         )
         header.label(text="Per-frame Attributes")
         if body is not None:
-            col = body.column(align=True)
-            for name in names:
-                col.label(text=name)
+            body.template_list(
+                "MN_UL_FrameAttributesList",
+                "frame_attributes_list",
+                obj.data,
+                "attributes",
+                obj.mn,
+                "frame_attributes_index",
+                rows=3,
+            )
 
 
 def layout_selection_manage(
@@ -531,6 +536,80 @@ class MN_UL_EntitiesList(bpy.types.UIList):
         ordered = []
         if self.use_filter_sort_alpha:
             ordered = bpy.types.UI_UL_list.sort_items_helper(sort_data, lambda e: e[1])
+        return filtered, ordered
+
+
+class MN_UL_FrameAttributesList(bpy.types.UIList):
+    """
+    UIList of the attributes a trajectory updates on each frame.
+
+    Lists the mesh's attributes, filtered and ordered by the names recorded in
+    `obj.mn.frame_attributes`, showing each attribute's name and data type.
+    """
+
+    def draw_item(
+        self,
+        context,
+        layout,
+        data,
+        item,
+        icon,
+        active_data,
+        active_property,
+        index=0,
+        flt_flag=0,
+    ):
+        attribute = cast(bpy.types.Attribute, item)
+        data_type = (
+            attribute.bl_rna.properties["data_type"]
+            .enum_items[attribute.data_type]
+            .name
+        )
+        if self.layout_type in {"DEFAULT", "COMPACT"}:
+            row = layout.row()
+            row.label(text=attribute.name)
+            row.label(text=data_type)
+        elif self.layout_type in {"GRID"}:
+            layout.alignment = "CENTER"
+            layout.label(text=attribute.name)
+
+    def filter_items(self, context, data, propname):
+        if data is None:
+            return [], []
+        attributes = getattr(data, propname)
+        # the panel draws either the active entity or the context object, so take
+        # whichever of them owns this mesh
+        obj = next(
+            (
+                o
+                for o in (get_active_entity_object(context), context.object)
+                if o is not None and o.data == data
+            ),
+            None,
+        )
+        names = [n for n in obj.mn.frame_attributes.split(",") if n] if obj else []
+        order = {name: i for i, name in enumerate(names)}
+        filtered = [0] * len(attributes)
+        ordered = [len(names)] * len(attributes)
+        for i, attribute in enumerate(attributes):
+            if attribute.name not in order:
+                continue
+            ordered[i] = order[attribute.name]
+            if (
+                not self.filter_name
+                or (self.filter_name.lower() in attribute.name.lower())
+                is not self.use_filter_invert
+            ):
+                filtered[i] |= self.bitflag_filter_item
+        if self.use_filter_sort_alpha:
+            sort_data = [(i, a.name) for i, a in enumerate(attributes)]
+            ordered = bpy.types.UI_UL_list.sort_items_helper(sort_data, lambda e: e[1])
+        else:
+            # keep the order the attributes were first seen in
+            ranks = sorted(range(len(attributes)), key=lambda i: (ordered[i], i))
+            ordered = [0] * len(attributes)
+            for position, i in enumerate(ranks):
+                ordered[i] = position
         return filtered, ordered
 
 
@@ -1119,6 +1198,7 @@ CLASSES = [
     MN_PT_Object,
     MN_UL_EntitiesList,
     MN_PT_Entities,
+    MN_UL_FrameAttributesList,
     MN_PT_trajectory,
     MN_PT_trajectory_dssp,
     MN_UL_StylesList,
