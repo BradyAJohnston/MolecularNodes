@@ -160,7 +160,7 @@ class ColorRainbow(AssetGeometryGroup):
             {
                 "Residue": ResidueParameter().o.factor,
                 "Chain": ChainParameter().o.factor,
-                "Structure": StructureParameter().o.atom_factor,
+                "Structure": StructureParameter().o.factor,
             },
         )
         combine_color = g.CombineColor.hsv(

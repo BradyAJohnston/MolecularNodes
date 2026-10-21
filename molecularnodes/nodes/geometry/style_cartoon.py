@@ -678,7 +678,11 @@ class CAToHelix(CustomGeometryGroup):
                     position=g.Position().o.position.blur(2, boolean_math),
                 )
                 >> g.SetCurveNormal()
-                >> g.ResampleCurve(length=MNUnits(value=2.0).o.angstrom, mode="Length")
+                >> g.ResampleCurve(
+                    length=MNUnits(value=2.0).o.angstrom,
+                    mode="Length",
+                    keep_last_segment=False,
+                )
                 >> g.SetSplineType.bezier()
                 >> g.SetCurveRadius(radius=MNUnits(value=width * 4.0).o.angstrom)
             )

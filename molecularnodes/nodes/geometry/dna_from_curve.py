@@ -2555,6 +2555,12 @@ class DNAFromCurve(AssetGeometryGroup):
             switch = g.NamedAttribute.boolean("is_comp").o.attribute.switch.integer(
                 integer_math_1, abs(integer_math_1 - 3)
             )
+        noise_texture = g.NoiseTexture(
+            w=g.SceneTime().o.seconds,
+            scale=1.02,
+            noise_dimensions="4D",
+            normalize=False,
+        )
         with g.Frame("Base distances"):
             math_1 = integer_math * wind.mix.float(g.Value(0.63), g.Value(0.34))
         math_2 = wind * (g.Value(math.tau).o.value / g.Value(10.5) * integer_math)
@@ -2567,11 +2573,12 @@ class DNAFromCurve(AssetGeometryGroup):
         ) >> g.StoreNamedAttribute.point.quaternion(
             name="rotation", value=axis_angle_to_rotation
         )
-        vector_math = g.VectorMath.scale(
-            g.NoiseTexture(
-                w=g.SceneTime().o.seconds, scale=1.02, noise_dimensions="4D"
-            ).o.color,
-            4.99,
+        join_bundle = g.JoinBundle(
+            (
+                CustomForce(
+                    Force=g.VectorMath.scale(noise_texture.o.color, 4.99).o.vector
+                ),
+            )
         )
         simulate_dna_guide = SimulateDNAGuide(
             **{"DNA Curve": store_named_attribute},
@@ -2580,7 +2587,7 @@ class DNAFromCurve(AssetGeometryGroup):
             Bendiness=0.0,
             Linear=10.0,
             Angular=30.0,
-            Effectors=g.JoinBundle((CustomForce(Force=vector_math.o.vector),)),
+            Effectors=join_bundle,
         )
         menu_switch = g.MenuSwitch.geometry(
             menu, {"Static": store_named_attribute, "Simulate": simulate_dna_guide}
