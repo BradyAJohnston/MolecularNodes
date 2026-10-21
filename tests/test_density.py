@@ -396,9 +396,80 @@ def test_add_style_color_by_density(fetch, tmp_path):
     assert np.allclose(colors[:, :3], b[:3], atol=1e-4)
 
 
-def test_add_style_color_by_styled_density_warns(fetch, tmp_path):
-    mol = fetch("1cbs")
+def _ramp_around(mol, tmp_path, name):
+    "A 1 Å grid around the molecule whose value is x (Å) minus the molecule's mean x."
+    positions = mol.named_attribute("position") / mol.world_scale
+    origin = np.floor(positions.min(axis=0)) - 10.0
+    shape = tuple(np.ceil(np.ptp(positions, axis=0) + 20).astype(int))
+    x0 = float(positions[:, 0].mean())
+    data = np.broadcast_to(
+        (origin[0] + np.arange(shape[0]) - x0)[:, None, None], shape
+    ).copy()
+    return _write_dx(tmp_path / name, data, origin, np.eye(3)), x0
+
+
+def test_density_grid_object(tmp_path):
     path = _write_dx(tmp_path / "grid.dx", np.ones((4, 4, 4)), [0, 0, 0], np.eye(3))
     density = mn.entities.density.Grids.load(path, style="density_surface")
-    with pytest.warns(UserWarning, match="no grid left to sample"):
-        mol.add_style("surface", color=density)
+    grid_object = density.grid_object
+
+    assert grid_object.name.startswith(".data_")
+    assert grid_object.data == density.object.data
+    assert grid_object.parent == density.object
+    assert len(grid_object.modifiers) == 0
+    assert grid_object.hide_render and grid_object.hide_viewport
+    assert grid_object.users_collection[0] == mn.blender.coll.data()
+    # not drawn or rendered: its collection is excluded from the view layer
+    assert grid_object not in list(bpy.context.view_layer.objects)
+    # the same object on every access
+    assert density.grid_object == grid_object
+    # while the styled density itself no longer holds a grid
+    assert databpy.GeometrySet(density.object).volume is None
+
+
+def test_density_grid_object_removed_with_density(tmp_path):
+    path = _write_dx(tmp_path / "grid.dx", np.ones((4, 4, 4)), [0, 0, 0], np.eye(3))
+    density = mn.entities.density.Grids.load(path)
+    name = density.grid_object.name
+    mn.session.get_session().remove(density.uuid)
+    assert name not in bpy.data.objects
+
+
+def test_add_style_color_by_styled_density(fetch, tmp_path):
+    from nodebpy import geometry as g
+    from molecularnodes.nodes.geometry import ColorSampleGrid, StyleSurface
+
+    mol = fetch("1cbs")
+    path, x0 = _ramp_around(mol, tmp_path, "ramp.dx")
+    # styled, so its own object holds a mesh rather than a grid
+    density = mn.entities.density.Grids.load(path, style="density_iso_surface")
+
+    with mol.tree.reset() as (atoms, join):
+        (
+            atoms
+            >> StyleSurface()
+            >> g.StoreNamedAttribute.point.float(
+                name="value",
+                value=ColorSampleGrid(object=density.grid_object).o.value,
+            )
+            >> join
+        )
+    surface = mol.named_attribute("position", evaluate=True) / mol.world_scale
+    values = mol.named_attribute("value", evaluate=True)
+    assert len(values) > 1000
+    assert np.allclose(values, surface[:, 0] - x0, atol=1e-3)
+
+    with mol.tree.reset():
+        pass
+    mol.add_style("surface", color=density)
+    surface = mol.named_attribute("position", evaluate=True) / mol.world_scale
+    colors = mol.named_attribute("Color", evaluate=True)[:, :3]
+    a, mid, b = (
+        _input_default(ColorSampleGrid._name, n)[:3] for n in "A Intermediate B".split()
+    )
+    factor = np.clip((surface[:, 0] - x0 + 5.0) / 10.0, 0, 1)[:, None]
+    low = a + np.clip(2 * factor, 0, 1) * (mid - a)
+    expected = low + np.clip(2 * factor - 1, 0, 1) * (b - low)
+    assert np.allclose(colors, expected, atol=1e-3)
+    # the ramp spans the -5 to 5 range, so both ends are used
+    assert (factor == 0).any() and (factor == 1).any()

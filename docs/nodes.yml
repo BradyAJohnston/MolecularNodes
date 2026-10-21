@@ -284,9 +284,11 @@ Color Sample Grid:
     Blender's grid nodes return zero for 64-bit (`DOUBLE`) grids.
     Place it in a `Set Color` after a style to color the style's own points (each surface vertex), or before
     a style to color the atoms by the value at their centres. The grid is read from the object's evaluated
-    geometry, so the volume object must still hold it: load the density with `style=None` and hide it from
-    renders, as a density style replaces the grid with a mesh. The grid is sampled in world space, so moving
-    either object moves the molecule through the grid.
+    geometry, and a density style replaces the grid with a mesh, so every density loaded with Molecular Nodes
+    has a hidden, unstyled companion object holding its grid, named `.data_<density name>_grid`. Pick that one:
+    type `.data` in the `Object::Object` field to list it, as Blender hides names starting with a dot. From
+    Python it is `density.grid_object`. The grid is sampled in world space, so moving either object moves
+    the molecule through the grid.
 Color Attribute Random:
   description: >-
     Generate a random color, based on the given attribute. Control the lightness and saturation of the color with

@@ -105,6 +105,32 @@ def test_reload_density_from_file():
     assert session.get(obj.uuid) is reloaded
 
 
+def test_density_grid_object_survives_save_and_reload(tmp_path, isolated_density_file):
+    "The hidden grid object is kept, not duplicated, by a .blend round trip and Reload."
+    from molecularnodes.entities.reload import reload_entity
+
+    session = mn.session.get_session()
+    session.clear()
+    density = mn.entities.density.Grids.load(
+        isolated_density_file(data_dir / "emd_24805.map.gz")
+    )
+    uuid = density.uuid
+    grid_name = density.grid_object.name
+
+    filepath = tmp_path / "density.blend"
+    bpy.ops.wm.save_as_mainfile(filepath=str(filepath))
+    session.clear()
+    bpy.ops.wm.open_mainfile(filepath=str(filepath))
+
+    restored = session.get(uuid)
+    assert isinstance(restored, mn.entities.density.Grids)
+    assert restored.grid_object.name == grid_name
+    session.remove_entity(uuid)
+    reloaded = reload_entity(restored.object)
+    assert reloaded.grid_object.name == grid_name
+    assert sum(o.name.startswith(".data_") for o in bpy.data.objects) == 1
+
+
 def test_reload_ensemble_star_from_file():
     from molecularnodes.entities.reload import can_reload, reload_entity
 

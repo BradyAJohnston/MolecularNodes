@@ -1280,10 +1280,9 @@ class Molecule(MolecularEntity):
               its output (each surface vertex for ``"surface"``), so instanced
               geometry such as instanced spheres is not colored. The range is the
               node's default of -5 to 5 (red through light grey to blue); change
-              ``Min`` and ``Max`` on the node for other grids. Load the density
-              with ``style=None``, as a density style replaces its grid with a
-              mesh, and set ``density.object.hide_render = True`` so the volume
-              itself is not rendered.
+              ``Min`` and ``Max`` on the node for other grids. The node samples the
+              density's hidden ``grid_object``, so the density can keep its own
+              style.
             - None (default) to add no color node, leaving the baked ``Color``
               attribute in use.
 
@@ -1329,15 +1328,6 @@ class Molecule(MolecularEntity):
         from . import OXDNA
 
         color_by_density = isinstance(color, Density)
-        if color_by_density and db.GeometrySet(color.object).volume is None:
-            warnings.warn(
-                f"Density '{color.name}' has style nodes that turn its grid into a "
-                "mesh, so there is no grid left to sample and the color will be "
-                "flat. Load the density used for coloring with `style=None`, and "
-                "set `density.object.hide_render = True` so its volume is not "
-                "rendered.",
-                category=UserWarning,
-            )
         style_is_callable = callable(style)
         if not style_is_callable and style not in STYLE_NODE_MAPPING:
             raise ValueError(
@@ -1426,7 +1416,9 @@ class Molecule(MolecularEntity):
                 >> (g.SetColor(color=color_input) if color_input is not None else None)
                 >> style_node
                 >> (
-                    g.SetColor(color=g.ColorSampleGrid(object=color.object).o.color)
+                    g.SetColor(
+                        color=g.ColorSampleGrid(object=color.grid_object).o.color
+                    )
                     if color_by_density
                     else None
                 )
