@@ -1274,7 +1274,7 @@ wheels = [
 
 [[package]]
 name = "mdanalysis"
-version = "2.10.0"
+version = "2.11.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "filelock" },
@@ -1289,12 +1289,13 @@ dependencies = [
     { name = "threadpoolctl" },
     { name = "tqdm" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/bc/eb/1ef9da97c43184f6c1c2b0a224cab574f82dcb39d930808f971feb4f2a3f/mdanalysis-2.10.0.tar.gz", hash = "sha256:5cef1f1eba4b25cbf9dd4045f08eeab293bb9577b970aa96132f14491312d877", size = 5263029, upload-time = "2025-10-17T23:58:06.241Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/81/20/376e8a20c8b74523baa39f5f71d986971b228275e0c0be73fa9a3a7b94a4/mdanalysis-2.11.0.tar.gz", hash = "sha256:aee95dc08d55169c58adbeb2980ff4a39b153bf85f55f291c6c0f7b8226223b0", size = 5450970, upload-time = "2026-10-21T12:58:52.405Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/c6/1c/6395e15678f1650a2d59d4b1142514bbc5fbf670bfab9d4c93c8b54a425e/mdanalysis-2.10.0-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:df1db84d24a9c9bf8771c1764c659a0a508e0724a4208755e3608653ebfbae29", size = 6618180, upload-time = "2025-10-17T23:57:50.668Z" },
-    { url = "https://files.pythonhosted.org/packages/58/0d/8572a9688ee913dbe3f5578b69dc8e4c58bcf086c7a8676ba99a61f9e8e0/mdanalysis-2.10.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:0bd7be6bad990c779a5b0d2d72801d6b57293fd8419f90526ff855da9bf8a829", size = 6506684, upload-time = "2025-10-17T23:57:52.727Z" },
-    { url = "https://files.pythonhosted.org/packages/f8/8e/bfa3cf758f479a910fdf474193ef73e7c8e9380b3a96fe127c64853f0307/mdanalysis-2.10.0-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:7042a10fc2b71cb781a733eda5a88d61cd27c4c26ff0403bee3e4021c00aa7dd", size = 13251494, upload-time = "2025-10-17T23:57:54.832Z" },
-    { url = "https://files.pythonhosted.org/packages/d7/95/dfcd59a9e99fd67335cfb77c9e6f24a8b5db38b3c0cf3b18f3f7bd7c2325/mdanalysis-2.10.0-cp313-cp313-win_amd64.whl", hash = "sha256:d82f8d38ed5ad8e6a19812d5cf3fac1c54d8dd634fb573908de4801bea73a6b1", size = 6464024, upload-time = "2025-10-17T23:57:56.799Z" },
+    { url = "https://files.pythonhosted.org/packages/f1/d3/0424f5b08d4767df45bd6f2d9654e73ea0303919f3046dee797e0dd9f0dd/mdanalysis-2.11.0-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:28a1163f1b3a37a4a807bbe1557ca26800bab002fba151a60e48db20515b793d", size = 6858721, upload-time = "2026-10-21T12:58:26.423Z" },
+    { url = "https://files.pythonhosted.org/packages/39/78/43d928ba6a471c6677345fca27065edf91c721b7601a30b848b509ae2d12/mdanalysis-2.11.0-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:137dc965e4a5d75b2c337d036c6ae41f15bb59aecc48fd39007e47b54195d3e8", size = 6808520, upload-time = "2026-10-21T12:58:28.994Z" },
+    { url = "https://files.pythonhosted.org/packages/13/98/03f3d802d2a77459da08a94ff4ee0ae26239c63abda6da87407050e4caf0/mdanalysis-2.11.0-cp313-cp313-manylinux_2_24_aarch64.manylinux_2_28_aarch64.whl", hash = "sha256:82a2f9bd5c2cfb1455f2ae9c7a44aadd65dfa297038029d1711eeb0e7fda630d", size = 13508969, upload-time = "2026-10-21T12:58:31.732Z" },
+    { url = "https://files.pythonhosted.org/packages/1b/a5/f2187427a6a6db35f40a1cb8d2b24ed761b3813875d2d6aa235e9efbec5a/mdanalysis-2.11.0-cp313-cp313-manylinux_2_24_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:b86e3f8831a8c6768d0eb5a44eb7680c1e781b1f65f4cab9f701cf7b7f0a3068", size = 13686023, upload-time = "2026-10-21T12:58:34.76Z" },
+    { url = "https://files.pythonhosted.org/packages/9c/ef/82d3147129e330c351147e8a810ad260054e0df5cc561482a46304df9dfb/mdanalysis-2.11.0-cp313-cp313-win_amd64.whl", hash = "sha256:8a40f2b146493fd5001d2d5f72e18dcda379afb8cd34f87460834e306ab64799", size = 6876117, upload-time = "2026-10-21T12:58:37.328Z" },
 ]
 
 [[package]]
@@ -1311,14 +1312,14 @@ wheels = [
 
 [[package]]
 name = "mdanalysistests"
-version = "2.10.0"
+version = "2.11.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "hypothesis" },
     { name = "mdanalysis" },
     { name = "pytest" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/eb/75/1ad63dbab60b2aa34ebb0730946bdeaf98afd3113430f57e4a85247f5829/mdanalysistests-2.10.0.tar.gz", hash = "sha256:286b8678e19195093a19b57b26d76b8274415d33ac23fc872355639fcb49beef", size = 57933275, upload-time = "2025-10-17T23:57:31.373Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/27/bb/f16a0690f7f0219eec3310deb3d47f09da6df58a50873f6624f4742ea6f0/mdanalysistests-2.11.0.tar.gz", hash = "sha256:5edeb5b01805da728b202103aa8d2b5974a37f1005ab1fe0150ed7d59702d2ea", size = 59555441, upload-time = "2026-10-21T12:55:53.042Z" }
 
 [[package]]
 name = "mdurl"
@@ -1420,13 +1421,13 @@ requires-dist = [
     { name = "jupyter", marker = "extra == 'docs'", specifier = ">=1.1.1" },
     { name = "jupyter", marker = "extra == 'jupyter'" },
     { name = "jupyter-cache", marker = "extra == 'docs'", specifier = ">=1.0.1" },
-    { name = "mdanalysis", specifier = ">=2.10" },
+    { name = "mdanalysis", specifier = ">=2.11" },
     { name = "mdanalysisdata", marker = "extra == 'dev'", specifier = ">=0.9.0" },
     { name = "mdanalysisdata", marker = "extra == 'docs'", specifier = ">=0.9.0" },
     { name = "mdanalysistests", marker = "extra == 'dev'", specifier = ">=2.7.0" },
     { name = "mdanalysistests", marker = "extra == 'docs'", specifier = ">=2.7.0" },
     { name = "mrcfile" },
-    { name = "nodebpy", specifier = ">=520.38.0" },
+    { name = "nodebpy", specifier = ">=520.39.0" },
     { name = "numpy", marker = "extra == 'dev'", specifier = ">2.2" },
     { name = "pandas", specifier = "<3.0.0" },
     { name = "pillow", marker = "extra == 'dev'" },
@@ -1566,11 +1567,11 @@ wheels = [
 
 [[package]]
 name = "nodebpy"
-version = "520.38.0"
+version = "520.39.0"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/02/95/4339e272884e98b96307de1dc0c82cc703ea8a294ef3cc9cebaae709713e/nodebpy-520.38.0.tar.gz", hash = "sha256:0245e090f638ef61d52a10a61f6eced7854e519602630c8c5132feaf10ab467a", size = 531939, upload-time = "2026-10-13T07:30:00.287Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ba/ca/daa33c6e1464d11092735e3e251e7f9479d2d77c8b370d267e1a1603e385/nodebpy-520.39.0.tar.gz", hash = "sha256:e998b0287e4f1accdcc365293d371288cde290936a27b2466de14e864aec75d6", size = 546804, upload-time = "2026-10-19T18:09:42.612Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/5c/7b/07bf54389c557c8e183eb47d0da114777c467a5c715b9947fec7853ffbc3/nodebpy-520.38.0-py3-none-any.whl", hash = "sha256:3124c712938c607e665f2586ba244dc18bb02f659c28c36d9276faba7735717b", size = 592373, upload-time = "2026-10-13T07:29:58.38Z" },
+    { url = "https://files.pythonhosted.org/packages/63/b1/424c6e7d87da49c34c7aec521cd56a7981e6aaddf55324cb88d795952f99/nodebpy-520.39.0-py3-none-any.whl", hash = "sha256:8b2b0c1d7051f625f1a7f4d66058a4f04b2f2bc71300ca82c5af2634ff2b6a76", size = 608664, upload-time = "2026-10-19T18:09:40.48Z" },
 ]
 
 [[package]]

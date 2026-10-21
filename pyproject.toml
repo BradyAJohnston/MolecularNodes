@@ -6,14 +6,14 @@ readme = "README.md"
 license = "GPL-3.0-or-later"
 dependencies = [
     "databpy>=0.12.0",
-    "mdanalysis>=2.10",
+    "mdanalysis>=2.11",
     "biotite>=1.7.1,<2",
     "mrcfile",
     "starfile",
     "imdclient>=0.2.3",
     "pandas<3.0.0",
     "griddataformats>=1.2.0",
-    "nodebpy>=520.38.0",
+    "nodebpy>=520.39.0",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.13.0"
