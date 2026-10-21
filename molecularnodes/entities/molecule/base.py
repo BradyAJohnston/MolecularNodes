@@ -898,7 +898,7 @@ class Molecule(MolecularEntity):
             return cls(universe, name=name or Path(file_path).name)
 
         reader = read_structure(file_path)
-        universe = universe_from_atoms(reader.array)
+        universe = universe_from_atoms(reader.array, frame_data=reader.model_data())
         if name is None:
             name = Path(file_path).name if not isinstance(file_path, io.BytesIO) else ""
         entity = cls(universe, name=name)
@@ -1563,7 +1563,10 @@ class Molecule(MolecularEntity):
                     source = StructureDownloader().download(
                         code=code, format="bcif", database=database or "rcsb"
                     )
-                self.universe = universe_from_atoms(read_structure(source).array)
+                reader = read_structure(source)
+                self.universe = universe_from_atoms(
+                    reader.array, frame_data=reader.model_data()
+                )
                 if frame is not None:
                     self.universe.trajectory[frame]
             except Exception as e:

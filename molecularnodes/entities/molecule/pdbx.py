@@ -73,6 +73,28 @@ class PDBXReader(ReaderBase):
         if atom_site is not None and "group_PDB" not in atom_site:
             atom_site["group_PDB"] = np.full(atom_site.row_count, "ATOM")
 
+    def _model_values(self):
+        n_models, n_atoms = self.array.coord.shape[:2]
+        atom_site = self.file.block["atom_site"]
+        if atom_site.row_count == n_models * n_atoms:
+            # every row of `atom_site` is an atom of the stack, in model order,
+            # so the columns are the values of each model
+            columns = {"b_factor": "B_iso_or_equiv", "occupancy": "occupancy"}
+            return {
+                name: atom_site[column].as_array(np.float32).reshape(n_models, n_atoms)
+                for name, column in columns.items()
+                if column in atom_site
+            }
+        # alternate locations were filtered out of the stack: read each model
+        # with the same filtering. Each read parses the whole category
+        models = [
+            pdbx.get_structure(
+                self.file, model=i, extra_fields=["b_factor", "occupancy"]
+            )
+            for i in range(1, n_models + 1)
+        ]
+        return self._stack_model_values(models)
+
     def _assemblies(self):
         return CIFAssemblyParser(self.file).get_assemblies()
 

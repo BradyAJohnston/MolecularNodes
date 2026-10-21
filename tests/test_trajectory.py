@@ -869,6 +869,123 @@ class TestTrajectory:
             atol=1e-4,
         )
 
+    @staticmethod
+    def _write_models_pdb(path, b_factors, occupancies):
+        # a multi-model PDB file of 50 atoms with these values for each model
+        source = mda.Universe(
+            data_dir / "md_ppr/box.gro", data_dir / "md_ppr/first_5_frames.xtc"
+        )
+        atoms = source.atoms[:50]
+        source.add_TopologyAttr("tempfactors")
+        source.add_TopologyAttr("occupancies")
+        with mda.Writer(str(path), multiframe=True) as writer:
+            for i, _ in enumerate(source.trajectory[: len(b_factors)]):
+                atoms.tempfactors = b_factors[i]
+                atoms.occupancies = occupancies[i]
+                writer.write(atoms)
+
+    @staticmethod
+    def _assert_models_follow_frames(mol, b_factors, occupancies):
+        for frame in range(len(b_factors)):
+            bpy.context.scene.frame_set(frame)
+            assert np.allclose(mol.named_attribute("b_factor"), b_factors[frame])
+            assert np.allclose(mol.named_attribute("occupancy"), occupancies[frame])
+
+    def test_ts_data_pdb_models_from_file(self, tmp_path):
+        # a multi-model PDB file loaded on its own is parsed by biotite, whose
+        # stack has the first model's values, and each frame carries its own
+        # model's B-factors and occupancies in ts.data
+        rng = np.random.default_rng(0)
+        b_factors = rng.uniform(0, 100, size=(3, 50)).round(2)
+        occupancies = rng.uniform(0, 1, size=(3, 50)).round(2)
+        path = tmp_path / "models.pdb"
+        self._write_models_pdb(path, b_factors, occupancies)
+
+        mol = mn.Molecule.load(path)
+        assert mol.object.mn.frame_attributes == "position,occupancy,b_factor"
+        self._assert_models_follow_frames(mol, b_factors, occupancies)
+
+        mol.subframes = 1
+        mol.interpolate = True
+        bpy.context.scene.frame_set(1)
+        assert np.allclose(
+            mol.named_attribute("b_factor"), b_factors[:2].mean(axis=0), atol=1e-4
+        )
+        assert np.allclose(
+            mol.named_attribute("occupancy"), occupancies[:2].mean(axis=0), atol=1e-4
+        )
+
+        mol.subframes = 0
+        mol.average = 1
+        bpy.context.scene.frame_set(1)
+        assert np.allclose(
+            mol.named_attribute("b_factor"), b_factors.mean(axis=0), atol=1e-4
+        )
+
+    def test_ts_data_pdb_models_from_file_identical(self, tmp_path):
+        # values that are the same in every model are not per-frame attributes
+        rng = np.random.default_rng(0)
+        b_factors = np.tile(rng.uniform(0, 100, size=50).round(2), (3, 1))
+        occupancies = rng.uniform(0, 1, size=(3, 50)).round(2)
+        path = tmp_path / "models.pdb"
+        self._write_models_pdb(path, b_factors, occupancies)
+
+        mol = mn.Molecule.load(path)
+        assert "tempfactor" not in mol.universe.trajectory.ts.data
+        assert mol.object.mn.frame_attributes == "position,occupancy"
+        self._assert_models_follow_frames(mol, b_factors, occupancies)
+
+    def test_ts_data_cif_models_from_file(self, tmp_path):
+        import biotite.structure.io.pdb as pdb
+        import biotite.structure.io.pdbx as pdbx
+
+        rng = np.random.default_rng(1)
+        b_factors = rng.uniform(0, 100, size=(3, 50)).round(2)
+        occupancies = rng.uniform(0, 1, size=(3, 50)).round(2)
+        pdb_path = tmp_path / "models.pdb"
+        self._write_models_pdb(pdb_path, b_factors, occupancies)
+        stack = pdb.get_structure(pdb.PDBFile.read(pdb_path))
+        cif = pdbx.CIFFile()
+        pdbx.set_structure(cif, stack)
+        # the rows of `atom_site` are the atoms of each model in turn
+        atom_site = cif.block["atom_site"]
+        atom_site["B_iso_or_equiv"] = b_factors.ravel()
+        atom_site["occupancy"] = occupancies.ravel()
+        path = tmp_path / "models.cif"
+        cif.write(path)
+
+        mol = mn.Molecule.load(path)
+        assert mol.object.mn.frame_attributes == "position,occupancy,b_factor"
+        self._assert_models_follow_frames(mol, b_factors, occupancies)
+
+    def test_ts_data_pdb_models_from_file_session(self, tmp_path, session):
+        from molecularnodes.entities.reload import reload_entity
+
+        rng = np.random.default_rng(2)
+        b_factors = rng.uniform(0, 100, size=(3, 50)).round(2)
+        occupancies = rng.uniform(0, 1, size=(3, 50)).round(2)
+        path = tmp_path / "models.pdb"
+        self._write_models_pdb(path, b_factors, occupancies)
+
+        mol = mn.Molecule.load(path)
+        uuid = mol.uuid
+        bpy.context.scene.frame_set(2)
+        filepath = str(tmp_path / "models.blend")
+        bpy.ops.wm.save_as_mainfile(filepath=filepath)
+        del mol
+        bpy.ops.wm.open_mainfile(filepath=filepath)
+
+        # the universe is rebuilt from the file, with each model's values
+        mol = mn.session.get_session().get(uuid)
+        assert "tempfactor" in mol.universe.trajectory.ts.data
+        self._assert_models_follow_frames(mol, b_factors, occupancies)
+
+        # as is an entity reloaded from its object
+        obj = mol.object
+        mn.session.get_session().remove_entity(uuid)
+        mol = reload_entity(obj)
+        self._assert_models_follow_frames(mol, b_factors, occupancies)
+
     def test_ts_data_lammps_dump(self, tmp_path):
         # extra columns of a LAMMPS dump are read into ts.data, and `q` updates
         # the charges

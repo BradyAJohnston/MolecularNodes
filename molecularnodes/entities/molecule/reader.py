@@ -183,6 +183,50 @@ class ReaderBase(metaclass=ABCMeta):
     def _assemblies(self):
         return {}
 
+    def model_data(self) -> dict[str, np.ndarray]:
+        """Occupancies and B-factors of each model, where they differ between models.
+
+        A stack takes its annotations from the first model, so the values of the
+        other models are read separately. They are keyed like the per-atom
+        `ts.data` arrays of the MDAnalysis PDBReader (``occupancy``,
+        ``tempfactor``), so each frame of the universe can carry its model's
+        values.
+
+        Returns
+        -------
+        dict[str, np.ndarray]
+            ``(n_models, n_atoms)`` arrays by `ts.data` key. Empty for a single
+            model, and without the values that are the same in every model.
+        """
+        if not isinstance(self.array, AtomArrayStack) or self.array.stack_depth() < 2:
+            return {}
+        try:
+            values = self._model_values()
+        except Exception as e:
+            logger.warning(f"Failed to read per-model B-factors and occupancies: {e}")
+            return {}
+        data = {}
+        for key, name in (("occupancy", "occupancy"), ("tempfactor", "b_factor")):
+            array = values.get(name)
+            if array is None or array.shape != self.array.coord.shape[:2]:
+                continue
+            if not np.all(array == array[0]):
+                data[key] = array
+        return data
+
+    def _model_values(self) -> dict[str, np.ndarray]:
+        """``b_factor`` and ``occupancy`` of each model, as ``(n_models, n_atoms)``."""
+        return {}
+
+    @staticmethod
+    def _stack_model_values(models: list[AtomArray]) -> dict[str, np.ndarray]:
+        """Stack the ``b_factor`` and ``occupancy`` annotations of each model."""
+        return {
+            name: np.stack([model.get_annotation(name) for model in models])
+            for name in ("b_factor", "occupancy")
+            if name in models[0].get_annotation_categories()
+        }
+
     @staticmethod
     def set_extra_annotations(
         annotations: dict, array, file
