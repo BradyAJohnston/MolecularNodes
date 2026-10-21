@@ -213,6 +213,7 @@ class Molecule(MolecularEntity):
     _mn_filepath_topology = StringObjectMNProperty("filepath_topology")
     _mn_filepath_trajectory = StringObjectMNProperty("filepath_trajectory")
     _mn_n_frames = IntObjectMNProperty("n_frames", _validate_non_negative)
+    _mn_frame_attributes = StringObjectMNProperty("frame_attributes")
     _entity_type: EntityType = EntityType.MOLECULE
     # extra `mda.Universe()` arguments for subclasses whose files can't be
     # recognised from their extension, used when restoring from a saved session
@@ -675,8 +676,28 @@ class Molecule(MolecularEntity):
     def _store_extra_attributes(self) -> None:
         # TODO: enable adding of arbitrary mda.Universe attirbutes not currently applied
         values = self.frame_manager.read_and_cache(self.uframe)
+        self._record_frame_attributes(values)
         values.pop("position")
         self._store_frame_attributes(values)
+
+    def _record_frame_attributes(self, names) -> None:
+        """Add attribute names to the object's list of per-frame attributes.
+
+        Names are only added: an attribute that a frame lacks keeps its last
+        values, and a TRR file can gain velocities on later frames.
+
+        Parameters
+        ----------
+        names : Iterable[str]
+            Names of attributes updated on this frame
+        """
+        # single-frame structures are not updated per frame
+        if self.frame_manager.n_frames == 1:
+            return
+        known = [n for n in self._mn_frame_attributes.split(",") if n]
+        new = [n for n in names if n not in known]
+        if new:
+            self._mn_frame_attributes = ",".join(known + new)
 
     def _store_frame_attributes(self, values: dict[str, np.ndarray]) -> None:
         """Store per-frame attributes other than positions.
@@ -1114,6 +1135,7 @@ class Molecule(MolecularEntity):
             Scene frame number
         """
         values = self.frame_manager.get_values_at_frame(frame)
+        self._record_frame_attributes(values)
         self.position = values.pop("position")
         self._store_frame_attributes(values)
 

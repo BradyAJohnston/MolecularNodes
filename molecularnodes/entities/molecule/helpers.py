@@ -56,10 +56,11 @@ TIMESTEP_ATTRIBUTES = {
     "force": ("forces", False),
 }
 
-# names of the existing attributes that per-atom `ts.data` arrays update: the
-# B-factors of each model of a PDB file, and LAMMPS dump charges. Other keys
-# keep their name
-TS_DATA_NAMES = {"tempfactor": "b_factor", "q": "charge"}
+# names of the built-in attributes that per-atom `ts.data` arrays update: the
+# B-factors and occupancies of each model of a PDB file, and LAMMPS dump
+# charges. Other keys keep their name, or take a `ts_` prefix when it is the
+# name of a built-in attribute
+TS_DATA_NAMES = {"tempfactor": "b_factor", "occupancy": "occupancy", "q": "charge"}
 
 
 class FrameManager:
@@ -91,6 +92,15 @@ class FrameManager:
         # attribute name -> universe frame -> values, for positions and any
         # other per-frame attribute a frame has (see `_read_frame`)
         self.caches: dict[str, dict[int, np.ndarray]] = {}
+        # attributes Molecular Nodes creates itself, which other `ts.data`
+        # keys must not overwrite (`bond_type` is stored on the edges)
+        self._builtin_names = {
+            "position",
+            "bond_type",
+            *TIMESTEP_ATTRIBUTES,
+            *getattr(trajectory, "_att_names", ()),
+            *getattr(trajectory, "_blender_attributes", {}),
+        }
 
     @property
     def attribute_caches(self) -> dict[str, dict[int, np.ndarray]]:
@@ -315,7 +325,9 @@ class FrameManager:
         # from import
         if self.n_frames != 1:
             for key, data in ts.data.items():
-                name = TS_DATA_NAMES.get(key, key)
+                name = TS_DATA_NAMES.get(key)
+                if name is None:
+                    name = f"ts_{key}" if key in self._builtin_names else key
                 if key in att_names or name in values:
                     continue
                 if isinstance(data, np.ndarray) and data.shape[:1] == (ts.n_atoms,):

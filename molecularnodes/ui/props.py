@@ -491,6 +491,12 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         default=False,
         update=_update_entities,
     )
+    frame_attributes: StringProperty(  # type: ignore
+        name="Per-frame Attributes",
+        description="Comma-separated names of the attributes updated on each frame of the trajectory",
+        default="",
+        options={"HIDDEN"},
+    )
     filepath_trajectory: StringProperty(  # type: ignore
         name="Trajectory",
         description="Filepath for the `trajectory` of the Object",

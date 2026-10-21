@@ -202,7 +202,9 @@ The others vary:
 Simulation topologies differ in what they contain, so the MD column is for typical topologies such as `.psf` and `.gro`.
 Trajectories also get `velocity` and `force` once a frame that has them is shown; most trajectory formats, such as `.xtc` and `.dcd`, store neither.
 Other per-atom values that MDAnalysis reads for each frame into `ts.data` are stored as attributes too: the B-factors and occupancies of each model of a `.pdb` file (as `b_factor` and `occupancy`), the `additional_columns` of a LAMMPS dump (`q` as `charge`, others by their column name) and the `additional_blocks` of a `.tng` file (by block name).
+Any other key that is the name of an attribute Molecular Nodes creates on import, such as a LAMMPS `mass` column, is stored with a `ts_` prefix (`ts_mass`) so it never overwrites that attribute.
 Float values are interpolated and averaged between frames like positions; integer and boolean values take the current frame's values.
+The attributes a trajectory updates on each frame are listed under *Per-frame Attributes* in its Trajectory Playback panel, and in `obj.mn.frame_attributes`.
 Single-frame structures keep the values from import.
 `mol.list_attributes()` lists the attributes on a molecule, and `mol.named_attribute()` raises an error for one that was not created.
 In the node tree there is no error: reading a missing attribute gives `0::Int` (or `False::Bool`) for every atom, so selecting by `entity_id` on a `.pdb` file treats every atom as entity `0::Int`.

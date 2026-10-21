@@ -799,6 +799,7 @@ class TestTrajectory:
         bpy.context.scene.frame_set(0)
         assert "velocity" not in traj.list_attributes()
         assert "force" not in traj.list_attributes()
+        assert traj.object.mn.frame_attributes == "position"
 
         # an attribute appears on the first frame that has it, and frames
         # without it keep the values last stored
@@ -814,6 +815,7 @@ class TestTrajectory:
                 assert "force" not in traj.list_attributes()
             else:
                 assert np.allclose(traj.named_attribute("force"), force)
+        assert traj.object.mn.frame_attributes == "position,velocity,force"
 
         # interpolating towards a frame without velocities uses this frame's:
         # scene frame 2 is halfway from frame 1 to frame 2
@@ -849,6 +851,7 @@ class TestTrajectory:
                 writer.write(atoms)
 
         traj = mn.entities.Molecule(mda.Universe(str(path)))
+        assert traj.object.mn.frame_attributes == "position,occupancy,b_factor"
         for frame in range(3):
             bpy.context.scene.frame_set(frame)
             assert np.allclose(traj.named_attribute("b_factor"), b_factors[frame])
@@ -915,6 +918,44 @@ class TestTrajectory:
         assert np.all(traj.named_attribute("flag") == 10)
         bpy.context.scene.frame_set(4)
         assert np.all(traj.named_attribute("flag") == 20)
+
+    def test_frame_attributes_xtc(self, universe):
+        traj = mn.entities.Molecule(universe)
+        bpy.context.scene.frame_set(1)
+        assert traj.object.mn.frame_attributes == "position"
+
+    def test_frame_attributes_single_frame(self, universe_with_bonds):
+        traj = mn.entities.Molecule(universe_with_bonds)
+        assert traj.object.mn.frame_attributes == ""
+
+    def test_ts_data_builtin_collision(self, tmp_path):
+        # a LAMMPS dump column named like a built-in attribute is stored with a
+        # `ts_` prefix and leaves the built-in attribute alone
+        lines = []
+        for step in range(2):
+            lines += [
+                "ITEM: TIMESTEP",
+                str(step),
+                "ITEM: NUMBER OF ATOMS",
+                "4",
+                "ITEM: BOX BOUNDS pp pp pp",
+                "0 10",
+                "0 10",
+                "0 10",
+                "ITEM: ATOMS id type x y z mass",
+            ]
+            lines += [f"{i + 1} 1 {i + step} 1.0 1.0 {100 + step}" for i in range(4)]
+        path = tmp_path / "mass.lammpsdump"
+        path.write_text("\n".join(lines) + "\n")
+
+        u = mda.Universe(str(path), format="LAMMPSDUMP", additional_columns=["mass"])
+        traj = mn.entities.Molecule(u)
+        mass = traj.named_attribute("mass").copy()
+        for frame in range(2):
+            bpy.context.scene.frame_set(frame)
+            assert np.allclose(traj.named_attribute("ts_mass"), 100 + frame)
+            assert np.array_equal(traj.named_attribute("mass"), mass)
+        assert traj.object.mn.frame_attributes == "position,ts_mass"
 
 
 @pytest.mark.parametrize("topology", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])

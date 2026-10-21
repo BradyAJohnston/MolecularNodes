@@ -191,6 +191,18 @@ def layout_trajectory_playback(
     playback.separator()
     playback.operator("mn.frames_to_collection", icon="RENDERLAYERS")
 
+    # the attributes updated on each frame, read from the object
+    names = [n for n in obj.mn.frame_attributes.split(",") if n]
+    if names:
+        header, body = playback.panel(
+            idname="layout_frame_attributes", default_closed=True
+        )
+        header.label(text="Per-frame Attributes")
+        if body is not None:
+            col = body.column(align=True)
+            for name in names:
+                col.label(text=name)
+
 
 def layout_selection_manage(
     layout: UILayout, traj: Molecule, panel: bool = True
