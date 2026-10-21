@@ -825,6 +825,38 @@ class TestTrajectory:
         assert np.allclose(traj.named_attribute("velocity"), vel[1] * traj.world_scale)
         assert np.allclose(traj.named_attribute("force"), force)
 
+    def test_frame_attribute_info(self, tmp_path):
+        # velocities on frames 1 and 3, forces on frame 2
+        traj = mn.entities.Molecule(
+            self._write_trr(tmp_path / "info.trr", (1, 3), (2,))
+        )
+        for frame in [1, 2]:
+            bpy.context.scene.frame_set(frame)
+
+        info = traj.frame_attribute_info("velocity")
+        assert info["source"] == "ts.velocities"
+        assert info["units"] == "Blender units/ps (Å/ps × 0.1)"
+        # frame 2 has no velocities, so frame 1's are held
+        assert info["frame"] == 1
+        assert not info["current"]
+        lengths = np.linalg.norm(traj.named_attribute("velocity"), axis=1)
+        assert np.allclose(info["range"], (lengths.min(), lengths.max()))
+
+        info = traj.frame_attribute_info("force")
+        assert info["source"] == "ts.forces"
+        assert info["units"] == "kJ/(mol·Å)"
+        assert info["frame"] == 2
+        assert info["current"]
+
+        assert traj.frame_attribute_info("position")["source"] == "ts.positions"
+
+        # the range is recomputed once the attributes are next stored
+        bpy.context.scene.frame_set(3)
+        info = traj.frame_attribute_info("velocity")
+        lengths = np.linalg.norm(traj.named_attribute("velocity"), axis=1)
+        assert info["current"]
+        assert np.allclose(info["range"], (lengths.min(), lengths.max()))
+
     def test_velocity_force_trr_positions_only(self, tmp_path):
         traj = mn.entities.Molecule(self._write_trr(tmp_path / "x.trr"))
         bpy.context.scene.frame_set(1)
@@ -956,6 +988,8 @@ class TestTrajectory:
             assert np.allclose(traj.named_attribute("ts_mass"), 100 + frame)
             assert np.array_equal(traj.named_attribute("mass"), mass)
         assert traj.object.mn.frame_attributes == "position,ts_mass"
+        assert traj.frame_attribute_info("ts_mass")["source"] == 'ts.data["mass"]'
+        assert traj.frame_attribute_info("ts_mass")["units"] == ""
 
 
 @pytest.mark.parametrize("topology", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
