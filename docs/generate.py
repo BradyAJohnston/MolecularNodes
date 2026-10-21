@@ -65,6 +65,10 @@ CATEGORY_DESCRIPTIONS = {
     "Geometry": "General geometry processing utilities",
     "Utilities": "Small helper node groups used throughout Molecular Nodes",
     "Materials": "Shader node groups for the pre-built materials",
+    "Compositor": (
+        "Compositor node groups for post-processing renders: outlines,"
+        " illustrative shading and masks from AOV passes"
+    ),
 }
 
 header = """---

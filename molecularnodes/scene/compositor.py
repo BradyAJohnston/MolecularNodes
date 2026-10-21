@@ -1,11 +1,98 @@
+import math
 from contextlib import contextmanager
-from typing import Iterator, NamedTuple
+from typing import Iterator, Literal, NamedTuple
 import bpy
 from bpy.types import CompositorNodeTree
 from nodebpy import compositor as c
 from nodebpy.builder import ColorSocket, TreeBuilder
+from ..nodes.compositor import ConeShadow, Illustrate
+from ..session import get_session
 
 annotations_image = "mn_annotations"
+
+# world units per Angstrom that Molecular Nodes imports structures at
+WORLD_SCALE = 0.1
+
+
+def add_view_layer_aov(
+    view_layer: bpy.types.ViewLayer, name: str, type: Literal["VALUE", "COLOR"]
+) -> bpy.types.AOV:
+    """Add a named AOV pass to the view layer, returning the existing one if
+    the name is already taken."""
+    aov = view_layer.aovs.get(name)
+    if aov is None:
+        aov = view_layer.aovs.add()
+        aov.name = name
+    aov.type = type
+    return aov
+
+
+def _entity_corner_depths(scene: bpy.types.Scene) -> list[float]:
+    """Camera depths, in world units, of the bounding-box corners of every
+    entity object in the scene (evaluated, so styles count)."""
+    from mathutils import Vector
+
+    camera = scene.camera
+    if camera is None:
+        return []
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    origin = camera.matrix_world.translation
+    forward = camera.matrix_world.to_3x3() @ Vector((0.0, 0.0, -1.0))
+    forward.normalize()
+    depths = []
+    for entity in get_session().entities.values():
+        try:
+            obj = entity.object
+        except Exception:
+            continue
+        if obj is None:
+            continue
+        evaluated = obj.evaluated_get(depsgraph)
+        for corner in evaluated.bound_box:
+            point = evaluated.matrix_world @ Vector(corner)
+            depths.append((point - origin).dot(forward))
+    return depths
+
+
+def _depth_range(scene: bpy.types.Scene) -> tuple[float, float]:
+    """(near, far) camera depth of the entities in the scene, falling back to
+    the camera clipping range."""
+    depths = _entity_corner_depths(scene)
+    if depths and max(depths) > min(depths):
+        return max(min(depths), 0.0), max(depths)
+    camera = scene.camera
+    if camera is None:
+        return 0.0, 100.0
+    return camera.data.clip_start, camera.data.clip_end
+
+
+def _pixel_size_angstrom(scene: bpy.types.Scene) -> float:
+    """Width of one rendered pixel in Angstrom at the entities in the scene:
+    from the orthographic scale, or the field of view at the mid-depth of the
+    entities for a perspective camera."""
+    camera = scene.camera
+    render = scene.render
+    pixels = max(render.resolution_x, render.resolution_y)
+    pixels *= render.resolution_percentage / 100.0
+    if camera is None or pixels <= 0:
+        return 1.0
+    data = camera.data
+    if data.type == "ORTHO":
+        width = data.ortho_scale
+    else:
+        near, far = _depth_range(scene)
+        width = 2.0 * (near + far) / 2.0 * math.tan(data.angle / 2.0)
+    return width / pixels / WORLD_SCALE
+
+
+# shading source for `CompositorTree.illustrate()` -> (view layer pass
+# attribute, Render Layers output accessor); "cone" is computed from the depth
+# pass by a Cone Shadow node instead
+_SHADING_SOURCES = {
+    "cone": ("use_pass_z", "depth"),
+    "ao": ("use_pass_ambient_occlusion", "ambient_occlusion"),
+    "shadow": ("use_pass_shadow", "shadow"),
+}
 
 
 class ResetCompositorSockets(NamedTuple):
@@ -205,6 +292,150 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
             )
             annotations = c.Image(image=_annotations_image())
             c.AlphaOver(self._wrap(source), annotations, 1.0) >> output
+
+    def _remove_composites(self) -> None:
+        """Remove any ``Illustrate`` node already in the tree, along with the
+        ``Cone Shadow`` feeding it, handing its consumers back the rendered
+        image, so :meth:`illustrate` replaces rather than stacks. Call inside
+        ``with self``."""
+        rl_node = self._render_layers_node()
+        for node in list(self.tree.nodes):
+            if node.bl_idname != "CompositorNodeGroup" or node.node_tree is None:
+                continue
+            if node.node_tree.name != Illustrate._asset_name:
+                continue
+            for link in node.inputs["Shadow"].links:
+                upstream = link.from_node
+                if (
+                    upstream.bl_idname == "CompositorNodeGroup"
+                    and upstream.node_tree is not None
+                    and upstream.node_tree.name == ConeShadow._asset_name
+                ):
+                    self.tree.nodes.remove(upstream)
+            consumers = [
+                link.to_socket for output in node.outputs for link in output.links
+            ]
+            for to_socket in consumers:
+                self.tree.links.new(rl_node.outputs["Image"], to_socket)
+            self.tree.nodes.remove(node)
+
+    def _insert_after_render(self, node) -> None:
+        """Re-route every consumer of the rendered image to read from ``node``
+        instead (the annotation overlay, or the output itself), or feed the
+        output when nothing consumed it. Call inside ``with self``."""
+        rl_node = self._render_layers_node()
+        consumers = [
+            link.to_socket
+            for link in rl_node.outputs["Image"].links
+            if link.to_node != node.node
+        ]
+        if consumers:
+            for to_socket in consumers:
+                self.tree.links.new(node.node.outputs[0], to_socket)
+        else:
+            node >> self.output
+
+    def illustrate(
+        self,
+        *,
+        shading: Literal["cone", "ao", "shadow"] | None = "cone",
+        outline: bool = True,
+        outline_normals: bool = False,
+        **inputs,
+    ) -> Illustrate:
+        """Insert an ``Illustrate`` node between Render Layers and whatever
+        currently consumes the rendered image.
+
+        Enables the render passes the node reads (depth, plus the normal pass
+        for ``outline_normals`` and the chosen shading pass) on the view
+        layer, adds the node group with its inputs linked to the Render Layers
+        node, and re-routes every existing consumer of the rendered image (the
+        annotation overlay, or the output itself) to read from it instead.
+        Calling it again replaces the node.
+
+        With ``shading="cone"`` the shading comes from a ``Cone Shadow`` node,
+        David Goodsell's conical soft shadow computed from the depth pass
+        alone, whose ``Pixel Size`` is set from the camera. It needs no
+        lighting, so pair it with the ``Flat`` material
+        (``mol.add_style("cartoon", material=mn.material.Flat())``) for
+        Illustrate-style renders.
+
+        ```python
+        node = canvas.compositor.illustrate(shading="cone", outline=True)
+        node.i.outline_size.default_value = 3
+        node.i.outline_color.default_value = (0.1, 0.1, 0.2, 1.0)
+        ```
+
+        Parameters
+        ----------
+        shading : {"cone", "ao", "shadow"} or None, default "cone"
+            What darkens the image: a ``Cone Shadow`` from the depth pass, the
+            ambient occlusion pass, the shadow pass (EEVEE only; Cycles has no
+            Shadow pass), or ``None`` for no shading at all.
+        outline : bool, default True
+            Draw lines where the depth changes sharply, from the ``Depth
+            Outline`` node inside the group.
+        outline_normals : bool, default False
+            Also draw lines where the surface normal changes sharply; enables
+            the normal pass.
+        **inputs
+            Any other input of the node by its Python name, for example
+            ``outline_size=3`` or ``background=True``.
+
+        Returns
+        -------
+        Illustrate
+            The node handle; tweak its inputs afterwards through ``node.i``.
+        """
+        if shading is not None and shading not in _SHADING_SOURCES:
+            raise ValueError(
+                f"Unknown shading source {shading!r}; "
+                f"expected one of {sorted(_SHADING_SOURCES)} or None."
+            )
+        view_layer = self._scene.view_layers[0]
+        view_layer.use_pass_z = True
+        if outline_normals:
+            view_layer.use_pass_normal = True
+        if shading is not None:
+            pass_attr, accessor = _SHADING_SOURCES[shading]
+            setattr(view_layer, pass_attr, True)
+
+        with self:
+            self._remove_composites()
+            rl_node = self._render_layers_node()
+            render = c.RenderLayers._from_node(rl_node)
+            links: dict[str, object] = {}
+            if outline_normals:
+                links["normal"] = render.o.normal
+            if shading == "cone":
+                links["shadow"] = ConeShadow(
+                    depth=render.o.depth,
+                    # the cone test compares against the depth pass, in world units
+                    pixel_size=_pixel_size_angstrom(self._scene) * WORLD_SCALE,
+                )
+            elif shading is not None:
+                if accessor not in {
+                    s.name.lower().replace(" ", "_")
+                    for s in rl_node.outputs
+                    if s.enabled
+                }:
+                    raise ValueError(
+                        f"The {shading!r} shading pass is not available with the "
+                        f"{self._scene.render.engine} engine; the Shadow pass is EEVEE only."
+                    )
+                links["shadow"] = getattr(render.o, accessor)
+            node = Illustrate(
+                image=render.o.image,
+                alpha=render.o.alpha,
+                depth=render.o.depth,
+                shading=shading is not None,
+                outline=outline,
+                outline_normals=outline_normals,
+                **links,
+                **inputs,
+            )
+            self._insert_after_render(node)
+        return node
 
 
 def setup_compositor(scene: bpy.types.Scene) -> CompositorTree:

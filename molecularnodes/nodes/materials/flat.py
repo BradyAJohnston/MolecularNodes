@@ -16,7 +16,7 @@ class Flat(CustomShaderGroup):
         mix_shader = s.MixShader(
             factor=MNColor().o.alpha,
             shader=s.TransparentBSDF(),
-            shader_001=FlatInternal(),
+            shader_001=FlatInternal(outline="None"),
         )
         _material_output = s.MaterialOutput(mix_shader)
 

@@ -760,7 +760,7 @@ class StyleSurface(AssetGeometryGroup):
                 atoms_3 = closure_zone_2.inputs.geometry("Atoms")
                 geometry_3 = closure_zone_2.outputs.geometry("Geometry")
                 with g.Frame("Coarse Subdivisions"):
-                    integer = g.Integer()
+                    integer = g.Integer(1)
                 _string = g.String(
                     "Experimental, pick 'SDF Coarse' in the SDF menu switch to try it. Runs the same offset, mean and fillet as 'SDF' but on a grid whose voxels are 'Coarse Voxel Factor' times larger (2 = 8x fewer voxels), meshes that and subdivides the mesh back up (plain Subdivide Mesh: Subdivision Surface costs ~250 ms here). Surface to Radius then projects the vertices onto the atom spheres, which restores detail on the convex parts."
                 )

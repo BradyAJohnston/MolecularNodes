@@ -580,8 +580,7 @@ Fade Geometry:
     domains. Place it after a style node and animate `Fade::Float` from `1` to `0` to fade that style out of a scene, or
     from `0` to `1` to fade it in. The node multiplies the existing alpha, so geometry that is already
     partly transparent stays proportionally more transparent. Only materials that read the alpha show the
-    fade: `Default` and `Squishy` do, while `Flat`, `Transparent` and `Ambient Occlusion` ignore it. Ambient occlusion
-    does not work alongside a Transparent BSDF, so the `Ambient Occlusion` material stays opaque.
+    fade: `Default`, `Squishy` and `Ambient Occlusion` do, while `Flat` and `Transparent` ignore it.
 Plexus:
   description: Find points that are within a given distance of each other and create an edge between them
 Visualize Points: {}
@@ -856,3 +855,55 @@ Sample Nearest Atoms:
     mesh.
   videos:
     - https://imgur.com/UzNwLv2
+Illustrate:
+  description: >-
+    Flat, illustrative composite of the render passes, wired straight from the Render Layers node. The *Shading* panel
+    darkens the `Image::Color` by the smoothed `Shadow::Color` input (Kuwahara for a painterly look, Blur for a soft one),
+    which takes the Ambient Occlusion or Shadow pass, or the output of `Cone Shadow::Node` for shading from the depth pass
+    alone; the *Outline* panel draws lines from `Depth Outline::Node` with `Outline::Node`, by its Sobel or Goodsell method; the *Background* panel
+    composites over a flat colour. From Python, `canvas.compositor.illustrate()` enables the passes, adds the shading source
+    and inserts the node in one call.
+Depth Outline:
+  description: >-
+    Line mask from the `Depth::Float` pass by one of two methods, picked with `Method::Menu`. *Sobel* draws hard lines
+    wherever the Sobel gradient of the depth passes `Threshold::Float`. *Goodsell* follows *Illustrate*: each of the eight
+    neighbours contributes how much farther it is than the centre, clamped to [`Min Diff::Float`, `Max Diff::Float`] and
+    weighted 1.0 on the edges and 0.8 on the corners, and the sum is ramped from `Low::Float` to `High::Float` into a soft
+    opacity, optionally smoothed (`Smooth::Bool`), so lines land on the nearer side of each depth step and their weight
+    follows its size. Distances are in world units, like the depth pass. The *Normals* panel adds lines from the
+    `Normals Pass::Vector` to catch creases between surfaces at the same depth; either way the lines are anti-aliased and
+    thickened to `Size::Int` pixels. Unlike the shader `Outline Mask::Node`, lines are drawn between separate objects and
+    over transparent backgrounds; draw them with `Outline::Node`.
+Outline:
+  description: >-
+    Draws a `Mask::Float` over an `Image::Color` in `Color::Color`. The alpha is set once, deliberately, to the larger of the
+    line coverage and the image alpha, so lines survive on transparent backgrounds.
+Value to Mask:
+  description: >-
+    Compares a float pass against `Target::Float` within `Epsilon::Float` and outputs the matching pixels as `Mask::Float` and
+    the rest as `Inverse::Float`. Meant for AOV passes written by a material from an attribute such as `chain_id`
+    (`canvas.add_aov("chain_id")` and `mn.material.add_aov(material, "chain_id")`), so one chain can be recoloured, outlined
+    or left untouched in the compositor.
+Mask Pixels:
+  description: >-
+    Splits an `Image::Color` by a `Mask::Float` into the pixels inside it (`Masked::Color`) and outside it (`Inverse::Color`),
+    each with the rest made transparent, so the two can be filtered separately and recombined with an Alpha Over node.
+Cone Shadow:
+  description: >-
+    Illustrate's screen-space ambient occlusion from the `Depth::Float` pass alone. 32 samples (8 directions on 4 rings up to
+    `Pixel Radius::Float` pixels) each cast shadow on the pixel when they are closer to the camera by more than the larger of
+    `Threshold::Float` and their screen distance times `Angle::Float` (with `Pixel Size::Float` relating pixels to depth);
+    the output `Shadow::Float` starts at 1, drops with every occluding sample and never goes below `Shadow Max::Float`.
+    Feed it to the `Shadow::Color` input of `Illustrate::Node`; `canvas.compositor.illustrate(shading="cone")` does this and
+    sets `Pixel Size::Float` from the camera.
+ID Outline:
+  description: >-
+    Illustrate's chain and residue outlines: counts, over the 5x5 neighbourhood, the pixels whose `ID::Float` differs from
+    the centre by more than `Min Difference::Float` and ramps the count from `Low::Float` to `High::Float` into an opacity.
+    Feed it a float AOV such as `chain_id` or `res_id` (`canvas.add_aov("chain_id")`,
+    `mn.material.add_aov(material, "chain_id", offset=1.0)`) and draw it with `Outline::Node`.
+Composite Depth Fog:
+  description: >-
+    Illustrate's atmospheric perspective: the `Image::Color` is blended towards `Fog Color::Color` by a factor that runs from
+    `Front Fog::Float` at `Near::Float` to `Back Fog::Float` at `Far::Float` (1 keeps the colour, 0 is fully fogged). Expects
+    straight alpha and keeps the image alpha. Place it after `Illustrate::Node` for fogged, flat-shaded renders.

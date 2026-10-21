@@ -1,40 +1,40 @@
 name: Upload to Extensions Platform
 
 on:
-  release:
-    types: [published]
+    release:
+        types: [published]
 
 # Cancel in-progress runs when a new workflow with the same group is triggered
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 jobs:
-  upload-to-extensions:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
+    upload-to-extensions:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
 
-    steps:
-      - uses: actions/checkout@v5
+        steps:
+            - uses: actions/checkout@v5
 
-      - name: Download Release Assets and Create Notes
-        run: |
-          mkdir assets
-          gh release download -p "*.zip" -D assets/
-          RELEASE_URL=$(gh release view --json url | jq -r .url)
-          echo "See release notes: ${RELEASE_URL}" > release_notes.txt
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Download Release Assets and Create Notes
+              run: |
+                  mkdir assets
+                  gh release download -p "*.zip" -D assets/
+                  RELEASE_URL=$(gh release view --json url | jq -r .url)
+                  echo "See release notes: ${RELEASE_URL}" > release_notes.txt
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload to Extensions Platform
-        env:
-          EXTENSION: molecularnodes
-        run: |
-          for zipfile in assets/*.zip; do
-            echo "Uploading $zipfile to Blender Extensions Platform"
-            curl -X POST https://extensions.blender.org/api/v1/extensions/${EXTENSION}/versions/upload/ \
-              -H "Authorization:bearer ${{ secrets.BLENDER_EXTENSIONS_TOKEN }}" \
-              -F "version_file=@${zipfile}" \
-              -F "release_notes=<release_notes.txt"
-          done
+            - name: Upload to Extensions Platform
+              env:
+                  EXTENSION: molecularnodes
+              run: |
+                  for zipfile in assets/*.zip; do
+                    echo "Uploading $zipfile to Blender Extensions Platform"
+                    curl -X POST https://extensions.blender.org/api/v1/extensions/${EXTENSION}/versions/upload/ \
+                      -H "Authorization:bearer ${{ secrets.BLENDER_EXTENSIONS_TOKEN }}" \
+                      -F "version_file=@${zipfile}" \
+                      -F "release_notes=<release_notes.txt"
+                  done

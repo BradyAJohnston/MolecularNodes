@@ -15,9 +15,11 @@ failure the received and difference images are written to
 """
 
 from itertools import product
+import bpy
 import pytest
 from nodebpy.nodes.geometry import RandomValue, StoreNamedAttribute
 import molecularnodes as mn
+import molecularnodes.nodes.compositor as mc
 import molecularnodes.nodes.geometry as mg
 from .constants import data_dir
 from .test_nodes import SYMMETRY_EXAMPLES
@@ -96,6 +98,14 @@ def test_render_material(fetch, material, golden_canvas, tmp_path, image_snapsho
     assert image_snapshot == _render(golden_canvas, tmp_path)
 
 
+def test_render_material_flat_outline(fetch, golden_canvas, tmp_path, image_snapshot):
+    # Flat has no outline by default; outline=True adds the dark edge lines
+    mol = _fetch_molecule(fetch)
+    mol.add_style("surface", material=mn.material.Flat(outline=True))
+    golden_canvas.look_at(mol, viewpoint="front")
+    assert image_snapshot == _render(golden_canvas, tmp_path)
+
+
 def test_render_selection_string(fetch, golden_canvas, tmp_path, image_snapshot):
     # a selection phrase masks the second style to part of the molecule
     mol = _fetch_molecule(fetch)
@@ -111,6 +121,119 @@ def test_render_selection_atomgroup(fetch, golden_canvas, tmp_path, image_snapsh
     mol.add_style("cartoon")
     mol.add_style("sticks", selection=mol.universe.select_atoms("resid 100:150"))
     golden_canvas.look_at(mol, viewpoint="front")
+    assert image_snapshot == _render(golden_canvas, tmp_path)
+
+
+def _outline(canvas, **inputs):
+    from nodebpy import compositor as c
+
+    canvas.passes = ["combined", "z", "normal"]
+    with canvas.compositor.reset() as (image, output):
+        render = c.RenderLayers()
+        mask = mc.DepthOutline(
+            depth=render.o.depth, normals_pass=render.o.normal, **inputs
+        )
+        mc.Outline(image=image, mask=mask) >> output
+
+
+def _chain_outline(canvas):
+    from nodebpy import compositor as c
+
+    canvas.passes = ["combined"]
+    canvas.add_aov("chain_id")
+    for mat in bpy.data.materials:
+        if mat.name.startswith("Flat"):
+            mn.material.add_aov(mat, "chain_id", offset=1.0)
+    with canvas.compositor.reset() as (image, output):
+        render = c.RenderLayers()
+        mask = mc.IDOutline(id=render.o.chain_id)
+        mc.Outline(image=image, mask=mask) >> output
+
+
+def _fog(canvas, image, depth, output):
+    near, far = mn.scene.compositor._depth_range(canvas.scene)
+    (
+        mc.CompositeDepthFog(
+            image=image,
+            depth=depth,
+            near=near,
+            far=far,
+            back_fog=0.2,
+            fog_color=(0.2, 0.3, 0.8, 1.0),
+        )
+        >> output
+    )
+
+
+def _fog_only(canvas):
+    from nodebpy import compositor as c
+
+    canvas.passes = ["combined", "z"]
+    with canvas.compositor.reset() as (image, output):
+        render = c.RenderLayers()
+        _fog(canvas, image, render.o.depth, output)
+
+
+def _illustrate_fog(canvas):
+    from nodebpy import compositor as c
+
+    canvas.passes = ["combined", "z"]
+    with canvas.compositor.reset() as (image, output):
+        render = c.RenderLayers()
+        node = mc.Illustrate(
+            image=image,
+            alpha=render.o.alpha,
+            depth=render.o.depth,
+            shadow=mc.ConeShadow(
+                depth=render.o.depth,
+                pixel_size=mn.scene.compositor._pixel_size_angstrom(canvas.scene)
+                * mn.scene.compositor.WORLD_SCALE,
+            ),
+        )
+        _fog(canvas, node, render.o.depth, output)
+
+
+# name -> (material, compositor setup applied after the camera is framed)
+COMPOSITOR_CASES = {
+    "plain": ("Default", lambda canvas: None),
+    # the two Depth Outline methods, then the normal edges and dilation
+    "outline": ("Flat", _outline),
+    "outline_goodsell": ("Flat", lambda canvas: _outline(canvas, method="Goodsell")),
+    "outline_normals": (
+        "Default",
+        lambda canvas: _outline(canvas, normals=True, size=2),
+    ),
+    "chain_outline": ("Flat", _chain_outline),
+    "fog": ("Default", _fog_only),
+    "illustrate_cone": ("Flat", lambda canvas: canvas.compositor.illustrate()),
+    "illustrate_goodsell": (
+        "Flat",
+        lambda canvas: canvas.compositor.illustrate(outline_method="Goodsell"),
+    ),
+    "illustrate_ao": (
+        "Default",
+        lambda canvas: canvas.compositor.illustrate(shading="ao", outline_normals=True),
+    ),
+    "illustrate_fog": ("Flat", _illustrate_fog),
+}
+
+
+# cases rendered on another structure than 4ozs: the bases of 1BNA's cartoon are
+# instances, so its chain outline only separates the two strands when the AOV is
+# read from the instancer
+CASE_STRUCTURES = {"chain_outline": "1BNA"}
+
+
+@pytest.mark.parametrize("case", list(COMPOSITOR_CASES))
+def test_render_compositor(case, fetch, golden_canvas, tmp_path, image_snapshot):
+    # the compositor node assets: depth and chain outlines, depth
+    # fog and the Illustrate composite with each of its shading sources
+    material, setup = COMPOSITOR_CASES[case]
+    golden_canvas.transparent = True
+    mol = fetch(CASE_STRUCTURES.get(case, "4ozs"), format="bcif")
+    mol.add_style("cartoon", material=getattr(mn.material, material)())
+    golden_canvas.look_at(mol, viewpoint="front")
+    setup(golden_canvas)
     assert image_snapshot == _render(golden_canvas, tmp_path)
 
 

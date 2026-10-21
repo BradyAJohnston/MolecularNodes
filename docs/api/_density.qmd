@@ -162,7 +162,7 @@ ds.show_contours = False
 
 ```{python}
 # set material
-ds.material = "Flat Outline"
+ds.material = "Fresnel Outline"
 ```
 
 ```{python}
