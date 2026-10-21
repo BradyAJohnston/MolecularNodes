@@ -241,7 +241,9 @@ computes from the depth pass. It is meant for the `Flat` material, which renders
 the atom colours unlit.
 
 ```{python}
-canvas.clear()
+# hide the earlier trajectories rather than clearing them, the later sections use them
+for t in (t1, t2):
+    t.object.hide_render = True
 flat = mn.material.Flat()
 t3 = mn.Molecule.load(PSF, DCD)
 t3.add_style("cartoon", material=flat)
@@ -270,6 +272,16 @@ with canvas.compositor.reset() as (image, output):
     grey = c.HueSaturationValue(image=parts.o.inverse, saturation=0.1)
     c.AlphaOver(background=grey, foreground=parts.o.masked) >> output
 canvas.snapshot()
+```
+
+Restore the earlier trajectories and the plain compositor for the sections below.
+
+```{python}
+t3.object.hide_render = True
+for t in (t1, t2):
+    t.object.hide_render = False
+canvas.compositor.reset()
+canvas.compositor.add_annotations()
 ```
 
 ## World & Lighting
