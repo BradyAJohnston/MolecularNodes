@@ -194,7 +194,7 @@ def _sample_grid_at(density, points_angstrom):
     with TreeBuilder(tree) as t:
         geometry = t.inputs.geometry("Geometry")
         result = t.outputs.geometry("Geometry")
-        node = ColorSampleGrid(object=density.object)
+        node = ColorSampleGrid(object=density.grid_object)
         (
             geometry
             >> g.StoreNamedAttribute.point.float(name="value", value=node.o.value)
@@ -473,3 +473,39 @@ def test_add_style_color_by_styled_density(fetch, tmp_path):
     assert np.allclose(colors, expected, atol=1e-3)
     # the ramp spans the -5 to 5 range, so both ends are used
     assert (factor == 0).any() and (factor == 1).any()
+
+
+def test_apbs_1brs_example_grid(isolated_density_file):
+    "The barnase-barstar potential used in the electrostatics docs page."
+    from gridData import Grid
+
+    path = isolated_density_file(data_dir / "1brs_AD_apbs.dx.gz")
+    density = mn.entities.density.Grids.load(path, style="density_iso_surface")
+    assert density.grid.grid.shape == (65, 65, 65)
+
+    # side-chain charge centres from PDB 1BRS (Å): barnase (chain A) lysines and
+    # barstar (chain D) carboxylates
+    atoms = {
+        "A LYS27 NZ": (28.301, 44.689, 7.816),
+        "A LYS62 NZ": (22.219, 30.830, 2.640),
+        "A LYS108 NZ": (6.643, 38.397, 5.241),
+        "D ASP39 OD1": (28.063, 40.822, 10.213),
+        "D GLU76 OE1": (29.816, 44.208, -2.210),
+    }
+    points = np.array(list(atoms.values()))
+    values, _ = _sample_grid_at(density, points)
+
+    # trilinear interpolation in numpy, as Sample Grid does
+    reference = Grid(str(path))
+    index = (points - reference.origin) / reference.delta
+    base = np.floor(index).astype(int)
+    frac = index - base
+    expected = np.zeros(len(points))
+    for corner in np.ndindex(2, 2, 2):
+        weight = np.prod(np.where(corner, frac, 1 - frac), axis=1)
+        i, j, k = (base + corner).T
+        expected += weight * reference.grid[i, j, k]
+    # values change by ~50 kT/e per Å at these atoms, so allow for float32 positions
+    assert np.allclose(values, expected, atol=1.0)
+    for name, value in zip(atoms, values):
+        assert (value > 10) if "LYS" in name else (value < -10), (name, value)

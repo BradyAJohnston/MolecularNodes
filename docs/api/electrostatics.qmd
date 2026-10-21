@@ -1,0 +1,63 @@
+---
+title: "Electrostatics"
+description: "Colour a molecular surface by an electrostatic potential from APBS."
+execute:
+  daemon: false
+---
+
+[APBS](https://www.poissonboltzmann.org/) solves the Poisson-Boltzmann equation for a molecule in solvent and writes the electrostatic potential on a grid, usually as a `.dx` file. Its values are in kT/e: thermal energy per elementary charge, about 25.7 mV at 25 °C.
+
+This example uses the potential of one barnase-barstar pair from [1BRS](https://www.rcsb.org/structure/1BRS) (barnase chain A, barstar chain D), made with pdb2pqr and APBS by `docs/dev/apbs_1brs.py`. Barnase is positively charged and barstar negatively charged.
+
+```{python}
+import molecularnodes as mn
+from molecularnodes.nodes import geometry as mg
+
+canvas = mn.Canvas()
+```
+
+## Load the potential
+
+Load the grid as a density and show it with `Density Style ISO Surface`, which meshes the potential at +1 kT/e (blue) and -1 kT/e (red).
+
+```{python}
+esp = mn.entities.density.Grids.load("../../tests/data/1brs_AD_apbs.dx.gz")
+
+with esp.tree.reset(input="Volume") as (volume, join):
+    (
+        volume
+        >> mg.DensityStyleISOSurface(
+            threshold=1.0,
+            positive_color=(0.1, 0.3, 1.0, 1.0),
+            negative_color=(1.0, 0.1, 0.1, 1.0),
+            material=mn.material.Transparent(
+                transparency=0.7, fresnel=True, outline_color=(0.85, 0.85, 0.85, 1.0)
+            ).material,
+        )
+        >> join
+    )
+```
+
+## Colour the surface
+
+Passing the density as `color` samples the potential at every vertex of the surface, from -5 kT/e (red) to 5 kT/e (blue). The grid is read from a hidden copy of the density, so the density keeps its own style. The coordinates of 1BRS line up with the grid because pdb2pqr keeps the input coordinates.
+
+```{python}
+mol = mn.Molecule.fetch("1BRS")
+mol.add_style("surface", selection="chainID A D", color=esp)
+```
+
+```{python}
+canvas.look_at(esp, viewpoint=(106.5, 0.0, -37.7))
+canvas.snapshot()
+```
+
+Hide the potential's own style to see only the coloured surface. Barnase (left) is mostly positive and barstar (right) mostly negative.
+
+```{python}
+esp.object.hide_render = True
+canvas.look_at(mol, viewpoint=(106.5, 0.0, -37.7))
+canvas.snapshot()
+```
+
+The colour range is set on the `Color Sample Grid` node in the molecule's tree, through its `Min` and `Max` inputs.

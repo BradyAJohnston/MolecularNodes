@@ -170,6 +170,7 @@ quartodoc:
       # - api/density.qmd
       - api/annotations.qmd
       - api/solvent.qmd
+      - api/electrostatics.qmd
       - api/canvas.qmd
       - api/blender.qmd
     - text: "---"
