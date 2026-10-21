@@ -497,6 +497,11 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         default="",
         options={"HIDDEN"},
     )
+    frame_attributes_index: IntProperty(  # type: ignore
+        name="Active Per-frame Attribute",
+        default=0,
+        options={"HIDDEN"},
+    )
     filepath_trajectory: StringProperty(  # type: ignore
         name="Trajectory",
         description="Filepath for the `trajectory` of the Object",
