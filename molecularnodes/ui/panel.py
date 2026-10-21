@@ -539,6 +539,25 @@ class MN_UL_EntitiesList(bpy.types.UIList):
         return filtered, ordered
 
 
+# the node-editor socket dot for each attribute data type
+ATTRIBUTE_TYPE_ICONS = {
+    "FLOAT": "NODE_SOCKET_FLOAT",
+    "INT": "NODE_SOCKET_INT",
+    "INT8": "NODE_SOCKET_INT",
+    "INT16_2D": "NODE_SOCKET_INT_VECTOR",
+    "INT32_2D": "NODE_SOCKET_INT_VECTOR",
+    "BOOLEAN": "NODE_SOCKET_BOOLEAN",
+    "FLOAT_VECTOR": "NODE_SOCKET_VECTOR",
+    "FLOAT2": "NODE_SOCKET_VECTOR",
+    "FLOAT4": "NODE_SOCKET_VECTOR",
+    "FLOAT_COLOR": "NODE_SOCKET_RGBA",
+    "BYTE_COLOR": "NODE_SOCKET_RGBA",
+    "QUATERNION": "NODE_SOCKET_ROTATION",
+    "FLOAT4X4": "NODE_SOCKET_MATRIX",
+    "STRING": "NODE_SOCKET_STRING",
+}
+
+
 class MN_UL_FrameAttributesList(bpy.types.UIList):
     """
     UIList of the attributes a trajectory updates on each frame.
@@ -567,7 +586,10 @@ class MN_UL_FrameAttributesList(bpy.types.UIList):
         )
         if self.layout_type in {"DEFAULT", "COMPACT"}:
             row = layout.row()
-            row.label(text=attribute.name)
+            row.label(
+                text=attribute.name,
+                icon=ATTRIBUTE_TYPE_ICONS.get(attribute.data_type, "NONE"),
+            )
             row.label(text=data_type)
         elif self.layout_type in {"GRID"}:
             layout.alignment = "CENTER"
