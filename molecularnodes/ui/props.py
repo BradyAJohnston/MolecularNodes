@@ -236,6 +236,23 @@ class FrameAttributeItem(bpy.types.PropertyGroup):
     )
 
 
+class CalculationItem(bpy.types.PropertyGroup):
+    """A calculation that writes an attribute from the universe."""
+
+    __slots__ = []
+
+    name: StringProperty(  # type: ignore
+        name="Attribute Name",
+        description="Name of the attribute the calculation writes",
+    )
+    updating: BoolProperty(  # type: ignore
+        name="Updating",
+        description="Recalculate on every frame change, rather than keeping the values from when it last ran",
+        default=True,
+        update=_update_entities,
+    )
+
+
 class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
     __slots__ = []
     entities_active_index: IntProperty(  # type: ignore
@@ -519,6 +536,12 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         description="The attributes written on frame changes, from the trajectory, selections and calculations",
         options={"HIDDEN"},
     )
+    calculations: CollectionProperty(  # type: ignore
+        type=CalculationItem,
+        name="Calculations",
+        description="Calculations that write attributes from the universe, and whether they update on frame changes",
+        options={"HIDDEN"},
+    )
     frame_attributes_index: IntProperty(  # type: ignore
         name="Active Per-frame Attribute",
         default=0,
@@ -666,6 +689,7 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
 CLASSES = [
     DSSPProperties,
     FrameAttributeItem,
+    CalculationItem,
     MolecularNodesObjectProperties,
     MolecularNodesSceneProperties,
     TrajectorySelectionItem,  # item has to be registered the ListUI and to work properly

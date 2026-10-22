@@ -607,6 +607,15 @@ class MN_UL_FrameAttributesList(bpy.types.UIList):
                 .enum_items[attribute.data_type]
                 .name
             )
+            # selections and calculations can be set to not update per frame
+            if item.source == "SELECTION":
+                settings = obj.mn_trajectory_selections.get(item.name)
+            elif item.source == "CALCULATION":
+                settings = obj.mn.calculations.get(item.name)
+            else:
+                settings = None
+            if settings is not None:
+                row.prop(settings, "updating", text="", icon="FILE_REFRESH")
         elif self.layout_type in {"GRID"}:
             layout.alignment = "CENTER"
             layout.label(text=item.name)
@@ -743,6 +752,9 @@ class MN_PT_trajectory_dssp(bpy.types.Panel):
         op = row.operator("mn.dssp_init", text="Update Selection")
         op.uuid = uuid
         op.selection = props.selection
+        calculation = obj.mn.calculations.get("sec_struct")
+        if calculation is not None:
+            layout.prop(calculation, "updating", text="Update Every Frame")
         # display options
         if traj._entity_type == EntityType.MOLECULE:
             row = layout.row()

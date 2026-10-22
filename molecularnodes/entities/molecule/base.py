@@ -39,6 +39,7 @@ from ..utilities import (
     _validate_non_negative,
 )
 from .annotations import MoleculeAnnotationManager
+from .calculations import CalculationManager
 from .dssp import DSSPManager
 from .helpers import (
     FrameManager,
@@ -167,8 +168,9 @@ class Molecule(MolecularEntity):
         Position caching and frame updates
     selections : SelectionManager
         Dynamic atom selections
-    calculations : dict
-        Custom per-frame calculations
+    calculations : CalculationManager
+        Calculations that write attributes from the universe, such as DSSP's
+        `sec_struct`
     annotations : MoleculeAnnotationManager
         Molecule annotations
     world_scale : float
@@ -249,7 +251,7 @@ class Molecule(MolecularEntity):
         super().__init__()
         self.universe: mda.Universe = universe
         self.selections: SelectionManager = SelectionManager(self)
-        self.calculations: Dict[str, Callable] = {}
+        self.calculations = CalculationManager(self)
         self.world_scale = world_scale
         self._updating_in_progress = False
         self.annotations = MoleculeAnnotationManager(self)
@@ -588,11 +590,23 @@ class Molecule(MolecularEntity):
             return self.atoms.sec_structs
         except (mda.NoDataError, AttributeError):
             pass
-        # otherwise compute it once from the current frame so the cartoon has
-        # something to show, per-frame updates require enabling the DSSP module
+        # otherwise compute it from the current frame so the cartoon has
+        # something to show
         if len(self.universe.select_atoms("protein")) == 0:
             raise mda.NoDataError("No protein atoms to compute secondary structure")
-        return self.dssp.compute_frame()
+        # raises where DSSP can't run, such as for coarse-grained beads
+        sec_struct = self.dssp.compute_frame()
+        if self.frame_manager.n_frames != 1:
+            # a trajectory gets DSSP as a calculation that isn't updating, which
+            # has run on this frame and can be set to update on every frame.
+            # Setting it up writes properties whose update callbacks would
+            # otherwise update this molecule to the scene frame mid-import
+            self._updating_in_progress = True
+            try:
+                self.dssp._setup("protein", updating=False, refresh=False)
+            finally:
+                self._updating_in_progress = False
+        return sec_struct
 
     def _save_filepaths_on_object(self) -> None:
         """Save file paths to the Blender object for reference"""
@@ -1036,18 +1050,6 @@ class Molecule(MolecularEntity):
 
         return data_obj
 
-    def _calculation_values(self) -> dict[str, np.ndarray]:
-        """Values of all registered calculations for the current frame"""
-        values = {}
-        for name, func in self.calculations.items():
-            try:
-                values[name] = func(self.universe)
-            except Exception as e:
-                logger.error(
-                    f"Failed to update calculation '{name}': {e}", exc_info=True
-                )
-        return values
-
     def _update_attributes(self, frame: int) -> None:
         """Write the attributes of every source for the scene frame.
 
@@ -1062,7 +1064,9 @@ class Molecule(MolecularEntity):
         trajectory = self._update_trajectory_positions(frame)
         self._store_frame_attributes(trajectory, "TRAJECTORY")
         self._store_frame_attributes(self.selections._frame_values(), "SELECTION")
-        self._store_frame_attributes(self._calculation_values(), "CALCULATION")
+        # DSSP is rebuilt from its saved settings after a file is reopened
+        self.dssp._restore()
+        self._store_frame_attributes(self.calculations._frame_values(), "CALCULATION")
         self._sync_frame_attributes(["position", *trajectory])
 
     def set_frame(self, frame: int) -> None:
@@ -1637,7 +1641,9 @@ class Molecule(MolecularEntity):
         if not hasattr(self, "dssp"):
             self.dssp = DSSPManager(self)
         if not hasattr(self, "calculations"):
-            self.calculations = state.pop("_preserved_calculations", {})
+            self.calculations = CalculationManager(self)
+            preserved = self.__dict__.pop("_preserved_calculations", {})
+            self.calculations._funcs.update(preserved)
 
     def _world_positions(self, selection: mda.AtomGroup) -> np.ndarray:
         """

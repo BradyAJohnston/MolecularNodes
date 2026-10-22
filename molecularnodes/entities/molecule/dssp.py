@@ -29,6 +29,7 @@ class DSSPManager:
         self._ta_threshold = None
         self._sw_threshold = None
         self._no_sec_struct = None
+        self._restore_failed = False
 
     def _set_dssp_resindices(self, resids: list) -> None:
         """Internal: Set resindices for DSSP resids"""
@@ -134,6 +135,7 @@ class DSSPManager:
         self._display_option = option
         if self._display_option_prop != option:
             self._display_option_prop = option
+        self._refresh()
 
     def _setup_dssp(self, selection: str) -> None:
         """Internal: Create the DSSP object for a selection and reset cached results"""
@@ -146,9 +148,13 @@ class DSSPManager:
         self._dssp_results = None
         self._trajectory_average = None
 
-    def init(self, selection: str = "protein") -> None:
+    def init(self, selection: str = "protein", updating: bool = True) -> None:
         """
-        Initialize DSSP
+        Calculate secondary structure with DSSP, as the `sec_struct` calculation
+
+        A trajectory whose structure file has no secondary structure gets this
+        calculation on load, not updating, so it has run on the first frame.
+        Calling this again changes the selection or whether it updates.
 
         Parameters
         ----------
@@ -156,12 +162,21 @@ class DSSPManager:
             MDAnalysis selection string limiting the atoms DSSP is run on,
             default is "protein". Use this to exclude termini or non-standard
             residues that lack the required (N, CA, C, O) atoms.
+        updating: bool, optional
+            Whether to recalculate on every frame change, default is True.
+            Otherwise the values are kept from when it last ran.
         """
         if self._DSSP is not None:
-            raise ValueError("DSSP already initialized")
+            if selection != self._props.selection:
+                self.set_selection(selection)
+            self._entity.calculations.set_updating("sec_struct", updating)
+            return
+        self._setup(selection, updating)
+
+    def _setup(self, selection: str, updating: bool, refresh: bool = True) -> None:
+        """Internal: Set up DSSP and add the `sec_struct` calculation"""
         universe = self._entity.universe
         self._setup_dssp(selection)
-        self._entity.calculations["sec_struct"] = self._calculate_sec_struct
         self._props = self._entity.props.dssp
         self._set_prop("selection", selection)
         # calculate no secondary structs attribute
@@ -173,6 +188,52 @@ class DSSPManager:
         # set and apply default
         self._set_display_option("per-frame")
         self._props.applied = True
+        self._entity.calculations.add(
+            "sec_struct", self._calculate_sec_struct, updating=updating, refresh=refresh
+        )
+
+    def _restore(self) -> None:
+        """Internal: Rebuild the `sec_struct` calculation from its saved settings
+
+        The calculation's function is not saved with a file, but its item on
+        the object and the DSSP properties are, so after a file is reopened
+        DSSP is set up again with the same selection, display option and
+        updating flag.
+        """
+        if self._DSSP is not None or self._restore_failed:
+            return
+        calculations = self._entity.calculations
+        if "sec_struct" in calculations:
+            return
+        item = calculations._item("sec_struct")
+        if item is None:
+            return
+        props = self._entity.props.dssp
+        if self._entity._entity_type == EntityType.MD_STREAMING:
+            option = props.display_option_streaming
+        else:
+            option = props.display_option
+        window_size = props.window_size
+        sw_threshold = props.sw_threshold if props.apply_sw_threshold else None
+        ta_threshold = props.ta_threshold if props.apply_ta_threshold else None
+        try:
+            self.init(selection=props.selection, updating=item.updating)
+            if option == "none":
+                self.show_none()
+            elif option == "sliding-window-average":
+                self.show_sliding_window_average(window_size, sw_threshold)
+            elif option == "trajectory-average":
+                self.show_trajectory_average(ta_threshold)
+        except Exception as e:
+            # don't retry on every frame change
+            self._restore_failed = True
+            logger.warning(f"Could not restore DSSP from its saved settings: {e}")
+
+    def _refresh(self) -> None:
+        """Internal: Recalculate now when not updating, so a change still shows"""
+        calculations = self._entity.calculations
+        if "sec_struct" in calculations and not calculations.updating("sec_struct"):
+            calculations.refresh("sec_struct")
 
     def compute_frame(self, selection: str = "protein") -> np.ndarray:
         """
@@ -215,6 +276,8 @@ class DSSPManager:
         self._set_prop("selection", selection)
         if self._display_option == "trajectory-average":
             self.show_trajectory_average(threshold=self._ta_threshold)
+        else:
+            self._refresh()
 
     def show_none(self) -> None:
         """
