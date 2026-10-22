@@ -1325,6 +1325,90 @@ class MN_OT_DSSP_cancel(Operator):
         return {"FINISHED"}
 
 
+class MN_OT_Align(Operator):
+    bl_idname = "mn.align"
+    bl_label = "Align Molecules"
+    bl_description = (
+        "Superimpose the selected molecules onto the active one by setting their"
+        " transforms. Residues are paired by sequence or structure, so the"
+        " sequences don't need to match"
+    )
+    bl_options = {"REGISTER", "UNDO"}
+
+    method: EnumProperty(  # type: ignore
+        name="Method",
+        items=(
+            (
+                "sequence",
+                "Sequence",
+                "Pair residues by sequence alignment and fit on their CA / P atoms,"
+                " dropping outliers",
+            ),
+            (
+                "structure",
+                "Structure",
+                "Pair residues by structural similarity (3Di), for remote homologs"
+                " with low sequence identity. Proteins only",
+            ),
+        ),
+        default="sequence",
+    )
+    selection: StringProperty(  # type: ignore
+        name="Selection",
+        description="MDAnalysis selection of the atoms to fit on in the selected"
+        " molecules. Empty uses all protein and nucleic acid chains",
+        default="",
+    )
+    fixed_selection: StringProperty(  # type: ignore
+        name="Active Selection",
+        description="MDAnalysis selection of the atoms to fit on in the active"
+        " molecule. Empty uses all protein and nucleic acid chains",
+        default="",
+    )
+
+    @staticmethod
+    def _molecules(context):
+        session = context.scene.MNSession
+        fixed = session.match(context.active_object) if context.active_object else None
+        mobiles = [
+            session.match(obj)
+            for obj in context.selected_objects
+            if obj != context.active_object
+        ]
+        return fixed, [m for m in mobiles if isinstance(m, Molecule)]
+
+    @classmethod
+    def poll(cls, context):
+        fixed, mobiles = cls._molecules(context)
+        if not isinstance(fixed, Molecule):
+            cls.poll_message_set("The active object must be a molecule")
+            return False
+        if not mobiles:
+            cls.poll_message_set("Select molecules to align, then the reference last")
+            return False
+        return True
+
+    def execute(self, context):
+        fixed, mobiles = self._molecules(context)
+        results = []
+        for mobile in mobiles:
+            try:
+                result = mobile.align_to(
+                    fixed,
+                    method=self.method,
+                    selection=self.selection or None,
+                    fixed_selection=self.fixed_selection or None,
+                )
+            except (ValueError, IndexError) as e:
+                self.report({"ERROR"}, f"Failed aligning {mobile.name}: {e}")
+                return {"CANCELLED"}
+            results.append(
+                f"{mobile.name}: RMSD {result.rmsd:.2f} Å over {result.n_anchors} atoms"
+            )
+        self.report({"INFO"}, f"Aligned to {fixed.name}. " + "; ".join(results))
+        return {"FINISHED"}
+
+
 CLASSES = [
     MN_OT_add_selection_to_style,
     MN_OT_Import_Molecule,
@@ -1342,4 +1426,5 @@ CLASSES = [
     MN_OT_DSSP_init,
     MN_OT_DSSP_apply,
     MN_OT_DSSP_cancel,
+    MN_OT_Align,
 ]

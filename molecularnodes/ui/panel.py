@@ -76,9 +76,12 @@ class MN_MT_Import(bpy.types.Menu):
 
 
 def pt_object_context(self, context):
-    # currently does and returns nothing but I've left it in so we can
-    # know where to add stuff in later for context-dependent menus
-    return None
+    obj = context.active_object
+    if obj is None or not isinstance(get_session(context).match(obj), Molecule):
+        return None
+    layout = self.layout
+    layout.separator()
+    layout.operator("mn.align")
 
 
 def ui_from_node(

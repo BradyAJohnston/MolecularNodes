@@ -954,6 +954,46 @@ class Molecule(MolecularEntity):
                 return None
         return assemblies_info
 
+    def align_to(
+        self,
+        fixed: "Molecule",
+        method: str = "sequence",
+        selection: str | None = None,
+        fixed_selection: str | None = None,
+    ):
+        """Superimpose this molecule onto ``fixed`` by setting its object transform.
+
+        Residues are paired by sequence (``method="sequence"``, the default) or by
+        structure (``method="structure"``, proteins only), so the two molecules do
+        not need identical sequences. The coordinates are not changed. See
+        :func:`~molecularnodes.entities.molecule.align.align` for details.
+
+        Parameters
+        ----------
+        fixed : Molecule
+            The reference molecule, which stays where it is.
+        method : {"sequence", "structure"}, optional
+            How corresponding residues are found.
+        selection : str | None, optional
+            MDAnalysis selection of this molecule's atoms to fit on.
+        fixed_selection : str | None, optional
+            MDAnalysis selection of the fixed molecule's atoms to fit on.
+
+        Returns
+        -------
+        AlignResult
+            The fitted transform, RMSD and number of anchor atoms.
+        """
+        from .align import align
+
+        return align(
+            self,
+            fixed,
+            method=method,
+            selection=selection,
+            fixed_selection=fixed_selection,
+        )
+
     def create_data_object(self) -> bpy.types.Object:
         """Create the data object holding the biological assembly transforms."""
         from ...blender import mesh
