@@ -213,28 +213,31 @@ def layout_trajectory_playback(
     playback.separator()
     playback.operator("mn.frames_to_collection", icon="RENDERLAYERS")
 
-    # the attributes updated on each frame, read from the object. Drawn outside
-    # of `playback` so calculation settings stay editable while streaming
-    if obj.mn.frame_attributes and obj.type == "MESH":
-        header, body = layout.panel(
-            idname="layout_frame_attributes", default_closed=True
-        )
-        header.label(text="Per-frame Attributes")
-        if body is not None:
-            row = body.row()
-            row.template_list(
-                "MN_UL_FrameAttributesList",
-                "frame_attributes_list",
-                obj.mn,
-                "frame_attributes",
-                obj.mn,
-                "frame_attributes_index",
-                rows=3,
-            )
-            col = row.column(align=True)
-            col.context_pointer_set("object", obj)
-            col.menu("MN_MT_AddCalculation", icon="ADD", text="")
-            layout_frame_attribute_details(body, traj)
+
+def layout_frame_attributes(
+    layout: UILayout, traj: Molecule, panel: bool = True
+) -> None:
+    """Draw the attributes written on frame changes, with an add menu and details."""
+    if panel:
+        header, layout = layout.panel(idname="layout_frame_attributes")
+        header.label(text="Attributes", icon="SPREADSHEET")
+        if layout is None:
+            return
+    obj = traj.object
+    row = layout.row()
+    row.template_list(
+        "MN_UL_FrameAttributesList",
+        "frame_attributes_list",
+        obj.mn,
+        "frame_attributes",
+        obj.mn,
+        "frame_attributes_index",
+        rows=3,
+    )
+    col = row.column(align=True)
+    col.context_pointer_set("object", obj)
+    col.menu("MN_MT_AddCalculation", icon="ADD", text="")
+    layout_frame_attribute_details(layout, traj)
 
 
 def layout_frame_attribute_details(layout: UILayout, traj: Molecule) -> None:
@@ -351,6 +354,7 @@ def panel_md_properties(layout, context):
         return None
 
     layout_trajectory_playback(layout, traj)
+    layout_frame_attributes(layout, traj)
     layout_selection_manage(layout, traj)
 
 
@@ -801,6 +805,39 @@ class MN_PT_trajectory(bpy.types.Panel):
         layout_trajectory_playback(layout, traj, panel=False)
 
 
+class MN_PT_Attributes(bpy.types.Panel):
+    """
+    Panel for the attributes a molecule writes on frame changes, and its selections
+    """
+
+    bl_idname = "MN_PT_attributes"
+    bl_label = "Attributes"
+    bl_space_type = "VIEW_3D"
+    bl_region_type = "UI"
+    bl_category = "Molecular Nodes"
+
+    @classmethod
+    def poll(cls, context):
+        """Visible for a Universe-backed entity, with or without playback."""
+        obj = get_active_entity_object(context)
+        if obj is None or obj.type != "MESH":
+            return False
+        if context.scene.MNSession.get(obj.uuid) is None:
+            return False
+        return obj.mn.entity_type in (
+            EntityType.MD_STREAMING,
+            EntityType.MD_OXDNA,
+            EntityType.MOLECULE,
+        )
+
+    def draw(self, context):
+        layout = cast(UILayout, self.layout)
+        obj = get_active_entity_object(context)
+        traj = context.scene.MNSession.get(obj.uuid)
+        layout_frame_attributes(layout, traj, panel=False)
+        layout_selection_manage(layout, traj)
+
+
 def is_style_node(node: bpy.types.Node) -> bool:
     """Whether a node is a style node, identified by "Style" in its name."""
     return "Style" in node.name
@@ -1221,6 +1258,7 @@ CLASSES = [
     MN_PT_Entities,
     MN_UL_FrameAttributesList,
     MN_PT_trajectory,
+    MN_PT_Attributes,
     MN_UL_StylesList,
     MN_PT_Styles,
     MN_UL_AnnotationsList,

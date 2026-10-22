@@ -700,7 +700,7 @@ class Molecule(MolecularEntity):
         Attributes come from the trajectory (positions, and velocities, forces
         and other per-atom values a frame has), from selections and from
         `calculations`. The record is kept on the object as
-        `obj.mn.frame_attributes`, and listed in the Trajectory Playback panel.
+        `obj.mn.frame_attributes`, and listed in the Attributes panel.
 
         Returns
         -------
@@ -722,13 +722,13 @@ class Molecule(MolecularEntity):
         trajectory_names : Iterable[str]
             Names of attributes read from the trajectory on this frame
         """
-        # single-frame structures are not updated per frame
-        if self.frame_manager.n_frames == 1:
-            return
         items = self.object.mn.frame_attributes
         current = [(item.name, item.source) for item in items]
         trajectory = [name for name, source in current if source == "TRAJECTORY"]
-        trajectory += [name for name in trajectory_names if name not in trajectory]
+        # a single-frame structure has no trajectory to read attributes from, but
+        # can still have selections and calculations
+        if self.frame_manager.n_frames != 1:
+            trajectory += [n for n in trajectory_names if n not in trajectory]
         wanted = [(name, "TRAJECTORY") for name in trajectory]
         wanted += [
             (item.name, "SELECTION") for item in self.selections.ui_items if item.name

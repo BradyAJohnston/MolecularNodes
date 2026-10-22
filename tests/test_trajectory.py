@@ -1172,6 +1172,9 @@ class TestTrajectory:
     def test_frame_attributes_single_frame(self, universe_with_bonds):
         traj = mn.entities.Molecule(universe_with_bonds)
         assert list(traj.frame_attributes) == []
+        # a single structure lists its selections, but no trajectory attributes
+        traj.selections.from_string("resid 1", name="first")
+        assert traj.frame_attributes == {"first": "SELECTION"}
 
     def test_frame_attributes_sources(self, universe):
         traj = mn.entities.Molecule(universe)
