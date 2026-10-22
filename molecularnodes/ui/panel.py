@@ -306,6 +306,10 @@ def layout_hbonds_settings(layout: UILayout, traj: Molecule) -> None:
     op = row.operator("mn.hbonds_init", text="", icon="FILE_REFRESH")
     op.uuid = obj.uuid
     op.selection = props.selection
+    col = layout.column(align=True)
+    col.prop(props, "d_a_cutoff")
+    col.prop(props, "d_h_a_angle_cutoff")
+    col.prop(props, "d_h_cutoff")
     data_object = traj.calculations._hbonds.object
     if data_object is not None:
         layout.label(text=f"{len(data_object.data.edges)} hydrogen bonds")

@@ -6,7 +6,7 @@ import pytest
 from MDAnalysis.analysis.hydrogenbonds import HydrogenBondAnalysis
 from nodebpy import geometry as g
 import molecularnodes as mn
-from molecularnodes.nodes.geometry import StyleHBonds
+from molecularnodes.nodes.geometry import FindHBonds, StyleHBonds
 from .constants import data_dir
 
 pytestmark = [
@@ -103,7 +103,9 @@ def test_hbonds_not_updating(fetch):
     # changing a setting recalculates straight away
     mol.calculations.hbonds(d_a_cutoff=3.5)
     assert not np.array_equal(edges(obj), pairs)
-    assert mol.calculations._hbonds._kwargs == {"d_a_cutoff": 3.5}
+    # cutoffs are stored as properties, not as other arguments
+    assert mol.calculations._hbonds._kwargs == {}
+    assert mol.props.hbonds.d_a_cutoff == pytest.approx(3.5)
     mol.calculations.hbonds(updating=True)
     mol.set_frame(0)
     u = mol.universe.copy()
@@ -118,6 +120,35 @@ def test_hbonds_not_updating(fetch):
             acceptors_sel="(all) and (element N O)",
         ),
     )
+
+
+def test_hbonds_cutoff_properties(fetch):
+    mol = fetch("2M6Q")
+    hbonds = mol.calculations.hbonds(d_h_a_angle_cutoff=140)
+    props = mol.props.hbonds
+    assert np.degrees(props.d_h_a_angle_cutoff) == pytest.approx(140)
+    assert hbonds.cutoffs == pytest.approx(
+        {"d_a_cutoff": 3.0, "d_h_a_angle_cutoff": 140, "d_h_cutoff": 1.2}
+    )
+    pairs = edges(hbonds.object)
+    # changing a property, as in the UI, recalculates straight away
+    props.d_a_cutoff = 3.5
+    props.d_h_a_angle_cutoff = np.radians(130)
+    new_pairs = edges(hbonds.object)
+    assert len(new_pairs) > len(pairs)
+    expected = expected_pairs(
+        mol.universe.copy(),
+        mol.universe.trajectory.frame,
+        d_a_cutoff=3.5,
+        d_h_a_angle_cutoff=130,
+        donors_sel="(all) and (element N O)",
+        hydrogens_sel="(all) and (element H D)",
+        acceptors_sel="(all) and (element N O)",
+    )
+    np.testing.assert_array_equal(new_pairs, expected)
+    # the selection and other arguments are kept
+    mol.calculations.hbonds(selection="protein")
+    assert hbonds.cutoffs["d_a_cutoff"] == pytest.approx(3.5)
 
 
 def test_hbonds_remove(fetch):
@@ -141,7 +172,7 @@ def test_hbonds_pickle(universe):
     restored.set_frame(1)
     hbonds = restored.calculations._hbonds
     assert hbonds.is_setup
-    assert hbonds._kwargs == {"d_a_cutoff": 3.2}
+    assert hbonds.cutoffs["d_a_cutoff"] == pytest.approx(3.2)
     assert restored.props.hbonds.selection == "resid 1-50"
     assert not restored.calculations.updating("hbonds")
     assert hbonds.object == mol.calculations._hbonds.object
@@ -184,6 +215,81 @@ def test_style_hbonds_selection(fetch):
             >> StyleHBonds(
                 selection=g.NamedAttribute.boolean("is_backbone"),
                 data_object=obj,
+                dashes=1,
+                quality=2,
+            )
+            >> join
+        )
+    assert evaluated_vertex_count(mol.object) == n_expected * 16
+
+
+@pytest.mark.parametrize("distance, angle", [(3.0, 150.0), (3.5, 130.0)])
+def test_find_hbonds_node(fetch, distance, angle):
+    mol = fetch("2M6Q")
+    with mol.tree.reset() as (atoms, join):
+        find = FindHBonds(atoms=atoms, distance=distance, angle=np.radians(angle))
+        (
+            atoms
+            >> g.StoreNamedAttribute.point.integer(
+                name="acceptor", value=find.o.acceptor_index
+            )
+            >> g.StoreNamedAttribute.point.boolean(
+                name="is_hbonded", value=find.o.is_hbonded
+            )
+            >> join
+        )
+    acceptor = mol.named_attribute("acceptor", evaluate=True)
+    is_hbonded = mol.named_attribute("is_hbonded", evaluate=True)
+    np.testing.assert_array_equal(is_hbonded, acceptor >= 0)
+    found = {(h, a) for h, a in enumerate(acceptor) if a >= 0}
+    expected = {
+        tuple(pair)
+        for pair in expected_pairs(
+            mol.universe.copy(),
+            0,
+            d_a_cutoff=distance,
+            d_h_a_angle_cutoff=angle,
+            donors_sel="element N O",
+            hydrogens_sel="element H D",
+            acceptors_sel="element N O",
+        )
+    }
+    assert len(expected) > 0
+    # each hydrogen bonds to at most one acceptor in nodes, so a hydrogen
+    # bonding to two (bifurcated) gives one of them
+    assert found <= expected
+    bifurcated = len(expected) - len({h for h, _ in expected})
+    assert len(found) >= len(expected) - bifurcated
+
+
+def test_style_hbonds_find_hbonds_source(fetch):
+    mol = fetch("2M6Q")
+    obj = mol.calculations.hbonds().object
+    pairs = edges(obj)
+    offset = np.array([1.0, 2.0, 3.0])
+    with mol.tree.reset() as (atoms, join):
+        (
+            atoms
+            >> g.SetPosition(offset=tuple(offset))
+            >> StyleHBonds(source="Find HBonds", dashes=1, quality=2)
+            >> join
+        )
+    position = mol.named_attribute("position", evaluate=True)
+    # the same bonds as MDAnalysis at the default cutoffs, following the atoms
+    cylinders = position.reshape(len(pairs), 16, 3)
+    midpoints = (mol.position + offset)[pairs].mean(axis=1)
+    np.testing.assert_allclose(
+        np.sort(cylinders.mean(axis=1), axis=0), np.sort(midpoints, axis=0), atol=1e-5
+    )
+    # a bond is shown only when both atoms are selected
+    is_backbone = mol.named_attribute("is_backbone")
+    n_expected = np.all(is_backbone[pairs], axis=1).sum()
+    with mol.tree.reset() as (atoms, join):
+        (
+            atoms
+            >> StyleHBonds(
+                source="Find HBonds",
+                selection=g.NamedAttribute.boolean("is_backbone"),
                 dashes=1,
                 quality=2,
             )

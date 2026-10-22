@@ -689,6 +689,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.FindBonds
         children: embedded
+      - name: nodes.geometry.FindHBonds
+        children: embedded
       - name: nodes.geometry.MenuResidueMask
         children: embedded
       - name: nodes.geometry.MenuResidueName

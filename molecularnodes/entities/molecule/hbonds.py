@@ -1,5 +1,6 @@
 import json
 import logging
+import math
 import bpy
 import databpy as db
 import MDAnalysis as mda
@@ -11,6 +12,9 @@ from ...nodes.geometry import StyleHBonds
 from ..base import EntityType, MolecularEntity
 
 logger = logging.getLogger(__name__)
+
+# arguments to HydrogenBondAnalysis that are properties, adjustable in the UI
+CUTOFFS = ("d_a_cutoff", "d_h_a_angle_cutoff", "d_h_cutoff")
 
 
 class HBondCalculation:
@@ -29,6 +33,8 @@ class HBondCalculation:
         self._entity = entity
         self._hba = None
         self._kwargs = {}
+        self._cutoffs = None
+        self._setting_props = False
         self._uframe = None
         self._restore_failed = False
 
@@ -45,6 +51,32 @@ class HBondCalculation:
     @property
     def _props(self):
         return self._entity.props.hbonds
+
+    @property
+    def cutoffs(self) -> dict[str, float]:
+        """The cutoffs given to `HydrogenBondAnalysis`, from the properties
+
+        `d_a_cutoff` and `d_h_cutoff` are in Angstroms, `d_h_a_angle_cutoff` in
+        degrees. Change them with `mol.calculations.hbonds(d_a_cutoff=...)` or
+        in the settings of `hbonds` in the Attributes panel.
+        """
+        props = self._props
+        return {
+            "d_a_cutoff": props.d_a_cutoff,
+            "d_h_a_angle_cutoff": math.degrees(props.d_h_a_angle_cutoff),
+            "d_h_cutoff": props.d_h_cutoff,
+        }
+
+    def _set_cutoffs(self, cutoffs: dict[str, float]) -> None:
+        """Internal: Store cutoffs on the properties without recalculating"""
+        values = {**cutoffs}
+        values["d_h_a_angle_cutoff"] = math.radians(values["d_h_a_angle_cutoff"])
+        self._setting_props = True
+        try:
+            for name, value in values.items():
+                self._set_prop(name, value)
+        finally:
+            self._setting_props = False
 
     def _set_prop(self, name: str, value: any) -> None:
         """Internal: Set the property value only when different"""
@@ -71,9 +103,14 @@ class HBondCalculation:
     def _setup_hba(self, selection: str, kwargs: dict) -> None:
         """Internal: Create the analysis for a selection and arguments"""
         universe = self._entity.universe
+        kwargs = dict(kwargs)
+        # cutoffs not given keep the values of the properties
+        current = self.cutoffs
+        cutoffs = {name: kwargs.pop(name, current[name]) for name in CUTOFFS}
         hba_kwargs = {
             "update_selections": False,
             **self._default_selections(selection),
+            **cutoffs,
             **kwargs,
         }
         if not universe.select_atoms(hba_kwargs["hydrogens_sel"]):
@@ -86,6 +123,8 @@ class HBondCalculation:
         self._kwargs = kwargs
         self._uframe = None
         self._set_prop("selection", selection)
+        self._set_cutoffs(cutoffs)
+        self._cutoffs = self.cutoffs
         try:
             self._set_prop("kwargs", json.dumps(kwargs))
         except TypeError:
@@ -129,6 +168,18 @@ class HBondCalculation:
             if updating is not None:
                 calculations.set_updating("hbonds", updating)
         # edges show straight away, whether or not they update on frame changes
+        self._calculate(self._entity.universe)
+
+    def _update_from_props(self) -> None:
+        """Internal: Recalculate after the cutoff properties change in the UI"""
+        if self._hba is None or self._setting_props or self.cutoffs == self._cutoffs:
+            return
+        try:
+            self._setup_hba(self._props.selection, self._kwargs)
+        except Exception as e:
+            logger.error(f"Hydrogen bonds failed with the new cutoffs: {e}")
+            self._set_cutoffs(self._cutoffs)
+            return
         self._calculate(self._entity.universe)
 
     def _restore(self) -> None:

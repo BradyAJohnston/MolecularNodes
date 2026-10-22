@@ -105,7 +105,10 @@ class CalculationManager:
             up. Otherwise the bonds are kept from when it last ran.
         **kwargs
             Passed to `MDAnalysis.analysis.hydrogenbonds.HydrogenBondAnalysis`,
-            overriding the defaults and any given before. By default hydrogens
+            overriding the defaults and any given before. The cutoffs
+            `d_a_cutoff` (3.0 Å), `d_h_a_angle_cutoff` (150 degrees) and
+            `d_h_cutoff` (1.2 Å) are stored as properties, adjustable in the
+            Attributes panel, and see `HBondCalculation.cutoffs`. By default hydrogens
             (H or D), donors and acceptors (N or O) are selected by element,
             donors are paired with hydrogens by distance, and selections are not
             updated per frame.
