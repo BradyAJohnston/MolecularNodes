@@ -607,7 +607,7 @@ class TestTrajectory:
         t.set_frame(1)
         assert np.array_equal(t["sec_struct"], initial_sec_struct)
         # update dssp on every frame
-        t.dssp.init()
+        t.calculations.dssp(updating=True)
         assert t.calculations.updating("sec_struct")
         # per-frame dssp on the import frame matches the import-time result
         t.set_frame(initial_frame)
@@ -616,16 +616,16 @@ class TestTrajectory:
         t.set_frame(1)
         frame_sec_struct = t["sec_struct"]
         # change dssp to none
-        t.dssp.show_none()
+        t.calculations.dssp().show_none()
         no_sec_struct = t["sec_struct"]
         assert not np.allclose(frame_sec_struct, no_sec_struct)
         assert snapshot == no_sec_struct
         # change dssp to sliding-window-average
-        t.dssp.show_sliding_window_average(window_size=5)
+        t.calculations.dssp().show_sliding_window_average(window_size=5)
         sw_sec_struct = t["sec_struct"]
         assert snapshot == sw_sec_struct
         # change dssp to trajectory-average
-        t.dssp.show_trajectory_average(threshold=0.5)
+        t.calculations.dssp().show_trajectory_average(threshold=0.5)
         avg_sec_struct = t["sec_struct"]
         assert snapshot == avg_sec_struct
         # per-frame, sliding-window-average and trajectory-average
@@ -638,6 +638,28 @@ class TestTrajectory:
         assert not np.allclose(no_sec_struct, sw_sec_struct)
         assert not np.allclose(no_sec_struct, avg_sec_struct)
 
+    def test_dssp_calculations_api(self, universe):
+        t = mn.Molecule(universe).add_style("cartoon")
+        assert not hasattr(t, "dssp")
+        # getting DSSP changes nothing that isn't given
+        dssp = t.calculations.dssp()
+        assert dssp.is_setup
+        assert not t.calculations.updating("sec_struct")
+        assert t.props.dssp.selection == "protein"
+        assert t.calculations.dssp(updating=True) is dssp
+        assert t.calculations.updating("sec_struct")
+        t.calculations.dssp(selection="protein and resid 1-100")
+        assert t.props.dssp.selection == "protein and resid 1-100"
+        assert t.calculations.updating("sec_struct")
+        # removing the calculation removes DSSP, and getting it sets it up again
+        del t.calculations["sec_struct"]
+        assert "sec_struct" not in t.calculations
+        assert "sec_struct" not in t.frame_attributes
+        assert not t.calculations._dssp.is_setup
+        t.calculations.dssp()
+        assert t.calculations.updating("sec_struct")
+        assert t.frame_attributes["sec_struct"] == "CALCULATION"
+
     def test_dssp_not_updating(self, universe):
         t = mn.Molecule(universe).add_style("cartoon")
         initial_sec_struct = t["sec_struct"].copy()
@@ -646,20 +668,22 @@ class TestTrajectory:
             assert np.array_equal(t["sec_struct"], initial_sec_struct)
         # changing what is shown recalculates straight away, without updating
         # on frame changes
-        t.dssp.show_none()
+        t.calculations.dssp().show_none()
         assert not t.calculations.updating("sec_struct")
         assert not np.array_equal(t["sec_struct"], initial_sec_struct)
-        t.dssp.show_per_frame()
+        t.calculations.dssp().show_per_frame()
         # turning updating on updates on every frame change
         t.calculations.set_updating("sec_struct", True)
         for frame in [1, 2]:
             t.set_frame(frame)
-            assert np.array_equal(t["sec_struct"], t.dssp.compute_frame())
+            assert np.array_equal(
+                t["sec_struct"], t.calculations.dssp().compute_frame()
+            )
 
     def test_dssp_restored_after_pickle(self, universe):
         t = mn.Molecule(universe).add_style("cartoon")
-        t.dssp.init(selection="protein and resid 1-100")
-        t.dssp.show_sliding_window_average(window_size=3)
+        t.calculations.dssp(selection="protein and resid 1-100", updating=True)
+        t.calculations.dssp().show_sliding_window_average(window_size=3)
         t.set_frame(2)
         expected = t["sec_struct"].copy()
 
@@ -670,14 +694,14 @@ class TestTrajectory:
         restored.set_frame(2)
         assert "sec_struct" in restored.calculations
         assert restored.calculations.updating("sec_struct")
-        assert restored.dssp._display_option == "sliding-window-average"
-        assert restored.dssp._window_size == 3
+        assert restored.calculations.dssp()._display_option == "sliding-window-average"
+        assert restored.calculations.dssp()._window_size == 3
         assert restored.props.dssp.selection == "protein and resid 1-100"
         assert np.array_equal(restored["sec_struct"], expected)
 
     def test_dssp_selection(self, universe):
         t = mn.Molecule(universe).add_style("cartoon")
-        t.dssp.init(selection="protein and resid 1-100")
+        t.calculations.dssp(selection="protein and resid 1-100", updating=True)
         t.set_frame(1)
         sec_struct = t["sec_struct"]
         resids = universe.atoms.resids
@@ -694,13 +718,13 @@ class TestTrajectory:
         assert np.all(sec_struct[~is_protein] == 0)
         # a default run assigns structure beyond the selection
         t_full = mn.Molecule(universe).add_style("cartoon")
-        t_full.dssp.init()
+        t_full.calculations.dssp(updating=True)
         t_full.set_frame(1)
         assert np.any(t_full["sec_struct"][is_protein & ~selected] < 3)
 
     def test_dssp_set_selection(self, universe):
         t = mn.Molecule(universe).add_style("cartoon")
-        t.dssp.init(selection="protein and resid 1-100")
+        t.calculations.dssp(selection="protein and resid 1-100", updating=True)
         assert t.props.dssp.selection == "protein and resid 1-100"
         t.set_frame(1)
         resids = universe.atoms.resids
@@ -710,19 +734,19 @@ class TestTrajectory:
         excluded = is_protein & (resids > 100)
         assert np.all(t["sec_struct"][excluded] == 3)
         # widening the selection part way through assigns structure to the rest
-        t.dssp.set_selection("protein")
+        t.calculations.dssp().set_selection("protein")
         assert t.props.dssp.selection == "protein"
         t.set_frame(1)
         assert np.any(t["sec_struct"][excluded] < 3)
         # a bad selection raises and leaves the previous selection working
         with pytest.raises(Exception):
-            t.dssp.set_selection("protein and bogus")
+            t.calculations.dssp().set_selection("protein and bogus")
         t.set_frame(2)
         assert np.any(t["sec_struct"][excluded] < 3)
         # the display option survives changing the selection
-        t.dssp.show_trajectory_average(threshold=0.5)
-        t.dssp.set_selection("protein and resid 1-100")
-        assert t.dssp._display_option == "trajectory-average"
+        t.calculations.dssp().show_trajectory_average(threshold=0.5)
+        t.calculations.dssp().set_selection("protein and resid 1-100")
+        assert t.calculations.dssp()._display_option == "trajectory-average"
         t.set_frame(1)
         assert np.all(t["sec_struct"][excluded] == 3)
         assert np.any(t["sec_struct"][is_protein & ~excluded] < 3)

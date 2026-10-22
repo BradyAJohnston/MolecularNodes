@@ -112,14 +112,16 @@ def _update_dssp_display_option(self, context):
         display_option = getattr(self, "display_option")
     # call none and per-frame directly
     if display_option == "none":
-        entity.dssp.show_none()
+        entity.calculations._dssp.show_none()
         _update_entities(self, context)
     elif display_option == "per-frame":
-        entity.dssp.show_per_frame()
+        entity.calculations._dssp.show_per_frame()
         _update_entities(self, context)
     elif display_option == "sliding-window-average":
         sw_threshold = self.sw_threshold if self.apply_sw_threshold else None
-        entity.dssp.show_sliding_window_average(self.window_size, sw_threshold)
+        entity.calculations._dssp.show_sliding_window_average(
+            self.window_size, sw_threshold
+        )
         _update_entities(self, context)
     else:
         self.applied = False

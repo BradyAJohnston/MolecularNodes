@@ -7,11 +7,14 @@ from ..base import EntityType, MolecularEntity
 logger = logging.getLogger(__name__)
 
 
-class DSSPManager:
+class DSSPCalculation:
     """
-    DSSP Manager for trajectories
+    Secondary structure calculated with DSSP, as the `sec_struct` calculation
 
-    Show secondary structures computed using MDAnalysis.analysis.dssp
+    Get it with `mol.calculations.dssp()`, which sets it up if needed. Its
+    methods choose what is shown: the secondary structure of each frame, or an
+    average over a sliding window of frames or over the whole trajectory.
+    Uses `MDAnalysis.analysis.dssp`.
     """
 
     def __init__(self, entity: MolecularEntity):
@@ -121,9 +124,9 @@ class DSSPManager:
             self._set_prop("display_option", value)
 
     def _ensure_init(self) -> None:
-        """Internal: Ensure DSSP is initialized"""
+        """Internal: Ensure DSSP is set up"""
         if self._DSSP is None:
-            raise ValueError("DSSP is not initialized")
+            raise ValueError("DSSP is not set up, see `mol.calculations.dssp()`")
 
     def _ensure_no_streaming(self) -> None:
         """Internal: Ensure non streaming trajectory"""
@@ -148,30 +151,26 @@ class DSSPManager:
         self._dssp_results = None
         self._trajectory_average = None
 
-    def init(self, selection: str = "protein", updating: bool = True) -> None:
-        """
-        Calculate secondary structure with DSSP, as the `sec_struct` calculation
+    @property
+    def is_setup(self) -> bool:
+        """Whether DSSP is set up as the `sec_struct` calculation"""
+        return self._DSSP is not None
 
-        A trajectory whose structure file has no secondary structure gets this
-        calculation on load, not updating, so it has run on the first frame.
-        Calling this again changes the selection or whether it updates.
+    def _init(self, selection: str | None = None, updating: bool | None = None) -> None:
+        """Internal: Set up DSSP if needed, and change the settings given
 
-        Parameters
-        ----------
-        selection: str, optional
-            MDAnalysis selection string limiting the atoms DSSP is run on,
-            default is "protein". Use this to exclude termini or non-standard
-            residues that lack the required (N, CA, C, O) atoms.
-        updating: bool, optional
-            Whether to recalculate on every frame change, default is True.
-            Otherwise the values are kept from when it last ran.
+        See `CalculationManager.dssp`, which calls this.
         """
-        if self._DSSP is not None:
-            if selection != self._props.selection:
-                self.set_selection(selection)
-            self._entity.calculations.set_updating("sec_struct", updating)
+        if self._DSSP is None:
+            self._setup(
+                "protein" if selection is None else selection,
+                True if updating is None else updating,
+            )
             return
-        self._setup(selection, updating)
+        if selection is not None and selection != self._props.selection:
+            self.set_selection(selection)
+        if updating is not None:
+            self._entity.calculations.set_updating("sec_struct", updating)
 
     def _setup(self, selection: str, updating: bool, refresh: bool = True) -> None:
         """Internal: Set up DSSP and add the `sec_struct` calculation"""
@@ -217,7 +216,7 @@ class DSSPManager:
         sw_threshold = props.sw_threshold if props.apply_sw_threshold else None
         ta_threshold = props.ta_threshold if props.apply_ta_threshold else None
         try:
-            self.init(selection=props.selection, updating=item.updating)
+            self._init(selection=props.selection, updating=item.updating)
             if option == "none":
                 self.show_none()
             elif option == "sliding-window-average":
@@ -239,7 +238,7 @@ class DSSPManager:
         """
         Run DSSP on the current frame only and return the `sec_struct` attribute
 
-        This does not enable per-frame updates, use `init()` for that.
+        This does not set up the `sec_struct` calculation, see `mol.calculations.dssp()`.
 
         Parameters
         ----------

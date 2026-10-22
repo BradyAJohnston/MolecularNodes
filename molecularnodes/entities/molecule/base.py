@@ -40,7 +40,6 @@ from ..utilities import (
 )
 from .annotations import MoleculeAnnotationManager
 from .calculations import CalculationManager
-from .dssp import DSSPManager
 from .helpers import (
     FrameManager,
     _ag_to_bool,
@@ -187,8 +186,6 @@ class Molecule(MolecularEntity):
         Apply periodic boundary corrections
     interpolate : bool
         Enable position interpolation
-    dssp : DSSPManager
-        A DSSP Manager to compute and show secondary structures
 
     Examples
     --------
@@ -256,7 +253,6 @@ class Molecule(MolecularEntity):
         self._updating_in_progress = False
         self.annotations = MoleculeAnnotationManager(self)
         self.frame_manager = FrameManager(self)
-        self.dssp = DSSPManager(self)
         if create_object:
             self.create_object(name=name)
 
@@ -595,7 +591,7 @@ class Molecule(MolecularEntity):
         if len(self.universe.select_atoms("protein")) == 0:
             raise mda.NoDataError("No protein atoms to compute secondary structure")
         # raises where DSSP can't run, such as for coarse-grained beads
-        sec_struct = self.dssp.compute_frame()
+        sec_struct = self.calculations._dssp.compute_frame()
         if self.frame_manager.n_frames != 1:
             # a trajectory gets DSSP as a calculation that isn't updating, which
             # has run on this frame and can be set to update on every frame.
@@ -603,7 +599,7 @@ class Molecule(MolecularEntity):
             # otherwise update this molecule to the scene frame mid-import
             self._updating_in_progress = True
             try:
-                self.dssp._setup("protein", updating=False, refresh=False)
+                self.calculations._dssp._setup("protein", updating=False, refresh=False)
             finally:
                 self._updating_in_progress = False
         return sec_struct
@@ -1065,7 +1061,7 @@ class Molecule(MolecularEntity):
         self._store_frame_attributes(trajectory, "TRAJECTORY")
         self._store_frame_attributes(self.selections._frame_values(), "SELECTION")
         # DSSP is rebuilt from its saved settings after a file is reopened
-        self.dssp._restore()
+        self.calculations._dssp._restore()
         self._store_frame_attributes(self.calculations._frame_values(), "CALCULATION")
         self._sync_frame_attributes(["position", *trajectory])
 
@@ -1555,8 +1551,6 @@ class Molecule(MolecularEntity):
             del state["selections"]
         if "annotations" in state:
             del state["annotations"]
-        if "dssp" in state:
-            del state["dssp"]
         if "calculations" in state:
             # Preserve picklable calculations
             preserved_calculations = {}
@@ -1638,8 +1632,6 @@ class Molecule(MolecularEntity):
             self.selections = SelectionManager(self)
         if not hasattr(self, "annotations"):
             self.annotations = MoleculeAnnotationManager(self)
-        if not hasattr(self, "dssp"):
-            self.dssp = DSSPManager(self)
         if not hasattr(self, "calculations"):
             self.calculations = CalculationManager(self)
             preserved = self.__dict__.pop("_preserved_calculations", {})

@@ -491,10 +491,10 @@ canvas.resolution = (800, 600)
 
 movie = mn.Molecule(u)
 # DSSP ran on the first frame on load; this recomputes it on every frame for the movie
-movie.dssp.init()
+movie.calculations.dssp(updating=True)
 # if DSSP fails on termini or non-standard residues, limit it with a selection:
-# movie.dssp.init(selection="protein and not resid 1")
-# the selection can be changed later with movie.dssp.set_selection("...")
+# movie.calculations.dssp(selection="protein and not resid 1", updating=True)
+# the selection can be changed later with movie.calculations.dssp(selection="...")
 movie.subframes = 1
 movie.interpolate = True
 movie.average = 1

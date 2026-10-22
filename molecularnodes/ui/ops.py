@@ -1208,14 +1208,14 @@ class MN_OT_Setup_Compositor(Operator):
 
 class MN_OT_DSSP_init(Operator):
     """
-    Operator to initialize DSSP for trajectories
+    Operator to add DSSP as the `sec_struct` calculation, or change its selection
     """
 
     bl_idname = "mn.dssp_init"
-    bl_label = "Initialize"
+    bl_label = "Add DSSP"
     bl_description = (
-        "Initialize DSSP analysis for trajectory, or update the selection "
-        "DSSP is run on if already initialized"
+        "Calculate secondary structure with DSSP on every frame, or update the "
+        "selection DSSP is run on if already added"
     )
 
     uuid: StringProperty()  # type: ignore
@@ -1226,10 +1226,7 @@ class MN_OT_DSSP_init(Operator):
         if entity is None:
             return {"CANCELLED"}
         try:
-            if entity.dssp._DSSP is None:
-                entity.dssp.init(selection=self.selection)
-            else:
-                entity.dssp.set_selection(self.selection)
+            entity.calculations.dssp(selection=self.selection)
         except Exception as e:
             self.report({"ERROR"}, f"DSSP failed for selection '{self.selection}': {e}")
             return {"CANCELLED"}
@@ -1257,9 +1254,11 @@ class MN_OT_DSSP_apply(Operator):
         props = entity.props.dssp
         if props.display_option == "trajectory-average":
             if self.apply_ta_threshold:
-                entity.dssp.show_trajectory_average(threshold=self.ta_threshold)
+                entity.calculations._dssp.show_trajectory_average(
+                    threshold=self.ta_threshold
+                )
             else:
-                entity.dssp.show_trajectory_average()
+                entity.calculations._dssp.show_trajectory_average()
         return {"FINISHED"}
 
 
@@ -1280,15 +1279,15 @@ class MN_OT_DSSP_cancel(Operator):
             return {"CANCELLED"}
         props = entity.props.dssp
         props.cancelling = True
-        props.display_option = entity.dssp._display_option
-        props.window_size = entity.dssp._window_size
-        if entity.dssp._sw_threshold is not None:
-            props.sw_threshold = entity.dssp._sw_threshold
+        props.display_option = entity.calculations._dssp._display_option
+        props.window_size = entity.calculations._dssp._window_size
+        if entity.calculations._dssp._sw_threshold is not None:
+            props.sw_threshold = entity.calculations._dssp._sw_threshold
             props.apply_sw_threshold = True
         else:
             props.apply_sw_threshold = False
-        if entity.dssp._ta_threshold is not None:
-            props.ta_threshold = entity.dssp._ta_threshold
+        if entity.calculations._dssp._ta_threshold is not None:
+            props.ta_threshold = entity.calculations._dssp._ta_threshold
             props.apply_ta_threshold = True
         else:
             props.apply_ta_threshold = False

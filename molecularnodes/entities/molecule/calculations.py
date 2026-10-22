@@ -18,6 +18,7 @@ from typing import TYPE_CHECKING, Callable, Iterator
 import numpy as np
 from databpy import LinkedObjectError
 from MDAnalysis import Universe
+from .dssp import DSSPCalculation
 
 if TYPE_CHECKING:
     from .base import Molecule
@@ -43,6 +44,43 @@ class CalculationManager:
     def __init__(self, entity: Molecule):
         self._entity = entity
         self._funcs: dict[str, Calculation] = {}
+        self._dssp = DSSPCalculation(entity)
+
+    def dssp(
+        self, selection: str | None = None, *, updating: bool | None = None
+    ) -> DSSPCalculation:
+        """Secondary structure from DSSP, as the `sec_struct` calculation.
+
+        Sets DSSP up if it isn't already, and changes only the settings given.
+        A trajectory whose files have no secondary structure has it set up on
+        load, not updating, so it has run on the first frame.
+
+        Parameters
+        ----------
+        selection : str, optional
+            MDAnalysis selection string limiting the atoms DSSP is run on,
+            `"protein"` when setting up. Use this to exclude termini or
+            non-standard residues that lack the required (N, CA, C, O) atoms.
+            Protein residues outside it are drawn as loops.
+        updating : bool, optional
+            Whether to recalculate on every frame change, `True` when setting
+            up. Otherwise the values are kept from when it last ran.
+
+        Returns
+        -------
+        DSSPCalculation
+            The DSSP calculation, whose methods choose what is shown, such as
+            `show_sliding_window_average()`
+
+        Examples
+        --------
+        ```python
+        dssp = mol.calculations.dssp(updating=True)
+        dssp.show_trajectory_average(threshold=0.5)
+        ```
+        """
+        self._dssp._init(selection=selection, updating=updating)
+        return self._dssp
 
     @property
     def ui_items(self):
@@ -148,6 +186,9 @@ class CalculationManager:
 
     def __delitem__(self, name: str) -> None:
         del self._funcs[name]
+        if name == "sec_struct":
+            # removing DSSP's calculation removes DSSP, it can be set up again
+            self._dssp = DSSPCalculation(self._entity)
         try:
             items = self.ui_items
         except (LinkedObjectError, AttributeError):

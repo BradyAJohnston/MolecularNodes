@@ -208,16 +208,76 @@ def layout_trajectory_playback(
                 rows=3,
             )
             layout_frame_attribute_details(body, traj)
+            if not traj.calculations._dssp.is_setup:
+                op = body.operator("mn.dssp_init", icon="ADD")
+                op.uuid = obj.uuid
+                op.selection = "protein"
 
 
 def layout_frame_attribute_details(layout: UILayout, traj: Molecule) -> None:
-    """Draw where the selected attribute is read or computed from."""
-    items = traj.object.mn.frame_attributes
-    index = traj.object.mn.frame_attributes_index
+    """Draw where the selected attribute comes from, and a calculation's settings."""
+    obj = traj.object
+    items = obj.mn.frame_attributes
+    index = obj.mn.frame_attributes_index
     if not 0 <= index < len(items):
         return
-    source = items[index].bl_rna.properties["source"].enum_items[items[index].source]
+    item = items[index]
+    source = item.bl_rna.properties["source"].enum_items[item.source]
     layout.label(text=f"Source: {source.name}")
+    if item.source != "CALCULATION":
+        return
+    if item.name == "sec_struct" and traj.calculations._dssp.is_setup:
+        layout_dssp_settings(layout, traj)
+        return
+    calculation = obj.mn.calculations.get(item.name)
+    if calculation is not None:
+        layout.prop(calculation, "updating", text="Update Every Frame")
+
+
+def layout_dssp_settings(layout: UILayout, traj: Molecule) -> None:
+    """Draw the settings of the DSSP `sec_struct` calculation."""
+    obj = traj.object
+    uuid = obj.uuid
+    props = traj.props.dssp
+    layout.prop(
+        obj.mn.calculations["sec_struct"], "updating", text="Update Every Frame"
+    )
+    row = layout.row()
+    row.prop(props, "selection")
+    op = row.operator("mn.dssp_init", text="", icon="FILE_REFRESH")
+    op.uuid = uuid
+    op.selection = props.selection
+    # display options
+    if traj._entity_type == EntityType.MD_STREAMING:
+        layout.prop(props, "display_option_streaming")
+    else:
+        layout.prop(props, "display_option")
+    # display option specific params
+    if props.display_option == "sliding-window-average":
+        layout.prop(props, "window_size")
+        row = layout.row()
+        row.prop(props, "apply_sw_threshold", text="")
+        col = row.column()
+        col.prop(props, "sw_threshold")
+        col.enabled = props.apply_sw_threshold
+    elif props.display_option == "trajectory-average":
+        row = layout.row()
+        row.prop(props, "apply_ta_threshold", text="")
+        col = row.column()
+        col.prop(props, "ta_threshold")
+        col.enabled = props.apply_ta_threshold
+        # averaging the whole trajectory is slow, so it waits for Apply
+        row = layout.row()
+        split = row.split(factor=0.5)
+        col = split.column()
+        op = col.operator("mn.dssp_apply")
+        op.uuid = uuid
+        op.apply_ta_threshold = props.apply_ta_threshold
+        op.ta_threshold = props.ta_threshold
+        col.enabled = not props.applied
+        col = split.column()
+        op = col.operator("mn.dssp_cancel")
+        op.uuid = uuid
 
 
 def layout_selection_manage(
@@ -712,86 +772,6 @@ class MN_PT_trajectory(bpy.types.Panel):
         layout_trajectory_playback(layout, traj, panel=False)
 
 
-class MN_PT_trajectory_dssp(bpy.types.Panel):
-    """
-    Panel for trajectory dssp details
-    """
-
-    bl_idname = "MN_PT_trajectory_dssp"
-    bl_label = "DSSP"
-    bl_space_type = "VIEW_3D"
-    bl_region_type = "UI"
-    bl_category = "Molecular Nodes"
-
-    @classmethod
-    def poll(cls, context):
-        """Visible only if entity selected is a trajectory"""
-        obj = get_active_entity_object(context)
-        if obj is None or context.scene.MNSession.get(obj.uuid) is None:
-            return False
-        # DSSP is computed over trajectory frames, so a molecule needs playback
-        if obj.mn.entity_type == EntityType.MD_STREAMING:
-            return True
-        return obj.mn.entity_type == EntityType.MOLECULE and obj.mn.n_frames > 1
-
-    def draw(self, context):
-        layout = self.layout
-        assert layout
-        obj = get_active_entity_object(context)
-        uuid = obj.uuid
-        traj = context.scene.MNSession.get(uuid)
-        props = traj.props.dssp
-        row = layout.row()
-        row.prop(props, "selection")
-        row = layout.row()
-        if traj.dssp._DSSP is None:
-            op = row.operator("mn.dssp_init")
-            op.uuid = uuid
-            op.selection = props.selection
-            return
-        op = row.operator("mn.dssp_init", text="Update Selection")
-        op.uuid = uuid
-        op.selection = props.selection
-        calculation = obj.mn.calculations.get("sec_struct")
-        if calculation is not None:
-            layout.prop(calculation, "updating", text="Update Every Frame")
-        # display options
-        if traj._entity_type == EntityType.MOLECULE:
-            row = layout.row()
-            row.prop(props, "display_option")
-        elif traj._entity_type == EntityType.MD_STREAMING:
-            row = layout.row()
-            row.prop(props, "display_option_streaming")
-        # display option specific params
-        if props.display_option == "sliding-window-average":
-            row = layout.row()
-            row.prop(props, "window_size")
-            row = layout.row()
-            row.prop(props, "apply_sw_threshold", text="")
-            col = row.column()
-            col.prop(props, "sw_threshold")
-            col.enabled = props.apply_sw_threshold
-        elif props.display_option == "trajectory-average":
-            row = layout.row()
-            row.prop(props, "apply_ta_threshold", text="")
-            col = row.column()
-            col.prop(props, "ta_threshold")
-            col.enabled = props.apply_ta_threshold
-        # apply button
-        if props.display_option == "trajectory-average":
-            row = layout.row()
-            split = row.split(factor=0.5)
-            col = split.column()
-            op = col.operator("mn.dssp_apply")
-            op.uuid = uuid
-            op.apply_ta_threshold = props.apply_ta_threshold
-            op.ta_threshold = props.ta_threshold
-            col.enabled = not props.applied
-            col = split.column()
-            op = col.operator("mn.dssp_cancel")
-            op.uuid = uuid
-
-
 def is_style_node(node: bpy.types.Node) -> bool:
     """Whether a node is a style node, identified by "Style" in its name."""
     return "Style" in node.name
@@ -1211,7 +1191,6 @@ CLASSES = [
     MN_PT_Entities,
     MN_UL_FrameAttributesList,
     MN_PT_trajectory,
-    MN_PT_trajectory_dssp,
     MN_UL_StylesList,
     MN_PT_Styles,
     MN_UL_AnnotationsList,

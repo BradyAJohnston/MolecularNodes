@@ -247,7 +247,7 @@ def main(out: Path, names: list[str]):
         canvas.clear()
         u = mda.Universe(data.topology, data.trajectories[0])
         mol = mn.Molecule(u)
-        mol.dssp.init()
+        mol.calculations.dssp(updating=True)
         mol.subframes, mol.interpolate = SUBFRAMES, True
         site = np.zeros(len(mol), dtype=bool)
         site[u.select_atoms(ACTIVE_SITE).indices] = True
