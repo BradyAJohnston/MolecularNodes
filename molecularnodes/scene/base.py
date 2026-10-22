@@ -147,6 +147,12 @@ class Canvas:
         Output resolution in pixels as ``(width, height)``.
     transparent : bool, default False
         When ``True``, renders use a transparent film (alpha background).
+    view_transform : ViewTransform | str | None, optional
+        Color-management view transform, e.g. ``"Standard"`` so colors render as
+        specified. Left out, the scene's setting (AgX in the preset) is kept.
+    background : tuple[float, float, float, float] | None, optional
+        World background color as RGBA in the range [0, 1]. Left out, the
+        preset's background is kept.
     template : pathlib.Path | str | None, optional
         Scene template to load. If a string is provided it can be either the
         name of an installed Blender app template (e.g. ``"Molecular Nodes"``),
@@ -220,6 +226,8 @@ class Canvas:
         engine: EEVEE | Cycles | _RENDER_ENGINES = "EEVEE",
         resolution=(1280, 720),
         transparent: bool = False,
+        view_transform: ViewTransform | str | None = None,
+        background: Tuple[float, float, float, float] | None = None,
         template: Path | str | None | Unset = _UNSET,
     ) -> None:
         """
@@ -233,6 +241,10 @@ class Canvas:
             Output resolution in pixels as ``(width, height)``.
         transparent : bool, default False
             Enable a transparent film (alpha background) when ``True``.
+        view_transform : ViewTransform | str | None, optional
+            Color-management view transform; left out, the scene's is kept.
+        background : tuple[float, float, float, float] | None, optional
+            World background color as RGBA; left out, the preset's is kept.
         template : pathlib.Path | str | None | Unset, optional
             Scene template name or path to a ``.blend`` file, always loaded when
             given. Left out, the "Molecular Nodes" preset is loaded only into a
@@ -261,6 +273,10 @@ class Canvas:
         self.resolution = resolution
         self.camera = Camera()
         self.transparent = transparent
+        if view_transform is not None:
+            self.view_transform = view_transform
+        if background is not None:
+            self.background = background
 
     def _bind(self) -> None:
         """
