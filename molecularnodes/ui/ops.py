@@ -1234,6 +1234,39 @@ class MN_OT_DSSP_init(Operator):
         return {"FINISHED"}
 
 
+class MN_OT_FrameAttribute_Remove(Operator):
+    """
+    Operator to remove a selection or calculation from the per-frame attributes
+    """
+
+    bl_idname = "mn.frame_attribute_remove"
+    bl_label = "Remove"
+    bl_description = (
+        "Remove this selection (and its attribute) or calculation (its attribute "
+        "keeps the values it last had)"
+    )
+    bl_options = {"REGISTER", "UNDO"}
+
+    uuid: StringProperty()  # type: ignore
+    name: StringProperty()  # type: ignore
+
+    def execute(self, context: Context):
+        entity = get_session().get(self.uuid)
+        if entity is None:
+            return {"CANCELLED"}
+        item = entity.object.mn.frame_attributes.get(self.name)
+        if item is None:
+            return {"CANCELLED"}
+        if item.source == "SELECTION":
+            entity.selections.remove(self.name)
+        elif item.source == "CALCULATION" and self.name in entity.calculations:
+            del entity.calculations[self.name]
+        else:
+            self.report({"ERROR"}, f"'{self.name}' can't be removed")
+            return {"CANCELLED"}
+        return {"FINISHED"}
+
+
 class MN_OT_DSSP_apply(Operator):
     """
     Operator to apply changed DSSP options
@@ -1311,6 +1344,7 @@ CLASSES = [
     MN_OT_Remove_Annotation,
     MN_OT_Setup_Compositor,
     MN_OT_DSSP_init,
+    MN_OT_FrameAttribute_Remove,
     MN_OT_DSSP_apply,
     MN_OT_DSSP_cancel,
 ]

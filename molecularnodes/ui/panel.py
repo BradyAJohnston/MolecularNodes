@@ -59,6 +59,28 @@ def add_menu_options(self: bpy.types.Menu, context: bpy.types.Context) -> None:
     layout.menu("MN_MT_Add", icon="PARTICLES")
 
 
+class MN_MT_AddCalculation(bpy.types.Menu):
+    """Calculations and analyses that can be added to a trajectory."""
+
+    bl_idname = "MN_MT_AddCalculation"
+    bl_label = "Add Calculation"
+
+    def draw(self, context: bpy.types.Context) -> None:
+        layout = self.layout
+        assert layout
+        obj = getattr(context, "object", None)
+        entity = context.scene.MNSession.get(obj.uuid) if obj is not None else None
+        row = layout.row()
+        # DSSP can be added once, as the `sec_struct` calculation
+        row.enabled = (
+            hasattr(entity, "calculations") and not entity.calculations._dssp.is_setup
+        )
+        op = row.operator("mn.dssp_init", text="DSSP")
+        if obj is not None:
+            op.uuid = obj.uuid
+        op.selection = "protein"
+
+
 class MN_MT_Import(bpy.types.Menu):
     bl_idname = "MN_MT_Import"
     bl_label = "Import"
@@ -191,14 +213,16 @@ def layout_trajectory_playback(
     playback.separator()
     playback.operator("mn.frames_to_collection", icon="RENDERLAYERS")
 
-    # the attributes updated on each frame, read from the object
+    # the attributes updated on each frame, read from the object. Drawn outside
+    # of `playback` so calculation settings stay editable while streaming
     if obj.mn.frame_attributes and obj.type == "MESH":
-        header, body = playback.panel(
+        header, body = layout.panel(
             idname="layout_frame_attributes", default_closed=True
         )
         header.label(text="Per-frame Attributes")
         if body is not None:
-            body.template_list(
+            row = body.row()
+            row.template_list(
                 "MN_UL_FrameAttributesList",
                 "frame_attributes_list",
                 obj.mn,
@@ -207,11 +231,10 @@ def layout_trajectory_playback(
                 "frame_attributes_index",
                 rows=3,
             )
+            col = row.column(align=True)
+            col.context_pointer_set("object", obj)
+            col.menu("MN_MT_AddCalculation", icon="ADD", text="")
             layout_frame_attribute_details(body, traj)
-            if not traj.calculations._dssp.is_setup:
-                op = body.operator("mn.dssp_init", icon="ADD")
-                op.uuid = obj.uuid
-                op.selection = "protein"
 
 
 def layout_frame_attribute_details(layout: UILayout, traj: Molecule) -> None:
@@ -657,16 +680,16 @@ class MN_UL_FrameAttributesList(bpy.types.UIList):
             if attribute is None:
                 # not stored yet, or a selection that failed
                 row.label(text=item.name, icon="NONE")
-                return
-            row.label(
-                text=item.name,
-                icon=ATTRIBUTE_TYPE_ICONS.get(attribute.data_type, "NONE"),
-            )
-            row.label(
-                text=attribute.bl_rna.properties["data_type"]
-                .enum_items[attribute.data_type]
-                .name
-            )
+            else:
+                row.label(
+                    text=item.name,
+                    icon=ATTRIBUTE_TYPE_ICONS.get(attribute.data_type, "NONE"),
+                )
+                row.label(
+                    text=attribute.bl_rna.properties["data_type"]
+                    .enum_items[attribute.data_type]
+                    .name
+                )
             # selections and calculations can be set to not update per frame
             if item.source == "SELECTION":
                 settings = obj.mn_trajectory_selections.get(item.name)
@@ -676,6 +699,12 @@ class MN_UL_FrameAttributesList(bpy.types.UIList):
                 settings = None
             if settings is not None:
                 row.prop(settings, "updating", text="", icon="FILE_REFRESH")
+            if item.source != "TRAJECTORY":
+                op = row.operator(
+                    "mn.frame_attribute_remove", text="", icon="X", emboss=False
+                )
+                op.uuid = obj.uuid
+                op.name = item.name
         elif self.layout_type in {"GRID"}:
             layout.alignment = "CENTER"
             layout.label(text=item.name)
@@ -1184,6 +1213,7 @@ class MN_PT_Compositor(bpy.types.Panel):
 
 CLASSES = [
     MN_MT_Add,
+    MN_MT_AddCalculation,
     MN_MT_Import,
     MN_PT_Scene,
     MN_PT_Object,

@@ -660,6 +660,38 @@ class TestTrajectory:
         assert t.calculations.updating("sec_struct")
         assert t.frame_attributes["sec_struct"] == "CALCULATION"
 
+    def test_frame_attribute_operators(self, universe):
+        t = mn.Molecule(universe)
+        t.selections.from_string("resid 1", name="first")
+        t.calculations["ones"] = lambda u: np.ones(u.atoms.n_atoms)
+        bpy.context.scene.frame_set(1)
+        sec_struct = t["sec_struct"].copy()
+
+        # a selection is removed along with its attribute
+        bpy.ops.mn.frame_attribute_remove(uuid=t.uuid, name="first")
+        assert "first" not in t.frame_attributes
+        assert t.selections.get("first") is None
+        assert "first" not in t.list_attributes()
+        # a calculation stops updating and its attribute keeps its values
+        bpy.ops.mn.frame_attribute_remove(uuid=t.uuid, name="ones")
+        assert "ones" not in t.calculations
+        assert "ones" not in t.frame_attributes
+        assert np.all(t["ones"] == 1)
+        # removing DSSP's calculation removes DSSP
+        bpy.ops.mn.frame_attribute_remove(uuid=t.uuid, name="sec_struct")
+        assert not t.calculations._dssp.is_setup
+        assert np.array_equal(t["sec_struct"], sec_struct)
+        # trajectory attributes can't be removed
+        with pytest.raises(RuntimeError):
+            bpy.ops.mn.frame_attribute_remove(uuid=t.uuid, name="position")
+        assert "position" in t.frame_attributes
+
+        # DSSP is added from the menu, updating on every frame
+        bpy.ops.mn.dssp_init(uuid=t.uuid, selection="protein")
+        assert t.calculations._dssp.is_setup
+        assert t.frame_attributes["sec_struct"] == "CALCULATION"
+        assert t.calculations.updating("sec_struct")
+
     def test_dssp_not_updating(self, universe):
         t = mn.Molecule(universe).add_style("cartoon")
         initial_sec_struct = t["sec_struct"].copy()
