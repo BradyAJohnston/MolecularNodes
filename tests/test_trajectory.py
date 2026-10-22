@@ -2,6 +2,7 @@ import itertools
 import os
 import pickle
 import tempfile
+from types import SimpleNamespace
 import bpy
 import databpy
 import MDAnalysis as mda
@@ -691,6 +692,43 @@ class TestTrajectory:
         assert t.calculations._dssp.is_setup
         assert t.frame_attributes["sec_struct"] == "CALCULATION"
         assert t.calculations.updating("sec_struct")
+
+    def test_frame_attributes_list_selection_add_and_filter(self, universe):
+        t = mn.Molecule(universe)
+        t.calculations["ones"] = lambda u: np.ones(u.atoms.n_atoms)
+        mn_props = t.object.mn
+
+        # adding a selection from the list's add menu makes it the active row,
+        # showing every source if the filter would hide it
+        mn_props.frame_attributes_filter = "TRAJECTORY"
+        bpy.ops.mn.trajectory_selection_add(uuid=t.uuid)
+        assert t.frame_attributes["selection_0"] == "SELECTION"
+        active = mn_props.frame_attributes[mn_props.frame_attributes_index]
+        assert active.name == "selection_0"
+        assert mn_props.frame_attributes_filter == "ALL"
+
+        # the filter above the list shows only the attributes from one source
+        ui_list = SimpleNamespace(
+            filter_name="", bitflag_filter_item=1, use_filter_sort_alpha=False
+        )
+
+        def shown(source):
+            mn_props.frame_attributes_filter = source
+            flags, _ = mn.ui.panel.MN_UL_FrameAttributesList.filter_items(
+                ui_list, bpy.context, mn_props, "frame_attributes"
+            )
+            return [
+                item.name
+                for item, flag in zip(mn_props.frame_attributes, flags)
+                if flag
+            ]
+
+        assert shown("ALL") == list(t.frame_attributes)
+        assert shown("SELECTION") == ["selection_0"]
+        assert set(shown("CALCULATION")) == set(t.calculations)
+        assert "ones" in shown("CALCULATION")
+        assert "position" in shown("TRAJECTORY")
+        assert "selection_0" not in shown("TRAJECTORY")
 
     def test_dssp_not_updating(self, universe):
         t = mn.Molecule(universe).add_style("cartoon")
