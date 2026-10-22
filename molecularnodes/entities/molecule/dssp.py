@@ -20,6 +20,8 @@ class DSSPCalculation:
     def __init__(self, entity: MolecularEntity):
         self._entity = entity
         self._DSSP = None
+        self._dssp_atoms = None
+        self._dssp_trajectory = None
         self._protein_residues = None
         self._dssp_residues = None
         self._dssp_results = None
@@ -54,7 +56,7 @@ class DSSPCalculation:
         # save current frame
         current_frame = trajectory.frame
         try:
-            dssp_results = self._DSSP.run(frames=window).results
+            dssp_results = self._analysis().run(frames=window).results
         except Exception as e:
             dssp_results = None
             logger.debug(f"Failed to run DSSP for frames {window}: {e}")
@@ -146,10 +148,21 @@ class DSSPCalculation:
         # create before assigning so a failing selection leaves the old state intact
         dssp = DSSP(atoms)
         self._DSSP = dssp
+        self._dssp_atoms = atoms
+        self._dssp_trajectory = atoms.universe.trajectory
         self._dssp_residues = atoms.residues
         self._dssp_resindices = None
         self._dssp_results = None
         self._trajectory_average = None
+
+    def _analysis(self) -> DSSP:
+        """Internal: The DSSP analysis, rebuilt if the universe's trajectory
+        reader was replaced (e.g. by `load_new` when the session is saved), as
+        it reads frames through the reader it was created with"""
+        if self._dssp_trajectory is not self._entity.universe.trajectory:
+            self._DSSP = DSSP(self._dssp_atoms)
+            self._dssp_trajectory = self._entity.universe.trajectory
+        return self._DSSP
 
     @property
     def is_setup(self) -> bool:
@@ -333,7 +346,7 @@ class DSSPCalculation:
         self._ensure_no_streaming()
         self._ta_threshold = threshold
         if self._dssp_results is None:
-            self._dssp_results = self._DSSP.run().results.copy()
+            self._dssp_results = self._analysis().run().results.copy()
         if threshold is not None:
             self._trajectory_average = translate(
                 self._dssp_results.dssp_ndarray.mean(axis=0) > threshold

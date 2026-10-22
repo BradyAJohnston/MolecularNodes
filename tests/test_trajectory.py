@@ -796,6 +796,24 @@ class TestTrajectory:
         assert "position" in shown("TRAJECTORY")
         assert "selection_0" not in shown("TRAJECTORY")
 
+    def test_dssp_after_session_save(self, tmp_path):
+        # saving the session replaces the universe's trajectory reader; DSSP
+        # reads frames through the new one and the replaced reader is closed,
+        # so it doesn't hold the trajectory file open
+        u = mda.Universe(
+            data_dir / "md_ppr/box.gro", data_dir / "md_ppr/first_5_frames.xtc"
+        )
+        t = mn.Molecule(u)
+        t.calculations.dssp(updating=True)
+        reader = t.universe.trajectory
+        mn.session.get_session().pickle(tmp_path / "test.blend")
+        assert t.universe.trajectory is not reader
+
+        for frame in [2, 3]:
+            bpy.context.scene.frame_set(frame)
+            assert np.array_equal(t["sec_struct"], t.calculations._dssp.compute_frame())
+        assert t.calculations._dssp._dssp_trajectory is t.universe.trajectory
+
     def test_dssp_not_updating(self, universe):
         t = mn.Molecule(universe).add_style("cartoon")
         initial_sec_struct = t["sec_struct"].copy()
