@@ -1,4 +1,5 @@
 import itertools
+import re
 from io import BytesIO
 from pathlib import Path
 import biotite.structure as struc
@@ -8,8 +9,31 @@ from biotite import InvalidFileError
 from .reader import ReaderBase
 
 
+class MultipleStructuresError(InvalidFileError):
+    """The file holds more than one structure in separate data blocks, so the
+    block to read has to be chosen. The candidates are in ``blocks``."""
+
+    def __init__(self, blocks: list[str]):
+        self.blocks = blocks
+        super().__init__(
+            f"The file contains {len(blocks)} structures in separate data blocks"
+            f" ({', '.join(blocks)}); choose one with `data_block`."
+        )
+
+
+def structure_blocks(file: pdbx.CIFFile | pdbx.BinaryCIFFile) -> list[str]:
+    """Names of the data blocks that contain atoms, either as a structure
+    (``atom_site``) or as a chemical component (``chem_comp_atom``)."""
+    return [
+        name
+        for name, block in file.items()
+        if "atom_site" in block or "chem_comp_atom" in block
+    ]
+
+
 class PDBXReader(ReaderBase):
-    def __init__(self, file_path: str | Path | BytesIO):
+    def __init__(self, file_path: str | Path | BytesIO, data_block: str | None = None):
+        self._data_block = data_block
         self._extra_annotations = {
             "sec_struct": self._get_secondary_structure,
             "entity_id": self._get_entity_id,
@@ -20,13 +44,45 @@ class PDBXReader(ReaderBase):
     def read(self, file_path):
         match file_path.suffix:
             case ".cif":
-                return pdbx.CIFFile.read(file_path)
+                # biotite only recognises tags that start the line, but some
+                # writers (e.g. Phenix) indent the tags under `loop_`
+                text = Path(file_path).read_text()
+                file = pdbx.CIFFile.deserialize(
+                    re.sub(r"^[ \t]+(?=_)", "", text, flags=re.MULTILINE)
+                )
             case ".bcif":
-                return pdbx.BinaryCIFFile.read(file_path)
+                file = pdbx.BinaryCIFFile.read(file_path)
             case _:
                 raise NotImplementedError(
                     f"File type {file_path.suffix} not supported."
                 )
+        return self._select_block(file)
+
+    def _select_block(self, file):
+        """Narrow a multi-block file down to the one block to read, so the rest
+        of the reader can use ``file.block``.
+
+        Blocks without atoms (e.g. the restraint blocks Phenix appends after the
+        model) are ignored. When several blocks hold atoms and no ``data_block``
+        was given, a ``MultipleStructuresError`` lists them.
+        """
+        if self._data_block is not None:
+            if self._data_block not in file:
+                raise InvalidFileError(
+                    f"No data block '{self._data_block}' in the file; it has"
+                    f" {', '.join(file.keys())}."
+                )
+            name = self._data_block
+        elif len(file) <= 1:
+            return file
+        else:
+            blocks = structure_blocks(file)
+            if len(blocks) > 1:
+                raise MultipleStructuresError(blocks)
+            # no block with atoms: keep the first so the error raised when
+            # reading it still describes the file's contents
+            name = blocks[0] if blocks else next(iter(file.keys()))
+        return type(file)({name: file[name]})
 
     def get_structure(
         self, model: int | None = None, include_bonds: bool = True

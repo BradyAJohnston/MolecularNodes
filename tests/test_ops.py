@@ -37,6 +37,23 @@ def test_op_fetch(fetch, snapshot_custom: NumpySnapshotExtension, code):
         np.testing.assert_allclose(test1.position, test2.position)
 
 
+def test_op_fetch_pubchem():
+    # tests/data/2244.sdf is the cached PubChem download, so no network is used;
+    # file_format is ignored for PubChem
+    with ObjectTracker() as o:
+        res = bpy.ops.mn.import_molecule(
+            code="2244",
+            database="pubchem",
+            file_format="bcif",
+            style="ball_and_stick",
+            cache_dir=str(data_dir),
+        )
+        mol = bpy.context.scene.MNSession.match(o.latest())
+    assert res == {"FINISHED"}
+    assert mol.props.database == "pubchem"
+    assert len(mol) == 21
+
+
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("file_format", ["bcif", "cif", "pdb"])
 def test_op_local(snapshot_custom, code, file_format):
@@ -374,3 +391,21 @@ def test_op_import_bad_paths_report_errors(op, kwargs, message):
     from deep inside a file reader."""
     with pytest.raises(RuntimeError, match=message):
         getattr(bpy.ops.mn, op)(**kwargs)
+
+
+def test_op_import_multiple_structure_blocks(tmp_path):
+    """A .cif with several structures in separate data blocks imports one
+    Molecule per block."""
+    session = bpy.context.scene.MNSession
+    path = tmp_path / "two.cif"
+    path.write_text(
+        (data_dir / "1BNA.cif").read_text() + "\n" + (data_dir / "1l58.cif").read_text()
+    )
+
+    with ObjectTracker() as o:
+        res = bpy.ops.mn.import_molecule(filepath=str(path), method="local")
+        assert res == {"FINISHED"}
+        objects = o.new_objects()
+
+    mols = [session.match(obj) for obj in objects]
+    assert sorted(mol.props.data_block for mol in mols) == ["1BNA", "1L58"]

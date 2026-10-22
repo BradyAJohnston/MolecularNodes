@@ -838,6 +838,7 @@ class Molecule(MolecularEntity):
         selection: str | None = None,
         create_object: bool = True,
         name: str | None = None,
+        data_block: str | None = None,
         **kwargs,
     ) -> "Molecule":
         """Load a single structure file, or an MD topology + trajectory.
@@ -865,6 +866,9 @@ class Molecule(MolecularEntity):
             Atom selection to restrict the style to, passed to :meth:`add_style`.
         create_object : bool, optional
             Whether to create the Blender object immediately (MD route only).
+        data_block : str | None, optional
+            For a ``.cif``/``.bcif`` with several structures in separate data blocks,
+            the name of the block to load (see :meth:`from_file`).
         kwargs : dict, optional
             Additional keyword arguments to pass to the `MDAnalysis.Universe()` constructor.
 
@@ -874,7 +878,7 @@ class Molecule(MolecularEntity):
             The loaded entity.
         """
         if coordinates is None:
-            entity = cls.from_file(topology, name=name)
+            entity = cls.from_file(topology, name=name, data_block=data_block)
         else:
             entity = cls(
                 universe=mda.Universe(topology, coordinates, **kwargs),
@@ -892,6 +896,7 @@ class Molecule(MolecularEntity):
         cls,
         file_path: str | Path | io.BytesIO,
         name: str | None = None,
+        data_block: str | None = None,
     ) -> "Molecule":
         """Load a single structure file into a Universe-backed entity.
 
@@ -913,6 +918,13 @@ class Molecule(MolecularEntity):
             Path to the structure file (or an in-memory ``bcif`` buffer).
         name : str | None, optional
             Name for the Blender object. Defaults to the file name (extension included).
+        data_block : str | None, optional
+            For a ``.cif``/``.bcif`` with several structures in separate data blocks,
+            the name of the block to load. Blocks without atoms (such as restraint
+            definitions) are skipped, so this is only needed when more than one
+            block holds a structure; otherwise a
+            :class:`~molecularnodes.entities.molecule.pdbx.MultipleStructuresError`
+            listing the blocks is raised.
 
         Returns
         -------
@@ -951,7 +963,7 @@ class Molecule(MolecularEntity):
                 )
             return cls(universe, name=name or Path(file_path).name)
 
-        reader = read_structure(file_path)
+        reader = read_structure(file_path, data_block=data_block)
         universe = universe_from_atoms(reader.array, frame_data=reader.model_data())
         if name is None:
             name = Path(file_path).name if not isinstance(file_path, io.BytesIO) else ""
@@ -972,13 +984,16 @@ class Molecule(MolecularEntity):
         Parameters
         ----------
         code : str
-            The database accession code (e.g. a PDB id).
+            The database accession code (e.g. a PDB id), or for ``"pubchem"`` a
+            compound CID (e.g. ``"2244"``) or name (e.g. ``"aspirin"``).
         format : str, optional
-            File format to download, by default ``".bcif"``.
+            File format to download, by default ``".bcif"``. Ignored for
+            ``"pubchem"``, which always downloads the 3D conformer as SDF.
         cache : Path | str | None, optional
             Directory to cache downloads in.
         database : str, optional
-            The database to fetch from, by default ``"rcsb"``.
+            The database to fetch from: ``"rcsb"`` (default), ``"alphafold"`` or
+            ``"pubchem"``.
 
         Returns
         -------
@@ -1005,6 +1020,7 @@ class Molecule(MolecularEntity):
         # record the source so the entity can be reloaded into a fresh session
         if not isinstance(file_path, io.BytesIO):
             self.props.filepath = str(file_path)
+        self.props.data_block = getattr(reader, "_data_block", None) or ""
 
     def assemblies(self, as_array: bool = False):
         """Get the biological assemblies parsed from the source file.
@@ -1033,6 +1049,46 @@ class Molecule(MolecularEntity):
                 logger.warning(f"Failed to convert biological assemblies to array: {e}")
                 return None
         return assemblies_info
+
+    def align_to(
+        self,
+        fixed: "Molecule",
+        method: str = "sequence",
+        selection: str | None = None,
+        fixed_selection: str | None = None,
+    ):
+        """Superimpose this molecule onto ``fixed`` by setting its object transform.
+
+        Residues are paired by sequence (``method="sequence"``, the default) or by
+        structure (``method="structure"``, proteins only), so the two molecules do
+        not need identical sequences. The coordinates are not changed. See
+        :func:`~molecularnodes.entities.molecule.align.align` for details.
+
+        Parameters
+        ----------
+        fixed : Molecule
+            The reference molecule, which stays where it is.
+        method : {"sequence", "structure"}, optional
+            How corresponding residues are found.
+        selection : str | None, optional
+            MDAnalysis selection of this molecule's atoms to fit on.
+        fixed_selection : str | None, optional
+            MDAnalysis selection of the fixed molecule's atoms to fit on.
+
+        Returns
+        -------
+        AlignResult
+            The fitted transform, RMSD and number of anchor atoms.
+        """
+        from .align import align
+
+        return align(
+            self,
+            fixed,
+            method=method,
+            selection=selection,
+            fixed_selection=fixed_selection,
+        )
 
     def create_data_object(self) -> bpy.types.Object:
         """Create the data object holding the biological assembly transforms."""
@@ -1531,6 +1587,7 @@ class Molecule(MolecularEntity):
                     # so it can be rebuilt via the biotite reader + converter on restore.
                     if self.props.filepath:
                         state["_structure_filepath"] = self.props.filepath
+                        state["_structure_data_block"] = self.props.data_block
                     if self.props.code:
                         state["_structure_code"] = self.props.code
                         state["_structure_database"] = self.props.database
@@ -1603,6 +1660,7 @@ class Molecule(MolecularEntity):
             filepath = state.pop("_structure_filepath", None)
             code = state.pop("_structure_code", None)
             database = state.pop("_structure_database", "rcsb")
+            data_block = state.pop("_structure_data_block", None) or None
             try:
                 if filepath:
                     source = path_resolve(filepath)
@@ -1610,7 +1668,7 @@ class Molecule(MolecularEntity):
                     source = StructureDownloader().download(
                         code=code, format="bcif", database=database or "rcsb"
                     )
-                reader = read_structure(source)
+                reader = read_structure(source, data_block=data_block)
                 self.universe = universe_from_atoms(
                     reader.array, frame_data=reader.model_data()
                 )
