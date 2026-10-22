@@ -211,30 +211,14 @@ def layout_trajectory_playback(
 
 
 def layout_frame_attribute_details(layout: UILayout, traj: Molecule) -> None:
-    """Draw the source, units, update frame and range of the selected attribute."""
+    """Draw where the selected per-frame attribute is read from."""
     obj = traj.object
     attributes = obj.data.attributes
     index = obj.mn.frame_attributes_index
     names = [n for n in obj.mn.frame_attributes.split(",") if n]
     if not 0 <= index < len(attributes) or attributes[index].name not in names:
         return
-    name = attributes[index].name
-    info = traj.frame_attribute_info(name)
-    col = layout.box().column(align=True)
-    col.label(text=f"Source: {info['source']}")
-    if info["units"]:
-        col.label(text=f"Units: {info['units']}")
-    if info["frame"] is None:
-        col.label(text="This frame: not yet updated")
-    elif info["current"]:
-        col.label(text=f"This frame: updated (frame {info['frame']})")
-    else:
-        col.label(text=f"This frame: holding values from frame {info['frame']}")
-    if info["range"] is not None:
-        low, high = info["range"]
-        is_vector = attributes[index].data_type in {"FLOAT_VECTOR", "FLOAT2", "FLOAT4"}
-        label = "Length range" if is_vector else "Range"
-        col.label(text=f"{label}: {low:.3g} to {high:.3g}")
+    layout.label(text="Source: Trajectory")
 
 
 def layout_selection_manage(

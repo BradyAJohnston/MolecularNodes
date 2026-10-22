@@ -41,8 +41,6 @@ from ..utilities import (
 from .annotations import MoleculeAnnotationManager
 from .dssp import DSSPManager
 from .helpers import (
-    TIMESTEP_ATTRIBUTES,
-    TS_DATA_NAMES,
     FrameManager,
     _ag_to_bool,
     _isin,
@@ -257,8 +255,6 @@ class Molecule(MolecularEntity):
         self._updating_in_progress = False
         # the universe frame each per-frame attribute was last updated on, and
         # its value range, cached until the attributes are next stored
-        self._frame_attribute_frames: dict[str, int] = {}
-        self._frame_attribute_ranges: dict[str, tuple[float, float]] = {}
         self.annotations = MoleculeAnnotationManager(self)
         self.frame_manager = FrameManager(self)
         self.dssp = DSSPManager(self)
@@ -704,75 +700,10 @@ class Molecule(MolecularEntity):
         # single-frame structures are not updated per frame
         if self.frame_manager.n_frames == 1:
             return
-        self._frame_attribute_frames.update({name: self.uframe for name in names})
-        self._frame_attribute_ranges.clear()
         known = [n for n in self._mn_frame_attributes.split(",") if n]
         new = [n for n in names if n not in known]
         if new:
             self._mn_frame_attributes = ",".join(known + new)
-
-    def frame_attribute_info(self, name: str) -> dict[str, str | int | bool | None]:
-        """Describe a per-frame attribute for display.
-
-        Parameters
-        ----------
-        name : str
-            Name of an attribute in `obj.mn.frame_attributes`
-
-        Returns
-        -------
-        dict
-            `source`: where the values are read from on each frame. `units`:
-            their units, empty when unknown. `frame`: the universe frame they
-            were last updated on, or None if not yet seen this session.
-            `current`: whether that is the current frame, rather than values
-            held from an earlier frame. `range`: (min, max) of the values now
-            on the mesh, of the length for vectors, or None.
-        """
-        ts_keys = {mn_name: key for key, mn_name in TS_DATA_NAMES.items()}
-        if name == "position":
-            source = "ts.positions"
-        elif name in TIMESTEP_ATTRIBUTES:
-            source = f"ts.{TIMESTEP_ATTRIBUTES[name][0]}"
-        elif ts_keys.get(name) in getattr(self.universe.trajectory, "_frame_data", {}):
-            # read from each model of a structure file (see ModelMemoryReader)
-            source = "per-model values from the file"
-        elif name in ts_keys:
-            source = f'ts.data["{ts_keys[name]}"]'
-        elif name.startswith("ts_") and name not in getattr(self, "_att_names", ()):
-            source = f'ts.data["{name[3:]}"]'
-        else:
-            source = f'ts.data["{name}"]'
-
-        scaled = name == "position" or name in getattr(self, "_att_names", ())
-        units = {
-            "position": "Blender units (Å × 0.1)",
-            "velocity": "Blender units/ps (Å/ps × 0.1)",
-            "force": "kJ/(mol·Å)",
-            "b_factor": "Å²",
-            "occupancy": "fraction",
-            "charge": "e",
-        }.get(name, "Blender units (× 0.1)" if scaled else "")
-
-        frame = self._frame_attribute_frames.get(name)
-        if name not in self._frame_attribute_ranges:
-            try:
-                values = np.asarray(self.named_attribute(name), dtype=float)
-                if values.ndim > 1:
-                    values = np.linalg.norm(values.reshape(len(values), -1), axis=1)
-                self._frame_attribute_ranges[name] = (
-                    float(values.min()),
-                    float(values.max()),
-                )
-            except Exception:
-                self._frame_attribute_ranges[name] = None
-        return {
-            "source": source,
-            "units": units,
-            "frame": frame,
-            "current": frame is not None and frame == self.uframe,
-            "range": self._frame_attribute_ranges[name],
-        }
 
     def _store_frame_attributes(self, values: dict[str, np.ndarray]) -> None:
         """Store per-frame attributes other than positions.
