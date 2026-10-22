@@ -32,6 +32,8 @@ class HBondCalculation:
     def __init__(self, entity: MolecularEntity):
         self._entity = entity
         self._hba = None
+        self._hba_kwargs = None
+        self._hba_trajectory = None
         self._kwargs = {}
         self._cutoffs = None
         self._setting_props = False
@@ -120,6 +122,8 @@ class HBondCalculation:
         # create before assigning so a failing selection leaves the old state intact
         hba = HydrogenBondAnalysis(universe, **hba_kwargs)
         self._hba = hba
+        self._hba_kwargs = hba_kwargs
+        self._hba_trajectory = universe.trajectory
         self._kwargs = kwargs
         self._uframe = None
         self._set_prop("selection", selection)
@@ -170,6 +174,16 @@ class HBondCalculation:
         # edges show straight away, whether or not they update on frame changes
         self._calculate(self._entity.universe)
 
+    def _analysis(self) -> HydrogenBondAnalysis:
+        """Internal: The analysis, rebuilt if the universe's trajectory reader
+        was replaced (e.g. by `load_new` when the session is saved), as it reads
+        frames through the reader it was created with"""
+        universe = self._entity.universe
+        if self._hba_trajectory is not universe.trajectory:
+            self._hba = HydrogenBondAnalysis(universe, **self._hba_kwargs)
+            self._hba_trajectory = universe.trajectory
+        return self._hba
+
     def _update_from_props(self) -> None:
         """Internal: Recalculate after the cutoff properties change in the UI"""
         if self._hba is None or self._setting_props or self.cutoffs == self._cutoffs:
@@ -213,7 +227,7 @@ class HBondCalculation:
         if self._hba is None or uframe == self._uframe:
             return None
         try:
-            results = self._hba.run(start=uframe, stop=uframe + 1).results
+            results = self._analysis().run(start=uframe, stop=uframe + 1).results
         finally:
             # running the analysis moves the trajectory
             if self._entity._entity_type != EntityType.MD_STREAMING:

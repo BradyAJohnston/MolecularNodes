@@ -151,6 +151,31 @@ def test_hbonds_cutoff_properties(fetch):
     assert hbonds.cutoffs["d_a_cutoff"] == pytest.approx(3.5)
 
 
+def test_hbonds_after_session_save(universe, tmp_path):
+    # saving the session replaces the universe's trajectory reader, and the
+    # analysis reads frames through the new one
+    mol = mn.Molecule(universe)
+    obj = mol.calculations.hbonds().object
+    reader = mol.universe.trajectory
+    mn.session.get_session().pickle(tmp_path / "test.blend")
+    assert mol.universe.trajectory is not reader
+    u = mda.Universe(
+        data_dir / "md_ppr/box.gro", data_dir / "md_ppr/first_5_frames.xtc"
+    )
+    for frame in [2, 3]:
+        mol.set_frame(frame)
+        expected = expected_pairs(
+            u,
+            frame,
+            donors_sel="(all) and (name N* O*)",
+            hydrogens_sel="(all) and (name H*)",
+            acceptors_sel="(all) and (name N* O*)",
+        )
+        # the reloaded reader can order bonds differently
+        assert set(map(tuple, edges(obj))) == set(map(tuple, expected))
+    assert mol.calculations._hbonds._hba_trajectory is mol.universe.trajectory
+
+
 def test_hbonds_remove(fetch):
     mol = fetch("2M6Q")
     obj = mol.calculations.hbonds().object
