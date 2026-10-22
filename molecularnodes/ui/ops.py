@@ -26,6 +26,7 @@ from ..entities import (
     ensemble,
     molecule,
 )
+from ..entities.molecule.pdbx import MultipleStructuresError
 from ..handlers import update_entities
 from ..nodes._utils import remove_style_node, styles_mapping, swap
 from ..scene.compositor import setup_compositor
@@ -56,6 +57,18 @@ DOWNLOAD_FORMATS = (
 # folder; MD topology + trajectory pairs are excluded, as which trajectory
 # belongs to which topology can't be matched up automatically
 FOLDER_IMPORT_EXTENSIONS = {".pdb", ".cif", ".bcif", ".xyz", ".sdf", ".mol"}
+
+
+def _load_structures(path: Path) -> list[Molecule]:
+    """Load a structure file, as one Molecule per structure when a .cif/.bcif
+    holds several structures in separate data blocks."""
+    try:
+        return [Molecule.load(path)]
+    except MultipleStructuresError as e:
+        return [
+            Molecule.load(path, data_block=block, name=f"{path.name}:{block}")
+            for block in e.blocks
+        ]
 
 
 # operator that is called by the 'button' press which calls the fetch function
@@ -387,9 +400,16 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                         f"{int(mol.props.n_frames)} frames from '{self.trajectory}'."
                     )
                 else:
-                    mol = Molecule.load(topology)
-                    message = f"Imported '{self.filepath}' as {mol.name}"
-                mols = [mol]
+                    mols = _load_structures(topology)
+                    mol = mols[-1]
+                    if len(mols) == 1:
+                        message = f"Imported '{self.filepath}' as {mol.name}"
+                    else:
+                        message = (
+                            f"Imported {len(mols)} structures from '{self.filepath}'"
+                        )
+                if not mols:
+                    mols = [mol]
             else:
                 codes = [code.strip() for code in self.code.split(",") if code.strip()]
                 if not codes:
@@ -453,11 +473,11 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         session = get_session(context)
         for file in self.files:
             try:
-                mol = Molecule.load(Path(self.directory, file.name))
-                shared_tree = self._setup_molecule(mol, shared_tree)
-                if self.objects_only:
-                    session.remove_entity(mol.uuid)
-                imported += 1
+                for mol in _load_structures(Path(self.directory, file.name)):
+                    shared_tree = self._setup_molecule(mol, shared_tree)
+                    if self.objects_only:
+                        session.remove_entity(mol.uuid)
+                    imported += 1
             except Exception as e:
                 self.report({"WARNING"}, message=f"Failed importing {file.name}: {e}")
 
@@ -506,8 +526,9 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
             for i, path in enumerate(files):
                 window_manager.progress_update(i)
                 try:
-                    mol = Molecule.load(path)
-                    shared_tree = self._setup_molecule(mol, shared_tree)
+                    mols = _load_structures(path)
+                    for mol in mols:
+                        shared_tree = self._setup_molecule(mol, shared_tree)
                 except Exception as e:
                     failed += 1
                     self.report(
@@ -515,19 +536,21 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                         f"Failed importing {path.relative_to(folder)}: {e}",
                     )
                     continue
-                obj = mol.object
-                for c in obj.users_collection:
-                    c.objects.unlink(obj)
-                collection_for(path.parent).objects.link(obj)
-                imported += 1
-                if self.objects_only:
-                    session.remove_entity(mol.uuid)
-                    del mol
-                    # the entity and its managers reference each other, so the
-                    # universes only free on a cycle collection - don't let
-                    # hundreds of them pile up while the import runs
-                    if imported % 50 == 0:
-                        gc.collect()
+                for mol in mols:
+                    obj = mol.object
+                    for c in obj.users_collection:
+                        c.objects.unlink(obj)
+                    collection_for(path.parent).objects.link(obj)
+                    imported += 1
+                    if self.objects_only:
+                        session.remove_entity(mol.uuid)
+                        del mol
+                        # the entity and its managers reference each other, so the
+                        # universes only free on a cycle collection - don't let
+                        # hundreds of them pile up while the import runs
+                        if imported % 50 == 0:
+                            gc.collect()
+                del mols
         finally:
             window_manager.progress_end()
             if self.objects_only:

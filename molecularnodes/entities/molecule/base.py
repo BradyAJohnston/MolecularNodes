@@ -742,6 +742,7 @@ class Molecule(MolecularEntity):
         selection: str | None = None,
         create_object: bool = True,
         name: str | None = None,
+        data_block: str | None = None,
         **kwargs,
     ) -> "Molecule":
         """Load a single structure file, or an MD topology + trajectory.
@@ -769,6 +770,9 @@ class Molecule(MolecularEntity):
             Atom selection to restrict the style to, passed to :meth:`add_style`.
         create_object : bool, optional
             Whether to create the Blender object immediately (MD route only).
+        data_block : str | None, optional
+            For a ``.cif``/``.bcif`` with several structures in separate data blocks,
+            the name of the block to load (see :meth:`from_file`).
         kwargs : dict, optional
             Additional keyword arguments to pass to the `MDAnalysis.Universe()` constructor.
 
@@ -778,7 +782,7 @@ class Molecule(MolecularEntity):
             The loaded entity.
         """
         if coordinates is None:
-            entity = cls.from_file(topology, name=name)
+            entity = cls.from_file(topology, name=name, data_block=data_block)
         else:
             entity = cls(
                 universe=mda.Universe(topology, coordinates, **kwargs),
@@ -796,6 +800,7 @@ class Molecule(MolecularEntity):
         cls,
         file_path: str | Path | io.BytesIO,
         name: str | None = None,
+        data_block: str | None = None,
     ) -> "Molecule":
         """Load a single structure file into a Universe-backed entity.
 
@@ -817,6 +822,13 @@ class Molecule(MolecularEntity):
             Path to the structure file (or an in-memory ``bcif`` buffer).
         name : str | None, optional
             Name for the Blender object. Defaults to the file name (extension included).
+        data_block : str | None, optional
+            For a ``.cif``/``.bcif`` with several structures in separate data blocks,
+            the name of the block to load. Blocks without atoms (such as restraint
+            definitions) are skipped, so this is only needed when more than one
+            block holds a structure; otherwise a
+            :class:`~molecularnodes.entities.molecule.pdbx.MultipleStructuresError`
+            listing the blocks is raised.
 
         Returns
         -------
@@ -855,7 +867,7 @@ class Molecule(MolecularEntity):
                 )
             return cls(universe, name=name or Path(file_path).name)
 
-        reader = read_structure(file_path)
+        reader = read_structure(file_path, data_block=data_block)
         universe = universe_from_atoms(reader.array)
         if name is None:
             name = Path(file_path).name if not isinstance(file_path, io.BytesIO) else ""
@@ -912,6 +924,7 @@ class Molecule(MolecularEntity):
         # record the source so the entity can be reloaded into a fresh session
         if not isinstance(file_path, io.BytesIO):
             self.props.filepath = str(file_path)
+        self.props.data_block = getattr(reader, "_data_block", None) or ""
 
     def assemblies(self, as_array: bool = False):
         """Get the biological assemblies parsed from the source file.
@@ -1440,6 +1453,7 @@ class Molecule(MolecularEntity):
                     # so it can be rebuilt via the biotite reader + converter on restore.
                     if self.props.filepath:
                         state["_structure_filepath"] = self.props.filepath
+                        state["_structure_data_block"] = self.props.data_block
                     if self.props.code:
                         state["_structure_code"] = self.props.code
                         state["_structure_database"] = self.props.database
@@ -1514,6 +1528,7 @@ class Molecule(MolecularEntity):
             filepath = state.pop("_structure_filepath", None)
             code = state.pop("_structure_code", None)
             database = state.pop("_structure_database", "rcsb")
+            data_block = state.pop("_structure_data_block", None) or None
             try:
                 if filepath:
                     source = path_resolve(filepath)
@@ -1521,7 +1536,9 @@ class Molecule(MolecularEntity):
                     source = StructureDownloader().download(
                         code=code, format="bcif", database=database or "rcsb"
                     )
-                self.universe = universe_from_atoms(read_structure(source).array)
+                self.universe = universe_from_atoms(
+                    read_structure(source, data_block=data_block).array
+                )
                 if frame is not None:
                     self.universe.trajectory[frame]
             except Exception as e:
