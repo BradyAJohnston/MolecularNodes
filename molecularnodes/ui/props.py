@@ -306,6 +306,12 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         default="",
         options={"HIDDEN"},
     )
+    data_block: StringProperty(  # type: ignore
+        name="Data Block",
+        description="Data block of a multi-structure CIF file this entity was loaded from",
+        default="",
+        options={"HIDDEN"},
+    )
     database: StringProperty(  # type: ignore
         name="Database",
         description="Database this structure was fetched from, used to reload it",

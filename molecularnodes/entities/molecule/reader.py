@@ -13,7 +13,9 @@ from ...utils import count_value_changes
 logger = logging.getLogger(__name__)
 
 
-def read_structure(file_path: str | Path | BytesIO) -> "ReaderBase":
+def read_structure(
+    file_path: str | Path | BytesIO, data_block: str | None = None
+) -> "ReaderBase":
     """Open a structure file and return the appropriate reader for its format.
 
     Dispatches on the file suffix to the biotite-backed reader that can parse it
@@ -24,6 +26,9 @@ def read_structure(file_path: str | Path | BytesIO) -> "ReaderBase":
     ----------
     file_path : str | Path | BytesIO
         Path to the structure file, or an in-memory ``bcif`` buffer.
+    data_block : str | None, optional
+        For mmCIF/BinaryCIF files with several structures in separate data
+        blocks, the name of the block to read.
 
     Returns
     -------
@@ -33,20 +38,21 @@ def read_structure(file_path: str | Path | BytesIO) -> "ReaderBase":
     Raises
     ------
     InvalidFileError
-        If the file format is not supported.
+        If the file format is not supported, or (as ``MultipleStructuresError``)
+        the file holds several structures and no ``data_block`` was given.
     """
     # imported lazily: pdb/pdbx/sdf import ReaderBase from this module
     from . import pdb, pdbx, sdf
 
     if isinstance(file_path, BytesIO):
-        return pdbx.PDBXReader(file_path)
+        return pdbx.PDBXReader(file_path, data_block=data_block)
 
     if isinstance(file_path, str):
         file_path = Path(file_path)
 
     match file_path.suffix:
         case ".cif" | ".bcif":
-            return pdbx.PDBXReader(file_path)
+            return pdbx.PDBXReader(file_path, data_block=data_block)
         case ".pdb":
             return pdb.PDBReader(file_path)
         case ".sdf" | ".mol":
