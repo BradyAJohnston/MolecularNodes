@@ -43,7 +43,9 @@ jobs:
               run: |
                   uv sync --all-extras
                   if [ "${{ inputs.daily }}" = "true" ]; then
-                    uv pip install "bpy==${{ inputs.version }}.*" --extra-index-url https://bradyajohnston.github.io/dailybpy/ --index-strategy unsafe-best-match --prerelease=allow
+                    # dailybpy only hosts the most recent build, so skip the uv cache restored
+                    # by setup-uv, which can point at a build that has since been deleted
+                    uv pip install "bpy==${{ inputs.version }}.*" --refresh-package bpy --extra-index-url https://bradyajohnston.github.io/dailybpy/ --index-strategy unsafe-best-match --prerelease=allow
                   else
                     uv pip install "bpy==${{ inputs.version }}.*"
                   fi
