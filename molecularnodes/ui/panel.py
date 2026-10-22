@@ -20,6 +20,9 @@ def import_options(layout: UILayout) -> None:
         "mn.import_molecule", text="Fetch from AlphaFold", icon="IMPORT"
     )
     op.database = "alphafold"
+    op = online.operator("mn.import_molecule", text="Fetch from PubChem", icon="IMPORT")
+    op.method = "fetch"
+    op.database = "pubchem"
 
     op = layout.operator("mn.import_molecule", text="Import Local File", icon="IMPORT")
     op.method = "local"
