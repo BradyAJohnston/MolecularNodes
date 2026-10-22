@@ -181,7 +181,8 @@ Per-molecule playback properties, all stored on the Blender object: `frame`,
 
 ```python
 traj = mn.Molecule(u)
-traj.calculations.dssp(updating=True)  # secondary structure per frame, if cartoon/ribbon needs it
+# secondary structure per frame, if cartoon/ribbon needs it
+traj.calculations.dssp(updating=True)
 traj.subframes, traj.interpolate, traj.average = 1, True, 1
 traj.add_style("cartoon", color="common")
 canvas.fps = 24
