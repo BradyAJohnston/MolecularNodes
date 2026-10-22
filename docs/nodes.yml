@@ -53,6 +53,16 @@ Style Sticks:
     Each bond terminates cleanly in a half sphere for a typical stick representation of the atoms and bonds
   videos:
     - https://imgur.com/iNqE87M
+Style HBonds:
+  description: >-
+    Draws hydrogen bonds as dashed cylinders between each hydrogen and its acceptor. The bonds are
+    computed by `MDAnalysis.analysis.hydrogenbonds` with `mol.hbonds.init()` (or the Hydrogen Bonds
+    calculation panel) and stored as edges on a data object that is passed in as `Data Object::Object`.
+    Adding the node in the GUI initializes the calculation and fills in the data object. The data object
+    holds only which atoms are bonded, with positions sampled from the `Atoms::Geometry` by index, so the
+    bonds follow any movement of the atoms upstream of the node. The atoms must be in their original order,
+    so use the `Selection::Bool` rather than deleting atoms before this node. A bond is shown when both of
+    its atoms are selected. Structures need explicit hydrogens.
 Separate Atoms:
   description: >-
     Separate the input atoms into the `Atoms::Geometry` and `Inverted::Geometry` based on the input `Selection::Bool`. For simply styling this

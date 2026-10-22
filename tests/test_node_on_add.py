@@ -113,3 +113,32 @@ def test_assembly_instance_without_entity_is_untouched():
     node_handlers._process_pending()
     assert node.inputs["Data Object"].default_value is None
     assert not node_handlers._pending
+
+
+def test_style_hbonds_add_initializes_hbonds(fetch):
+    node_handlers._pending.clear()
+    mol = fetch("2M6Q")
+    hbonds = mol.calculations._hbonds
+    assert not hbonds.is_setup
+
+    tree = _import_asset("Style HBonds")
+    node = _new_group_node(tree, host=mol.modifier_node_tree)
+    node_handlers._process_pending()
+
+    assert hbonds.is_setup
+    assert node.inputs["Data Object"].default_value == hbonds.object
+    assert len(hbonds.object.data.edges) > 0
+    # the style node's default material is still set alongside
+    assert node.inputs["Material"].default_value is not None
+
+
+def test_style_hbonds_add_without_hydrogens(fetch):
+    node_handlers._pending.clear()
+    mol = fetch("1l58")
+    tree = _import_asset("Style HBonds")
+    node = _new_group_node(tree, host=mol.modifier_node_tree)
+    node_handlers._process_pending()
+
+    assert not mol.calculations._hbonds.is_setup
+    assert node.inputs["Data Object"].default_value is None
+    assert node.get(node_handlers._MARKER)

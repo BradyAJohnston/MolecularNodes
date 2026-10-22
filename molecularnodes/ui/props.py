@@ -217,6 +217,23 @@ class DSSPProperties(bpy.types.PropertyGroup):
     cancelling: BoolProperty(default=False)  # type: ignore
 
 
+class HBondProperties(bpy.types.PropertyGroup):
+    selection: StringProperty(  # type: ignore
+        name="Selection",
+        description=(
+            "MDAnalysis selection string limiting the atoms considered as "
+            "hydrogens, donors and acceptors"
+        ),
+        default="all",
+    )
+    kwargs: StringProperty(  # type: ignore
+        name="Arguments",
+        description="Other arguments to HydrogenBondAnalysis as JSON, restored with the file",
+        default="{}",
+        options={"HIDDEN"},
+    )
+
+
 FRAME_ATTRIBUTE_SOURCES = (
     (
         "TRAJECTORY",
@@ -261,6 +278,11 @@ class CalculationItem(bpy.types.PropertyGroup):
         description="Recalculate on every frame change, rather than keeping the values from when it last ran",
         default=True,
         update=_update_entities,
+    )
+    object: PointerProperty(  # type: ignore
+        type=bpy.types.Object,
+        name="Object",
+        description="Object the calculation writes to, for one that writes an object rather than an attribute",
     )
 
 
@@ -585,6 +607,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         default="",
     )
     dssp: PointerProperty(type=DSSPProperties)  # type: ignore
+    hbonds: PointerProperty(type=HBondProperties)  # type: ignore
 
 
 class TrajectorySelectionItem(bpy.types.PropertyGroup):
@@ -689,6 +712,7 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
 
 CLASSES = [
     DSSPProperties,
+    HBondProperties,
     FrameAttributeItem,
     CalculationItem,
     MolecularNodesObjectProperties,

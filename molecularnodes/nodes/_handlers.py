@@ -65,12 +65,10 @@ def register_on_add(match: str | Callable[[str], bool], setup: NodeSetup) -> Non
     _registry.append((match, setup))
 
 
-def _lookup(name: str) -> NodeSetup | None:
+def _lookup(name: str) -> list[NodeSetup]:
+    """All setup callbacks registered for a node group, in registration order."""
     name = _DUPLICATE_SUFFIX.sub("", name)
-    for predicate, setup in _registry:
-        if predicate(name):
-            return setup
-    return None
+    return [setup for predicate, setup in _registry if predicate(name)]
 
 
 def _is_mn_source(item) -> bool:
@@ -104,7 +102,7 @@ def node_asset_import_post(ctx: bpy.types.BlendImportContext) -> None:
         tree = item.id
         if tree is None or not _is_mn_source(item):
             continue
-        if _lookup(item.name) is None:
+        if not _lookup(item.name):
             continue
         # the node instance doesn't exist yet — capture where the drop is
         # happening while the operator context is available, and defer
@@ -136,8 +134,8 @@ def _process_pending() -> None:
     """Run deferred setup callbacks on newly added node instances."""
     entries, _pending[:] = list(_pending), []
     for group_name, target_name, object_name in entries:
-        setup = _lookup(group_name)
-        if setup is None:
+        setups = _lookup(group_name)
+        if not setups:
             continue
         if target_name is not None and target_name in bpy.data.node_groups:
             hosts = [bpy.data.node_groups[target_name]]
@@ -162,12 +160,13 @@ def _process_pending() -> None:
                 # a node in a nested group has no modifier of its own, so fall
                 # back to the object that was active when the asset was dropped
                 obj = _object_using_tree(host) or fallback_obj
-                try:
-                    setup(node, obj)
-                except Exception:
-                    logger.exception(
-                        f"setup failed for node {node.name!r} in {host.name!r}"
-                    )
+                for setup in setups:
+                    try:
+                        setup(node, obj)
+                    except Exception:
+                        logger.exception(
+                            f"setup failed for node {node.name!r} in {host.name!r}"
+                        )
                 node[_MARKER] = True
     return None
 

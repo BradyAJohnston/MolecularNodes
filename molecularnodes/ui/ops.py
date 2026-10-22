@@ -1263,6 +1263,37 @@ class MN_OT_DSSP_init(Operator):
         return {"FINISHED"}
 
 
+class MN_OT_HBonds_init(Operator):
+    """
+    Operator to add hydrogen bonds as the `hbonds` calculation, or change its selection
+    """
+
+    bl_idname = "mn.hbonds_init"
+    bl_label = "Add Hydrogen Bonds"
+    bl_description = (
+        "Calculate hydrogen bonds on every frame, for the Style HBonds node, or "
+        "update the selection they are calculated for if already added"
+    )
+
+    uuid: StringProperty()  # type: ignore
+    selection: StringProperty(default="all")  # type: ignore
+
+    def execute(self, context: Context):
+        entity = get_session().get(self.uuid)
+        if entity is None:
+            return {"CANCELLED"}
+        try:
+            entity.calculations.hbonds(selection=self.selection)
+        except Exception as e:
+            self.report(
+                {"ERROR"},
+                f"Hydrogen bonds failed for selection '{self.selection}': {e}",
+            )
+            return {"CANCELLED"}
+        update_entities(context.scene)
+        return {"FINISHED"}
+
+
 class MN_OT_FrameAttribute_Remove(Operator):
     """
     Operator to remove a selection or calculation from the per-frame attributes
@@ -1498,6 +1529,7 @@ CLASSES = [
     MN_OT_Remove_Annotation,
     MN_OT_Setup_Compositor,
     MN_OT_DSSP_init,
+    MN_OT_HBonds_init,
     MN_OT_FrameAttribute_Remove,
     MN_OT_DSSP_apply,
     MN_OT_DSSP_cancel,

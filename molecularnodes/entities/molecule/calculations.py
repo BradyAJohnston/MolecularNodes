@@ -2,7 +2,8 @@
 Calculations that write attributes on a ``Molecule``
 
 A calculation is a function that takes the ``Universe`` and returns one value
-per atom, stored as an attribute under the calculation's name. An updating
+per atom, stored as an attribute under the calculation's name, or one that
+writes a data object itself and returns None, such as hydrogen bonds. An updating
 calculation runs on every frame change; one that isn't keeps the values from
 when it last ran, which is when it was added, refreshed or set to update.
 
@@ -15,17 +16,19 @@ built-in ones such as DSSP are rebuilt from their saved settings.
 from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Callable, Iterator
+import bpy
 import numpy as np
 from databpy import LinkedObjectError
 from MDAnalysis import Universe
 from .dssp import DSSPCalculation
+from .hbonds import HBondCalculation
 
 if TYPE_CHECKING:
     from .base import Molecule
 
 logger = logging.getLogger(__name__)
 
-Calculation = Callable[[Universe], np.ndarray]
+Calculation = Callable[[Universe], np.ndarray | None]
 
 
 class CalculationManager:
@@ -45,6 +48,7 @@ class CalculationManager:
         self._entity = entity
         self._funcs: dict[str, Calculation] = {}
         self._dssp = DSSPCalculation(entity)
+        self._hbonds = HBondCalculation(entity)
 
     def dssp(
         self, selection: str | None = None, *, updating: bool | None = None
@@ -82,6 +86,52 @@ class CalculationManager:
         self._dssp._init(selection=selection, updating=updating)
         return self._dssp
 
+    def hbonds(
+        self, selection: str | None = None, *, updating: bool | None = None, **kwargs
+    ) -> HBondCalculation:
+        """Hydrogen bonds from MDAnalysis, as the `hbonds` calculation.
+
+        Sets hydrogen bonds up if they aren't already, and changes only the
+        settings given. The calculation writes the bonds as edges on a data
+        object, `HBondCalculation.object`, for the `Style HBonds` node to draw.
+
+        Parameters
+        ----------
+        selection : str, optional
+            MDAnalysis selection string limiting the atoms considered as
+            hydrogens, donors and acceptors, `"all"` when setting up.
+        updating : bool, optional
+            Whether to recalculate on every frame change, `True` when setting
+            up. Otherwise the bonds are kept from when it last ran.
+        **kwargs
+            Passed to `MDAnalysis.analysis.hydrogenbonds.HydrogenBondAnalysis`,
+            overriding the defaults and any given before. By default hydrogens
+            (H or D), donors and acceptors (N or O) are selected by element,
+            donors are paired with hydrogens by distance, and selections are not
+            updated per frame.
+
+        Returns
+        -------
+        HBondCalculation
+            The hydrogen bond calculation, whose `object` is the `Data Object`
+            for a `Style HBonds` node
+
+        Raises
+        ------
+        ValueError
+            When there are no hydrogens, which the analysis requires
+
+        Examples
+        --------
+        ```python
+        hbonds = mol.calculations.hbonds(d_a_cutoff=3.5)
+        with mol.tree.reset() as (atoms, join):
+            atoms >> StyleHBonds(data_object=hbonds.object) >> join
+        ```
+        """
+        self._hbonds._init(selection=selection, updating=updating, **kwargs)
+        return self._hbonds
+
     @property
     def ui_items(self):
         """The saved calculation items on the object, ``obj.mn.calculations``."""
@@ -101,6 +151,7 @@ class CalculationManager:
         *,
         updating: bool = True,
         refresh: bool = True,
+        data_object: bpy.types.Object | None = None,
     ) -> None:
         """Add a calculation, replacing any with the same name.
 
@@ -111,13 +162,17 @@ class CalculationManager:
         ----------
         name : str
             Name of the attribute the calculation writes.
-        func : Callable[[Universe], np.ndarray]
-            Function returning one value per atom.
+        func : Callable[[Universe], np.ndarray | None]
+            Function returning one value per atom, or writing `data_object`
+            and returning None.
         updating : bool, default=True
             Whether to recalculate on every frame change.
         refresh : bool, default=True
             Whether to run a calculation that isn't updating now. Without this
             the attribute keeps its current values until the next refresh.
+        data_object : bpy.types.Object, optional
+            Object the calculation writes rather than an attribute, recorded
+            with its settings on the object.
         """
         self._funcs[name] = func
         try:
@@ -131,6 +186,8 @@ class CalculationManager:
             item.name = name
         if item.updating != updating:
             item.updating = updating
+        if item.object != data_object:
+            item.object = data_object
         if refresh and not updating:
             self.refresh(name)
         self._entity._sync_frame_attributes()
@@ -162,11 +219,15 @@ class CalculationManager:
         values = {}
         for name in names:
             try:
-                values[name] = self._funcs[name](self._entity.universe)
+                value = self._funcs[name](self._entity.universe)
             except Exception as e:
                 logger.error(
                     f"Failed to update calculation '{name}': {e}", exc_info=True
                 )
+                continue
+            # calculations that write an object return no attribute values
+            if value is not None:
+                values[name] = value
         return values
 
     def _frame_values(self) -> dict[str, np.ndarray]:
@@ -189,6 +250,9 @@ class CalculationManager:
         if name == "sec_struct":
             # removing DSSP's calculation removes DSSP, it can be set up again
             self._dssp = DSSPCalculation(self._entity)
+        elif name == "hbonds":
+            # its data object keeps the bonds it last had
+            self._hbonds = HBondCalculation(self._entity)
         try:
             items = self.ui_items
         except (LinkedObjectError, AttributeError):

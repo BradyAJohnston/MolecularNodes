@@ -89,6 +89,14 @@ class MN_MT_AddFrameAttribute(bpy.types.Menu):
         if obj is not None:
             op.uuid = obj.uuid
         op.selection = "protein"
+        row = layout.row()
+        row.enabled = (
+            hasattr(entity, "calculations") and not entity.calculations._hbonds.is_setup
+        )
+        op = row.operator("mn.hbonds_init", text="Hydrogen Bonds")
+        if obj is not None:
+            op.uuid = obj.uuid
+        op.selection = "all"
 
 
 class MN_MT_Import(bpy.types.Menu):
@@ -280,9 +288,27 @@ def layout_frame_attribute_details(layout: UILayout, traj: Molecule) -> None:
     if item.name == "sec_struct" and traj.calculations._dssp.is_setup:
         layout_dssp_settings(layout, traj)
         return
+    if item.name == "hbonds" and traj.calculations._hbonds.is_setup:
+        layout_hbonds_settings(layout, traj)
+        return
     calculation = obj.mn.calculations.get(item.name)
     if calculation is not None:
         layout.prop(calculation, "updating", text="Update Every Frame")
+
+
+def layout_hbonds_settings(layout: UILayout, traj: Molecule) -> None:
+    """Draw the settings of the `hbonds` calculation."""
+    obj = traj.object
+    props = traj.props.hbonds
+    layout.prop(obj.mn.calculations["hbonds"], "updating", text="Update Every Frame")
+    row = layout.row()
+    row.prop(props, "selection")
+    op = row.operator("mn.hbonds_init", text="", icon="FILE_REFRESH")
+    op.uuid = obj.uuid
+    op.selection = props.selection
+    data_object = traj.calculations._hbonds.object
+    if data_object is not None:
+        layout.label(text=f"{len(data_object.data.edges)} hydrogen bonds")
 
 
 def layout_dssp_settings(layout: UILayout, traj: Molecule) -> None:
@@ -678,7 +704,15 @@ class MN_UL_FrameAttributesList(bpy.types.UIList):
             row = layout.row()
             source = item.bl_rna.properties["source"].enum_items[item.source]
             row.label(text=item.name, icon=source.icon)
-            if attribute is None:
+            calculation = (
+                obj.mn.calculations.get(item.name)
+                if item.source == "CALCULATION"
+                else None
+            )
+            if calculation is not None and calculation.object is not None:
+                # a calculation that writes an object rather than an attribute
+                row.label(text="Object", icon="OBJECT_DATA")
+            elif attribute is None:
                 # not stored yet, or a selection that failed
                 row.label(text="")
             else:
