@@ -1166,10 +1166,16 @@ class Molecule(MolecularEntity):
         """Bake a range of trajectory frames into a collection of frame objects.
 
         Each object in the returned collection holds the atom positions (in Blender world
-        units) for a single frame, in the same vertex order as this molecule's mesh. The
-        collection can then be read inside geometry nodes (e.g. with the *Animate Frames*
-        node) to drive positions from baked data, rather than updating the ``Universe``
+        units) for a single frame, in the same vertex order as this molecule's mesh,
+        along with the attributes written on frame changes (see `frame_attributes`):
+        those read from the trajectory, selections and calculations. The collection
+        can then be read inside geometry nodes (e.g. with the *Animate Frames* node)
+        to drive positions from baked data, rather than updating the ``Universe``
         every scene frame.
+
+        As in playback, a trajectory attribute that a frame lacks keeps the values
+        of the last frame that had it, and selections and calculations that don't
+        update on frame changes keep the values they have now.
 
         Re-baking replaces any objects previously baked into the same collection.
 
@@ -1209,20 +1215,82 @@ class Molecule(MolecularEntity):
         for obj in list(frames.objects):
             bpy.data.objects.remove(obj, do_unlink=True)
 
+        attributes = self.object.data.attributes
+        static = {
+            name: db.named_attribute(self.object, name)
+            for name in self.calculations
+            if not self.calculations.updating(name) and name in attributes
+        }
+        values: dict[str, np.ndarray] = {}
+        sources: dict[str, str] = {}
+
         # bake each requested frame, restoring the current frame afterwards
         original_uframe = self.uframe
         try:
             for i, frame in enumerate(range(start, stop, step)):
                 self.uframe = frame
-                db.create_object(
+                obj = db.create_object(
                     vertices=self._scaled_position,
                     name=f"{self.name}_frame_{i:04d}",
                     collection=frames,
                 )
+                # trajectory values a frame lacks carry over from earlier frames
+                trajectory = self.frame_manager._read_frame(frame)
+                trajectory.pop("position")
+                selections = {
+                    name: _ag_to_bool(ag)
+                    for name, ag in self.selections.atomgroups.items()
+                }
+                calculations = {**self.calculations._frame_values(), **static}
+                for source, frame_values in (
+                    ("TRAJECTORY", trajectory),
+                    ("SELECTION", selections),
+                    ("CALCULATION", calculations),
+                ):
+                    values.update(frame_values)
+                    sources.update(dict.fromkeys(frame_values, source))
+                self._store_baked_attributes(obj, values, sources)
         finally:
             self.uframe = original_uframe
 
         return frames
+
+    def _store_baked_attributes(
+        self,
+        obj: bpy.types.Object,
+        values: dict[str, np.ndarray],
+        sources: dict[str, str],
+    ) -> None:
+        """Store the per-frame attributes of a baked frame on its object.
+
+        Each attribute gets the type it has on this molecule's mesh.
+
+        Parameters
+        ----------
+        obj : bpy.types.Object
+            The baked frame's object
+        values : dict[str, np.ndarray]
+            Values by attribute name
+        sources : dict[str, str]
+            Source of each attribute, by name: `"TRAJECTORY"`, `"SELECTION"` or
+            `"CALCULATION"`
+        """
+        attributes = self.object.data.attributes
+        for name, value in values.items():
+            attribute = attributes.get(name)
+            if attribute is not None:
+                atype = attribute.data_type
+            elif sources[name] == "SELECTION":
+                atype = db.AttributeTypes.BOOLEAN
+            else:
+                atype = None
+            try:
+                db.store_named_attribute(obj, data=value, name=name, atype=atype)
+            except Exception as e:
+                # as in playback, trajectory values Blender can't store are expected
+                expected = sources[name] == "TRAJECTORY" and isinstance(e, ValueError)
+                level = logging.DEBUG if expected else logging.ERROR
+                logger.log(level, f"Skipping baked attribute '{name}': {e}")
 
     def _update_trajectory_positions(self, frame: int) -> dict[str, np.ndarray]:
         """Update trajectory positions for the given frame.

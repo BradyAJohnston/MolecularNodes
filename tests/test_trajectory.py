@@ -105,6 +105,72 @@ class TestTrajectory:
         with pytest.raises(ValueError):
             traj.frames_to_collection(step=0)
 
+    def test_frames_to_collection_attributes(self, universe):
+        traj = mn.entities.Molecule(universe, name="TestFramesAttributes")
+        traj.selections.from_string("around 3.5 protein", name="near")
+        traj.selections.from_string("resid 1", name="first", updating=False)
+        traj.calculations["x"] = lambda u: u.atoms.positions[:, 0].copy()
+        traj.calculations.add(
+            "frame_number",
+            lambda u: np.full(u.atoms.n_atoms, u.trajectory.frame),
+            updating=False,
+        )
+        bpy.context.scene.frame_set(1)
+        traj.uframe = 0
+        frame_number = traj.named_attribute("frame_number").copy()
+
+        frames = traj.frames_to_collection()
+        for frame in range(traj.universe.trajectory.n_frames):
+            obj = frames.objects[f"{traj.name}_frame_{frame:04d}"]
+            traj.uframe = frame
+            # selections and updating calculations are evaluated at the frame
+            assert np.array_equal(
+                databpy.named_attribute(obj, "near"),
+                np.isin(
+                    traj.atoms.ix, traj.universe.select_atoms("around 3.5 protein").ix
+                ),
+            )
+            assert np.array_equal(
+                databpy.named_attribute(obj, "first"), traj.atoms.resids == 1
+            )
+            assert np.allclose(
+                databpy.named_attribute(obj, "x"), traj.atoms.positions[:, 0]
+            )
+            # a calculation that doesn't update keeps the values it has now
+            assert np.array_equal(
+                databpy.named_attribute(obj, "frame_number"), frame_number
+            )
+            # attributes have the type they have on the molecule
+            for name in ["near", "first", "x", "frame_number", "sec_struct"]:
+                assert (
+                    obj.data.attributes[name].data_type
+                    == traj.object.data.attributes[name].data_type
+                )
+
+    def test_frames_to_collection_trr_gaps(self, tmp_path):
+        # velocities on frames 1 and 3, forces on frame 2, neither on frame 0
+        u = self._write_trr(tmp_path / "gaps.trr", (1, 3), (2,))
+        reference = mda.Universe(
+            data_dir / "md_ppr/box.gro", str(tmp_path / "gaps.trr")
+        )
+        vel = {f: reference.trajectory[f].velocities.copy() for f in (1, 3)}
+        force = reference.trajectory[2].forces.copy()
+
+        traj = mn.entities.Molecule(u, name="TestFramesGaps")
+        # baking doesn't depend on which frames have been played back
+        frames = traj.frames_to_collection()
+        objects = [frames.objects[f"{traj.name}_frame_{f:04d}"] for f in range(5)]
+        assert "velocity" not in objects[0].data.attributes
+        assert "force" not in objects[1].data.attributes
+        # frames without velocities or forces keep those of earlier frames
+        for frame, shown in {1: 1, 2: 1, 3: 3, 4: 3}.items():
+            assert np.allclose(
+                databpy.named_attribute(objects[frame], "velocity"),
+                vel[shown] * traj.world_scale,
+            )
+        for frame in (2, 3, 4):
+            assert np.allclose(databpy.named_attribute(objects[frame], "force"), force)
+
     def test_attributes_added(self, universe):
         traj = mn.entities.Molecule(universe)
         attributes = traj.list_attributes()

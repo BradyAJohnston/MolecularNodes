@@ -728,7 +728,8 @@ class MN_OT_Frames_To_Collection(bpy.types.Operator):
     bl_label = "Bake Frames to Collection"
     bl_description = (
         "Bake a range of trajectory frames into a collection of objects (one per frame) "
-        "whose positions can be read inside geometry nodes with the Animate Frames node"
+        "with the positions and per-frame attributes, which can be read inside geometry "
+        "nodes with the Animate Frames node"
     )
     bl_options = {"REGISTER", "UNDO"}
 
