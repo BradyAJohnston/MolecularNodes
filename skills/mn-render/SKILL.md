@@ -253,6 +253,8 @@ This recipe gives clean, evenly lit figures from any viewpoint (used for the Ali
 Molecules PR):
 
 ```python
+from molecularnodes.nodes import geometry as mg
+
 canvas = mn.Canvas(
     mn.scene.Cycles(samples=64, device="GPU"),  # falls back to CPU without a GPU
     resolution=(1000, 900),
@@ -261,14 +263,25 @@ canvas = mn.Canvas(
 )
 canvas.world.hdri_strength = 1.0  # the preset uses 1.5
 
+ref = mn.Molecule.fetch("4HHB")  # haemoglobin
+other = mn.Molecule.fetch("1A6M")  # myoglobin
+other.align_to(ref, fixed_selection="chainID A")  # onto the alpha chain
+
 mat = mn.material.AmbientOcclusion()  # one instance, shared by every style
 context, focus, moved = (0.6, 0.6, 0.63, 1), (0.35, 0.6, 0.95, 1), (1.0, 0.45, 0.1, 1)
 ref.add_style(
     "cartoon", selection="protein and not chainID A", color=context, material=mat
 )
 ref.add_style("cartoon", selection="protein and chainID A", color=focus, material=mat)
-ref.add_style("ball_and_stick", selection="resname HEM", color=context, material=mat)
 other.add_style("cartoon", selection="protein", color=moved, material=mat)
+# element colours for the haems, with carbons in their protein's colour
+for mol, carbon in ((ref, context), (other, moved)):
+    mol.add_style(
+        "ball_and_stick",
+        selection="resname HEM",
+        color=lambda carbon=carbon: mg.ColorElement(c=carbon),
+        material=mat,
+    )
 
 bpy.context.view_layer.update()
 canvas.look_at(ref, viewpoint="back")  # orient
@@ -287,8 +300,10 @@ canvas.snapshot("closeup.png")
 - **Pick the viewpoint from a contact sheet.** Render the six named viewpoints at
   `render_scale=25`, tile them with PIL and look, rather than guessing Euler angles.
 - **One idea per colour:** neutral grey for context, one saturated colour per subject.
-  Show ligands or cofactors (e.g. haem) as `ball_and_stick` in their protein's colour;
-  they make good visual checks, e.g. haems landing on each other after an alignment.
+  Show ligands or cofactors (e.g. haem) as `ball_and_stick` coloured by element with
+  `mg.ColorElement(c=...)` (`from molecularnodes.nodes import geometry as mg`), which
+  keeps carbons in their protein's colour. They make good visual checks, e.g. haems
+  landing on each other after an alignment.
 - **Before/after panels** keep the viewpoint fixed and only refit. Tile them with PIL
   onto white (the PNGs may have alpha) with a short title per panel.
 
