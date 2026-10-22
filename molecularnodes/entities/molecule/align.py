@@ -37,11 +37,15 @@ class AlignResult:
         RMSD in Å between the anchor atoms after the fit.
     n_anchors : int
         Number of atom pairs the final fit was made on.
+    merged_chains : bool
+        Whether the selections had different numbers of chains and were each
+        aligned as one joined chain.
     """
 
     matrix: np.ndarray
     rmsd: float
     n_anchors: int
+    merged_chains: bool = False
 
 
 def atom_array_from_atoms(atoms: mda.AtomGroup) -> struc.AtomArray:
@@ -64,6 +68,17 @@ def atom_array_from_atoms(atoms: mda.AtomGroup) -> struc.AtomArray:
         array.chain_id = atoms.segids
     if hasattr(atoms, "icodes"):
         array.ins_code = atoms.icodes
+    return array
+
+
+def _as_single_chain(array: struc.AtomArray) -> struc.AtomArray:
+    """Join all chains of ``array`` into one, numbering the residues
+    consecutively so biotite doesn't split it where the numbering restarts."""
+    array = array.copy()
+    n_residues = struc.get_residue_count(array)
+    array.res_id = struc.spread_residue_wise(array, np.arange(1, n_residues + 1))
+    array.chain_id[:] = "A"
+    array.ins_code[:] = ""
     return array
 
 
@@ -105,9 +120,12 @@ def align(
     fixed_selection : str | None, optional
         MDAnalysis selection of the fixed atoms to fit on, with the same default.
 
-    The two selections must contain the same number of chains, in matching
-    order; select single chains (e.g. ``"chainID A"`` and ``"chainID H"``) to
-    align chains that are labelled differently or to align a subunit.
+    Chains are paired in order, so select matching chains on each side (e.g.
+    ``"chainID A"`` and ``"chainID H"``) to align a single subunit or chains that
+    are labelled differently. When the two selections have different numbers of
+    chains, each is joined into one chain in its original order and aligned as
+    a whole, which pairs e.g. a single-chain scFv with the separate heavy and
+    light chains of a Fab.
 
     Returns
     -------
@@ -123,14 +141,10 @@ def align(
     fixed_array = _select(fixed, fixed_selection or default, "fixed")
     mobile_array = _select(mobile, selection or default, "mobile")
 
-    n_fixed = struc.get_chain_count(fixed_array)
-    n_mobile = struc.get_chain_count(mobile_array)
-    if n_fixed != n_mobile:
-        raise ValueError(
-            f"The fixed selection has {n_fixed} chains and the mobile selection"
-            f" {n_mobile}; select matching chains on each side"
-            " (e.g. 'chainID A' and 'chainID H')"
-        )
+    merged = struc.get_chain_count(fixed_array) != struc.get_chain_count(mobile_array)
+    if merged:
+        fixed_array = _as_single_chain(fixed_array)
+        mobile_array = _as_single_chain(mobile_array)
 
     if method == "sequence":
         fitted, transform, fixed_idx, mobile_idx = struc.superimpose_homologs(
@@ -156,4 +170,6 @@ def align(
     local[:3, 3] *= fixed.world_scale
     mobile.object.matrix_world = fixed.object.matrix_world @ Matrix(local.tolist())
 
-    return AlignResult(matrix=matrix, rmsd=rmsd, n_anchors=len(fixed_idx))
+    return AlignResult(
+        matrix=matrix, rmsd=rmsd, n_anchors=len(fixed_idx), merged_chains=merged
+    )

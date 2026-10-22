@@ -1356,13 +1356,15 @@ class MN_OT_Align(Operator):
     selection: StringProperty(  # type: ignore
         name="Selection",
         description="MDAnalysis selection of the atoms to fit on in the selected"
-        " molecules. Empty uses all protein and nucleic acid chains",
+        " molecules, e.g. 'chainID H L'. Empty uses all protein and nucleic acid"
+        " chains",
         default="",
     )
     fixed_selection: StringProperty(  # type: ignore
-        name="Active Selection",
+        name="Selection",
         description="MDAnalysis selection of the atoms to fit on in the active"
-        " molecule. Empty uses all protein and nucleic acid chains",
+        " molecule, e.g. 'chainID A'. Empty uses all protein and nucleic acid"
+        " chains",
         default="",
     )
 
@@ -1388,6 +1390,44 @@ class MN_OT_Align(Operator):
             return False
         return True
 
+    def invoke(self, context, event):
+        # open a dialog first: the chains often need picking before the fit
+        return context.window_manager.invoke_props_dialog(
+            self, width=450, confirm_text="Align"
+        )
+
+    @staticmethod
+    def _chain_summary(mol: Molecule) -> str:
+        """The chains of `mol` with their residue counts, e.g. 'A 102, H 117'."""
+        polymer = mol.universe.select_atoms("protein or nucleic")
+        chains = getattr(polymer, "chainIDs", polymer.segids)
+        counts = {
+            chain: len(polymer[chains == chain].residues)
+            for chain in dict.fromkeys(chains)
+        }
+        return ", ".join(f"{chain} {n}" for chain, n in counts.items()) or "none"
+
+    def _draw_side(self, layout, label: str, mols: list, prop: str) -> None:
+        box = layout.box()
+        box.label(text=label)
+        for mol in mols:
+            col = box.column(align=True)
+            col.label(text=mol.name, icon="OBJECT_DATA")
+            col.label(text=f"Chains (residues): {self._chain_summary(mol)}")
+        box.prop(self, prop)
+
+    def draw(self, context):
+        layout = self.layout
+        fixed, mobiles = self._molecules(context)
+        layout.prop(self, "method", expand=True)
+        self._draw_side(layout, "Reference (active)", [fixed], "fixed_selection")
+        self._draw_side(layout, "Move", mobiles, "selection")
+        layout.label(
+            text="Chains are paired in order; if the counts differ, each side is"
+            " joined into one chain",
+            icon="INFO",
+        )
+
     def execute(self, context):
         fixed, mobiles = self._molecules(context)
         results = []
@@ -1404,6 +1444,7 @@ class MN_OT_Align(Operator):
                 return {"CANCELLED"}
             results.append(
                 f"{mobile.name}: RMSD {result.rmsd:.2f} Å over {result.n_anchors} atoms"
+                + (" (chains joined)" if result.merged_chains else "")
             )
         self.report({"INFO"}, f"Aligned to {fixed.name}. " + "; ".join(results))
         return {"FINISHED"}

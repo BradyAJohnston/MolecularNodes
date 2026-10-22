@@ -49,15 +49,34 @@ def test_align_recovers_transform(method):
     )
 
 
-def test_align_chain_count_mismatch():
+def test_align_select_chains():
     fixed = mn.Molecule.load(data_dir / "8H1B.cif")
     mobile = mn.Molecule.load(data_dir / "8H1B.cif")
-    with pytest.raises(ValueError, match="chains"):
-        mobile.align_to(fixed, selection="chainID A")
-
-    # selecting a single chain on each side makes them comparable
-    result = mobile.align_to(fixed, selection="chainID A", fixed_selection="chainID A")
+    mobile.object.matrix_world = _random_matrix(3)
+    result = mobile.align_to(fixed, selection="chainID B", fixed_selection="chainID B")
+    assert not result.merged_chains
     assert result.rmsd < 0.01
+    ca = "protein and name CA"
+    assert np.allclose(
+        _world_positions(mobile, ca), _world_positions(fixed, ca), atol=1e-3
+    )
+
+
+@pytest.mark.parametrize("method", ["sequence", "structure"])
+def test_align_chain_count_mismatch(method):
+    # like a Fab's separate heavy and light chains against a single-chain scFv:
+    # the mobile copy is split into two chains, the fixed one is a single chain
+    fixed, mobile = _homolog_pair()
+    mobile.universe.atoms[mobile.universe.atoms.resids > 80].chainIDs = "B"
+
+    result = mobile.align_to(fixed, method=method)
+
+    assert result.merged_chains
+    assert result.rmsd < 0.01
+    ca = "protein and name CA"
+    assert np.allclose(
+        _world_positions(mobile, ca), _world_positions(fixed, ca), atol=1e-3
+    )
 
 
 def test_align_onto_itself():
@@ -78,3 +97,10 @@ def test_op_align():
     assert np.allclose(
         _world_positions(mobile, ca), _world_positions(fixed, ca), atol=1e-3
     )
+
+
+def test_op_align_chain_summary():
+    # the dialog lists each molecule's chains to help write the selections
+    mol = mn.Molecule.load(data_dir / "8H1B.cif")
+    summary = mn.ui.ops.MN_OT_Align._chain_summary(mol)
+    assert [part.split()[0] for part in summary.split(", ")] == ["A", "B", "C", "D"]
