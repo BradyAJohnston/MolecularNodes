@@ -217,7 +217,6 @@ class Molecule(MolecularEntity):
     _mn_filepath_topology = StringObjectMNProperty("filepath_topology")
     _mn_filepath_trajectory = StringObjectMNProperty("filepath_trajectory")
     _mn_n_frames = IntObjectMNProperty("n_frames", _validate_non_negative)
-    _mn_frame_attributes = StringObjectMNProperty("frame_attributes")
     _entity_type: EntityType = EntityType.MOLECULE
     # extra `mda.Universe()` arguments for subclasses whose files can't be
     # recognised from their extension, used when restoring from a saved session
@@ -253,8 +252,6 @@ class Molecule(MolecularEntity):
         self.calculations: Dict[str, Callable] = {}
         self.world_scale = world_scale
         self._updating_in_progress = False
-        # the universe frame each per-frame attribute was last updated on, and
-        # its value range, cached until the attributes are next stored
         self.annotations = MoleculeAnnotationManager(self)
         self.frame_manager = FrameManager(self)
         self.dssp = DSSPManager(self)
@@ -682,31 +679,64 @@ class Molecule(MolecularEntity):
     def _store_extra_attributes(self) -> None:
         # TODO: enable adding of arbitrary mda.Universe attirbutes not currently applied
         values = self.frame_manager.read_and_cache(self.uframe)
-        self._record_frame_attributes(values)
+        self._sync_frame_attributes(values)
         values.pop("position")
-        self._store_frame_attributes(values)
+        self._store_frame_attributes(values, "TRAJECTORY")
 
-    def _record_frame_attributes(self, names) -> None:
-        """Add attribute names to the object's list of per-frame attributes.
+    @property
+    def frame_attributes(self) -> dict[str, str]:
+        """The attributes written on frame changes, and where each comes from.
 
-        Names are only added: an attribute that a frame lacks keeps its last
-        values, and a TRR file can gain velocities on later frames.
+        Attributes come from the trajectory (positions, and velocities, forces
+        and other per-atom values a frame has), from selections and from
+        `calculations`. The record is kept on the object as
+        `obj.mn.frame_attributes`, and listed in the Trajectory Playback panel.
+
+        Returns
+        -------
+        dict[str, str]
+            Source of each attribute by name: `"TRAJECTORY"`, `"SELECTION"` or
+            `"CALCULATION"`
+        """
+        return {item.name: item.source for item in self.object.mn.frame_attributes}
+
+    def _sync_frame_attributes(self, trajectory_names=()) -> None:
+        """Bring the object's record of attributes written on frame changes up to date.
+
+        Trajectory attributes are only added: an attribute that a frame lacks
+        keeps its last values, and a TRR file can gain velocities on later
+        frames. Selections and calculations are listed as they currently are.
 
         Parameters
         ----------
-        names : Iterable[str]
-            Names of attributes updated on this frame
+        trajectory_names : Iterable[str]
+            Names of attributes read from the trajectory on this frame
         """
         # single-frame structures are not updated per frame
         if self.frame_manager.n_frames == 1:
             return
-        known = [n for n in self._mn_frame_attributes.split(",") if n]
-        new = [n for n in names if n not in known]
-        if new:
-            self._mn_frame_attributes = ",".join(known + new)
+        items = self.object.mn.frame_attributes
+        current = [(item.name, item.source) for item in items]
+        trajectory = [name for name, source in current if source == "TRAJECTORY"]
+        trajectory += [name for name in trajectory_names if name not in trajectory]
+        wanted = [(name, "TRAJECTORY") for name in trajectory]
+        wanted += [
+            (item.name, "SELECTION") for item in self.selections.ui_items if item.name
+        ]
+        wanted += [(name, "CALCULATION") for name in self.calculations]
+        # only write when something changed, as writing redraws the panel
+        if wanted == current:
+            return
+        items.clear()
+        for name, source in wanted:
+            item = items.add()
+            item.name = name
+            item.source = source
 
-    def _store_frame_attributes(self, values: dict[str, np.ndarray]) -> None:
-        """Store per-frame attributes other than positions.
+    def _store_frame_attributes(
+        self, values: dict[str, np.ndarray], source: str
+    ) -> None:
+        """Store attributes written on frame changes, other than positions.
 
         Only the attributes given are stored. One that a frame lacks is not
         given, so an existing attribute keeps the values it was last given.
@@ -715,14 +745,22 @@ class Molecule(MolecularEntity):
         ----------
         values : dict[str, np.ndarray]
             Values by attribute name
+        source : str
+            Where the values come from: `"TRAJECTORY"`, `"SELECTION"` or
+            `"CALCULATION"`
         """
+        # selections are always boolean, other existing attributes keep their
+        # type and new ones get the type of their values
+        atype = db.AttributeTypes.BOOLEAN if source == "SELECTION" else None
         for name, value in values.items():
             try:
-                # an existing attribute keeps its type, a new one gets the type
-                # of its values
-                self.store_named_attribute(data=value, name=name)
-            except ValueError as e:
-                logger.debug(f"Skipping per-frame attribute '{name}': {e}")
+                self.store_named_attribute(data=value, name=name, atype=atype)
+            except Exception as e:
+                # values a trajectory reader has but Blender can't store are
+                # expected, a calculation or selection that can't be stored is not
+                expected = source == "TRAJECTORY" and isinstance(e, ValueError)
+                level = logging.DEBUG if expected else logging.ERROR
+                logger.log(level, f"Skipping attribute '{name}': {e}")
 
     def _create_object(self, name: str = "NewUniverseObject") -> None:
         """Create Blender mesh object (internal).
@@ -998,19 +1036,34 @@ class Molecule(MolecularEntity):
 
         return data_obj
 
-    def _update_calculations(self) -> None:
-        """Update all registered calculations for the current frame"""
+    def _calculation_values(self) -> dict[str, np.ndarray]:
+        """Values of all registered calculations for the current frame"""
+        values = {}
         for name, func in self.calculations.items():
             try:
-                self.store_named_attribute(data=func(self.universe), name=name)
+                values[name] = func(self.universe)
             except Exception as e:
                 logger.error(
                     f"Failed to update calculation '{name}': {e}", exc_info=True
                 )
+        return values
 
-    def _update_selections(self) -> None:
-        """Update all selections for the current frame."""
-        self.selections.update_attributes()
+    def _update_attributes(self, frame: int) -> None:
+        """Write the attributes of every source for the scene frame.
+
+        The trajectory goes first: it moves the universe to the frame and sets
+        positions, which selections and calculations are then computed from.
+
+        Parameters
+        ----------
+        frame : int
+            Scene frame number
+        """
+        trajectory = self._update_trajectory_positions(frame)
+        self._store_frame_attributes(trajectory, "TRAJECTORY")
+        self._store_frame_attributes(self.selections._frame_values(), "SELECTION")
+        self._store_frame_attributes(self._calculation_values(), "CALCULATION")
+        self._sync_frame_attributes(["position", *trajectory])
 
     def set_frame(self, frame: int) -> None:
         """Update trajectory state for scene frame.
@@ -1039,9 +1092,7 @@ class Molecule(MolecularEntity):
 
         try:
             self._updating_in_progress = True
-            self._update_positions(frame)
-            self._update_selections()
-            self._update_calculations()
+            self._update_attributes(frame)
             # update annotation object
             self.annotations._update_annotation_object()
             # update periodic box nodes
@@ -1117,19 +1168,7 @@ class Molecule(MolecularEntity):
 
         return frames
 
-    def _update_positions(self, frame: int) -> None:
-        """
-        Internal method to update atom positions.
-
-        Delegates to FrameManager which handles caching, interpolation,
-        averaging, and periodic corrections.
-
-        Args:
-            frame: Scene frame number
-        """
-        self._update_trajectory_positions(frame)
-
-    def _update_trajectory_positions(self, frame: int) -> None:
+    def _update_trajectory_positions(self, frame: int) -> dict[str, np.ndarray]:
         """Update trajectory positions for the given frame.
 
         This method can be overridden by subclasses to implement custom
@@ -1139,11 +1178,15 @@ class Molecule(MolecularEntity):
         ----------
         frame : int
             Scene frame number
+
+        Returns
+        -------
+        dict[str, np.ndarray]
+            Values of the frame's other trajectory attributes, to be stored
         """
         values = self.frame_manager.get_values_at_frame(frame)
-        self._record_frame_attributes(values)
         self.position = values.pop("position")
-        self._store_frame_attributes(values)
+        return values
 
     def _update_box(self) -> None:
         """Update any Periodic Box nodes in the geometry node tree."""

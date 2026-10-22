@@ -819,7 +819,7 @@ class TestTrajectory:
         bpy.context.scene.frame_set(0)
         assert "velocity" not in traj.list_attributes()
         assert "force" not in traj.list_attributes()
-        assert traj.object.mn.frame_attributes == "position"
+        assert list(traj.frame_attributes) == ["position"]
 
         # an attribute appears on the first frame that has it, and frames
         # without it keep the values last stored
@@ -835,7 +835,7 @@ class TestTrajectory:
                 assert "force" not in traj.list_attributes()
             else:
                 assert np.allclose(traj.named_attribute("force"), force)
-        assert traj.object.mn.frame_attributes == "position,velocity,force"
+        assert list(traj.frame_attributes) == ["position", "velocity", "force"]
 
         # interpolating towards a frame without velocities uses this frame's:
         # scene frame 2 is halfway from frame 1 to frame 2
@@ -871,7 +871,7 @@ class TestTrajectory:
                 writer.write(atoms)
 
         traj = mn.entities.Molecule(mda.Universe(str(path)))
-        assert traj.object.mn.frame_attributes == "position,occupancy,b_factor"
+        assert list(traj.frame_attributes) == ["position", "occupancy", "b_factor"]
         for frame in range(3):
             bpy.context.scene.frame_set(frame)
             assert np.allclose(traj.named_attribute("b_factor"), b_factors[frame])
@@ -922,7 +922,7 @@ class TestTrajectory:
         self._write_models_pdb(path, b_factors, occupancies)
 
         mol = mn.Molecule.load(path)
-        assert mol.object.mn.frame_attributes == "position,occupancy,b_factor"
+        assert list(mol.frame_attributes) == ["position", "occupancy", "b_factor"]
         self._assert_models_follow_frames(mol, b_factors, occupancies)
 
         mol.subframes = 1
@@ -952,7 +952,7 @@ class TestTrajectory:
 
         mol = mn.Molecule.load(path)
         assert "tempfactor" not in mol.universe.trajectory.ts.data
-        assert mol.object.mn.frame_attributes == "position,occupancy"
+        assert list(mol.frame_attributes) == ["position", "occupancy"]
         self._assert_models_follow_frames(mol, b_factors, occupancies)
 
     def test_ts_data_cif_models_from_file(self, tmp_path):
@@ -975,7 +975,7 @@ class TestTrajectory:
         cif.write(path)
 
         mol = mn.Molecule.load(path)
-        assert mol.object.mn.frame_attributes == "position,occupancy,b_factor"
+        assert list(mol.frame_attributes) == ["position", "occupancy", "b_factor"]
         self._assert_models_follow_frames(mol, b_factors, occupancies)
 
     def test_ts_data_pdb_models_from_file_session(self, tmp_path, session):
@@ -1059,11 +1059,69 @@ class TestTrajectory:
     def test_frame_attributes_xtc(self, universe):
         traj = mn.entities.Molecule(universe)
         bpy.context.scene.frame_set(1)
-        assert traj.object.mn.frame_attributes == "position"
+        assert list(traj.frame_attributes) == ["position"]
 
     def test_frame_attributes_single_frame(self, universe_with_bonds):
         traj = mn.entities.Molecule(universe_with_bonds)
-        assert traj.object.mn.frame_attributes == ""
+        assert list(traj.frame_attributes) == []
+
+    def test_frame_attributes_sources(self, universe):
+        traj = mn.entities.Molecule(universe)
+        traj.selections.from_string("around 5 resid 1", name="near")
+        traj.selections.from_atomgroup(universe.atoms[:10], name="first")
+        traj.calculations["com_x"] = lambda u: np.full(
+            u.atoms.n_atoms, u.atoms.center_of_mass()[0]
+        )
+        bpy.context.scene.frame_set(1)
+        assert traj.frame_attributes == {
+            "position": "TRAJECTORY",
+            "near": "SELECTION",
+            "first": "SELECTION",
+            "com_x": "CALCULATION",
+        }
+        # the same record is on the object, for the panel and saved files
+        items = traj.object.mn.frame_attributes
+        assert [(i.name, i.source) for i in items] == list(
+            traj.frame_attributes.items()
+        )
+
+        # every source is written on frame changes
+        for frame in [2, 3]:
+            bpy.context.scene.frame_set(frame)
+            u = traj.universe
+            assert np.allclose(
+                traj.named_attribute("com_x"), u.atoms.center_of_mass()[0]
+            )
+            near = u.select_atoms("around 5 resid 1")
+            assert np.array_equal(
+                np.flatnonzero(traj.named_attribute("near")), near.indices
+            )
+
+        # removing a selection or a calculation removes it from the record
+        traj.selections.remove("near")
+        assert "near" not in traj.frame_attributes
+        del traj.calculations["com_x"]
+        bpy.context.scene.frame_set(4)
+        assert traj.frame_attributes == {
+            "position": "TRAJECTORY",
+            "first": "SELECTION",
+        }
+
+    def test_frame_attributes_failing_calculation(self, universe):
+        def fails(u):
+            raise ValueError("no")
+
+        traj = mn.entities.Molecule(universe)
+        traj.calculations["fails"] = fails
+        traj.calculations["ones"] = lambda u: np.ones(u.atoms.n_atoms)
+        traj.selections.from_string("around 5 resid 1", name="near")
+        bpy.context.scene.frame_set(2)
+        assert np.all(traj.named_attribute("ones") == 1)
+        near = traj.universe.select_atoms("around 5 resid 1")
+        assert np.array_equal(
+            np.flatnonzero(traj.named_attribute("near")), near.indices
+        )
+        assert "fails" not in traj.list_attributes()
 
     def test_ts_data_builtin_collision(self, tmp_path):
         # a LAMMPS dump column named like a built-in attribute is stored with a
@@ -1092,7 +1150,7 @@ class TestTrajectory:
             bpy.context.scene.frame_set(frame)
             assert np.allclose(traj.named_attribute("ts_mass"), 100 + frame)
             assert np.array_equal(traj.named_attribute("mass"), mass)
-        assert traj.object.mn.frame_attributes == "position,ts_mass"
+        assert list(traj.frame_attributes) == ["position", "ts_mass"]
 
 
 @pytest.mark.parametrize("topology", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])
