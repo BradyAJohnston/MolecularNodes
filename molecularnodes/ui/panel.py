@@ -20,6 +20,9 @@ def import_options(layout: UILayout) -> None:
         "mn.import_molecule", text="Fetch from AlphaFold", icon="IMPORT"
     )
     op.database = "alphafold"
+    op = online.operator("mn.import_molecule", text="Fetch from PubChem", icon="IMPORT")
+    op.method = "fetch"
+    op.database = "pubchem"
 
     op = layout.operator("mn.import_molecule", text="Import Local File", icon="IMPORT")
     op.method = "local"
@@ -73,9 +76,12 @@ class MN_MT_Import(bpy.types.Menu):
 
 
 def pt_object_context(self, context):
-    # currently does and returns nothing but I've left it in so we can
-    # know where to add stuff in later for context-dependent menus
-    return None
+    obj = context.active_object
+    if obj is None or not isinstance(get_session(context).match(obj), Molecule):
+        return None
+    layout = self.layout
+    layout.separator()
+    layout.operator("mn.align")
 
 
 def ui_from_node(
@@ -201,12 +207,23 @@ def layout_trajectory_playback(
             body.template_list(
                 "MN_UL_FrameAttributesList",
                 "frame_attributes_list",
-                obj.data,
-                "attributes",
+                obj.mn,
+                "frame_attributes",
                 obj.mn,
                 "frame_attributes_index",
                 rows=3,
             )
+            layout_frame_attribute_details(body, traj)
+
+
+def layout_frame_attribute_details(layout: UILayout, traj: Molecule) -> None:
+    """Draw where the selected attribute is read or computed from."""
+    items = traj.object.mn.frame_attributes
+    index = traj.object.mn.frame_attributes_index
+    if not 0 <= index < len(items):
+        return
+    source = items[index].bl_rna.properties["source"].enum_items[items[index].source]
+    layout.label(text=f"Source: {source.name}")
 
 
 def layout_selection_manage(
@@ -539,12 +556,31 @@ class MN_UL_EntitiesList(bpy.types.UIList):
         return filtered, ordered
 
 
+# the node-editor socket dot for each attribute data type
+ATTRIBUTE_TYPE_ICONS = {
+    "FLOAT": "NODE_SOCKET_FLOAT",
+    "INT": "NODE_SOCKET_INT",
+    "INT8": "NODE_SOCKET_INT",
+    "INT16_2D": "NODE_SOCKET_INT_VECTOR",
+    "INT32_2D": "NODE_SOCKET_INT_VECTOR",
+    "BOOLEAN": "NODE_SOCKET_BOOLEAN",
+    "FLOAT_VECTOR": "NODE_SOCKET_VECTOR",
+    "FLOAT2": "NODE_SOCKET_VECTOR",
+    "FLOAT4": "NODE_SOCKET_VECTOR",
+    "FLOAT_COLOR": "NODE_SOCKET_RGBA",
+    "BYTE_COLOR": "NODE_SOCKET_RGBA",
+    "QUATERNION": "NODE_SOCKET_ROTATION",
+    "FLOAT4X4": "NODE_SOCKET_MATRIX",
+    "STRING": "NODE_SOCKET_STRING",
+}
+
+
 class MN_UL_FrameAttributesList(bpy.types.UIList):
     """
-    UIList of the attributes a trajectory updates on each frame.
+    UIList of the attributes written on frame changes.
 
-    Lists the mesh's attributes, filtered and ordered by the names recorded in
-    `obj.mn.frame_attributes`, showing each attribute's name and data type.
+    Lists the items of `obj.mn.frame_attributes`, showing each attribute's name
+    and the data type of the mesh attribute.
     """
 
     def draw_item(
@@ -559,58 +595,27 @@ class MN_UL_FrameAttributesList(bpy.types.UIList):
         index=0,
         flt_flag=0,
     ):
-        attribute = cast(bpy.types.Attribute, item)
-        data_type = (
-            attribute.bl_rna.properties["data_type"]
-            .enum_items[attribute.data_type]
-            .name
-        )
+        # `data` is the object's `mn` properties
+        obj = cast(bpy.types.Object, data.id_data)
+        attribute = obj.data.attributes.get(item.name)
         if self.layout_type in {"DEFAULT", "COMPACT"}:
             row = layout.row()
-            row.label(text=attribute.name)
-            row.label(text=data_type)
+            if attribute is None:
+                # not stored yet, or a selection that failed
+                row.label(text=item.name, icon="NONE")
+                return
+            row.label(
+                text=item.name,
+                icon=ATTRIBUTE_TYPE_ICONS.get(attribute.data_type, "NONE"),
+            )
+            row.label(
+                text=attribute.bl_rna.properties["data_type"]
+                .enum_items[attribute.data_type]
+                .name
+            )
         elif self.layout_type in {"GRID"}:
             layout.alignment = "CENTER"
-            layout.label(text=attribute.name)
-
-    def filter_items(self, context, data, propname):
-        if data is None:
-            return [], []
-        attributes = getattr(data, propname)
-        # the panel draws either the active entity or the context object, so take
-        # whichever of them owns this mesh
-        obj = next(
-            (
-                o
-                for o in (get_active_entity_object(context), context.object)
-                if o is not None and o.data == data
-            ),
-            None,
-        )
-        names = [n for n in obj.mn.frame_attributes.split(",") if n] if obj else []
-        order = {name: i for i, name in enumerate(names)}
-        filtered = [0] * len(attributes)
-        ordered = [len(names)] * len(attributes)
-        for i, attribute in enumerate(attributes):
-            if attribute.name not in order:
-                continue
-            ordered[i] = order[attribute.name]
-            if (
-                not self.filter_name
-                or (self.filter_name.lower() in attribute.name.lower())
-                is not self.use_filter_invert
-            ):
-                filtered[i] |= self.bitflag_filter_item
-        if self.use_filter_sort_alpha:
-            sort_data = [(i, a.name) for i, a in enumerate(attributes)]
-            ordered = bpy.types.UI_UL_list.sort_items_helper(sort_data, lambda e: e[1])
-        else:
-            # keep the order the attributes were first seen in
-            ranks = sorted(range(len(attributes)), key=lambda i: (ordered[i], i))
-            ordered = [0] * len(attributes)
-            for position, i in enumerate(ranks):
-                ordered[i] = position
-        return filtered, ordered
+            layout.label(text=item.name)
 
 
 class MN_PT_Entities(bpy.types.Panel):

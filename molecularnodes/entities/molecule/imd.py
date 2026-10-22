@@ -78,7 +78,7 @@ class StreamingTrajectory(Molecule):
         """
         return None
 
-    def _update_trajectory_positions(self, frame: int) -> None:
+    def _update_trajectory_positions(self, frame: int) -> dict:
         """Override to handle streaming frame updates.
 
         For streaming trajectories, the requested frame number can't be seeked
@@ -100,11 +100,12 @@ class StreamingTrajectory(Molecule):
             If there's an error reading from the IMD stream
         """
         if frame == self._last_scene_frame:
-            return
+            return {}
         try:
             self.universe.trajectory.next()
             self.position = self._scaled_position
             self._last_scene_frame = frame
+            return {}
         except StopIteration:
             logger.warning("Stream ended or connection lost")
             raise

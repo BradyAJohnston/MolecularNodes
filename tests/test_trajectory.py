@@ -7,8 +7,10 @@ import databpy
 import MDAnalysis as mda
 import numpy as np
 import pytest
+from nodebpy.nodes.geometry import SetPosition
 from numpy.testing import assert_almost_equal
 import molecularnodes as mn
+from molecularnodes.nodes.geometry import Force, Velocity
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
 
@@ -775,6 +777,24 @@ class TestTrajectory:
         )
         assert np.allclose(traj.named_attribute("force"), expected_force)
 
+    @pytest.mark.parametrize("name", ["velocity", "force"])
+    def test_velocity_force_nodes(self, name: str):
+        traj = mn.entities.Molecule(self._universe_in_memory(True, True))
+        bpy.context.scene.frame_set(2)
+        with traj.tree.reset() as (atoms, join):
+            node = Force().o.force if name == "force" else Velocity().o.velocity
+            atoms >> SetPosition(position=node) >> join
+        assert np.allclose(
+            traj.named_attribute("position", evaluate=True),
+            traj.named_attribute(name),
+        )
+
+    def test_force_node_fallback(self, universe):
+        traj = mn.entities.Molecule(universe)
+        with traj.tree.reset() as (atoms, join):
+            atoms >> SetPosition(position=Force().o.force) >> join
+        assert np.allclose(traj.named_attribute("position", evaluate=True), 0.0)
+
     def _write_trr(self, path, velocity_frames=(), force_frames=()) -> mda.Universe:
         # GROMACS writes velocities and forces at their own strides, so a TRR
         # file can have them on only some frames
@@ -799,7 +819,7 @@ class TestTrajectory:
         bpy.context.scene.frame_set(0)
         assert "velocity" not in traj.list_attributes()
         assert "force" not in traj.list_attributes()
-        assert traj.object.mn.frame_attributes == "position"
+        assert list(traj.frame_attributes) == ["position"]
 
         # an attribute appears on the first frame that has it, and frames
         # without it keep the values last stored
@@ -815,7 +835,7 @@ class TestTrajectory:
                 assert "force" not in traj.list_attributes()
             else:
                 assert np.allclose(traj.named_attribute("force"), force)
-        assert traj.object.mn.frame_attributes == "position,velocity,force"
+        assert list(traj.frame_attributes) == ["position", "velocity", "force"]
 
         # interpolating towards a frame without velocities uses this frame's:
         # scene frame 2 is halfway from frame 1 to frame 2
@@ -851,7 +871,7 @@ class TestTrajectory:
                 writer.write(atoms)
 
         traj = mn.entities.Molecule(mda.Universe(str(path)))
-        assert traj.object.mn.frame_attributes == "position,occupancy,b_factor"
+        assert list(traj.frame_attributes) == ["position", "occupancy", "b_factor"]
         for frame in range(3):
             bpy.context.scene.frame_set(frame)
             assert np.allclose(traj.named_attribute("b_factor"), b_factors[frame])
@@ -868,6 +888,123 @@ class TestTrajectory:
             occupancies[:2].mean(axis=0),
             atol=1e-4,
         )
+
+    @staticmethod
+    def _write_models_pdb(path, b_factors, occupancies):
+        # a multi-model PDB file of 50 atoms with these values for each model
+        source = mda.Universe(
+            data_dir / "md_ppr/box.gro", data_dir / "md_ppr/first_5_frames.xtc"
+        )
+        atoms = source.atoms[:50]
+        source.add_TopologyAttr("tempfactors")
+        source.add_TopologyAttr("occupancies")
+        with mda.Writer(str(path), multiframe=True) as writer:
+            for i, _ in enumerate(source.trajectory[: len(b_factors)]):
+                atoms.tempfactors = b_factors[i]
+                atoms.occupancies = occupancies[i]
+                writer.write(atoms)
+
+    @staticmethod
+    def _assert_models_follow_frames(mol, b_factors, occupancies):
+        for frame in range(len(b_factors)):
+            bpy.context.scene.frame_set(frame)
+            assert np.allclose(mol.named_attribute("b_factor"), b_factors[frame])
+            assert np.allclose(mol.named_attribute("occupancy"), occupancies[frame])
+
+    def test_ts_data_pdb_models_from_file(self, tmp_path):
+        # a multi-model PDB file loaded on its own is parsed by biotite, whose
+        # stack has the first model's values, and each frame carries its own
+        # model's B-factors and occupancies in ts.data
+        rng = np.random.default_rng(0)
+        b_factors = rng.uniform(0, 100, size=(3, 50)).round(2)
+        occupancies = rng.uniform(0, 1, size=(3, 50)).round(2)
+        path = tmp_path / "models.pdb"
+        self._write_models_pdb(path, b_factors, occupancies)
+
+        mol = mn.Molecule.load(path)
+        assert list(mol.frame_attributes) == ["position", "occupancy", "b_factor"]
+        self._assert_models_follow_frames(mol, b_factors, occupancies)
+
+        mol.subframes = 1
+        mol.interpolate = True
+        bpy.context.scene.frame_set(1)
+        assert np.allclose(
+            mol.named_attribute("b_factor"), b_factors[:2].mean(axis=0), atol=1e-4
+        )
+        assert np.allclose(
+            mol.named_attribute("occupancy"), occupancies[:2].mean(axis=0), atol=1e-4
+        )
+
+        mol.subframes = 0
+        mol.average = 1
+        bpy.context.scene.frame_set(1)
+        assert np.allclose(
+            mol.named_attribute("b_factor"), b_factors.mean(axis=0), atol=1e-4
+        )
+
+    def test_ts_data_pdb_models_from_file_identical(self, tmp_path):
+        # values that are the same in every model are not per-frame attributes
+        rng = np.random.default_rng(0)
+        b_factors = np.tile(rng.uniform(0, 100, size=50).round(2), (3, 1))
+        occupancies = rng.uniform(0, 1, size=(3, 50)).round(2)
+        path = tmp_path / "models.pdb"
+        self._write_models_pdb(path, b_factors, occupancies)
+
+        mol = mn.Molecule.load(path)
+        assert "tempfactor" not in mol.universe.trajectory.ts.data
+        assert list(mol.frame_attributes) == ["position", "occupancy"]
+        self._assert_models_follow_frames(mol, b_factors, occupancies)
+
+    def test_ts_data_cif_models_from_file(self, tmp_path):
+        import biotite.structure.io.pdb as pdb
+        import biotite.structure.io.pdbx as pdbx
+
+        rng = np.random.default_rng(1)
+        b_factors = rng.uniform(0, 100, size=(3, 50)).round(2)
+        occupancies = rng.uniform(0, 1, size=(3, 50)).round(2)
+        pdb_path = tmp_path / "models.pdb"
+        self._write_models_pdb(pdb_path, b_factors, occupancies)
+        stack = pdb.get_structure(pdb.PDBFile.read(pdb_path))
+        cif = pdbx.CIFFile()
+        pdbx.set_structure(cif, stack)
+        # the rows of `atom_site` are the atoms of each model in turn
+        atom_site = cif.block["atom_site"]
+        atom_site["B_iso_or_equiv"] = b_factors.ravel()
+        atom_site["occupancy"] = occupancies.ravel()
+        path = tmp_path / "models.cif"
+        cif.write(path)
+
+        mol = mn.Molecule.load(path)
+        assert list(mol.frame_attributes) == ["position", "occupancy", "b_factor"]
+        self._assert_models_follow_frames(mol, b_factors, occupancies)
+
+    def test_ts_data_pdb_models_from_file_session(self, tmp_path, session):
+        from molecularnodes.entities.reload import reload_entity
+
+        rng = np.random.default_rng(2)
+        b_factors = rng.uniform(0, 100, size=(3, 50)).round(2)
+        occupancies = rng.uniform(0, 1, size=(3, 50)).round(2)
+        path = tmp_path / "models.pdb"
+        self._write_models_pdb(path, b_factors, occupancies)
+
+        mol = mn.Molecule.load(path)
+        uuid = mol.uuid
+        bpy.context.scene.frame_set(2)
+        filepath = str(tmp_path / "models.blend")
+        bpy.ops.wm.save_as_mainfile(filepath=filepath)
+        del mol
+        bpy.ops.wm.open_mainfile(filepath=filepath)
+
+        # the universe is rebuilt from the file, with each model's values
+        mol = mn.session.get_session().get(uuid)
+        assert "tempfactor" in mol.universe.trajectory.ts.data
+        self._assert_models_follow_frames(mol, b_factors, occupancies)
+
+        # as is an entity reloaded from its object
+        obj = mol.object
+        mn.session.get_session().remove_entity(uuid)
+        mol = reload_entity(obj)
+        self._assert_models_follow_frames(mol, b_factors, occupancies)
 
     def test_ts_data_lammps_dump(self, tmp_path):
         # extra columns of a LAMMPS dump are read into ts.data, and `q` updates
@@ -922,11 +1059,69 @@ class TestTrajectory:
     def test_frame_attributes_xtc(self, universe):
         traj = mn.entities.Molecule(universe)
         bpy.context.scene.frame_set(1)
-        assert traj.object.mn.frame_attributes == "position"
+        assert list(traj.frame_attributes) == ["position"]
 
     def test_frame_attributes_single_frame(self, universe_with_bonds):
         traj = mn.entities.Molecule(universe_with_bonds)
-        assert traj.object.mn.frame_attributes == ""
+        assert list(traj.frame_attributes) == []
+
+    def test_frame_attributes_sources(self, universe):
+        traj = mn.entities.Molecule(universe)
+        traj.selections.from_string("around 5 resid 1", name="near")
+        traj.selections.from_atomgroup(universe.atoms[:10], name="first")
+        traj.calculations["com_x"] = lambda u: np.full(
+            u.atoms.n_atoms, u.atoms.center_of_mass()[0]
+        )
+        bpy.context.scene.frame_set(1)
+        assert traj.frame_attributes == {
+            "position": "TRAJECTORY",
+            "near": "SELECTION",
+            "first": "SELECTION",
+            "com_x": "CALCULATION",
+        }
+        # the same record is on the object, for the panel and saved files
+        items = traj.object.mn.frame_attributes
+        assert [(i.name, i.source) for i in items] == list(
+            traj.frame_attributes.items()
+        )
+
+        # every source is written on frame changes
+        for frame in [2, 3]:
+            bpy.context.scene.frame_set(frame)
+            u = traj.universe
+            assert np.allclose(
+                traj.named_attribute("com_x"), u.atoms.center_of_mass()[0]
+            )
+            near = u.select_atoms("around 5 resid 1")
+            assert np.array_equal(
+                np.flatnonzero(traj.named_attribute("near")), near.indices
+            )
+
+        # removing a selection or a calculation removes it from the record
+        traj.selections.remove("near")
+        assert "near" not in traj.frame_attributes
+        del traj.calculations["com_x"]
+        bpy.context.scene.frame_set(4)
+        assert traj.frame_attributes == {
+            "position": "TRAJECTORY",
+            "first": "SELECTION",
+        }
+
+    def test_frame_attributes_failing_calculation(self, universe):
+        def fails(u):
+            raise ValueError("no")
+
+        traj = mn.entities.Molecule(universe)
+        traj.calculations["fails"] = fails
+        traj.calculations["ones"] = lambda u: np.ones(u.atoms.n_atoms)
+        traj.selections.from_string("around 5 resid 1", name="near")
+        bpy.context.scene.frame_set(2)
+        assert np.all(traj.named_attribute("ones") == 1)
+        near = traj.universe.select_atoms("around 5 resid 1")
+        assert np.array_equal(
+            np.flatnonzero(traj.named_attribute("near")), near.indices
+        )
+        assert "fails" not in traj.list_attributes()
 
     def test_ts_data_builtin_collision(self, tmp_path):
         # a LAMMPS dump column named like a built-in attribute is stored with a
@@ -955,7 +1150,7 @@ class TestTrajectory:
             bpy.context.scene.frame_set(frame)
             assert np.allclose(traj.named_attribute("ts_mass"), 100 + frame)
             assert np.array_equal(traj.named_attribute("mass"), mass)
-        assert traj.object.mn.frame_attributes == "position,ts_mass"
+        assert list(traj.frame_attributes) == ["position", "ts_mass"]
 
 
 @pytest.mark.parametrize("topology", ["pent/prot_ion.tpr", "pent/TOPOL2.pdb"])

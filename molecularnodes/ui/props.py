@@ -2,6 +2,7 @@ import json
 import bpy
 from bpy.props import (
     BoolProperty,
+    CollectionProperty,
     EnumProperty,
     FloatProperty,
     IntProperty,
@@ -214,6 +215,27 @@ class DSSPProperties(bpy.types.PropertyGroup):
     cancelling: BoolProperty(default=False)  # type: ignore
 
 
+class FrameAttributeItem(bpy.types.PropertyGroup):
+    """An attribute that is written on frame changes, and where it comes from."""
+
+    __slots__ = []
+
+    name: StringProperty(  # type: ignore
+        name="Attribute Name",
+        description="Name of the attribute on the mesh",
+    )
+    source: EnumProperty(  # type: ignore
+        name="Source",
+        description="Where the values of the attribute come from",
+        items=(
+            ("TRAJECTORY", "Trajectory", "Read from each frame of the trajectory"),
+            ("SELECTION", "Selection", "A selection of the molecule"),
+            ("CALCULATION", "Calculation", "Calculated from the universe"),
+        ),
+        default="TRAJECTORY",
+    )
+
+
 class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
     __slots__ = []
     entities_active_index: IntProperty(  # type: ignore
@@ -303,6 +325,12 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         name="File Path",
         description="Source file this entity was loaded from, used to reload it",
         subtype="FILE_PATH",
+        default="",
+        options={"HIDDEN"},
+    )
+    data_block: StringProperty(  # type: ignore
+        name="Data Block",
+        description="Data block of a multi-structure CIF file this entity was loaded from",
         default="",
         options={"HIDDEN"},
     )
@@ -491,10 +519,10 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         default=False,
         update=_update_entities,
     )
-    frame_attributes: StringProperty(  # type: ignore
+    frame_attributes: CollectionProperty(  # type: ignore
+        type=FrameAttributeItem,
         name="Per-frame Attributes",
-        description="Comma-separated names of the attributes updated on each frame of the trajectory",
-        default="",
+        description="The attributes written on frame changes, from the trajectory, selections and calculations",
         options={"HIDDEN"},
     )
     frame_attributes_index: IntProperty(  # type: ignore
@@ -643,6 +671,7 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
 
 CLASSES = [
     DSSPProperties,
+    FrameAttributeItem,
     MolecularNodesObjectProperties,
     MolecularNodesSceneProperties,
     TrajectorySelectionItem,  # item has to be registered the ListUI and to work properly
