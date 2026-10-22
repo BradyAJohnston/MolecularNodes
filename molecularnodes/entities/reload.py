@@ -37,7 +37,7 @@ def _reload_molecule(obj: bpy.types.Object) -> Molecule:
         file_path = path_resolve(mn.filepath)
     else:
         raise ValueError("No source file or PDB code recorded for this molecule")
-    reader = read_structure(file_path)
+    reader = read_structure(file_path, data_block=mn.data_block or None)
     universe = universe_from_atoms(reader.array, frame_data=reader.model_data())
     entity = Molecule(universe, create_object=False)
     entity.object = obj

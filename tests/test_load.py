@@ -1,4 +1,5 @@
 import itertools
+import re
 import bpy
 import databpy as db
 import numpy as np
@@ -160,3 +161,53 @@ def test_cyclic_peptide_closing_bond(fetch):
     first_n, last_c = _terminal_backbone_indices(mol_linear)
     bonds = np.sort(mol_linear.universe.atoms.bonds.indices, axis=1)
     assert not np.any(np.all(bonds == sorted((first_n, last_c)), axis=1))
+
+
+RESTRAINT_BLOCK = """data_link_SS
+loop_
+  _chem_link_bond.link_id
+  _chem_link_bond.atom_1_comp_id
+  _chem_link_bond.atom_id_1
+  _chem_link_bond.atom_2_comp_id
+  _chem_link_bond.atom_id_2
+  _chem_link_bond.type
+  _chem_link_bond.value_dist
+  _chem_link_bond.value_dist_esd
+   SS 1 SG 2 SG single 2.031 0.020
+"""
+
+
+def test_cif_phenix_restraint_block(tmp_path):
+    # phenix.real_space_refine indents the tags under `loop_` and appends
+    # restraint definition blocks with no atoms after the model
+    model = re.sub(
+        r"^(_|loop_)",
+        r"  \1",
+        (data_dir / "1BNA.cif").read_text(),
+        flags=re.MULTILINE,
+    )
+    path = tmp_path / "refined.cif"
+    path.write_text(model.replace("  loop_", "loop_") + "\n" + RESTRAINT_BLOCK)
+    mol = mn.Molecule.load(path)
+    single = mn.Molecule.load(data_dir / "1BNA.cif")
+    assert mol.universe.atoms.n_atoms == single.universe.atoms.n_atoms
+    assert np.allclose(mol.position, single.position)
+
+
+def test_cif_multiple_structure_blocks(tmp_path):
+    path = tmp_path / "two.cif"
+    path.write_text(
+        (data_dir / "1BNA.cif").read_text() + "\n" + (data_dir / "1l58.cif").read_text()
+    )
+    with pytest.raises(mn.entities.molecule.pdbx.MultipleStructuresError) as e:
+        mn.Molecule.load(path)
+    assert e.value.blocks == ["1BNA", "1L58"]
+
+    for block, code in zip(e.value.blocks, ["1BNA.cif", "1l58.cif"]):
+        mol = mn.Molecule.load(path, data_block=block)
+        single = mn.Molecule.load(data_dir / code)
+        assert mol.universe.atoms.n_atoms == single.universe.atoms.n_atoms
+        assert mol.props.data_block == block
+        # reloading reads the same block back
+        reloaded = mn.entities.reload.reload_entity(mol.object)
+        assert reloaded.universe.atoms.n_atoms == single.universe.atoms.n_atoms

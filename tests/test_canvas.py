@@ -53,6 +53,16 @@ def test_world(canvas):
     assert canvas.world.hdri_strength == pytest.approx(1.5)
 
 
+def test_init_view_transform_background():
+    canvas = mn.Canvas(view_transform="Standard", background=(1, 1, 1, 1))
+    assert canvas.view_transform == "Standard"
+    assert tuple(canvas.background) == pytest.approx((1, 1, 1, 1))
+
+    # left out, the preset's settings are kept
+    canvas = mn.Canvas(template="Molecular Nodes")
+    assert canvas.view_transform == "AgX"
+
+
 def test_load_blend():
     # Test loading a .blend file
     file = data_dir / "blendfiles/suzanne.blend"
