@@ -590,19 +590,24 @@ class Molecule(MolecularEntity):
         # something to show
         if len(self.universe.select_atoms("protein")) == 0:
             raise mda.NoDataError("No protein atoms to compute secondary structure")
-        # raises where DSSP can't run, such as for coarse-grained beads
-        sec_struct = self.calculations._dssp.compute_frame()
         if self.frame_manager.n_frames != 1:
             # a trajectory gets DSSP as a calculation that isn't updating, which
-            # has run on this frame and can be set to update on every frame.
-            # Setting it up writes properties whose update callbacks would
-            # otherwise update this molecule to the scene frame mid-import
+            # runs on this frame and can be set to update on every frame. It is
+            # set up first so this frame reuses its analysis. Setting it up
+            # writes properties whose update callbacks would otherwise update
+            # this molecule to the scene frame mid-import
             self._updating_in_progress = True
             try:
                 self.calculations._dssp._setup("protein", updating=False, refresh=False)
             finally:
                 self._updating_in_progress = False
-        return sec_struct
+        # raises where DSSP can't run, such as for coarse-grained beads
+        try:
+            return self.calculations._dssp.compute_frame()
+        except Exception:
+            if "sec_struct" in self.calculations:
+                del self.calculations["sec_struct"]
+            raise
 
     def _save_filepaths_on_object(self) -> None:
         """Save file paths to the Blender object for reference"""

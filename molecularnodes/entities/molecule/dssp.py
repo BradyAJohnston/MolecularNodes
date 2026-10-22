@@ -265,8 +265,14 @@ class DSSPCalculation:
             Per-atom secondary structure: 0 not protein, 1 helix, 2 sheet, 3 loop
         """
         universe = self._entity.universe
-        atoms = universe.select_atoms(selection)
-        results = DSSP(atoms).run(frames=[universe.trajectory.frame]).results
+        # reuse the set up analysis for its selection, as creating one is slow
+        if self.is_setup and self._props.selection == selection:
+            atoms = self._dssp_atoms
+            dssp = self._analysis()
+        else:
+            atoms = universe.select_atoms(selection)
+            dssp = DSSP(atoms)
+        results = dssp.run(frames=[universe.trajectory.frame]).results
         mask = np.isin(atoms.residues.resids, results.resids)
         resindices = atoms.residues.resindices[mask]
         attribute_data = np.zeros(len(universe.atoms), dtype=int)
