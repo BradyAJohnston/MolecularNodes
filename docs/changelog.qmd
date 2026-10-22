@@ -16,6 +16,7 @@ title: "Changelog"
 - `Canvas.look_at(viewpoint=...)` accepts `"pca"`, `"unobstructed"`, `"visible_area"`, `"raycast"` and `"entropy"` to choose the camera direction from the target, with `occluders` for what could hide it. Experimental. [#1171](https://github.com/BradyAJohnston/MolecularNodes/issues/1171)
 - `Symmetry Helical` takes an `Axial Symmetry` input for filaments with Cn symmetry about the helix axis, such as amyloid built from two protofilaments.
 - Fetch small molecules from PubChem by CID or name: `mn.Molecule.fetch("aspirin", database="pubchem")` downloads the 3D conformer as SDF, and the import panel has a `Fetch from PubChem` button.
+- `Align Molecules` operator (viewport right-click menu) and `Molecule.align_to()`: superimpose the selected molecules onto the active one by setting their object transforms. Residues are paired by sequence alignment (biotite's `superimpose_homologs`) or, for remote homologs, by structure (`superimpose_structural_homologs`), so the sequences don't need to match. The operator opens a dialog listing each molecule's chains, where optional selections pick the chains to fit on. When the two sides have different numbers of chains (e.g. a Fab's heavy and light chains against a single-chain scFv), each is joined into one chain and aligned as a whole.
 
 ## Changed
 - The `Ambient Occlusion` material is always opaque and no longer fades with `Fade Geometry`, because ambient occlusion does not work alongside a Transparent BSDF. Its default exponent is now 1.5, for slightly lighter crevices.
