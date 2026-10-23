@@ -30,7 +30,12 @@ from ...nodes import handlers as node_handlers
 from ...nodes._assets import link_asset_groups
 from ...nodes._utils import STYLE_LITERALS, STYLE_NODE_MAPPING
 from ...nodes.geometry import AssemblyInstance
-from ...utils import _UNSET, count_value_changes, temp_override_property
+from ...utils import (
+    _UNSET,
+    count_value_changes,
+    is_periodic_box,
+    temp_override_property,
+)
 from ..base import EntityType, MolecularEntity, MolecularTree
 from ..utilities import (
     BoolObjectMNProperty,
@@ -257,20 +262,18 @@ class Molecule(MolecularEntity):
             self.create_object(name=name)
 
     @property
-    def _is_orthorhombic(self) -> bool:
-        """Check if simulation box is orthorhombic.
+    def _has_periodic_box(self) -> bool:
+        """Check if the current frame has a usable periodic box.
 
-        Orthorhombic boxes (all angles = 90°) enable optimized periodic boundary handling.
+        Periodic boundary correction works for orthorhombic and triclinic
+        boxes, and is skipped for frames without one.
 
         Returns
         -------
         bool
-            True if box angles are all 90 degrees
+            True if the unit cell is a valid periodic box
         """
-        dim = self.universe.dimensions
-        if dim is None:
-            return False
-        return np.allclose(dim[3:], 90.0)
+        return is_periodic_box(self.universe.dimensions)
 
     @property
     def atoms(self) -> mda.AtomGroup:

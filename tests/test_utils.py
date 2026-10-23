@@ -57,6 +57,57 @@ def test_correct_1d_multiple_wraps():
     )
 
 
+def test_minimum_image_orthorhombic_matches_old():
+    # orthorhombic boxes give the same positions as the orthorhombic-only
+    # correction, and MDAnalysis's minimize_vectors agrees with both
+    from MDAnalysis.lib.distances import minimize_vectors
+
+    rng = np.random.default_rng(0)
+    box = np.array([17.6, 8.2, 10.9, 90.0, 90.0, 90.0])
+    pos_1 = (rng.random((1000, 3)) * box[:3]).astype(np.float32)
+    pos_2 = ((pos_1 + rng.normal(0, 1.5, pos_1.shape)) % box[:3]).astype(np.float32)
+    old = mn.utils.correct_periodic_positions(pos_1, pos_2, box[:3])
+    new = mn.utils.minimum_image_positions(pos_1, pos_2, box)
+    assert new.dtype == pos_2.dtype
+    assert np.allclose(new, old, atol=1e-5)
+    assert np.allclose(pos_1 + minimize_vectors(pos_2 - pos_1, box), old, atol=1e-5)
+
+
+def test_minimum_image_triclinic():
+    # a step out through the slanted face of a rhombic dodecahedron box is
+    # brought back as the short step, where per-axis wrapping would not be
+    from MDAnalysis.lib.mdamath import triclinic_vectors
+
+    box = np.array([100.0, 100.0, 100.0, 60.0, 60.0, 90.0])
+    a, b, c = triclinic_vectors(box)
+    start = 0.5 * a + 0.5 * b + 0.98 * c
+    step = np.array([0.0, 0.0, 2.0])
+    pos_1 = np.array([start], dtype=np.float32)
+    pos_2 = np.array([start + step - c], dtype=np.float32)
+    corrected = mn.utils.minimum_image_positions(pos_1, pos_2, box)
+    assert corrected.dtype == np.float32
+    assert np.allclose(corrected, start + step, atol=1e-4)
+    # inputs are not modified
+    assert np.allclose(pos_2, start + step - c)
+
+
+@pytest.mark.parametrize(
+    "dimensions,expected",
+    [
+        (None, False),
+        ([0.0, 0.0, 0.0, 90.0, 90.0, 90.0], False),
+        ([1.0, 1.0, 1.0, 90.0, 90.0, 90.0], False),
+        ([10.0, 10.0, 10.0, 90.0, 90.0, 200.0], False),
+        ([10.0, 10.0, np.nan, 90.0, 90.0, 90.0], False),
+        ([10.0, 12.0, 14.0, 90.0, 90.0, 90.0], True),
+        ([98.0, 98.0, 130.0, 90.0, 90.0, 120.0], True),
+        ([100.0, 100.0, 100.0, 60.0, 60.0, 90.0], True),
+    ],
+)
+def test_is_periodic_box(dimensions, expected):
+    assert mn.utils.is_periodic_box(dimensions) == expected
+
+
 def test_frame_mapper_basic():
     assert frame_mapper(10) == 10
     assert frame_mapper(0) == 0
