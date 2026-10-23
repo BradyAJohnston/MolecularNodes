@@ -149,6 +149,8 @@ class MolecularEntity(
 ):
     update_with_scene = BoolObjectMNProperty("update_with_scene")
     _entity_type: EntityType | None = None
+    #: the builder for this entity's node tree
+    _tree_class: type[MolecularTree] = MolecularTree
 
     def __init__(self) -> None:
         super().__init__(obj=None)
@@ -222,7 +224,7 @@ class MolecularEntity(
     @property
     def tree(self) -> MolecularTree:
         if self._tree is None:
-            self._tree = MolecularTree(self, self.modifier_node_tree)
+            self._tree = self._tree_class(self, self.modifier_node_tree)
         return self._tree
 
     @tree.setter

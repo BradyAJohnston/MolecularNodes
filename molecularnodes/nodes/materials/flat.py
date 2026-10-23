@@ -13,16 +13,23 @@ class Flat(CustomShaderGroup):
     _name = "Shader Nodetree"
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
+        mn_color = MNColor()
         mix_shader = s.MixShader(
-            factor=MNColor().o.alpha,
+            factor=mn_color.o.alpha,
             shader=s.TransparentBSDF(),
-            shader_001=FlatInternal(outline="None"),
+            shader_001=FlatInternal(outline="None", color=mn_color.o.color),
         )
         _material_output = s.MaterialOutput(mix_shader)
 
 
 MATERIAL = Flat
 MATERIAL_NAME = "Flat"
+
+MATERIAL_PROPERTIES = {
+    "surface_render_method": "BLENDED",
+    "use_transparency_overlap": False,
+    "blend_method": "BLEND",
+}
 
 MATERIAL_ASSET_METADATA = {
     "catalog_id": "fc8d3698-34f7-4b7e-8167-a2c0391b171b",

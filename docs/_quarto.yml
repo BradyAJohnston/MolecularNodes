@@ -171,6 +171,7 @@ quartodoc:
       # - api/density.qmd
       - api/annotations.qmd
       - api/solvent.qmd
+      - api/electrostatics.qmd
       - api/canvas.qmd
       - api/blender.qmd
     - text: "---"
@@ -346,6 +347,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.ColorResName
         children: embedded
+      - name: nodes.geometry.ColorSampleGrid
+        children: embedded
       - name: nodes.geometry.ColorSecondaryStructure
         children: embedded
       - name: nodes.geometry.ColorToLCh
@@ -432,6 +435,8 @@ quartodoc:
       - name: nodes.geometry.DensityStyleSurface
         children: embedded
       - name: nodes.geometry.DensityStyleWire
+        children: embedded
+      - name: nodes.geometry.SetGeometryVolume
         children: embedded
     - kind: page
       path: nodes.ensemble

@@ -7,14 +7,14 @@ from nodebpy import TreeBuilder
 from nodebpy import shader as s
 from nodebpy.builder import (
     AssetShaderGroup,
+    ColorSocket,
     FloatSocket,
     MenuSocket,
     PackageLibrary,
     ShaderSocket,
     SocketAccessor,
 )
-from nodebpy.types import InputFloat, InputMenu
-from .mn_color import MNColor
+from nodebpy.types import InputColor, InputFloat, InputMenu
 from .outline_mask import OutlineMask
 
 
@@ -30,6 +30,8 @@ class FlatInternal(AssetShaderGroup):
         Threshold
     thickness : InputFloat
         Thickness
+    color : InputColor
+        Color
 
     Inputs
     ------
@@ -39,6 +41,8 @@ class FlatInternal(AssetShaderGroup):
         Threshold
     i.thickness : FloatSocket
         Thickness
+    i.color : ColorSocket
+        Color
 
     Outputs
     -------
@@ -58,6 +62,8 @@ class FlatInternal(AssetShaderGroup):
         """Threshold"""
         thickness: FloatSocket
         """Thickness"""
+        color: ColorSocket
+        """Color"""
 
     class _Outputs(SocketAccessor):
         emission: ShaderSocket
@@ -75,9 +81,15 @@ class FlatInternal(AssetShaderGroup):
         outline: InputMenu | Literal["Outline", "None"] = "Outline",
         threshold: InputFloat = 0.8,
         thickness: InputFloat = 0.15,
+        color: InputColor = None,
     ):
         super().__init__(
-            **{"Outline": outline, "Threshold": threshold, "Thickness": thickness}
+            **{
+                "Outline": outline,
+                "Threshold": threshold,
+                "Thickness": thickness,
+                "Color": color,
+            }
         )
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
@@ -90,16 +102,14 @@ class FlatInternal(AssetShaderGroup):
         thickness = tree.inputs.float(
             "Thickness", 0.15, min_value=0.0, max_value=10_000.0
         )
+        color = tree.inputs.color("Color", (0.0, 0.0, 0.0, 1.0))
         emission = tree.outputs.shader("Emission")
 
-        mn_color = MNColor()
         mix = OutlineMask(threshold=threshold, thickness=thickness).o.outline.mix.color(
-            mn_color.o.color, (0.0, 0.0, 0.0, 1.0)
+            color, (0.0, 0.0, 0.0, 1.0)
         )
         emission_1 = s.Emission(
-            s.MenuSwitch.color(
-                outline, {"Outline": mix, "None": mn_color.o.color}
-            ).o.output
+            s.MenuSwitch.color(outline, {"Outline": mix, "None": color}).o.output
         )
 
         emission_1 >> emission

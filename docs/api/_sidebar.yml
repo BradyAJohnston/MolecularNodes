@@ -15,6 +15,7 @@ website:
       - api/materials.qmd
       - api/annotations.qmd
       - api/solvent.qmd
+      - api/electrostatics.qmd
       - api/canvas.qmd
       - api/blender.qmd
       section: Guides
