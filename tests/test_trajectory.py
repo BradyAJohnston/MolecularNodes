@@ -1168,3 +1168,118 @@ def test_martini(snapshot, topology):
 
     for att in traj.list_attributes():
         assert snapshot == traj[att]
+
+
+class TestPeriodicTriclinic:
+    # a rhombic dodecahedron (xy-square) box: the c vector leans over a and b,
+    # so its faces are not perpendicular to the axes
+    BOX = np.array([100.0, 100.0, 100.0, 60.0, 60.0, 90.0])
+
+    @staticmethod
+    def _universe(atom_0: np.ndarray, dimensions) -> mda.Universe:
+        # a real topology with atom 0 following `atom_0` (one position per
+        # frame) and every other atom still, so only atom 0 can be corrected
+        u = mda.Universe(data_dir / "md_ppr/box.gro")
+        coords = np.repeat(u.atoms.positions[None], len(atom_0), axis=0)
+        coords[:, 0] = atom_0
+        u.load_new(
+            coords.astype(np.float32),
+            format=mda.coordinates.memory.MemoryReader,
+            dimensions=dimensions,
+        )
+        return u
+
+    def _crossing(self) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        # a point just inside the slanted c face, a step that takes it out
+        # through that face, and the box vector c it wraps back by
+        from MDAnalysis.lib.mdamath import triclinic_vectors
+
+        a, b, c = triclinic_vectors(self.BOX)
+        start = 0.5 * a + 0.5 * b + 0.98 * c
+        step = np.array([0.0, 0.0, 2.0])
+        return start, step, c
+
+    def test_interpolates_across_slanted_face(self):
+        start, step, c = self._crossing()
+        traj = mn.entities.Molecule(
+            self._universe(np.array([start, start + step - c]), self.BOX)
+        )
+        traj.subframes = 1
+        traj.interpolate = True
+
+        # with 1 subframe, scene frame 1 is halfway from frame 0 to frame 1
+        bpy.context.scene.frame_set(1)
+        naive = traj.position[0].copy()
+        assert np.allclose(naive, (start + 0.5 * (step - c)) * traj.world_scale)
+
+        traj.correct_periodic = True
+        corrected = traj.position[0].copy()
+        assert np.allclose(corrected, (start + 0.5 * step) * traj.world_scale)
+        # the other atoms do not move
+        assert np.allclose(
+            traj.position[1:], traj.frame_manager._position_at_frame(0)[1:]
+        )
+        traj.correct_periodic = False
+
+    def test_average_across_slanted_face(self):
+        start, step, c = self._crossing()
+        # uneven steps, so the mean is not the middle frame's position
+        frames = np.array([start - step, start, start + 2 * step - c])
+        traj = mn.entities.Molecule(self._universe(frames, self.BOX))
+        bpy.context.scene.frame_set(0)
+        traj.correct_periodic = True
+        traj.average = 1
+        bpy.context.scene.frame_set(1)
+        # the mean of the unwrapped path, not a point pulled across the box
+        assert np.allclose(
+            traj.position[0], (start + step / 3) * traj.world_scale, atol=1e-4
+        )
+        traj.average = 0
+        traj.correct_periodic = False
+
+    @pytest.mark.parametrize(
+        "dimensions",
+        [None, [0.0, 0.0, 0.0, 90.0, 90.0, 90.0], [1.0, 1.0, 1.0, 90.0, 90.0, 90.0]],
+    )
+    def test_no_box(self, dimensions):
+        # without a usable box nothing is corrected, and nothing fails
+        start, step, c = self._crossing()
+        traj = mn.entities.Molecule(
+            self._universe(np.array([start, start + step - c]), dimensions)
+        )
+        assert not traj._has_periodic_box
+        traj.subframes = 1
+        traj.interpolate = True
+        traj.correct_periodic = True
+        bpy.context.scene.frame_set(1)
+        assert np.allclose(
+            traj.position[0], (start + 0.5 * (step - c)) * traj.world_scale
+        )
+        traj.correct_periodic = False
+
+    def test_orthorhombic_unchanged(self):
+        # an orthorhombic trajectory interpolates exactly as with the
+        # orthorhombic-only correction this replaced
+        u = mda.Universe(
+            data_dir / "martini/dode_membrane/topol_nowat.gro",
+            data_dir / "martini/dode_membrane/traj_imaged_dt1ns_frames_1-10.xtc",
+        )
+        traj = mn.entities.Molecule(u)
+        assert traj._has_periodic_box
+        traj.subframes = 3
+        traj.interpolate = True
+        traj.correct_periodic = True
+        for scene_frame in [5, 6, 7, 13, 14]:
+            bpy.context.scene.frame_set(scene_frame)
+            shown = np.asarray(traj.position).copy()
+            uframe = scene_frame // 4
+            pos_a = traj.frame_manager._position_at_frame(uframe)
+            pos_b = traj.frame_manager._position_at_frame(uframe + 1)
+            box = u.trajectory[uframe].dimensions[:3] * traj.world_scale
+            expected = databpy.lerp(
+                pos_a,
+                mn.utils.correct_periodic_positions(pos_a, pos_b, box),
+                t=(scene_frame % 4) / 4,
+            )
+            assert np.allclose(shown, expected, atol=1e-5)
+        traj.correct_periodic = False

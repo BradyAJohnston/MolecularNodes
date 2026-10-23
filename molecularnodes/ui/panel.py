@@ -187,10 +187,10 @@ def layout_trajectory_playback(
     subrow.enabled = obj.mn.update_with_scene
     col = row.column()
 
-    # only enable this as an option if the universe is orthothombic
+    # only enable this as an option if the universe has a periodic box
     row = col.row()
     row.prop(obj.mn, "correct_periodic")
-    row.enabled = traj._is_orthorhombic
+    row.enabled = traj._has_periodic_box
     col.prop(obj.mn, "interpolate")
 
     # bake frames into a collection for use directly in geometry nodes
