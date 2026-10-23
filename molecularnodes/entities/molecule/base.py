@@ -1124,8 +1124,10 @@ class Molecule(MolecularEntity):
         trajectory = self._update_trajectory_positions(frame)
         self._store_frame_attributes(trajectory, "TRAJECTORY")
         self._store_frame_attributes(self.selections._frame_values(), "SELECTION")
-        # DSSP is rebuilt from its saved settings after a file is reopened
+        # DSSP and hydrogen bonds are rebuilt from their saved settings after a
+        # file is reopened
         self.calculations._dssp._restore()
+        self.calculations._hbonds._restore()
         self._store_frame_attributes(self.calculations._frame_values(), "CALCULATION")
         self._sync_frame_attributes(["position", *trajectory])
 
@@ -1688,7 +1690,8 @@ class Molecule(MolecularEntity):
             # Preserve picklable calculations
             preserved_calculations = {}
             for name, calc_func in state["calculations"].items():
-                if name == "sec_struct":
+                # built-in calculations are rebuilt from their saved settings
+                if name in ("sec_struct", "hbonds"):
                     continue
                 try:
                     import pickle

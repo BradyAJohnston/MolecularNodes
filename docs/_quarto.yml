@@ -191,6 +191,7 @@ quartodoc:
     - entities.molecule.SelectionManager
     - entities.molecule.CalculationManager
     - entities.molecule.DSSPCalculation
+    - entities.molecule.HBondCalculation
     - entities.StreamingTrajectory
 
   - title: Other Entities
@@ -624,6 +625,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.StyleCartoon
         children: embedded
+      - name: nodes.geometry.StyleHBonds
+        children: embedded
       - name: nodes.geometry.StyleRibbon
         children: embedded
       - name: nodes.geometry.StyleSpheres
@@ -685,6 +688,8 @@ quartodoc:
       - name: nodes.geometry.FindBondedAtom
         children: embedded
       - name: nodes.geometry.FindBonds
+        children: embedded
+      - name: nodes.geometry.FindHBonds
         children: embedded
       - name: nodes.geometry.MenuResidueMask
         children: embedded

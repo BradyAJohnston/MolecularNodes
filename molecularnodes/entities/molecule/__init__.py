@@ -7,6 +7,7 @@ from .annotations import (
 from .base import Molecule
 from .calculations import CalculationManager
 from .dssp import DSSPCalculation
+from .hbonds import HBondCalculation
 from .imd import StreamingTrajectory
 from .oxdna import OXDNA
 from .reader import read_structure
@@ -26,4 +27,5 @@ __all__ = [
     "MoleculeInfo",
     "DSSPCalculation",
     "CalculationManager",
+    "HBondCalculation",
 ]

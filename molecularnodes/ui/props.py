@@ -1,4 +1,5 @@
 import json
+import math
 import bpy
 from bpy.props import (
     BoolProperty,
@@ -217,6 +218,55 @@ class DSSPProperties(bpy.types.PropertyGroup):
     cancelling: BoolProperty(default=False)  # type: ignore
 
 
+def _update_hbonds_cutoffs(self, context):
+    entity = context.scene.MNSession.get(self.id_data.uuid)
+    if entity is None:
+        return
+    entity.calculations._hbonds._update_from_props()
+
+
+class HBondProperties(bpy.types.PropertyGroup):
+    d_a_cutoff: FloatProperty(  # type: ignore
+        name="Distance",
+        description="Maximum distance between the donor and acceptor in Angstroms",
+        min=0.0,
+        soft_max=5.0,
+        default=3.0,
+        update=_update_hbonds_cutoffs,
+    )
+    d_h_a_angle_cutoff: FloatProperty(  # type: ignore
+        name="Angle",
+        description="Minimum donor-hydrogen-acceptor angle",
+        subtype="ANGLE",
+        min=0.0,
+        max=math.pi,
+        default=math.radians(150.0),
+        update=_update_hbonds_cutoffs,
+    )
+    d_h_cutoff: FloatProperty(  # type: ignore
+        name="Donor Distance",
+        description="Maximum distance between a hydrogen and its donor in Angstroms, which pairs them",
+        min=0.0,
+        soft_max=2.0,
+        default=1.2,
+        update=_update_hbonds_cutoffs,
+    )
+    selection: StringProperty(  # type: ignore
+        name="Selection",
+        description=(
+            "MDAnalysis selection string limiting the atoms considered as "
+            "hydrogens, donors and acceptors"
+        ),
+        default="all",
+    )
+    kwargs: StringProperty(  # type: ignore
+        name="Arguments",
+        description="Other arguments to HydrogenBondAnalysis than the cutoffs, as JSON, restored with the file",
+        default="{}",
+        options={"HIDDEN"},
+    )
+
+
 FRAME_ATTRIBUTE_SOURCES = (
     (
         "TRAJECTORY",
@@ -261,6 +311,11 @@ class CalculationItem(bpy.types.PropertyGroup):
         description="Recalculate on every frame change, rather than keeping the values from when it last ran",
         default=True,
         update=_update_entities,
+    )
+    object: PointerProperty(  # type: ignore
+        type=bpy.types.Object,
+        name="Object",
+        description="Object the calculation writes to, for one that writes an object rather than an attribute",
     )
 
 
@@ -585,6 +640,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         default="",
     )
     dssp: PointerProperty(type=DSSPProperties)  # type: ignore
+    hbonds: PointerProperty(type=HBondProperties)  # type: ignore
 
 
 class TrajectorySelectionItem(bpy.types.PropertyGroup):
@@ -689,6 +745,7 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
 
 CLASSES = [
     DSSPProperties,
+    HBondProperties,
     FrameAttributeItem,
     CalculationItem,
     MolecularNodesObjectProperties,

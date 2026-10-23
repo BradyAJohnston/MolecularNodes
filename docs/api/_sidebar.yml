@@ -26,6 +26,7 @@ website:
         - api/reference/entities.molecule.SelectionManager.qmd
         - api/reference/entities.molecule.CalculationManager.qmd
         - api/reference/entities.molecule.DSSPCalculation.qmd
+        - api/reference/entities.molecule.HBondCalculation.qmd
         - api/reference/entities.StreamingTrajectory.qmd
         section: Molecule
       - contents:

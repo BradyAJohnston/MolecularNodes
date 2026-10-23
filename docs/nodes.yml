@@ -53,6 +53,29 @@ Style Sticks:
     Each bond terminates cleanly in a half sphere for a typical stick representation of the atoms and bonds
   videos:
     - https://imgur.com/iNqE87M
+Style HBonds:
+  description: >-
+    Draws hydrogen bonds as dashed cylinders between each hydrogen and its acceptor. With `Source::Menu`
+    set to `Data Object`, the bonds are computed by `MDAnalysis.analysis.hydrogenbonds` with
+    `mol.calculations.hbonds()` (or Hydrogen Bonds in the add menu of the Attributes panel) and stored
+    as edges on a data object that is passed in as `Data Object::Object`. Adding the node in the GUI
+    sets up the calculation and fills in the data object. The data object holds only which atoms are
+    bonded, with positions sampled from the `Atoms::Geometry` by index, so the bonds follow any movement
+    of the atoms upstream of the node. The atoms must be in their original order, so use the
+    `Selection::Bool` rather than deleting atoms before this node. With `Source::Menu` set to
+    `Find HBonds`, the bonds are found in the node tree with `Find HBonds::Node` instead, using the
+    `Distance::Float` and `Angle::Float` cutoffs, with no calculation in Python. A bond is shown when
+    both of its atoms are selected. Structures need explicit hydrogens.
+Find HBonds:
+  description: >-
+    Finds hydrogen bonds between the input `Atoms::Geometry` in the node tree, giving for each hydrogen
+    whether it is in a hydrogen bond (`Is HBonded::Bool`) and the index of its acceptor
+    (`Acceptor Index::Int`, -1 for other atoms). Each hydrogen is paired with the nearest heavy atom
+    within 1.2 Å as its donor, and nitrogen and oxygen atoms are donors and acceptors. A bond needs the
+    donor and acceptor within `Distance::Float` and a donor-hydrogen-acceptor angle of at least
+    `Angle::Float`, the same criteria and defaults as `MDAnalysis.analysis.hydrogenbonds`. A hydrogen
+    bonds to at most one acceptor, so of a bifurcated hydrogen bond only one is found. Structures need
+    explicit hydrogens.
 Separate Atoms:
   description: >-
     Separate the input atoms into the `Atoms::Geometry` and `Inverted::Geometry` based on the input `Selection::Bool`. For simply styling this

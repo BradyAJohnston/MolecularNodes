@@ -109,6 +109,7 @@ from .fallback_vector import FallbackVector
 from .field_remap import FieldRemap
 from .find_bonded_atom import FindBondedAtom
 from .find_bonds import FindBonds
+from .find_hbonds import FindHBonds
 from .force import Force
 from .force_brownian import ForceBrownian
 from .force_gravity import ForceGravity
@@ -240,6 +241,7 @@ from .starfile_instances import StarfileInstances
 from .structure_parameter import StructureParameter
 from .style_ball_and_stick import StyleBallAndStick
 from .style_cartoon import StyleCartoon
+from .style_hbonds import StyleHBonds
 from .style_ribbon import StyleRibbon
 from .style_spheres import StyleSpheres
 from .style_sticks import StyleSticks
@@ -384,6 +386,7 @@ __all__ = (
     "FieldRemap",
     "FindBondedAtom",
     "FindBonds",
+    "FindHBonds",
     "Force",
     "ForceBrownian",
     "ForceGravity",
@@ -515,6 +518,7 @@ __all__ = (
     "StructureParameter",
     "StyleBallAndStick",
     "StyleCartoon",
+    "StyleHBonds",
     "StyleRibbon",
     "StyleSpheres",
     "StyleSticks",
