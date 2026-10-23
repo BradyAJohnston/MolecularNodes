@@ -197,6 +197,34 @@ def layout_trajectory_playback(
     playback.separator()
     playback.operator("mn.frames_to_collection", icon="RENDERLAYERS")
 
+    # the attributes updated on each frame, read from the object
+    if obj.mn.frame_attributes and obj.type == "MESH":
+        header, body = playback.panel(
+            idname="layout_frame_attributes", default_closed=True
+        )
+        header.label(text="Per-frame Attributes")
+        if body is not None:
+            body.template_list(
+                "MN_UL_FrameAttributesList",
+                "frame_attributes_list",
+                obj.mn,
+                "frame_attributes",
+                obj.mn,
+                "frame_attributes_index",
+                rows=3,
+            )
+            layout_frame_attribute_details(body, traj)
+
+
+def layout_frame_attribute_details(layout: UILayout, traj: Molecule) -> None:
+    """Draw where the selected attribute is read or computed from."""
+    items = traj.object.mn.frame_attributes
+    index = traj.object.mn.frame_attributes_index
+    if not 0 <= index < len(items):
+        return
+    source = items[index].bl_rna.properties["source"].enum_items[items[index].source]
+    layout.label(text=f"Source: {source.name}")
+
 
 def layout_selection_manage(
     layout: UILayout, traj: Molecule, panel: bool = True
@@ -526,6 +554,68 @@ class MN_UL_EntitiesList(bpy.types.UIList):
         if self.use_filter_sort_alpha:
             ordered = bpy.types.UI_UL_list.sort_items_helper(sort_data, lambda e: e[1])
         return filtered, ordered
+
+
+# the node-editor socket dot for each attribute data type
+ATTRIBUTE_TYPE_ICONS = {
+    "FLOAT": "NODE_SOCKET_FLOAT",
+    "INT": "NODE_SOCKET_INT",
+    "INT8": "NODE_SOCKET_INT",
+    "INT16_2D": "NODE_SOCKET_INT_VECTOR",
+    "INT32_2D": "NODE_SOCKET_INT_VECTOR",
+    "BOOLEAN": "NODE_SOCKET_BOOLEAN",
+    "FLOAT_VECTOR": "NODE_SOCKET_VECTOR",
+    "FLOAT2": "NODE_SOCKET_VECTOR",
+    "FLOAT4": "NODE_SOCKET_VECTOR",
+    "FLOAT_COLOR": "NODE_SOCKET_RGBA",
+    "BYTE_COLOR": "NODE_SOCKET_RGBA",
+    "QUATERNION": "NODE_SOCKET_ROTATION",
+    "FLOAT4X4": "NODE_SOCKET_MATRIX",
+    "STRING": "NODE_SOCKET_STRING",
+}
+
+
+class MN_UL_FrameAttributesList(bpy.types.UIList):
+    """
+    UIList of the attributes written on frame changes.
+
+    Lists the items of `obj.mn.frame_attributes`, showing each attribute's name
+    and the data type of the mesh attribute.
+    """
+
+    def draw_item(
+        self,
+        context,
+        layout,
+        data,
+        item,
+        icon,
+        active_data,
+        active_property,
+        index=0,
+        flt_flag=0,
+    ):
+        # `data` is the object's `mn` properties
+        obj = cast(bpy.types.Object, data.id_data)
+        attribute = obj.data.attributes.get(item.name)
+        if self.layout_type in {"DEFAULT", "COMPACT"}:
+            row = layout.row()
+            if attribute is None:
+                # not stored yet, or a selection that failed
+                row.label(text=item.name, icon="NONE")
+                return
+            row.label(
+                text=item.name,
+                icon=ATTRIBUTE_TYPE_ICONS.get(attribute.data_type, "NONE"),
+            )
+            row.label(
+                text=attribute.bl_rna.properties["data_type"]
+                .enum_items[attribute.data_type]
+                .name
+            )
+        elif self.layout_type in {"GRID"}:
+            layout.alignment = "CENTER"
+            layout.label(text=item.name)
 
 
 class MN_PT_Entities(bpy.types.Panel):
@@ -1113,6 +1203,7 @@ CLASSES = [
     MN_PT_Object,
     MN_UL_EntitiesList,
     MN_PT_Entities,
+    MN_UL_FrameAttributesList,
     MN_PT_trajectory,
     MN_PT_trajectory_dssp,
     MN_UL_StylesList,
