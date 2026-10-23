@@ -69,7 +69,7 @@ class IsoGridToMesh(CustomGeometryGroup):
         grid_to_mesh = g.GridToMesh(
             grid=grid_2.output,
             threshold=negative.output.switch.float(
-                threshold_1.output, abs(threshold_1.output) * -1.0
+                abs(threshold_1.output), abs(threshold_1.output) * -1.0
             ),
         )
         set_color = SetColor(

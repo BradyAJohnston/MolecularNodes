@@ -28,8 +28,8 @@ with esp.tree.reset(input="Volume") as (volume, join):
         volume
         >> mg.DensityStyleISOSurface(
             threshold=1.0,
-            positive_color=(0.1, 0.3, 1.0, 1.0),
-            negative_color=(1.0, 0.1, 0.1, 1.0),
+            positive=(0.1, 0.3, 1.0, 1.0),
+            negative=(1.0, 0.1, 0.1, 1.0),
             material=mn.material.Transparent(
                 transparency=0.7, fresnel=True, outline_color=(0.85, 0.85, 0.85, 1.0)
             ).material,
