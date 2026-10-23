@@ -112,14 +112,16 @@ def _update_dssp_display_option(self, context):
         display_option = getattr(self, "display_option")
     # call none and per-frame directly
     if display_option == "none":
-        entity.dssp.show_none()
+        entity.calculations._dssp.show_none()
         _update_entities(self, context)
     elif display_option == "per-frame":
-        entity.dssp.show_per_frame()
+        entity.calculations._dssp.show_per_frame()
         _update_entities(self, context)
     elif display_option == "sliding-window-average":
         sw_threshold = self.sw_threshold if self.apply_sw_threshold else None
-        entity.dssp.show_sliding_window_average(self.window_size, sw_threshold)
+        entity.calculations._dssp.show_sliding_window_average(
+            self.window_size, sw_threshold
+        )
         _update_entities(self, context)
     else:
         self.applied = False
@@ -215,6 +217,19 @@ class DSSPProperties(bpy.types.PropertyGroup):
     cancelling: BoolProperty(default=False)  # type: ignore
 
 
+FRAME_ATTRIBUTE_SOURCES = (
+    (
+        "TRAJECTORY",
+        "Trajectory",
+        "Read from each frame of the trajectory",
+        "FILE_MOVIE",
+        0,
+    ),
+    ("SELECTION", "Selection", "A selection of the molecule", "RESTRICT_SELECT_OFF", 1),
+    ("CALCULATION", "Calculation", "Calculated from the universe", "DRIVER", 2),
+)
+
+
 class FrameAttributeItem(bpy.types.PropertyGroup):
     """An attribute that is written on frame changes, and where it comes from."""
 
@@ -227,12 +242,25 @@ class FrameAttributeItem(bpy.types.PropertyGroup):
     source: EnumProperty(  # type: ignore
         name="Source",
         description="Where the values of the attribute come from",
-        items=(
-            ("TRAJECTORY", "Trajectory", "Read from each frame of the trajectory"),
-            ("SELECTION", "Selection", "A selection of the molecule"),
-            ("CALCULATION", "Calculation", "Calculated from the universe"),
-        ),
+        items=FRAME_ATTRIBUTE_SOURCES,
         default="TRAJECTORY",
+    )
+
+
+class CalculationItem(bpy.types.PropertyGroup):
+    """A calculation that writes an attribute from the universe."""
+
+    __slots__ = []
+
+    name: StringProperty(  # type: ignore
+        name="Attribute Name",
+        description="Name of the attribute the calculation writes",
+    )
+    updating: BoolProperty(  # type: ignore
+        name="Updating",
+        description="Recalculate on every frame change, rather than keeping the values from when it last ran",
+        default=True,
+        update=_update_entities,
     )
 
 
@@ -525,9 +553,23 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         description="The attributes written on frame changes, from the trajectory, selections and calculations",
         options={"HIDDEN"},
     )
+    calculations: CollectionProperty(  # type: ignore
+        type=CalculationItem,
+        name="Calculations",
+        description="Calculations that write attributes from the universe, and whether they update on frame changes",
+        options={"HIDDEN"},
+    )
     frame_attributes_index: IntProperty(  # type: ignore
         name="Active Per-frame Attribute",
         default=0,
+        options={"HIDDEN"},
+    )
+    frame_attributes_filter: EnumProperty(  # type: ignore
+        name="Show",
+        description="Which per-frame attributes to list, by where they come from",
+        items=(("ALL", "All", "List every per-frame attribute", "NONE", 3),)
+        + FRAME_ATTRIBUTE_SOURCES,
+        default="ALL",
         options={"HIDDEN"},
     )
     filepath_trajectory: StringProperty(  # type: ignore
@@ -597,43 +639,6 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
     )
 
 
-class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
-    """UI List"""
-
-    def draw_item(
-        self,
-        context,
-        layout,
-        data,
-        item,
-        icon,
-        active_data,
-        active_property,
-        *,
-        index=0,
-        flt_flag=0,
-    ):
-        custom_icon = "VIS_SEL_11"
-
-        if self.layout_type in {"DEFAULT", "COMPACT"}:
-            row = layout.row()
-            if item.message != "":
-                custom_icon = "ERROR"
-                row.alert = True
-
-            col = row.column()
-            col.prop(item, "name", text="", emboss=False)
-            col.enabled = False
-            row.prop(item, "updating", icon_only=True, icon="FILE_REFRESH")
-            row.prop(item, "periodic", icon_only=True, icon="CUBE")
-            if item.from_atomgroup:
-                row.enabled = False
-
-        elif self.layout_type in {"GRID"}:
-            layout.alignment = "CENTER"
-            layout.label(text="", icon=custom_icon)
-
-
 class MN_OT_Universe_Selection_Add(bpy.types.Operator):
     "Add a new custom selection to a trajectory"
 
@@ -641,10 +646,23 @@ class MN_OT_Universe_Selection_Add(bpy.types.Operator):
     bl_label = "+"
     bl_description = "Add a new boolean attribute for the given MDA selection string"
 
+    uuid: StringProperty()  # type: ignore
+
     def execute(self, context):
-        traj = get_entity(context)
-        traj.selections.from_string("all")
+        if self.uuid:
+            traj = context.scene.MNSession.get(self.uuid)
+        else:
+            traj = get_entity(context)
+        item = traj.selections.from_string("all")
         traj.selections.ui_index = max(0, len(traj.selections) - 1)
+        # make the new selection the active row of the Attributes list, so its
+        # selection string shows for editing
+        mn = traj.object.mn
+        if mn.frame_attributes_filter not in ("ALL", "SELECTION"):
+            mn.frame_attributes_filter = "ALL"
+        index = mn.frame_attributes.find(item.name)
+        if index >= 0:
+            mn.frame_attributes_index = index
         return {"FINISHED"}
 
 
@@ -672,10 +690,10 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
 CLASSES = [
     DSSPProperties,
     FrameAttributeItem,
+    CalculationItem,
     MolecularNodesObjectProperties,
     MolecularNodesSceneProperties,
     TrajectorySelectionItem,  # item has to be registered the ListUI and to work properly
-    MN_UL_TrajectorySelectionListUI,
     MN_OT_Universe_Selection_Add,
     MN_OT_Universe_Selection_Delete,
 ]

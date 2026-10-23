@@ -2,6 +2,7 @@ import itertools
 import os
 import pickle
 import tempfile
+from types import SimpleNamespace
 import bpy
 import databpy
 import MDAnalysis as mda
@@ -103,6 +104,72 @@ class TestTrajectory:
         # step must be positive
         with pytest.raises(ValueError):
             traj.frames_to_collection(step=0)
+
+    def test_frames_to_collection_attributes(self, universe):
+        traj = mn.entities.Molecule(universe, name="TestFramesAttributes")
+        traj.selections.from_string("around 3.5 protein", name="near")
+        traj.selections.from_string("resid 1", name="first", updating=False)
+        traj.calculations["x"] = lambda u: u.atoms.positions[:, 0].copy()
+        traj.calculations.add(
+            "frame_number",
+            lambda u: np.full(u.atoms.n_atoms, u.trajectory.frame),
+            updating=False,
+        )
+        bpy.context.scene.frame_set(1)
+        traj.uframe = 0
+        frame_number = traj.named_attribute("frame_number").copy()
+
+        frames = traj.frames_to_collection()
+        for frame in range(traj.universe.trajectory.n_frames):
+            obj = frames.objects[f"{traj.name}_frame_{frame:04d}"]
+            traj.uframe = frame
+            # selections and updating calculations are evaluated at the frame
+            assert np.array_equal(
+                databpy.named_attribute(obj, "near"),
+                np.isin(
+                    traj.atoms.ix, traj.universe.select_atoms("around 3.5 protein").ix
+                ),
+            )
+            assert np.array_equal(
+                databpy.named_attribute(obj, "first"), traj.atoms.resids == 1
+            )
+            assert np.allclose(
+                databpy.named_attribute(obj, "x"), traj.atoms.positions[:, 0]
+            )
+            # a calculation that doesn't update keeps the values it has now
+            assert np.array_equal(
+                databpy.named_attribute(obj, "frame_number"), frame_number
+            )
+            # attributes have the type they have on the molecule
+            for name in ["near", "first", "x", "frame_number", "sec_struct"]:
+                assert (
+                    obj.data.attributes[name].data_type
+                    == traj.object.data.attributes[name].data_type
+                )
+
+    def test_frames_to_collection_trr_gaps(self, tmp_path):
+        # velocities on frames 1 and 3, forces on frame 2, neither on frame 0
+        u = self._write_trr(tmp_path / "gaps.trr", (1, 3), (2,))
+        reference = mda.Universe(
+            data_dir / "md_ppr/box.gro", str(tmp_path / "gaps.trr")
+        )
+        vel = {f: reference.trajectory[f].velocities.copy() for f in (1, 3)}
+        force = reference.trajectory[2].forces.copy()
+
+        traj = mn.entities.Molecule(u, name="TestFramesGaps")
+        # baking doesn't depend on which frames have been played back
+        frames = traj.frames_to_collection()
+        objects = [frames.objects[f"{traj.name}_frame_{f:04d}"] for f in range(5)]
+        assert "velocity" not in objects[0].data.attributes
+        assert "force" not in objects[1].data.attributes
+        # frames without velocities or forces keep those of earlier frames
+        for frame, shown in {1: 1, 2: 1, 3: 3, 4: 3}.items():
+            assert np.allclose(
+                databpy.named_attribute(objects[frame], "velocity"),
+                vel[shown] * traj.world_scale,
+            )
+        for frame in (2, 3, 4):
+            assert np.allclose(databpy.named_attribute(objects[frame], "force"), force)
 
     def test_attributes_added(self, universe):
         traj = mn.entities.Molecule(universe)
@@ -598,13 +665,17 @@ class TestTrajectory:
     def test_dssp(self, snapshot, universe):
         initial_frame = universe.trajectory.frame
         t = mn.Molecule(universe).add_style("cartoon")
-        # sec_struct is computed once from the current frame on import, so the
-        # cartoon has structure to show before the dssp module is initialized
+        # sec_struct is computed from the current frame on import, as a DSSP
+        # calculation that isn't updating, so the cartoon has structure to show
         initial_sec_struct = t["sec_struct"]
         assert np.any(initial_sec_struct == 1)
-        assert "sec_struct" not in t.calculations
-        # initialize dssp
-        t.dssp.init()
+        assert "sec_struct" in t.calculations
+        assert not t.calculations.updating("sec_struct")
+        t.set_frame(1)
+        assert np.array_equal(t["sec_struct"], initial_sec_struct)
+        # update dssp on every frame
+        t.calculations.dssp(updating=True)
+        assert t.calculations.updating("sec_struct")
         # per-frame dssp on the import frame matches the import-time result
         t.set_frame(initial_frame)
         assert np.array_equal(t["sec_struct"], initial_sec_struct)
@@ -612,16 +683,16 @@ class TestTrajectory:
         t.set_frame(1)
         frame_sec_struct = t["sec_struct"]
         # change dssp to none
-        t.dssp.show_none()
+        t.calculations.dssp().show_none()
         no_sec_struct = t["sec_struct"]
         assert not np.allclose(frame_sec_struct, no_sec_struct)
         assert snapshot == no_sec_struct
         # change dssp to sliding-window-average
-        t.dssp.show_sliding_window_average(window_size=5)
+        t.calculations.dssp().show_sliding_window_average(window_size=5)
         sw_sec_struct = t["sec_struct"]
         assert snapshot == sw_sec_struct
         # change dssp to trajectory-average
-        t.dssp.show_trajectory_average(threshold=0.5)
+        t.calculations.dssp().show_trajectory_average(threshold=0.5)
         avg_sec_struct = t["sec_struct"]
         assert snapshot == avg_sec_struct
         # per-frame, sliding-window-average and trajectory-average
@@ -634,9 +705,157 @@ class TestTrajectory:
         assert not np.allclose(no_sec_struct, sw_sec_struct)
         assert not np.allclose(no_sec_struct, avg_sec_struct)
 
+    def test_dssp_calculations_api(self, universe):
+        t = mn.Molecule(universe).add_style("cartoon")
+        assert not hasattr(t, "dssp")
+        # getting DSSP changes nothing that isn't given
+        dssp = t.calculations.dssp()
+        assert dssp.is_setup
+        assert not t.calculations.updating("sec_struct")
+        assert t.props.dssp.selection == "protein"
+        assert t.calculations.dssp(updating=True) is dssp
+        assert t.calculations.updating("sec_struct")
+        t.calculations.dssp(selection="protein and resid 1-100")
+        assert t.props.dssp.selection == "protein and resid 1-100"
+        assert t.calculations.updating("sec_struct")
+        # removing the calculation removes DSSP, and getting it sets it up again
+        del t.calculations["sec_struct"]
+        assert "sec_struct" not in t.calculations
+        assert "sec_struct" not in t.frame_attributes
+        assert not t.calculations._dssp.is_setup
+        t.calculations.dssp()
+        assert t.calculations.updating("sec_struct")
+        assert t.frame_attributes["sec_struct"] == "CALCULATION"
+
+    def test_frame_attribute_operators(self, universe):
+        t = mn.Molecule(universe)
+        t.selections.from_string("resid 1", name="first")
+        t.calculations["ones"] = lambda u: np.ones(u.atoms.n_atoms)
+        bpy.context.scene.frame_set(1)
+        sec_struct = t["sec_struct"].copy()
+
+        # a selection is removed along with its attribute
+        bpy.ops.mn.frame_attribute_remove(uuid=t.uuid, name="first")
+        assert "first" not in t.frame_attributes
+        assert t.selections.get("first") is None
+        assert "first" not in t.list_attributes()
+        # a calculation stops updating and its attribute keeps its values
+        bpy.ops.mn.frame_attribute_remove(uuid=t.uuid, name="ones")
+        assert "ones" not in t.calculations
+        assert "ones" not in t.frame_attributes
+        assert np.all(t["ones"] == 1)
+        # removing DSSP's calculation removes DSSP
+        bpy.ops.mn.frame_attribute_remove(uuid=t.uuid, name="sec_struct")
+        assert not t.calculations._dssp.is_setup
+        assert np.array_equal(t["sec_struct"], sec_struct)
+        # trajectory attributes can't be removed
+        with pytest.raises(RuntimeError):
+            bpy.ops.mn.frame_attribute_remove(uuid=t.uuid, name="position")
+        assert "position" in t.frame_attributes
+
+        # DSSP is added from the menu, updating on every frame
+        bpy.ops.mn.dssp_init(uuid=t.uuid, selection="protein")
+        assert t.calculations._dssp.is_setup
+        assert t.frame_attributes["sec_struct"] == "CALCULATION"
+        assert t.calculations.updating("sec_struct")
+
+    def test_frame_attributes_list_selection_add_and_filter(self, universe):
+        t = mn.Molecule(universe)
+        t.calculations["ones"] = lambda u: np.ones(u.atoms.n_atoms)
+        mn_props = t.object.mn
+
+        # adding a selection from the list's add menu makes it the active row,
+        # showing every source if the filter would hide it
+        mn_props.frame_attributes_filter = "TRAJECTORY"
+        bpy.ops.mn.trajectory_selection_add(uuid=t.uuid)
+        assert t.frame_attributes["selection_0"] == "SELECTION"
+        active = mn_props.frame_attributes[mn_props.frame_attributes_index]
+        assert active.name == "selection_0"
+        assert mn_props.frame_attributes_filter == "ALL"
+
+        # the filter above the list shows only the attributes from one source
+        ui_list = SimpleNamespace(
+            filter_name="", bitflag_filter_item=1, use_filter_sort_alpha=False
+        )
+
+        def shown(source):
+            mn_props.frame_attributes_filter = source
+            flags, _ = mn.ui.panel.MN_UL_FrameAttributesList.filter_items(
+                ui_list, bpy.context, mn_props, "frame_attributes"
+            )
+            return [
+                item.name
+                for item, flag in zip(mn_props.frame_attributes, flags)
+                if flag
+            ]
+
+        assert shown("ALL") == list(t.frame_attributes)
+        assert shown("SELECTION") == ["selection_0"]
+        assert set(shown("CALCULATION")) == set(t.calculations)
+        assert "ones" in shown("CALCULATION")
+        assert "position" in shown("TRAJECTORY")
+        assert "selection_0" not in shown("TRAJECTORY")
+
+    def test_dssp_after_session_save(self, tmp_path):
+        # saving the session replaces the universe's trajectory reader; DSSP
+        # reads frames through the new one and the replaced reader is closed,
+        # so it doesn't hold the trajectory file open
+        u = mda.Universe(
+            data_dir / "md_ppr/box.gro", data_dir / "md_ppr/first_5_frames.xtc"
+        )
+        t = mn.Molecule(u)
+        t.calculations.dssp(updating=True)
+        reader = t.universe.trajectory
+        mn.session.get_session().pickle(tmp_path / "test.blend")
+        assert t.universe.trajectory is not reader
+
+        for frame in [2, 3]:
+            bpy.context.scene.frame_set(frame)
+            assert np.array_equal(t["sec_struct"], t.calculations._dssp.compute_frame())
+        assert t.calculations._dssp._dssp_trajectory is t.universe.trajectory
+
+    def test_dssp_not_updating(self, universe):
+        t = mn.Molecule(universe).add_style("cartoon")
+        initial_sec_struct = t["sec_struct"].copy()
+        for frame in [1, 2]:
+            t.set_frame(frame)
+            assert np.array_equal(t["sec_struct"], initial_sec_struct)
+        # changing what is shown recalculates straight away, without updating
+        # on frame changes
+        t.calculations.dssp().show_none()
+        assert not t.calculations.updating("sec_struct")
+        assert not np.array_equal(t["sec_struct"], initial_sec_struct)
+        t.calculations.dssp().show_per_frame()
+        # turning updating on updates on every frame change
+        t.calculations.set_updating("sec_struct", True)
+        for frame in [1, 2]:
+            t.set_frame(frame)
+            assert np.array_equal(
+                t["sec_struct"], t.calculations.dssp().compute_frame()
+            )
+
+    def test_dssp_restored_after_pickle(self, universe):
+        t = mn.Molecule(universe).add_style("cartoon")
+        t.calculations.dssp(selection="protein and resid 1-100", updating=True)
+        t.calculations.dssp().show_sliding_window_average(window_size=3)
+        t.set_frame(2)
+        expected = t["sec_struct"].copy()
+
+        restored = pickle.loads(pickle.dumps(t))
+        # the function isn't pickled, the saved settings are
+        assert "sec_struct" not in restored.calculations
+        restored.set_frame(1)
+        restored.set_frame(2)
+        assert "sec_struct" in restored.calculations
+        assert restored.calculations.updating("sec_struct")
+        assert restored.calculations.dssp()._display_option == "sliding-window-average"
+        assert restored.calculations.dssp()._window_size == 3
+        assert restored.props.dssp.selection == "protein and resid 1-100"
+        assert np.array_equal(restored["sec_struct"], expected)
+
     def test_dssp_selection(self, universe):
         t = mn.Molecule(universe).add_style("cartoon")
-        t.dssp.init(selection="protein and resid 1-100")
+        t.calculations.dssp(selection="protein and resid 1-100", updating=True)
         t.set_frame(1)
         sec_struct = t["sec_struct"]
         resids = universe.atoms.resids
@@ -653,13 +872,13 @@ class TestTrajectory:
         assert np.all(sec_struct[~is_protein] == 0)
         # a default run assigns structure beyond the selection
         t_full = mn.Molecule(universe).add_style("cartoon")
-        t_full.dssp.init()
+        t_full.calculations.dssp(updating=True)
         t_full.set_frame(1)
         assert np.any(t_full["sec_struct"][is_protein & ~selected] < 3)
 
     def test_dssp_set_selection(self, universe):
         t = mn.Molecule(universe).add_style("cartoon")
-        t.dssp.init(selection="protein and resid 1-100")
+        t.calculations.dssp(selection="protein and resid 1-100", updating=True)
         assert t.props.dssp.selection == "protein and resid 1-100"
         t.set_frame(1)
         resids = universe.atoms.resids
@@ -669,19 +888,19 @@ class TestTrajectory:
         excluded = is_protein & (resids > 100)
         assert np.all(t["sec_struct"][excluded] == 3)
         # widening the selection part way through assigns structure to the rest
-        t.dssp.set_selection("protein")
+        t.calculations.dssp().set_selection("protein")
         assert t.props.dssp.selection == "protein"
         t.set_frame(1)
         assert np.any(t["sec_struct"][excluded] < 3)
         # a bad selection raises and leaves the previous selection working
         with pytest.raises(Exception):
-            t.dssp.set_selection("protein and bogus")
+            t.calculations.dssp().set_selection("protein and bogus")
         t.set_frame(2)
         assert np.any(t["sec_struct"][excluded] < 3)
         # the display option survives changing the selection
-        t.dssp.show_trajectory_average(threshold=0.5)
-        t.dssp.set_selection("protein and resid 1-100")
-        assert t.dssp._display_option == "trajectory-average"
+        t.calculations.dssp().show_trajectory_average(threshold=0.5)
+        t.calculations.dssp().set_selection("protein and resid 1-100")
+        assert t.calculations.dssp()._display_option == "trajectory-average"
         t.set_frame(1)
         assert np.all(t["sec_struct"][excluded] == 3)
         assert np.any(t["sec_struct"][is_protein & ~excluded] < 3)
@@ -819,7 +1038,7 @@ class TestTrajectory:
         bpy.context.scene.frame_set(0)
         assert "velocity" not in traj.list_attributes()
         assert "force" not in traj.list_attributes()
-        assert list(traj.frame_attributes) == ["position"]
+        assert list(traj.frame_attributes) == ["position", "sec_struct"]
 
         # an attribute appears on the first frame that has it, and frames
         # without it keep the values last stored
@@ -835,7 +1054,12 @@ class TestTrajectory:
                 assert "force" not in traj.list_attributes()
             else:
                 assert np.allclose(traj.named_attribute("force"), force)
-        assert list(traj.frame_attributes) == ["position", "velocity", "force"]
+        assert list(traj.frame_attributes) == [
+            "position",
+            "velocity",
+            "force",
+            "sec_struct",
+        ]
 
         # interpolating towards a frame without velocities uses this frame's:
         # scene frame 2 is halfway from frame 1 to frame 2
@@ -1059,11 +1283,20 @@ class TestTrajectory:
     def test_frame_attributes_xtc(self, universe):
         traj = mn.entities.Molecule(universe)
         bpy.context.scene.frame_set(1)
-        assert list(traj.frame_attributes) == ["position"]
+        # DSSP's calculation is listed, not updating, as the file has no
+        # secondary structure
+        assert traj.frame_attributes == {
+            "position": "TRAJECTORY",
+            "sec_struct": "CALCULATION",
+        }
+        assert not traj.calculations.updating("sec_struct")
 
     def test_frame_attributes_single_frame(self, universe_with_bonds):
         traj = mn.entities.Molecule(universe_with_bonds)
         assert list(traj.frame_attributes) == []
+        # a single structure lists its selections, but no trajectory attributes
+        traj.selections.from_string("resid 1", name="first")
+        assert traj.frame_attributes == {"first": "SELECTION"}
 
     def test_frame_attributes_sources(self, universe):
         traj = mn.entities.Molecule(universe)
@@ -1077,6 +1310,7 @@ class TestTrajectory:
             "position": "TRAJECTORY",
             "near": "SELECTION",
             "first": "SELECTION",
+            "sec_struct": "CALCULATION",
             "com_x": "CALCULATION",
         }
         # the same record is on the object, for the panel and saved files
@@ -1105,6 +1339,7 @@ class TestTrajectory:
         assert traj.frame_attributes == {
             "position": "TRAJECTORY",
             "first": "SELECTION",
+            "sec_struct": "CALCULATION",
         }
 
     def test_frame_attributes_failing_calculation(self, universe):

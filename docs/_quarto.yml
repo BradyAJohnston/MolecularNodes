@@ -189,7 +189,8 @@ quartodoc:
     contents:
     - Molecule
     - entities.molecule.SelectionManager
-    - entities.molecule.DSSPManager
+    - entities.molecule.CalculationManager
+    - entities.molecule.DSSPCalculation
     - entities.StreamingTrajectory
 
   - title: Other Entities

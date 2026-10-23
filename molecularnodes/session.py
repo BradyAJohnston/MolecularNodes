@@ -54,6 +54,7 @@ def _remap_trajectory_paths(trajectories: Dict[str, Molecule], remap) -> None:
         filenames = getattr(traj.universe.trajectory, "filenames", None)
         # save linked universe frame
         uframe = traj.uframe
+        previous = traj.universe.trajectory
         if filenames is not None:
             traj.universe.load_new([remap(f) for f in filenames])
         else:
@@ -67,6 +68,9 @@ def _remap_trajectory_paths(trajectories: Dict[str, Molecule], remap) -> None:
         # restore linked universe frame
         traj.uframe = uframe
         traj._save_filepaths_on_object()
+        # close the replaced reader's files, which an analysis such as DSSP can
+        # otherwise keep open
+        previous.close()
 
 
 def _make_trajectory_paths_relative(trajectories: Dict[str, Molecule]) -> None:

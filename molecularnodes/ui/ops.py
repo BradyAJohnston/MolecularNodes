@@ -728,7 +728,8 @@ class MN_OT_Frames_To_Collection(bpy.types.Operator):
     bl_label = "Bake Frames to Collection"
     bl_description = (
         "Bake a range of trajectory frames into a collection of objects (one per frame) "
-        "whose positions can be read inside geometry nodes with the Animate Frames node"
+        "with the positions and per-frame attributes, which can be read inside geometry "
+        "nodes with the Animate Frames node"
     )
     bl_options = {"REGISTER", "UNDO"}
 
@@ -1236,14 +1237,14 @@ class MN_OT_Setup_Compositor(Operator):
 
 class MN_OT_DSSP_init(Operator):
     """
-    Operator to initialize DSSP for trajectories
+    Operator to add DSSP as the `sec_struct` calculation, or change its selection
     """
 
     bl_idname = "mn.dssp_init"
-    bl_label = "Initialize"
+    bl_label = "Add DSSP"
     bl_description = (
-        "Initialize DSSP analysis for trajectory, or update the selection "
-        "DSSP is run on if already initialized"
+        "Calculate secondary structure with DSSP on every frame, or update the "
+        "selection DSSP is run on if already added"
     )
 
     uuid: StringProperty()  # type: ignore
@@ -1254,14 +1255,44 @@ class MN_OT_DSSP_init(Operator):
         if entity is None:
             return {"CANCELLED"}
         try:
-            if entity.dssp._DSSP is None:
-                entity.dssp.init(selection=self.selection)
-            else:
-                entity.dssp.set_selection(self.selection)
+            entity.calculations.dssp(selection=self.selection)
         except Exception as e:
             self.report({"ERROR"}, f"DSSP failed for selection '{self.selection}': {e}")
             return {"CANCELLED"}
         update_entities(context.scene)
+        return {"FINISHED"}
+
+
+class MN_OT_FrameAttribute_Remove(Operator):
+    """
+    Operator to remove a selection or calculation from the per-frame attributes
+    """
+
+    bl_idname = "mn.frame_attribute_remove"
+    bl_label = "Remove"
+    bl_description = (
+        "Remove this selection (and its attribute) or calculation (its attribute "
+        "keeps the values it last had)"
+    )
+    bl_options = {"REGISTER", "UNDO"}
+
+    uuid: StringProperty()  # type: ignore
+    name: StringProperty()  # type: ignore
+
+    def execute(self, context: Context):
+        entity = get_session().get(self.uuid)
+        if entity is None:
+            return {"CANCELLED"}
+        item = entity.object.mn.frame_attributes.get(self.name)
+        if item is None:
+            return {"CANCELLED"}
+        if item.source == "SELECTION":
+            entity.selections.remove(self.name)
+        elif item.source == "CALCULATION" and self.name in entity.calculations:
+            del entity.calculations[self.name]
+        else:
+            self.report({"ERROR"}, f"'{self.name}' can't be removed")
+            return {"CANCELLED"}
         return {"FINISHED"}
 
 
@@ -1285,9 +1316,11 @@ class MN_OT_DSSP_apply(Operator):
         props = entity.props.dssp
         if props.display_option == "trajectory-average":
             if self.apply_ta_threshold:
-                entity.dssp.show_trajectory_average(threshold=self.ta_threshold)
+                entity.calculations._dssp.show_trajectory_average(
+                    threshold=self.ta_threshold
+                )
             else:
-                entity.dssp.show_trajectory_average()
+                entity.calculations._dssp.show_trajectory_average()
         return {"FINISHED"}
 
 
@@ -1308,15 +1341,15 @@ class MN_OT_DSSP_cancel(Operator):
             return {"CANCELLED"}
         props = entity.props.dssp
         props.cancelling = True
-        props.display_option = entity.dssp._display_option
-        props.window_size = entity.dssp._window_size
-        if entity.dssp._sw_threshold is not None:
-            props.sw_threshold = entity.dssp._sw_threshold
+        props.display_option = entity.calculations._dssp._display_option
+        props.window_size = entity.calculations._dssp._window_size
+        if entity.calculations._dssp._sw_threshold is not None:
+            props.sw_threshold = entity.calculations._dssp._sw_threshold
             props.apply_sw_threshold = True
         else:
             props.apply_sw_threshold = False
-        if entity.dssp._ta_threshold is not None:
-            props.ta_threshold = entity.dssp._ta_threshold
+        if entity.calculations._dssp._ta_threshold is not None:
+            props.ta_threshold = entity.calculations._dssp._ta_threshold
             props.apply_ta_threshold = True
         else:
             props.apply_ta_threshold = False
@@ -1465,6 +1498,7 @@ CLASSES = [
     MN_OT_Remove_Annotation,
     MN_OT_Setup_Compositor,
     MN_OT_DSSP_init,
+    MN_OT_FrameAttribute_Remove,
     MN_OT_DSSP_apply,
     MN_OT_DSSP_cancel,
     MN_OT_Align,

@@ -62,6 +62,35 @@ def add_menu_options(self: bpy.types.Menu, context: bpy.types.Context) -> None:
     layout.menu("MN_MT_Add", icon="PARTICLES")
 
 
+class MN_MT_AddFrameAttribute(bpy.types.Menu):
+    """Selections, and calculations and analyses, that can be added to a molecule."""
+
+    bl_idname = "MN_MT_AddFrameAttribute"
+    bl_label = "Add"
+
+    def draw(self, context: bpy.types.Context) -> None:
+        layout = self.layout
+        assert layout
+        obj = getattr(context, "object", None)
+        entity = context.scene.MNSession.get(obj.uuid) if obj is not None else None
+        op = layout.operator(
+            "mn.trajectory_selection_add", text="Selection", icon="RESTRICT_SELECT_OFF"
+        )
+        if obj is not None:
+            op.uuid = obj.uuid
+        layout.separator()
+        layout.label(text="Calculations")
+        row = layout.row()
+        # DSSP can be added once, as the `sec_struct` calculation
+        row.enabled = (
+            hasattr(entity, "calculations") and not entity.calculations._dssp.is_setup
+        )
+        op = row.operator("mn.dssp_init", text="DSSP")
+        if obj is not None:
+            op.uuid = obj.uuid
+        op.selection = "protein"
+
+
 class MN_MT_Import(bpy.types.Menu):
     bl_idname = "MN_MT_Import"
     bl_label = "Import"
@@ -197,62 +226,109 @@ def layout_trajectory_playback(
     playback.separator()
     playback.operator("mn.frames_to_collection", icon="RENDERLAYERS")
 
-    # the attributes updated on each frame, read from the object
-    if obj.mn.frame_attributes and obj.type == "MESH":
-        header, body = playback.panel(
-            idname="layout_frame_attributes", default_closed=True
-        )
-        header.label(text="Per-frame Attributes")
-        if body is not None:
-            body.template_list(
-                "MN_UL_FrameAttributesList",
-                "frame_attributes_list",
-                obj.mn,
-                "frame_attributes",
-                obj.mn,
-                "frame_attributes_index",
-                rows=3,
-            )
-            layout_frame_attribute_details(body, traj)
 
-
-def layout_frame_attribute_details(layout: UILayout, traj: Molecule) -> None:
-    """Draw where the selected attribute is read or computed from."""
-    items = traj.object.mn.frame_attributes
-    index = traj.object.mn.frame_attributes_index
-    if not 0 <= index < len(items):
-        return
-    source = items[index].bl_rna.properties["source"].enum_items[items[index].source]
-    layout.label(text=f"Source: {source.name}")
-
-
-def layout_selection_manage(
+def layout_frame_attributes(
     layout: UILayout, traj: Molecule, panel: bool = True
 ) -> None:
+    """Draw the attributes written on frame changes, with a filter by source, an
+    add menu and the selected attribute's details."""
     if panel:
-        header, layout = layout.panel(idname="selection_panel")
-        header.label(text="Selections", icon="RESTRICT_SELECT_OFF")
+        header, layout = layout.panel(idname="layout_frame_attributes")
+        header.label(text="Attributes", icon="SPREADSHEET")
         if layout is None:
             return
     obj = traj.object
+    layout.row().prop(obj.mn, "frame_attributes_filter", expand=True)
     row = layout.row()
-    row = row.split(factor=0.9)
     row.template_list(
-        "MN_UL_TrajectorySelectionListUI",
-        "A list",
-        obj,
-        "mn_trajectory_selections",
+        "MN_UL_FrameAttributesList",
+        "frame_attributes_list",
         obj.mn,
-        "trajectory_selection_index",
-        rows=3,
+        "frame_attributes",
+        obj.mn,
+        "frame_attributes_index",
+        rows=5,
     )
-    col = row.column()
-    col.operator("mn.trajectory_selection_add", icon="ADD", text="")
-    col.operator("mn.trajectory_selection_remove", icon="REMOVE", text="")
-    if obj.mn_trajectory_selections:
-        item = obj.mn_trajectory_selections[obj.mn.trajectory_selection_index]
+    col = row.column(align=True)
+    col.context_pointer_set("object", obj)
+    col.menu("MN_MT_AddFrameAttribute", icon="ADD", text="")
+    layout_frame_attribute_details(layout, traj)
 
-        selection_string_input(layout, item)
+
+def layout_frame_attribute_details(layout: UILayout, traj: Molecule) -> None:
+    """Draw where the selected attribute comes from, and the settings of a
+    selection or calculation."""
+    obj = traj.object
+    items = obj.mn.frame_attributes
+    index = obj.mn.frame_attributes_index
+    if not 0 <= index < len(items):
+        return
+    item = items[index]
+    source = item.bl_rna.properties["source"].enum_items[item.source]
+    layout.label(text=f"Source: {source.name}")
+    if item.source == "SELECTION":
+        selection = obj.mn_trajectory_selections.get(item.name)
+        if selection is not None:
+            selection_string_input(layout, selection)
+            row = layout.row()
+            row.prop(selection, "updating", text="Update Every Frame")
+            row.prop(selection, "periodic")
+            row.enabled = not selection.from_atomgroup
+        return
+    if item.source != "CALCULATION":
+        return
+    if item.name == "sec_struct" and traj.calculations._dssp.is_setup:
+        layout_dssp_settings(layout, traj)
+        return
+    calculation = obj.mn.calculations.get(item.name)
+    if calculation is not None:
+        layout.prop(calculation, "updating", text="Update Every Frame")
+
+
+def layout_dssp_settings(layout: UILayout, traj: Molecule) -> None:
+    """Draw the settings of the DSSP `sec_struct` calculation."""
+    obj = traj.object
+    uuid = obj.uuid
+    props = traj.props.dssp
+    layout.prop(
+        obj.mn.calculations["sec_struct"], "updating", text="Update Every Frame"
+    )
+    row = layout.row()
+    row.prop(props, "selection")
+    op = row.operator("mn.dssp_init", text="", icon="FILE_REFRESH")
+    op.uuid = uuid
+    op.selection = props.selection
+    # display options
+    if traj._entity_type == EntityType.MD_STREAMING:
+        layout.prop(props, "display_option_streaming")
+    else:
+        layout.prop(props, "display_option")
+    # display option specific params
+    if props.display_option == "sliding-window-average":
+        layout.prop(props, "window_size")
+        row = layout.row()
+        row.prop(props, "apply_sw_threshold", text="")
+        col = row.column()
+        col.prop(props, "sw_threshold")
+        col.enabled = props.apply_sw_threshold
+    elif props.display_option == "trajectory-average":
+        row = layout.row()
+        row.prop(props, "apply_ta_threshold", text="")
+        col = row.column()
+        col.prop(props, "ta_threshold")
+        col.enabled = props.apply_ta_threshold
+        # averaging the whole trajectory is slow, so it waits for Apply
+        row = layout.row()
+        split = row.split(factor=0.5)
+        col = split.column()
+        op = col.operator("mn.dssp_apply")
+        op.uuid = uuid
+        op.apply_ta_threshold = props.apply_ta_threshold
+        op.ta_threshold = props.ta_threshold
+        col.enabled = not props.applied
+        col = split.column()
+        op = col.operator("mn.dssp_cancel")
+        op.uuid = uuid
 
 
 def panel_md_properties(layout, context):
@@ -274,7 +350,7 @@ def panel_md_properties(layout, context):
         return None
 
     layout_trajectory_playback(layout, traj)
-    layout_selection_manage(layout, traj)
+    layout_frame_attributes(layout, traj)
 
 
 def panel_object(layout: bpy.types.UILayout, context: bpy.types.Context):
@@ -600,22 +676,59 @@ class MN_UL_FrameAttributesList(bpy.types.UIList):
         attribute = obj.data.attributes.get(item.name)
         if self.layout_type in {"DEFAULT", "COMPACT"}:
             row = layout.row()
+            source = item.bl_rna.properties["source"].enum_items[item.source]
+            row.label(text=item.name, icon=source.icon)
             if attribute is None:
                 # not stored yet, or a selection that failed
-                row.label(text=item.name, icon="NONE")
-                return
-            row.label(
-                text=item.name,
-                icon=ATTRIBUTE_TYPE_ICONS.get(attribute.data_type, "NONE"),
-            )
-            row.label(
-                text=attribute.bl_rna.properties["data_type"]
-                .enum_items[attribute.data_type]
-                .name
-            )
+                row.label(text="")
+            else:
+                row.label(
+                    text=attribute.bl_rna.properties["data_type"]
+                    .enum_items[attribute.data_type]
+                    .name,
+                    icon=ATTRIBUTE_TYPE_ICONS.get(attribute.data_type, "NONE"),
+                )
+            # selections and calculations can be set to not update per frame
+            if item.source == "SELECTION":
+                settings = obj.mn_trajectory_selections.get(item.name)
+            elif item.source == "CALCULATION":
+                settings = obj.mn.calculations.get(item.name)
+            else:
+                settings = None
+            if settings is not None:
+                row.prop(settings, "updating", text="", icon="FILE_REFRESH")
+            if item.source != "TRAJECTORY":
+                op = row.operator(
+                    "mn.frame_attribute_remove", text="", icon="X", emboss=False
+                )
+                op.uuid = obj.uuid
+                op.name = item.name
         elif self.layout_type in {"GRID"}:
             layout.alignment = "CENTER"
             layout.label(text=item.name)
+
+    def filter_items(self, context, data, propname):
+        """Show the attributes from the source picked above the list, and apply
+        the list's own name filter and sorting."""
+        items = getattr(data, propname)
+        helper = bpy.types.UI_UL_list
+        if self.filter_name:
+            flags = helper.filter_items_by_name(
+                self.filter_name, self.bitflag_filter_item, items, "name"
+            )
+        else:
+            flags = [self.bitflag_filter_item] * len(items)
+        source = data.frame_attributes_filter
+        if source != "ALL":
+            flags = [
+                flag if item.source == source else 0 for flag, item in zip(flags, items)
+            ]
+        order = (
+            helper.sort_items_by_name(items, "name")
+            if self.use_filter_sort_alpha
+            else []
+        )
+        return flags, order
 
 
 class MN_PT_Entities(bpy.types.Panel):
@@ -709,81 +822,37 @@ class MN_PT_trajectory(bpy.types.Panel):
         layout_trajectory_playback(layout, traj, panel=False)
 
 
-class MN_PT_trajectory_dssp(bpy.types.Panel):
+class MN_PT_Attributes(bpy.types.Panel):
     """
-    Panel for trajectory dssp details
+    Panel for the attributes a molecule writes on frame changes: from the
+    trajectory, its selections and its calculations
     """
 
-    bl_idname = "MN_PT_trajectory_dssp"
-    bl_label = "DSSP"
+    bl_idname = "MN_PT_attributes"
+    bl_label = "Attributes"
     bl_space_type = "VIEW_3D"
     bl_region_type = "UI"
     bl_category = "Molecular Nodes"
 
     @classmethod
     def poll(cls, context):
-        """Visible only if entity selected is a trajectory"""
+        """Visible for a Universe-backed entity, with or without playback."""
         obj = get_active_entity_object(context)
-        if obj is None or context.scene.MNSession.get(obj.uuid) is None:
+        if obj is None or obj.type != "MESH":
             return False
-        # DSSP is computed over trajectory frames, so a molecule needs playback
-        if obj.mn.entity_type == EntityType.MD_STREAMING:
-            return True
-        return obj.mn.entity_type == EntityType.MOLECULE and obj.mn.n_frames > 1
+        if context.scene.MNSession.get(obj.uuid) is None:
+            return False
+        return obj.mn.entity_type in (
+            EntityType.MD_STREAMING,
+            EntityType.MD_OXDNA,
+            EntityType.MOLECULE,
+        )
 
     def draw(self, context):
-        layout = self.layout
-        assert layout
+        layout = cast(UILayout, self.layout)
         obj = get_active_entity_object(context)
-        uuid = obj.uuid
-        traj = context.scene.MNSession.get(uuid)
-        props = traj.props.dssp
-        row = layout.row()
-        row.prop(props, "selection")
-        row = layout.row()
-        if traj.dssp._DSSP is None:
-            op = row.operator("mn.dssp_init")
-            op.uuid = uuid
-            op.selection = props.selection
-            return
-        op = row.operator("mn.dssp_init", text="Update Selection")
-        op.uuid = uuid
-        op.selection = props.selection
-        # display options
-        if traj._entity_type == EntityType.MOLECULE:
-            row = layout.row()
-            row.prop(props, "display_option")
-        elif traj._entity_type == EntityType.MD_STREAMING:
-            row = layout.row()
-            row.prop(props, "display_option_streaming")
-        # display option specific params
-        if props.display_option == "sliding-window-average":
-            row = layout.row()
-            row.prop(props, "window_size")
-            row = layout.row()
-            row.prop(props, "apply_sw_threshold", text="")
-            col = row.column()
-            col.prop(props, "sw_threshold")
-            col.enabled = props.apply_sw_threshold
-        elif props.display_option == "trajectory-average":
-            row = layout.row()
-            row.prop(props, "apply_ta_threshold", text="")
-            col = row.column()
-            col.prop(props, "ta_threshold")
-            col.enabled = props.apply_ta_threshold
-        # apply button
-        if props.display_option == "trajectory-average":
-            row = layout.row()
-            split = row.split(factor=0.5)
-            col = split.column()
-            op = col.operator("mn.dssp_apply")
-            op.uuid = uuid
-            op.apply_ta_threshold = props.apply_ta_threshold
-            op.ta_threshold = props.ta_threshold
-            col.enabled = not props.applied
-            col = split.column()
-            op = col.operator("mn.dssp_cancel")
-            op.uuid = uuid
+        traj = context.scene.MNSession.get(obj.uuid)
+        layout_frame_attributes(layout, traj, panel=False)
 
 
 def is_style_node(node: bpy.types.Node) -> bool:
@@ -1198,6 +1267,7 @@ class MN_PT_Compositor(bpy.types.Panel):
 
 CLASSES = [
     MN_MT_Add,
+    MN_MT_AddFrameAttribute,
     MN_MT_Import,
     MN_PT_Scene,
     MN_PT_Object,
@@ -1205,7 +1275,7 @@ CLASSES = [
     MN_PT_Entities,
     MN_UL_FrameAttributesList,
     MN_PT_trajectory,
-    MN_PT_trajectory_dssp,
+    MN_PT_Attributes,
     MN_UL_StylesList,
     MN_PT_Styles,
     MN_UL_AnnotationsList,

@@ -44,7 +44,7 @@ from ..utilities import (
     _validate_non_negative,
 )
 from .annotations import MoleculeAnnotationManager
-from .dssp import DSSPManager
+from .calculations import CalculationManager
 from .helpers import (
     FrameManager,
     _ag_to_bool,
@@ -172,8 +172,9 @@ class Molecule(MolecularEntity):
         Position caching and frame updates
     selections : SelectionManager
         Dynamic atom selections
-    calculations : dict
-        Custom per-frame calculations
+    calculations : CalculationManager
+        Calculations that write attributes from the universe, such as DSSP's
+        `sec_struct`
     annotations : MoleculeAnnotationManager
         Molecule annotations
     world_scale : float
@@ -190,8 +191,6 @@ class Molecule(MolecularEntity):
         Apply periodic boundary corrections
     interpolate : bool
         Enable position interpolation
-    dssp : DSSPManager
-        A DSSP Manager to compute and show secondary structures
 
     Examples
     --------
@@ -254,12 +253,11 @@ class Molecule(MolecularEntity):
         super().__init__()
         self.universe: mda.Universe = universe
         self.selections: SelectionManager = SelectionManager(self)
-        self.calculations: Dict[str, Callable] = {}
+        self.calculations = CalculationManager(self)
         self.world_scale = world_scale
         self._updating_in_progress = False
         self.annotations = MoleculeAnnotationManager(self)
         self.frame_manager = FrameManager(self)
-        self.dssp = DSSPManager(self)
         if create_object:
             self.create_object(name=name)
 
@@ -591,11 +589,28 @@ class Molecule(MolecularEntity):
             return self.atoms.sec_structs
         except (mda.NoDataError, AttributeError):
             pass
-        # otherwise compute it once from the current frame so the cartoon has
-        # something to show, per-frame updates require enabling the DSSP module
+        # otherwise compute it from the current frame so the cartoon has
+        # something to show
         if len(self.universe.select_atoms("protein")) == 0:
             raise mda.NoDataError("No protein atoms to compute secondary structure")
-        return self.dssp.compute_frame()
+        if self.frame_manager.n_frames != 1:
+            # a trajectory gets DSSP as a calculation that isn't updating, which
+            # runs on this frame and can be set to update on every frame. It is
+            # set up first so this frame reuses its analysis. Setting it up
+            # writes properties whose update callbacks would otherwise update
+            # this molecule to the scene frame mid-import
+            self._updating_in_progress = True
+            try:
+                self.calculations._dssp._setup("protein", updating=False, refresh=False)
+            finally:
+                self._updating_in_progress = False
+        # raises where DSSP can't run, such as for coarse-grained beads
+        try:
+            return self.calculations._dssp.compute_frame()
+        except Exception:
+            if "sec_struct" in self.calculations:
+                del self.calculations["sec_struct"]
+            raise
 
     def _save_filepaths_on_object(self) -> None:
         """Save file paths to the Blender object for reference"""
@@ -693,7 +708,7 @@ class Molecule(MolecularEntity):
         Attributes come from the trajectory (positions, and velocities, forces
         and other per-atom values a frame has), from selections and from
         `calculations`. The record is kept on the object as
-        `obj.mn.frame_attributes`, and listed in the Trajectory Playback panel.
+        `obj.mn.frame_attributes`, and listed in the Attributes panel.
 
         Returns
         -------
@@ -715,13 +730,13 @@ class Molecule(MolecularEntity):
         trajectory_names : Iterable[str]
             Names of attributes read from the trajectory on this frame
         """
-        # single-frame structures are not updated per frame
-        if self.frame_manager.n_frames == 1:
-            return
         items = self.object.mn.frame_attributes
         current = [(item.name, item.source) for item in items]
         trajectory = [name for name, source in current if source == "TRAJECTORY"]
-        trajectory += [name for name in trajectory_names if name not in trajectory]
+        # a single-frame structure has no trajectory to read attributes from, but
+        # can still have selections and calculations
+        if self.frame_manager.n_frames != 1:
+            trajectory += [n for n in trajectory_names if n not in trajectory]
         wanted = [(name, "TRAJECTORY") for name in trajectory]
         wanted += [
             (item.name, "SELECTION") for item in self.selections.ui_items if item.name
@@ -1095,18 +1110,6 @@ class Molecule(MolecularEntity):
 
         return data_obj
 
-    def _calculation_values(self) -> dict[str, np.ndarray]:
-        """Values of all registered calculations for the current frame"""
-        values = {}
-        for name, func in self.calculations.items():
-            try:
-                values[name] = func(self.universe)
-            except Exception as e:
-                logger.error(
-                    f"Failed to update calculation '{name}': {e}", exc_info=True
-                )
-        return values
-
     def _update_attributes(self, frame: int) -> None:
         """Write the attributes of every source for the scene frame.
 
@@ -1121,7 +1124,9 @@ class Molecule(MolecularEntity):
         trajectory = self._update_trajectory_positions(frame)
         self._store_frame_attributes(trajectory, "TRAJECTORY")
         self._store_frame_attributes(self.selections._frame_values(), "SELECTION")
-        self._store_frame_attributes(self._calculation_values(), "CALCULATION")
+        # DSSP is rebuilt from its saved settings after a file is reopened
+        self.calculations._dssp._restore()
+        self._store_frame_attributes(self.calculations._frame_values(), "CALCULATION")
         self._sync_frame_attributes(["position", *trajectory])
 
     def set_frame(self, frame: int) -> None:
@@ -1169,10 +1174,16 @@ class Molecule(MolecularEntity):
         """Bake a range of trajectory frames into a collection of frame objects.
 
         Each object in the returned collection holds the atom positions (in Blender world
-        units) for a single frame, in the same vertex order as this molecule's mesh. The
-        collection can then be read inside geometry nodes (e.g. with the *Animate Frames*
-        node) to drive positions from baked data, rather than updating the ``Universe``
+        units) for a single frame, in the same vertex order as this molecule's mesh,
+        along with the attributes written on frame changes (see `frame_attributes`):
+        those read from the trajectory, selections and calculations. The collection
+        can then be read inside geometry nodes (e.g. with the *Animate Frames* node)
+        to drive positions from baked data, rather than updating the ``Universe``
         every scene frame.
+
+        As in playback, a trajectory attribute that a frame lacks keeps the values
+        of the last frame that had it, and selections and calculations that don't
+        update on frame changes keep the values they have now.
 
         Re-baking replaces any objects previously baked into the same collection.
 
@@ -1212,20 +1223,82 @@ class Molecule(MolecularEntity):
         for obj in list(frames.objects):
             bpy.data.objects.remove(obj, do_unlink=True)
 
+        attributes = self.object.data.attributes
+        static = {
+            name: db.named_attribute(self.object, name)
+            for name in self.calculations
+            if not self.calculations.updating(name) and name in attributes
+        }
+        values: dict[str, np.ndarray] = {}
+        sources: dict[str, str] = {}
+
         # bake each requested frame, restoring the current frame afterwards
         original_uframe = self.uframe
         try:
             for i, frame in enumerate(range(start, stop, step)):
                 self.uframe = frame
-                db.create_object(
+                obj = db.create_object(
                     vertices=self._scaled_position,
                     name=f"{self.name}_frame_{i:04d}",
                     collection=frames,
                 )
+                # trajectory values a frame lacks carry over from earlier frames
+                trajectory = self.frame_manager._read_frame(frame)
+                trajectory.pop("position")
+                selections = {
+                    name: _ag_to_bool(ag)
+                    for name, ag in self.selections.atomgroups.items()
+                }
+                calculations = {**self.calculations._frame_values(), **static}
+                for source, frame_values in (
+                    ("TRAJECTORY", trajectory),
+                    ("SELECTION", selections),
+                    ("CALCULATION", calculations),
+                ):
+                    values.update(frame_values)
+                    sources.update(dict.fromkeys(frame_values, source))
+                self._store_baked_attributes(obj, values, sources)
         finally:
             self.uframe = original_uframe
 
         return frames
+
+    def _store_baked_attributes(
+        self,
+        obj: bpy.types.Object,
+        values: dict[str, np.ndarray],
+        sources: dict[str, str],
+    ) -> None:
+        """Store the per-frame attributes of a baked frame on its object.
+
+        Each attribute gets the type it has on this molecule's mesh.
+
+        Parameters
+        ----------
+        obj : bpy.types.Object
+            The baked frame's object
+        values : dict[str, np.ndarray]
+            Values by attribute name
+        sources : dict[str, str]
+            Source of each attribute, by name: `"TRAJECTORY"`, `"SELECTION"` or
+            `"CALCULATION"`
+        """
+        attributes = self.object.data.attributes
+        for name, value in values.items():
+            attribute = attributes.get(name)
+            if attribute is not None:
+                atype = attribute.data_type
+            elif sources[name] == "SELECTION":
+                atype = db.AttributeTypes.BOOLEAN
+            else:
+                atype = None
+            try:
+                db.store_named_attribute(obj, data=value, name=name, atype=atype)
+            except Exception as e:
+                # as in playback, trajectory values Blender can't store are expected
+                expected = sources[name] == "TRAJECTORY" and isinstance(e, ValueError)
+                level = logging.DEBUG if expected else logging.ERROR
+                logger.log(level, f"Skipping baked attribute '{name}': {e}")
 
     def _update_trajectory_positions(self, frame: int) -> dict[str, np.ndarray]:
         """Update trajectory positions for the given frame.
@@ -1611,8 +1684,6 @@ class Molecule(MolecularEntity):
             del state["selections"]
         if "annotations" in state:
             del state["annotations"]
-        if "dssp" in state:
-            del state["dssp"]
         if "calculations" in state:
             # Preserve picklable calculations
             preserved_calculations = {}
@@ -1695,10 +1766,10 @@ class Molecule(MolecularEntity):
             self.selections = SelectionManager(self)
         if not hasattr(self, "annotations"):
             self.annotations = MoleculeAnnotationManager(self)
-        if not hasattr(self, "dssp"):
-            self.dssp = DSSPManager(self)
         if not hasattr(self, "calculations"):
-            self.calculations = state.pop("_preserved_calculations", {})
+            self.calculations = CalculationManager(self)
+            preserved = self.__dict__.pop("_preserved_calculations", {})
+            self.calculations._funcs.update(preserved)
 
     def _world_positions(self, selection: mda.AtomGroup) -> np.ndarray:
         """
