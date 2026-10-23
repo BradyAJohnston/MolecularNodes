@@ -6,6 +6,7 @@ from nodebpy import TreeBuilder
 from nodebpy import shader as s
 from nodebpy.builder import CustomShaderGroup
 from ..shader._shared.mn_fresnel import MNFresnel
+from ..shader.ambient_occlusion_internal import AmbientOcclusionInternal
 from ..shader.mn_color import MNColor
 
 
@@ -13,18 +14,14 @@ class FresnelOutline(CustomShaderGroup):
     _name = "Shader Nodetree"
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
-        with s.Frame("Shade the Flat Colors with Ambient Occlusion"):
-            mix = s.Mix.color(
-                a=s.ColorRamp(s.AmbientOcclusion().o.ao ** 1.5).o.color,
-                b=MNColor().o.color,
-                blend_type="MULTIPLY",
-            )
-        with s.Frame("Stops colors as lights in Cycles"):
-            mix_shader = s.MixShader(
-                factor=s.LightPath().o.is_camera_ray,
-                shader=mix.o.result_color,
-                shader_001=s.Emission(mix.o.result_color),
-            )
+        mn_color = MNColor()
+        mix_shader = s.MixShader(
+            factor=mn_color.o.alpha,
+            shader=s.TransparentBSDF(),
+            shader_001=AmbientOcclusionInternal(
+                color=mn_color.o.color, ao_space="Local"
+            ),
+        )
         with s.Frame("Add Outline"):
             mix_shader_1 = s.MixShader(
                 factor=MNFresnel(ior=0.95, factor=1.0),

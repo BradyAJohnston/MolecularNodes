@@ -155,6 +155,7 @@ from .mass import Mass
 from .menu_atom_name import MenuAtomName
 from .menu_residue_mask import MenuResidueMask
 from .menu_residue_name import MenuResidueName
+from .mesh_contours import MeshContours
 from .mn_typed_bundles import MNTypedBundles
 from .n2_index_angle import Group2IndexAngle
 from .n3_index_angle import Group3IndexAngle
@@ -435,6 +436,7 @@ __all__ = (
     "MenuAtomName",
     "MenuResidueMask",
     "MenuResidueName",
+    "MeshContours",
     "NormalizeField",
     "NucleicChi",
     "NucleicDihedral",

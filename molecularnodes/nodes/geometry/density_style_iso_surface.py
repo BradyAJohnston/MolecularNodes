@@ -8,23 +8,147 @@ from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
+    ClosureSocket,
     ColorSocket,
+    CustomGeometryGroup,
     FloatSocket,
     GeometrySocket,
     MaterialSocket,
     PackageLibrary,
     SocketAccessor,
-    VectorSocket,
 )
 from nodebpy.types import (
     InputBoolean,
+    InputClosure,
     InputColor,
     InputFloat,
     InputGeometry,
     InputMaterial,
-    InputVector,
 )
-from .between_vector import BetweenVector
+from .set_color import SetColor
+
+
+class IsoGridToMesh(CustomGeometryGroup):
+    _name = "Iso Grid to Mesh"
+
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
+        grid = tree.inputs.float("Grid", 0.0)
+        process_grid = tree.inputs.closure("Process Grid")
+        threshold = tree.inputs.float(
+            "Threshold",
+            0.00959343,
+            description="ISO value. Surfaces are meshed at +Threshold and, for signed grids such as potentials or orbitals, at -Threshold",
+        )
+        material = tree.inputs.material(
+            "Material", description="Material to use for this surface"
+        )
+        negative_color = tree.inputs.color(
+            "Negative Color",
+            (1.0, 0.0, 0.0, 1.0),
+            description="Color for negative ISO values",
+        )
+        positive_color = tree.inputs.color(
+            "Positive Color",
+            (0.0, 0.0, 1.0, 1.0),
+            description="Color for positive ISO values",
+        )
+        shade_smooth = tree.inputs.boolean(
+            "Shade Smooth", True, description="Use smooth shading for surface"
+        )
+        geometry = tree.outputs.geometry("Geometry")
+
+        closure_zone = g.ClosureZone()
+        grid_1 = closure_zone.inputs.float("Grid")
+        threshold_1 = closure_zone.inputs.float("Threshold")
+        value = closure_zone.inputs.color("Value")
+        negative = closure_zone.inputs.boolean("Negative")
+        mesh = closure_zone.outputs.geometry("Mesh")
+        evaluate_closure = g.EvaluateClosure(process_grid, define_signature=True)
+        evaluate_closure.inputs.float(grid_1.output, "Grid")
+        grid_2 = evaluate_closure.outputs.float("Grid")
+        grid_to_mesh = g.GridToMesh(
+            grid=grid_2.output,
+            threshold=negative.output.switch.float(
+                threshold_1.output, abs(threshold_1.output) * -1.0
+            ),
+        )
+        set_color = SetColor(
+            atoms=g.FlipFaces(mesh=grid_to_mesh, selection=negative.output),
+            color=value.output,
+        )
+        set_color >> mesh.input
+        evaluate_closure_1 = g.EvaluateClosure(closure_zone.closure)
+        evaluate_closure_1.inputs.float(grid, "Grid")
+        evaluate_closure_1.inputs.float(threshold, "Threshold")
+        evaluate_closure_1.inputs.color(negative_color, "Value")
+        evaluate_closure_1.inputs.boolean(True, "Negative")
+        mesh_1 = evaluate_closure_1.outputs.geometry("Mesh")
+        evaluate_closure_2 = g.EvaluateClosure(closure_zone.closure)
+        evaluate_closure_2.inputs.float(grid, "Grid")
+        evaluate_closure_2.inputs.float(threshold, "Threshold")
+        evaluate_closure_2.inputs.color(positive_color, "Value")
+        evaluate_closure_2.inputs.boolean(name="Negative")
+        mesh_2 = evaluate_closure_2.outputs.geometry("Mesh")
+        (
+            g.JoinGeometry((mesh_1.output, mesh_2.output))
+            >> g.SetMaterial(material=material)
+            >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
+            >> g.JoinGeometry()
+            >> geometry
+        )
+
+
+class GetGeometryGrid(CustomGeometryGroup):
+    _name = "Get Geometry Grid"
+    _color_tag = "GEOMETRY"
+
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
+        geometry = tree.inputs.geometry(
+            "Geometry", description="Geometry to get the bundle of"
+        )
+        geometry_1 = tree.outputs.geometry(
+            "Geometry", description="Geometry to get the bundle of"
+        )
+        bundle = tree.outputs.bundle("Bundle")
+        grid = tree.outputs.float("Grid")
+
+        get_bundle_item = g.GetBundleItem.float(
+            geometry.bundle(), "MN/Density", structure_type="GRID"
+        )
+        (
+            get_bundle_item.o.exists.switch.float(
+                g.GetNamedGrid.float(geometry, "density").o.grid, get_bundle_item.o.item
+            )
+            >> grid
+        )
+
+        geometry >> geometry_1
+        get_bundle_item >> bundle
+
+
+class EvaluateOnGrid(CustomGeometryGroup):
+    _name = "Evaluate on Grid"
+    _color_tag = "GEOMETRY"
+
+    def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
+        geometry = tree.inputs.geometry(
+            "Geometry", description="Geometry to get the bundle of"
+        )
+        closure = tree.inputs.closure("Closure")
+        geometry_1 = tree.outputs.geometry("Geometry")
+
+        get_geometry_grid = GetGeometryGrid(Geometry=geometry)
+        evaluate_closure = g.EvaluateClosure(closure)
+        evaluate_closure.inputs.float(get_geometry_grid.o.grid, "Grid")
+        geometry_2 = evaluate_closure.outputs.geometry("Geometry")
+        (
+            geometry_2.output.set_bundle(
+                g.StoreBundleItem.float(
+                    get_geometry_grid.o.bundle, "MN/Grid", get_geometry_grid.o.grid
+                )
+            )
+            >> geometry_1
+        )
 
 
 class DensityStyleISOSurface(AssetGeometryGroup):
@@ -35,25 +159,13 @@ class DensityStyleISOSurface(AssetGeometryGroup):
     ----------
     volume : InputGeometry
         Input geometry
-    visible : InputBoolean
-        Visibility of style
     threshold : InputFloat
         ISO value. Surfaces are meshed at +Threshold and, for signed grids such as potentials or orbitals, at -Threshold
-    show_contours : InputBoolean
-        Whether to show surface contours
-    only_contours : InputBoolean
-        Only show contour edges
-    contour_thickness : InputFloat
-        Thickness of the contour edges
-    contour_color : InputColor
-        Color of contour edges
-    slice_width : InputVector
-        1
-    slice_center : InputVector
-        Slice Center
-    negative_color : InputColor
+    process_grid : InputClosure
+        Extra operations on the Float grid before being turned into a mesh
+    negative : InputColor
         Color for negative ISO values
-    positive_color : InputColor
+    positive : InputColor
         Color for positive ISO values
     shade_smooth : InputBoolean
         Use smooth shading for surface
@@ -64,25 +176,13 @@ class DensityStyleISOSurface(AssetGeometryGroup):
     ------
     i.volume : GeometrySocket
         Input geometry
-    i.visible : BooleanSocket
-        Visibility of style
     i.threshold : FloatSocket
         ISO value. Surfaces are meshed at +Threshold and, for signed grids such as potentials or orbitals, at -Threshold
-    i.show_contours : BooleanSocket
-        Whether to show surface contours
-    i.only_contours : BooleanSocket
-        Only show contour edges
-    i.contour_thickness : FloatSocket
-        Thickness of the contour edges
-    i.contour_color : ColorSocket
-        Color of contour edges
-    i.slice_width : VectorSocket
-        1
-    i.slice_center : VectorSocket
-        Slice Center
-    i.negative_color : ColorSocket
+    i.process_grid : ClosureSocket
+        Extra operations on the Float grid before being turned into a mesh
+    i.negative : ColorSocket
         Color for negative ISO values
-    i.positive_color : ColorSocket
+    i.positive : ColorSocket
         Color for positive ISO values
     i.shade_smooth : BooleanSocket
         Use smooth shading for surface
@@ -103,25 +203,13 @@ class DensityStyleISOSurface(AssetGeometryGroup):
     class _Inputs(SocketAccessor):
         volume: GeometrySocket
         """Input geometry"""
-        visible: BooleanSocket
-        """Visibility of style"""
         threshold: FloatSocket
         """ISO value. Surfaces are meshed at +Threshold and, for signed grids such as potentials or orbitals, at -Threshold"""
-        show_contours: BooleanSocket
-        """Whether to show surface contours"""
-        only_contours: BooleanSocket
-        """Only show contour edges"""
-        contour_thickness: FloatSocket
-        """Thickness of the contour edges"""
-        contour_color: ColorSocket
-        """Color of contour edges"""
-        slice_width: VectorSocket
-        """1"""
-        slice_center: VectorSocket
-        """Slice Center"""
-        negative_color: ColorSocket
+        process_grid: ClosureSocket
+        """Extra operations on the Float grid before being turned into a mesh"""
+        negative: ColorSocket
         """Color for negative ISO values"""
-        positive_color: ColorSocket
+        positive: ColorSocket
         """Color for positive ISO values"""
         shade_smooth: BooleanSocket
         """Use smooth shading for surface"""
@@ -142,32 +230,20 @@ class DensityStyleISOSurface(AssetGeometryGroup):
     def __init__(
         self,
         volume: InputGeometry = None,
-        visible: InputBoolean = True,
         threshold: InputFloat = 0.00959343,
-        show_contours: InputBoolean = False,
-        only_contours: InputBoolean = False,
-        contour_thickness: InputFloat = 0.1,
-        contour_color: InputColor = None,
-        slice_width: InputVector = None,
-        slice_center: InputVector = None,
-        negative_color: InputColor = None,
-        positive_color: InputColor = None,
+        process_grid: InputClosure = None,
+        negative: InputColor = None,
+        positive: InputColor = None,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
     ):
         super().__init__(
             **{
                 "Volume": volume,
-                "Visible": visible,
                 "Threshold": threshold,
-                "Show Contours": show_contours,
-                "Only Contours": only_contours,
-                "Contour Thickness": contour_thickness,
-                "Contour Color": contour_color,
-                "Slice Width": slice_width,
-                "Slice Center": slice_center,
-                "Negative Color": negative_color,
-                "Positive Color": positive_color,
+                "Process Grid": process_grid,
+                "Negative": negative,
+                "Positive": positive,
                 "Shade Smooth": shade_smooth,
                 "Material": material,
             }
@@ -175,58 +251,23 @@ class DensityStyleISOSurface(AssetGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         volume = tree.inputs.geometry("Volume", description="Input geometry")
-        visible = tree.inputs.boolean(
-            "Visible", True, description="Visibility of style"
-        )
         threshold = tree.inputs.float(
             "Threshold",
             0.00959343,
             description="ISO value. Surfaces are meshed at +Threshold and, for signed grids such as potentials or orbitals, at -Threshold",
         )
-        with tree.inputs.panel("Contours", default_closed=True):
-            show_contours = tree.inputs.boolean(
-                "Show Contours", False, description="Whether to show surface contours"
+        with tree.inputs.panel("Surface", default_closed=True):
+            process_grid = tree.inputs.closure(
+                "Process Grid",
+                description="Extra operations on the Float grid before being turned into a mesh",
             )
-            only_contours = tree.inputs.boolean(
-                "Only Contours", False, description="Only show contour edges"
-            )
-            contour_thickness = tree.inputs.float(
-                "Contour Thickness",
-                0.1,
-                description="Thickness of the contour edges",
-                min_value=0.0,
-                max_value=1.0,
-                subtype="FACTOR",
-            )
-            contour_color = tree.inputs.color(
-                "Contour Color",
-                (0.0, 0.0, 0.0, 1.0),
-                description="Color of contour edges",
-            )
-        with tree.inputs.panel("Slice"):
-            slice_width = tree.inputs.vector(
-                "Slice Width",
-                (0.5, 0.5, 0.5),
-                description="1",
-                min_value=0.0,
-                max_value=1.0,
-                subtype="FACTOR",
-            )
-            slice_center = tree.inputs.vector(
-                "Slice Center",
-                (0.5, 0.5, 0.5),
-                min_value=0.0,
-                max_value=1.0,
-                subtype="FACTOR",
-            )
-        with tree.inputs.panel("Material", default_closed=True):
-            negative_color = tree.inputs.color(
-                "Negative Color",
+            negative = tree.inputs.color(
+                "Negative",
                 (1.0, 0.0, 0.0, 1.0),
                 description="Color for negative ISO values",
             )
-            positive_color = tree.inputs.color(
-                "Positive Color",
+            positive = tree.inputs.color(
+                "Positive",
                 (0.0, 0.0, 1.0, 1.0),
                 description="Color for positive ISO values",
             )
@@ -240,47 +281,22 @@ class DensityStyleISOSurface(AssetGeometryGroup):
             "Geometry", description="ISO surface geometry output"
         )
 
-        bounding_box = g.BoundingBox(volume)
-        math_1 = contour_thickness * 0.001
-        math_2 = abs(threshold)
-        switch = visible.switch.geometry(true=volume)
-        between_vector = BetweenVector(
-            value=g.Position().o.position.map_range(
-                bounding_box.o.min, bounding_box.o.max
-            ),
-            lower=slice_center - slice_width,
-            upper=slice_center + slice_width,
+        closure_zone = g.ClosureZone()
+        grid = closure_zone.inputs.float("Grid")
+        geometry_1 = closure_zone.outputs.geometry("Geometry")
+        iso_grid_to_mesh = IsoGridToMesh(
+            Grid=grid.output,
+            **{"Process Grid": process_grid},
+            Threshold=threshold,
+            Material=material,
+            **{
+                "Negative Color": negative,
+                "Positive Color": positive,
+                "Shade Smooth": shade_smooth,
+            },
         )
-        set_material = (
-            g.VolumeToMesh(volume=switch, threshold=math_2 * -1.0)
-            >> g.FlipFaces()
-            >> g.StoreNamedAttribute.point.color(name="Color", value=negative_color)
-            >> g.SetMaterial(material=material)
-        )
-        set_material_1 = (
-            g.VolumeToMesh(volume=switch, threshold=math_2)
-            >> g.StoreNamedAttribute.point.color(name="Color", value=positive_color)
-            >> g.SetMaterial(material=material)
-        )
-        separate_geometry = (
-            g.JoinGeometry((set_material_1, set_material))
-            >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
-            >> g.SeparateGeometry.point(selection=between_vector)
-        )
-        set_material_2 = (
-            g.MeshToCurve(mesh=separate_geometry.o.selection, selection=show_contours)
-            >> g.CurveToMesh(profile_curve=g.Quadrilateral(width=math_1, height=math_1))
-            >> g.StoreNamedAttribute.edge.color(name="Color", value=contour_color)
-            >> g.SetMaterial(material=material)
-        )
-        join_geometry = g.JoinGeometry(
-            (
-                only_contours.switch.geometry(separate_geometry.o.selection),
-                set_material_2,
-            )
-        )
-
-        join_geometry >> geometry
+        iso_grid_to_mesh >> geometry_1.input
+        EvaluateOnGrid(Geometry=volume, Closure=closure_zone.closure) >> geometry
 
 
 ASSET = DensityStyleISOSurface
