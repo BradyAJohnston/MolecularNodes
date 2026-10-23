@@ -1,0 +1,112 @@
+name: Run Tests
+
+# Reusable workflow that runs the tests against one version of Blender on each platform,
+# both with the bpy module and inside a Blender install. It is called from a workflow per
+# Blender version (tests-5.2.yml, ...) so that each version has its own status badge in
+# the README.
+
+on:
+    workflow_call:
+        inputs:
+            version:
+                description: "The major.minor version of Blender to test against, e.g. 5.2"
+                required: true
+                type: string
+            daily:
+                description: "Install bpy from the daily builds rather than PyPI releases"
+                required: false
+                default: false
+                type: boolean
+            network:
+                description: "Also run the tests that download from RCSB / EMDB"
+                required: false
+                default: false
+                type: boolean
+
+jobs:
+    test-bpy:
+        name: bpy (${{ matrix.os }})
+        runs-on: ${{ matrix.os }}
+        strategy:
+            max-parallel: 6
+            # without this the first OS to fail cancels the others, hiding whether a failure
+            # is platform-specific
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, macos-latest, windows-latest]
+        steps:
+            - uses: actions/checkout@v5
+            - name: Install uv
+              uses: astral-sh/setup-uv@v5
+            - name: Install molecularnodes
+              shell: bash
+              run: |
+                  uv sync --all-extras
+                  if [ "${{ inputs.daily }}" = "true" ]; then
+                    # dailybpy only hosts the most recent build, so skip the uv cache restored
+                    # by setup-uv, which can point at a build that has since been deleted
+                    uv pip install "bpy==${{ inputs.version }}.*" --refresh-package bpy --extra-index-url https://bradyajohnston.github.io/dailybpy/ --index-strategy unsafe-best-match --prerelease=allow
+                  else
+                    uv pip install "bpy==${{ inputs.version }}.*"
+                  fi
+            # `--no-sync` stops uv from restoring the locked version of bpy
+            - name: Check bpy version
+              run: |
+                  uv run --no-sync python -c "import bpy; print(bpy.app.version_string)"
+            - name: Build node assets
+              timeout-minutes: 10
+              run: |
+                  uv run --no-sync -m nodebpy.assets build
+            - name: Run Tests
+              # windows runners need ~17 minutes for the full suite
+              timeout-minutes: 30
+              run: |
+                  uv run --no-sync pytest -n auto -m "not network"
+            # tests that download from RCSB / EMDB run in one job only: every job downloading
+            # at once gets rate limited and fails
+            - name: Run network tests
+              if: inputs.network && matrix.os == 'ubuntu-latest'
+              timeout-minutes: 10
+              run: |
+                  uv run --no-sync pytest -m network
+            - name: Upload image comparison failures
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: image-failures-bpy-${{ inputs.version }}-${{ matrix.os }}
+                  retention-days: 7
+                  if-no-files-found: ignore
+                  path: tests/image_failures/
+
+    test-blender:
+        name: Blender (${{ matrix.os }})
+        runs-on: ${{ matrix.os }}
+        strategy:
+            max-parallel: 6
+            fail-fast: false
+            matrix:
+                os: [ubuntu-latest, macos-latest, windows-latest]
+        steps:
+            - uses: actions/checkout@v5
+            # a version that has no release yet (beta / alpha) installs the daily build
+            - uses: BradyAJohnston/setup-blender@v5
+              with:
+                  version: ${{ inputs.version }}
+
+            - name: Install Dependencies
+              shell: bash
+              run: |
+                  blender -b -P tests/install.py
+
+            - name: Run Tests
+              shell: bash
+              run: |
+                  blender -b -P tests/run.py -- -v -m "not network"
+            - name: Upload image comparison failures
+              if: failure()
+              uses: actions/upload-artifact@v4
+              with:
+                  name: image-failures-blender-${{ inputs.version }}-${{ matrix.os }}
+                  retention-days: 7
+                  if-no-files-found: ignore
+                  path: tests/image_failures/

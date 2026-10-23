@@ -110,6 +110,7 @@ from .fallback_vector import FallbackVector
 from .field_remap import FieldRemap
 from .find_bonded_atom import FindBondedAtom
 from .find_bonds import FindBonds
+from .force import Force
 from .force_brownian import ForceBrownian
 from .force_gravity import ForceGravity
 from .force_mesh_collide import ForceMeshCollide
@@ -386,6 +387,7 @@ __all__ = (
     "FieldRemap",
     "FindBondedAtom",
     "FindBonds",
+    "Force",
     "ForceBrownian",
     "ForceGravity",
     "ForceMeshCollide",
