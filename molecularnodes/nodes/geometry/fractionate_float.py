@@ -1,5 +1,5 @@
 # Node-group asset "Fractionate Float" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -79,7 +79,7 @@ class FractionateFloat(AssetGeometryGroup):
         super().__init__(**{"Menu": menu, "Value": value})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
+        menu = tree.inputs.menu("Menu", "Linear", expanded=True, optional_label=True)
         value = tree.inputs.float("Value", 0.0, description="The value to fractionate")
         fraction = tree.outputs.float(
             "Fraction", description="Fractional component of the value, between 0 and 1"
@@ -107,8 +107,6 @@ class FractionateFloat(AssetGeometryGroup):
 
         float_to_integer >> floor
         float_to_integer_1 >> ceiling
-
-        menu.default_value = "Linear"
 
 
 ASSET = FractionateFloat

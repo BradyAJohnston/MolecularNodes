@@ -1,5 +1,5 @@
 # Node group "Attribute at Index" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -12,7 +12,7 @@ from nodebpy.builder import (
     SocketAccessor,
     StringSocket,
 )
-from nodebpy.types import InputInteger, InputString
+from nodebpy.types import Default, InputInteger, InputString
 
 
 class AttributeAtIndex(CustomGeometryGroup):
@@ -22,7 +22,7 @@ class AttributeAtIndex(CustomGeometryGroup):
     Parameters
     ----------
     index : InputInteger
-        Index
+        Index. When unconnected: The index from the context.
     name : InputString
         Name
 
@@ -61,7 +61,7 @@ class AttributeAtIndex(CustomGeometryGroup):
 
     def __init__(
         self,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
         name: InputString = "res_id",
     ):
         super().__init__(**{"Index": index, "Name": name})

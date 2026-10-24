@@ -1,5 +1,5 @@
 # Node-group asset "Split to Centred Instances" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -106,14 +106,12 @@ class SplitToCentredInstances(AssetGeometryGroup):
 
         capture = g.CaptureAttribute.point(geometry=geometry)
         centroid = capture.items.vector(
-            "Centroid", Centroid(selection=selection, group_id=group_id)
+            Centroid(selection=selection, group_id=group_id), "Centroid"
         )
         with g.Frame("Get first point in each group, to be sampled by instance"):
             sample_index = SeparateFirstPoint(
                 geometry=capture.o.geometry, group_id=group_id
-            ) >> g.SampleIndex(
-                value=centroid.output, index=g.Index(), data_type="FLOAT_VECTOR"
-            )
+            ) >> g.SampleIndex.point.vector(value=centroid.output, index=g.Index())
         with g.Frame("Centres each group on world origin"):
             set_position = g.SetPosition(
                 geometry=capture.o.geometry, offset=centroid.output * -1.0

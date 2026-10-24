@@ -45,7 +45,7 @@ While the molecule is imported, we are in 3D view by default. We can change to a
 
 The protein is now imported in the scene. To change the way the protein is displayed, we have to use the `Geometry Nodes` editor. This is where we change the nodes that are use to process the underlying atomic data, resulting in the final 3D object we can see in front of us.
 
-To access `Geometry Nodes` panel, we can either select the `Geoemtry Nodes` workspace, or split the current viewport and change one of the workspaces into the node editor.
+To access `Geometry Nodes` panel, we can either select the `Geometry Nodes` workspace, or split the current viewport and change one of the workspaces into the node editor.
 
 ![Arranging workspaces.](https://imgur.com/0HaIgZp.mp4)
 

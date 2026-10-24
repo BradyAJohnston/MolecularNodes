@@ -1,5 +1,5 @@
 # Node-group asset "Structure Parameter" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -24,7 +24,7 @@ class StructureParameter(AssetGeometryGroup):
 
     Outputs
     -------
-    o.atom_factor : FloatSocket
+    o.factor : FloatSocket
         Factor of the atom within the structure, which is the relative position of the `Index` within the overall structure between 0 and 1
     o.index : IntegerSocket
         `Index` of the point within the structure. Equal to the `Index` input node
@@ -51,7 +51,7 @@ class StructureParameter(AssetGeometryGroup):
         pass
 
     class _Outputs(SocketAccessor):
-        atom_factor: FloatSocket
+        factor: FloatSocket
         """Factor of the atom within the structure, which is the relative position of the `Index` within the overall structure between 0 and 1"""
         index: IntegerSocket
         """`Index` of the point within the structure. Equal to the `Index` input node"""
@@ -75,12 +75,12 @@ class StructureParameter(AssetGeometryGroup):
         @property
         def o(self) -> _Outputs: ...
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        atom_factor = tree.outputs.float(
-            "Atom Factor",
+        factor = tree.outputs.float(
+            "Factor",
             description="Factor of the atom within the structure, which is the relative position of the `Index` within the overall structure between 0 and 1",
             subtype="FACTOR",
         )
@@ -109,7 +109,7 @@ class StructureParameter(AssetGeometryGroup):
 
         group_info = GroupInfo()
         index_1 = g.Index()
-        IndexToFactor(index=index_1, size=group_info.o.size) >> atom_factor
+        IndexToFactor(index=index_1, size=group_info.o.size) >> factor
         sub_group_info = SubGroupInfo(sub_group_id=UniqueResidueID())
         (
             IndexToFactor(

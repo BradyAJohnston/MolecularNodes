@@ -1,5 +1,5 @@
 # Node-group asset "Group Info" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -80,7 +80,7 @@ class GroupInfo(AssetGeometryGroup):
         index_of_last = tree.outputs.integer("Index of Last")
 
         index = g.Index()
-        accumulate_field = g.AccumulateField.point.integer(g.Integer(), group_id)
+        accumulate_field = g.AccumulateField.point.integer(g.Integer(1), group_id)
         switch = g.Compare.integer.equal(
             accumulate_field.o.trailing, 0
         ).o.result.switch.integer(true=index)

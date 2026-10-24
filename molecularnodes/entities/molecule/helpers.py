@@ -5,17 +5,18 @@ synchronization, and attribute metadata collection.
 """
 
 import logging
-from collections import OrderedDict
-from typing import Callable, Optional
+from typing import Optional
 import databpy as db
 import numpy as np
 import numpy.typing as npt
 from MDAnalysis import AtomGroup
+from MDAnalysis.exceptions import NoDataError
 from ...utils import (
-    correct_periodic_positions,
     fraction,
     frame_mapper,
     frames_to_average,
+    is_periodic_box,
+    minimum_image_positions,
 )
 
 logger = logging.getLogger(__name__)
@@ -28,108 +29,18 @@ def _ag_to_bool(ag: AtomGroup) -> np.typing.NDArray[np.bool_]:
     return mask
 
 
-# ============================================================================
-# Position Cache Management
-# ============================================================================
-
-
-class PositionCache:
-    """Position cache with automatic size limits and cleanup.
-
-    OrderedDict-based cache with automatic eviction for memory efficiency.
-
-    Parameters
-    ----------
-    max_size : int, default=10
-        Maximum number of frames to cache
+def _isin(values: np.ndarray, test_values) -> np.typing.NDArray[np.bool_]:
     """
+    Per-element membership test, like `np.isin`, for arrays with few unique values.
 
-    def __init__(self, max_size: int = 10):
-        """Initialize the position cache.
-
-        Parameters
-        ----------
-        max_size : int
-            Maximum number of frames to cache
-        """
-        self._cache: OrderedDict[int, np.ndarray] = OrderedDict()
-        self._max_size = max_size
-
-    def __contains__(self, frame: int) -> bool:
-        """Check if a frame is cached."""
-        return frame in self._cache
-
-    def __getitem__(self, frame: int) -> np.ndarray:
-        """Get cached positions for a frame."""
-        return self._cache[frame]
-
-    def __setitem__(self, frame: int, positions: np.ndarray) -> None:
-        """Cache positions for a frame."""
-        self._cache[frame] = positions
-        self._enforce_size_limit()
-
-    def __delitem__(self, frame: int) -> None:
-        """Remove a frame from the cache."""
-        del self._cache[frame]
-
-    def keys(self):
-        """Get all cached frame numbers."""
-        return self._cache.keys()
-
-    def _enforce_size_limit(self) -> None:
-        """Remove oldest entries if cache exceeds max size."""
-        while len(self._cache) > self._max_size:
-            self._cache.popitem(last=False)
-
-    def get_or_compute(
-        self, frame: int, compute_fn: Callable[[int], np.ndarray]
-    ) -> np.ndarray:
-        """Get cached position or compute and cache it.
-
-        Parameters
-        ----------
-        frame : int
-            Frame number
-        compute_fn : callable
-            Function to compute positions if not cached
-
-        Returns
-        -------
-        np.ndarray
-            Atom positions for the frame
-        """
-        if frame not in self._cache:
-            self._cache[frame] = compute_fn(frame)
-            self._enforce_size_limit()
-        return self._cache[frame]
-
-    def clear(self) -> None:
-        """Clear all cached positions."""
-        self._cache.clear()
-
-    def remove_frames_except(self, frames_to_keep: npt.NDArray[np.int64]) -> None:
-        """Remove all frames except the specified ones.
-
-        Parameters
-        ----------
-        frames_to_keep : np.ndarray
-            Frame numbers to retain
-        """
-        to_remove = [f for f in self._cache if f not in frames_to_keep]
-        for f in to_remove:
-            del self._cache[f]
-
-    def get_ordered_array(self) -> np.ndarray:
-        """Return cached frames as a 3D array in chronological order.
-
-        Returns
-        -------
-        np.ndarray
-            Shape (n_frames, n_atoms, 3)
-        """
-        keys = list(self._cache.keys())
-        keys.sort()
-        return np.array([self._cache[k] for k in keys])
+    Residue and atom names are object arrays with many repeats, which `np.isin`
+    compares one atom at a time against every test value. Testing only the unique
+    values and mapping the result back is much faster for long lists of names.
+    """
+    unique, inverse = np.unique(values, return_inverse=True)
+    test_values = set(test_values)
+    is_in = np.fromiter((v in test_values for v in unique), bool, len(unique))
+    return is_in[inverse].reshape(np.shape(values))
 
 
 # ============================================================================
@@ -137,11 +48,27 @@ class PositionCache:
 # ============================================================================
 
 
+# per-frame vector attributes read when the MDAnalysis Timestep has them:
+# attribute name -> (Timestep attribute, whether to scale by world_scale).
+# Velocities are lengths per time so they scale like positions; forces are not
+# lengths and keep MDAnalysis units (kJ/(mol*Å))
+TIMESTEP_ATTRIBUTES = {
+    "velocity": ("velocities", True),
+    "force": ("forces", False),
+}
+
+# names of the built-in attributes that per-atom `ts.data` arrays update: the
+# B-factors and occupancies of each model of a PDB file, and LAMMPS dump
+# charges. Other keys keep their name, or take a `ts_` prefix when it is the
+# name of a built-in attribute
+TS_DATA_NAMES = {"tempfactor": "b_factor", "occupancy": "occupancy", "q": "charge"}
+
+
 class FrameManager:
     """Frame updates, position caching, interpolation, and periodic corrections.
 
     Encapsulates:
-    - Position caching and retrieval
+    - Caching of positions and other per-frame attributes
     - Frame-to-frame interpolation
     - Periodic boundary corrections
     - Frame averaging
@@ -163,18 +90,26 @@ class FrameManager:
             Parent Molecule instance
         """
         self.trajectory = trajectory
-        self.cache = PositionCache()
-        # entities can declare extra per-frame vector attributes (e.g. oxDNA
-        # base vectors) via `_att_names`. Only names the reader actually found
-        # in the file get a cache — trailing columns such as velocities are
-        # optional in oxDNA configurations
-        self.attribute_caches = {}
-        att_names = getattr(trajectory, "_att_names", ())
-        if att_names:
-            ts_data = trajectory.universe.trajectory.ts.data
-            self.attribute_caches = {
-                name: PositionCache() for name in att_names if name in ts_data
-            }
+        # attribute name -> universe frame -> values, for positions and any
+        # other per-frame attribute a frame has (see `_read_frame`)
+        self.caches: dict[str, dict[int, np.ndarray]] = {}
+        # universe frame -> unit cell dimensions (Å, degrees) of the frames in
+        # the caches, or None for a frame without a box
+        self._boxes: dict[int, Optional[np.ndarray]] = {}
+        # attributes Molecular Nodes creates itself, which other `ts.data`
+        # keys must not overwrite (`bond_type` is stored on the edges)
+        self._builtin_names = {
+            "position",
+            "bond_type",
+            *TIMESTEP_ATTRIBUTES,
+            *getattr(trajectory, "_att_names", ()),
+            *getattr(trajectory, "_blender_attributes", {}),
+        }
+
+    @property
+    def attribute_caches(self) -> dict[str, dict[int, np.ndarray]]:
+        """The caches of the per-frame attributes other than positions."""
+        return {name: c for name, c in self.caches.items() if name != "position"}
 
     @property
     def n_frames(self) -> Optional[int]:
@@ -211,12 +146,26 @@ class FrameManager:
         self.trajectory.uframe = frame
         return self.trajectory._scaled_position
 
+    def _box_at_frame(self, frame: Optional[int]) -> Optional[np.ndarray]:
+        """Unit cell dimensions of a universe frame, read when it was cached.
+
+        Falls back to the box of the frame the universe is on for a frame that
+        is not cached, or when `frame` is None.
+        """
+        if frame in self._boxes:
+            return self._boxes[frame]
+        return self.trajectory.universe.dimensions
+
     def adjust_periodic_positions(
-        self, pos1: np.ndarray, pos2: np.ndarray
+        self, pos1: np.ndarray, pos2: np.ndarray, frame: Optional[int] = None
     ) -> np.ndarray:
         """Apply periodic boundary correction to positions.
 
-        Corrects for atoms crossing periodic boundaries, ensuring smooth interpolation.
+        Shifts each atom of `pos2` to its periodic image nearest to it in
+        `pos1` (the minimum image convention), so that interpolation and
+        averaging take the short way across a boundary. Works for orthorhombic
+        boxes and, via `MDAnalysis.lib.distances.minimize_vectors`, triclinic
+        ones (see `minimum_image_positions`).
 
         Parameters
         ----------
@@ -224,20 +173,24 @@ class FrameManager:
             Reference positions
         pos2 : np.ndarray
             Positions to correct
+        frame : int, optional
+            Universe frame whose box to use. When the box changes between
+            frames (NPT), the box of the current frame is used.
 
         Returns
         -------
         np.ndarray
-            Corrected positions (unchanged if correction not needed)
+            Corrected positions (unchanged if correction is off or the frame
+            has no usable box)
         """
-        if self.trajectory.correct_periodic and self.trajectory._is_orthorhombic:
-            return correct_periodic_positions(
-                pos1,
-                pos2,
-                self.trajectory.universe.dimensions[:3] * self.trajectory.world_scale,
-            )
-        else:
+        if not self.trajectory.correct_periodic:
             return pos2
+        box = self._box_at_frame(frame)
+        if not is_periodic_box(box):
+            return pos2
+        box = np.array(box, dtype=np.float64)
+        box[:3] *= self.trajectory.world_scale
+        return minimum_image_positions(pos1, pos2, box)
 
     def _frame_range(self, frame: int) -> npt.NDArray[np.int64]:
         """Get frame numbers to average over.
@@ -347,8 +300,85 @@ class FrameManager:
 
         return uframe_current, uframe_next
 
-    def update_position_cache(self, frame: int, cache_ahead: bool = True) -> None:
-        """Update the position cache for the current frame.
+    def _trim_cache(self, frames_to_keep) -> None:
+        """Drop cached frames other than these, once more than 2 are held."""
+        if len(self.caches.get("position", {})) > 2:
+            for cache in (*self.caches.values(), self._boxes):
+                for f in [f for f in cache if f not in frames_to_keep]:
+                    del cache[f]
+
+    def _read_frame(self, frame: int) -> dict[str, np.ndarray]:
+        """Read every per-frame attribute that a universe frame has.
+
+        Positions are always read. The entity's `_att_names` (e.g. oxDNA base
+        vectors) are read when the frame's `ts.data` has them, and velocities
+        and forces when the Timestep has them: most trajectories have neither,
+        and a TRR file can have them on only some frames. Other per-atom arrays
+        in `ts.data` are read under their MN names (see `TS_DATA_NAMES`).
+
+        Parameters
+        ----------
+        frame : int
+            Universe frame number
+
+        Returns
+        -------
+        dict[str, np.ndarray]
+            Values by attribute name, in Blender units where they are lengths
+        """
+        values = {"position": self._position_at_frame(frame)}
+        ts = self.trajectory.universe.trajectory.ts
+        dimensions = ts.dimensions
+        self._boxes[frame] = None if dimensions is None else np.array(dimensions)
+        world_scale = self.trajectory.world_scale
+        att_names = getattr(self.trajectory, "_att_names", ())
+        for name in att_names:
+            if name in ts.data:
+                values[name] = ts.data[name] * world_scale
+        for name, (ts_attribute, scaled) in TIMESTEP_ATTRIBUTES.items():
+            if name in values or not getattr(ts, f"has_{ts_attribute}", False):
+                continue
+            try:
+                data = getattr(ts, ts_attribute)
+            except NoDataError:
+                continue
+            values[name] = data * world_scale if scaled else data.copy()
+        # any other per-atom array the reader put in `ts.data`, such as PDB
+        # occupancies and B-factors per model, LAMMPS dump `additional_columns`
+        # or TNG `additional_blocks`. Single-frame structures keep the values
+        # from import
+        if self.n_frames != 1:
+            for key, data in ts.data.items():
+                name = TS_DATA_NAMES.get(key)
+                if name is None:
+                    name = f"ts_{key}" if key in self._builtin_names else key
+                if key in att_names or name in values:
+                    continue
+                if isinstance(data, np.ndarray) and data.shape[:1] == (ts.n_atoms,):
+                    values[name] = data.copy()
+        return values
+
+    def read_and_cache(self, frame: int) -> dict[str, np.ndarray]:
+        """Read a universe frame afresh and cache it.
+
+        Parameters
+        ----------
+        frame : int
+            Universe frame number
+
+        Returns
+        -------
+        dict[str, np.ndarray]
+            Values by attribute name
+        """
+        values = self._read_frame(frame)
+        self._trim_cache([frame])
+        for name, value in values.items():
+            self.caches.setdefault(name, {})[frame] = value
+        return values
+
+    def update_cache(self, frame: int, cache_ahead: bool = True) -> None:
+        """Update the cache for the current frame.
 
         Intelligently caches based on averaging and interpolation settings,
         prefetching the next frame when needed.
@@ -361,20 +391,20 @@ class FrameManager:
             Whether to cache next frame for interpolation
         """
         frames_to_cache = self._frames_to_cache(frame, cache_ahead)
-
-        # Only cleanup the cache if we have more than 2 frames stored
-        if len(self.cache.keys()) > 2:
-            self.cache.remove_frames_except(frames_to_cache)
+        self._trim_cache(frames_to_cache)
 
         # Update the cache with any frames that are not yet cached
         for f in frames_to_cache:
-            if f not in self.cache:
-                self.cache[f] = self._position_at_frame(f)
+            if f not in self.caches.get("position", {}):
+                for name, value in self._read_frame(f).items():
+                    self.caches.setdefault(name, {})[f] = value
 
-    def position_cache_mean(self, frame: int) -> np.ndarray:
-        """Get mean position from cached frames.
+    def cache_mean(self, frame: int) -> dict[str, np.ndarray]:
+        """Get mean values from cached frames.
 
-        Computes average over the averaging window with periodic corrections if needed.
+        Computes the average over the averaging window, with periodic
+        corrections for positions if needed. Each attribute is averaged over
+        the frames of the window that have it.
 
         Parameters
         ----------
@@ -383,13 +413,16 @@ class FrameManager:
 
         Returns
         -------
-        np.ndarray
-            Mean positions (or single frame if not averaging)
+        dict[str, np.ndarray]
+            Mean values (or single frame if not averaging) of the attributes
+            this frame has, by name
         """
-        self.update_position_cache(frame)
-
+        self.update_cache(frame)
+        current = {
+            name: cache[frame] for name, cache in self.caches.items() if frame in cache
+        }
         if self.trajectory.average == 0:
-            return self.cache[frame]
+            return current
 
         # park the universe on this frame so the box dimensions used by the
         # corrections below are a deterministic function of `frame` — after
@@ -401,24 +434,41 @@ class FrameManager:
         # average exactly the window for this frame — the cache can hold other
         # frames (interpolation look-ahead, a previous window), which must not
         # leak into the mean
-        array = np.array([self.cache[f] for f in self._frame_range(frame)])
-        if self.trajectory.correct_periodic and self.trajectory._is_orthorhombic:
-            # correct each frame against its (corrected) predecessor:
-            # consecutive frames are where the nearest-image assumption holds.
-            # Correcting everything against the window's first frame mistakes
-            # real motion greater than half a box — legitimate in unwrapped or
-            # per-molecule-imaged trajectories — for a boundary crossing, and
-            # the windows of neighbouring frames then disagree by a whole box
-            for i in range(1, len(array)):
-                array[i] = self.adjust_periodic_positions(array[i - 1], array[i])
+        window = self._frame_range(frame)
+        means = {}
+        for name in current:
+            if current[name].dtype.kind != "f":
+                # integer and boolean values are not averaged
+                means[name] = current[name]
+                continue
+            cache = self.caches[name]
+            array = np.stack([cache[f] for f in window if f in cache])
+            if name == "position" and self.trajectory.correct_periodic:
+                # correct each frame against its (corrected) predecessor:
+                # consecutive frames are where the nearest-image assumption
+                # holds. Correcting everything against the window's first frame
+                # mistakes real motion greater than half a box — legitimate in
+                # unwrapped or per-molecule-imaged trajectories — for a boundary
+                # crossing, and the windows of neighbouring frames then disagree
+                # by a whole box
+                for i in range(1, len(array)):
+                    array[i] = self.adjust_periodic_positions(
+                        array[i - 1], array[i], frame
+                    )
+            means[name] = np.mean(array, axis=0)
+        return means
 
-        return np.mean(array, axis=0)
+    def position_cache_mean(self, frame: int) -> np.ndarray:
+        """Get mean positions from cached frames, see `cache_mean`."""
+        return self.cache_mean(frame)["position"]
 
-    def get_positions_at_frame(self, frame: int) -> np.ndarray:
-        """Get positions for a given frame with all processing applied.
+    def get_values_at_frame(self, frame: int) -> dict[str, np.ndarray]:
+        """Get per-frame attributes for a given frame with all processing applied.
 
-        Main entry point for position retrieval. Handles frame mapping, interpolation,
-        averaging, and periodic boundary corrections.
+        Main entry point for frame updates. Handles frame mapping, interpolation,
+        averaging, and periodic boundary corrections (for positions only). An
+        attribute the current frame lacks is left out; one the next frame lacks
+        is not interpolated.
 
         Parameters
         ----------
@@ -428,146 +478,40 @@ class FrameManager:
 
         Returns
         -------
-        np.ndarray
-            Processed atom positions
+        dict[str, np.ndarray]
+            Processed values by attribute name, always including `position`
         """
         uframe_current, uframe_next = self._mapped_uframes(frame)
 
         if self.trajectory.subframes > 0 and self.trajectory.interpolate:
             # Interpolate between current and next frame
-            pos_current = self.position_cache_mean(uframe_current)
-            pos_next = self.position_cache_mean(uframe_next)
-
-            # interpolate towards the nearest periodic image. Averaging only
-            # corrects within each window, so two averaged endpoints can still
-            # sit on opposite sides of the box — the correction applies to them
-            # just the same
-            pos_next = self.adjust_periodic_positions(pos_current, pos_next)
-
-            # Interpolate between the two sets of positions
-            return db.lerp(
-                pos_current, pos_next, t=fraction(frame, self.trajectory.subframes + 1)
-            )
-        elif self.trajectory.average > 0:
-            # Return mean positions for cached frames
-            return self.position_cache_mean(uframe_current)
-        else:
-            # Just return current positions
-            return self._position_at_frame(uframe_current)
-
-    def _attributes_at_frame(self, frame: int) -> dict[str, np.ndarray]:
-        """Get oxDNA attributes at a specific universe frame.
-
-        Parameters
-        ----------
-        frame : int
-            Universe frame number
-
-        Returns
-        -------
-        dict[str, np.ndarray]
-            oxDNA attributes sorted by name
-        """
-
-        self.trajectory.uframe = frame
-        ts_data = self.trajectory.universe.trajectory.ts.data
-        return {
-            name: ts_data[name] * self.trajectory.world_scale
-            for name in self.attribute_caches
-        }
-
-    def update_attribute_caches(self, frame: int, cache_ahead: bool = True) -> None:
-        """Update the oxDNA attribute caches for the current frame.
-
-        Intelligently caches based on averaging and interpolation settings,
-        prefetching the next frame when needed.
-
-        Parameters
-        ----------
-        frame : int
-            Current frame number
-        cache_ahead : bool, default=True
-            Whether to cache next frame for interpolation
-        """
-        frames_to_cache = self._frames_to_cache(frame, cache_ahead)
-
-        for cache in self.attribute_caches.values():
-            # Only cleanup the cache if we have more than 2 frames stored
-            if len(cache.keys()) > 2:
-                cache.remove_frames_except(frames_to_cache)
-
-        # Update the attribute caches with any frames that are not yet cached.
-        # The caches always hold the same frames, so check just the first one
-        first_cache = next(iter(self.attribute_caches.values()))
-        for f in frames_to_cache:
-            if f not in first_cache:
-                attributes_at_frame = self._attributes_at_frame(f)
-                for name, cache in self.attribute_caches.items():
-                    cache[f] = attributes_at_frame[name]
-
-    def attribute_cache_means(self, frame: int) -> dict[str, np.ndarray]:
-        """Get mean oxDNA attributes from cached frames.
-
-        Computes average over the averaging window.
-
-        Parameters
-        ----------
-        frame : int
-            Center frame number
-
-        Returns
-        -------
-        dict[str, np.ndarray]
-            Mean oxDNA attributes (or single frame if not averaging) sorted by name
-        """
-        self.update_attribute_caches(frame)
-
-        if self.trajectory.average == 0:
-            return {name: cache[frame] for name, cache in self.attribute_caches.items()}
-
-        # average exactly the window for this frame — the cache can hold other
-        # frames (interpolation look-ahead, a previous window), which must not
-        # leak into the mean
-        window = self._frame_range(frame)
-        return {
-            name: np.mean([cache[f] for f in window], axis=0)
-            for name, cache in self.attribute_caches.items()
-        }
-
-    def get_attributes_at_frame(self, frame) -> dict[str, np.ndarray]:
-        """Get oxDNA attributes for a given frame with all processing applied.
-
-        Main entry point for position retrieval. Handles frame mapping, interpolation,
-        and averaging.
-
-        Parameters
-        ----------
-        frame : int
-            Scene frame number, or the manual frame when not updating with the
-            scene
-
-        Returns
-        -------
-        dict[str, np.ndarray]
-            Processed oxDNA attributes sorted by name
-        """
-        if not self.attribute_caches:
-            return {}
-
-        uframe_current, uframe_next = self._mapped_uframes(frame)
-
-        if self.trajectory.subframes > 0 and self.trajectory.interpolate:
-            # Interpolate between current and next frames
-            attrib_current = self.attribute_cache_means(uframe_current)
-            attrib_next = self.attribute_cache_means(uframe_next)
+            current = self.cache_mean(uframe_current)
+            after = self.cache_mean(uframe_next)
             t = fraction(frame, self.trajectory.subframes + 1)
-            return {
-                name: db.lerp(attrib_current[name], attrib_next[name], t=t)
-                for name in self.attribute_caches
-            }
+            values = {}
+            for name, value in current.items():
+                # integer and boolean values are not interpolated
+                if name not in after or value.dtype.kind != "f":
+                    values[name] = value
+                    continue
+                value_next = after[name]
+                if name == "position":
+                    # interpolate towards the nearest periodic image. Averaging
+                    # only corrects within each window, so two averaged
+                    # endpoints can still sit on opposite sides of the box — the
+                    # correction applies to them just the same
+                    value_next = self.adjust_periodic_positions(
+                        value, value_next, uframe_current
+                    )
+                values[name] = db.lerp(value, value_next, t=t)
+            return values
         elif self.trajectory.average > 0:
-            # Return mean attributes for cached frames
-            return self.attribute_cache_means(uframe_current)
+            # Return mean values for cached frames
+            return self.cache_mean(uframe_current)
         else:
-            # Just return current attributes
-            return self._attributes_at_frame(uframe_current)
+            # Just return current values
+            return self.read_and_cache(uframe_current)
+
+    def get_positions_at_frame(self, frame: int) -> np.ndarray:
+        """Get positions for a given frame, see `get_values_at_frame`."""
+        return self.get_values_at_frame(frame)["position"]

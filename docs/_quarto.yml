@@ -45,8 +45,6 @@ website:
     contents:
     - href: nodes/index.qmd
       text: Overview
-    - href: nodes/materials.qmd
-      text: Materials
     - href: nodes/general.qmd
       text: General
     - href: nodes/animate.qmd
@@ -55,6 +53,8 @@ website:
       text: Attributes
     - href: nodes/color.qmd
       text: Color
+    - href: nodes/compositor.qmd
+      text: Compositor
     - href: nodes/curves.qmd
       text: Curves
     - href: nodes/dna.qmd
@@ -65,6 +65,8 @@ website:
       text: Ensemble
     - href: nodes/geometry.qmd
       text: Geometry
+    - href: nodes/materials.qmd
+      text: Materials
     - href: nodes/select.qmd
       text: Select
     - href: nodes/simulation.qmd
@@ -160,6 +162,7 @@ quartodoc:
     - section: "Guides"
       contents:
       - api/styles.qmd
+      - api/pubchem.qmd
       - api/trajectories.qmd
       - api/mdanalysis.qmd
       - api/nodebpy.qmd
@@ -168,6 +171,7 @@ quartodoc:
       # - api/density.qmd
       - api/annotations.qmd
       - api/solvent.qmd
+      - api/electrostatics.qmd
       - api/canvas.qmd
       - api/blender.qmd
     - text: "---"
@@ -186,7 +190,9 @@ quartodoc:
     contents:
     - Molecule
     - entities.molecule.SelectionManager
-    - entities.molecule.DSSPManager
+    - entities.molecule.CalculationManager
+    - entities.molecule.DSSPCalculation
+    - entities.molecule.HBondCalculation
     - entities.StreamingTrajectory
 
   - title: Other Entities
@@ -231,35 +237,17 @@ quartodoc:
 
   # -- begin generated node sections (docs/generate.py) --
   - title: Nodes
-    desc: The node groups included with Molecular Nodes, grouped by the same categories as the add menu inside of Geometry Nodes. Each node group is also available as a typed Python class for scripting.
+    desc: The node groups included with Molecular Nodes, grouped by the same categories as the
+      add menu inside of Geometry Nodes. Each node group is also available as a typed Python
+      class for scripting.
     contents:
-    - kind: page
-      path: nodes.materials
-      summary:
-        name: Materials
-        desc: Shader node groups for the pre-built materials
-      contents:
-      - name: nodes.shader.OutlineMask
-        children: embedded
-      - name: nodes.shader.TransparentOutlineInternal
-        children: embedded
     - kind: page
       path: nodes.general
       summary:
         name: General
         desc: ''
       contents:
-      - name: nodes.geometry.AssemblyID
-        children: embedded
       - name: nodes.geometry.EdgeLength
-        children: embedded
-      - name: nodes.geometry.ImageID
-        children: embedded
-      - name: nodes.geometry.SymmetryID
-        children: embedded
-      - name: nodes.shader.ColorAO
-        children: embedded
-      - name: nodes.shader.FlatInternal
         children: embedded
     - kind: page
       path: nodes.animate
@@ -279,12 +267,18 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.AnimateWiggle
         children: embedded
+      - name: nodes.geometry.EaseValue
+        children: embedded
+      - name: nodes.geometry.StaggerValue
+        children: embedded
     - kind: page
       path: nodes.attributes
       summary:
         name: Attributes
         desc: Read attributes from structures
       contents:
+      - name: nodes.geometry.AssemblyID
+        children: embedded
       - name: nodes.geometry.AtomID
         children: embedded
       - name: nodes.geometry.AtomName
@@ -303,6 +297,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.FrameID
         children: embedded
+      - name: nodes.geometry.ImageID
+        children: embedded
       - name: nodes.geometry.Mass
         children: embedded
       - name: nodes.geometry.ResidueID
@@ -312,6 +308,8 @@ quartodoc:
       - name: nodes.geometry.SecondaryStructure
         children: embedded
       - name: nodes.geometry.SegmentID
+        children: embedded
+      - name: nodes.geometry.SymmetryID
         children: embedded
       - name: nodes.geometry.UResID
         children: embedded
@@ -335,6 +333,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.ColorGoodsell
         children: embedded
+      - name: nodes.geometry.ColorMatplotlib
+        children: embedded
       - name: nodes.geometry.ColorMixIntermediate
         children: embedded
       - name: nodes.geometry.ColorOKLabMix
@@ -347,6 +347,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.ColorResName
         children: embedded
+      - name: nodes.geometry.ColorSampleGrid
+        children: embedded
       - name: nodes.geometry.ColorSecondaryStructure
         children: embedded
       - name: nodes.geometry.ColorToLCh
@@ -358,6 +360,29 @@ quartodoc:
       - name: nodes.geometry.SetColor
         children: embedded
       - name: nodes.shader.MNColor
+        children: embedded
+    - kind: page
+      path: nodes.compositor
+      summary:
+        name: Compositor
+        desc: 'Compositor node groups for post-processing renders: outlines, illustrative shading
+          and masks from AOV passes'
+      contents:
+      - name: nodes.compositor.CompositeDepthFog
+        children: embedded
+      - name: nodes.compositor.ConeShadow
+        children: embedded
+      - name: nodes.compositor.DepthOutline
+        children: embedded
+      - name: nodes.compositor.IDOutline
+        children: embedded
+      - name: nodes.compositor.Illustrate
+        children: embedded
+      - name: nodes.compositor.MaskPixels
+        children: embedded
+      - name: nodes.compositor.Outline
+        children: embedded
+      - name: nodes.compositor.ValueToMask
         children: embedded
     - kind: page
       path: nodes.curves
@@ -411,6 +436,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.DensityStyleWire
         children: embedded
+      - name: nodes.geometry.SetGeometryVolume
+        children: embedded
     - kind: page
       path: nodes.ensemble
       summary:
@@ -432,6 +459,14 @@ quartodoc:
       - name: nodes.geometry.RotationCisTEM
         children: embedded
       - name: nodes.geometry.RotationRELION
+        children: embedded
+      - name: nodes.geometry.SymmetryCubic
+        children: embedded
+      - name: nodes.geometry.SymmetryCyclic
+        children: embedded
+      - name: nodes.geometry.SymmetryDihedral
+        children: embedded
+      - name: nodes.geometry.SymmetryHelical
         children: embedded
       - name: nodes.geometry.TEMRotation
         children: embedded
@@ -455,11 +490,13 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.EvaluateOrderedBundles
         children: embedded
-      - name: nodes.geometry.EvluateWhilePlanar
+      - name: nodes.geometry.EvaluateWhilePlanar
+        children: embedded
+      - name: nodes.geometry.FadeGeometry
         children: embedded
       - name: nodes.geometry.FallbackGeometry
         children: embedded
-      - name: nodes.geometry.GeoemtryToPlanar
+      - name: nodes.geometry.GeometryToPlanar
         children: embedded
       - name: nodes.geometry.LagGeometry
         children: embedded
@@ -480,6 +517,22 @@ quartodoc:
       - name: nodes.geometry.VisualizeAngle
         children: embedded
       - name: nodes.geometry.VisualizePoints
+        children: embedded
+    - kind: page
+      path: nodes.materials
+      summary:
+        name: Materials
+        desc: Shader node groups for the pre-built materials
+      contents:
+      - name: nodes.shader.AmbientOcclusionInternal
+        children: embedded
+      - name: nodes.shader.ColorAO
+        children: embedded
+      - name: nodes.shader.FlatInternal
+        children: embedded
+      - name: nodes.shader.OutlineMask
+        children: embedded
+      - name: nodes.shader.TransparentOutlineInternal
         children: embedded
     - kind: page
       path: nodes.select
@@ -577,6 +630,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.StyleCartoon
         children: embedded
+      - name: nodes.geometry.StyleHBonds
+        children: embedded
       - name: nodes.geometry.StyleRibbon
         children: embedded
       - name: nodes.geometry.StyleSpheres
@@ -638,6 +693,8 @@ quartodoc:
       - name: nodes.geometry.FindBondedAtom
         children: embedded
       - name: nodes.geometry.FindBonds
+        children: embedded
+      - name: nodes.geometry.FindHBonds
         children: embedded
       - name: nodes.geometry.MenuResidueMask
         children: embedded

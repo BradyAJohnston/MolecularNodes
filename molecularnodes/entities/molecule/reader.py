@@ -1,4 +1,5 @@
 import json
+import logging
 from abc import ABCMeta
 from io import BytesIO
 from pathlib import Path
@@ -9,8 +10,12 @@ from ... import color
 from ...assets import data
 from ...utils import count_value_changes
 
+logger = logging.getLogger(__name__)
 
-def read_structure(file_path: str | Path | BytesIO) -> "ReaderBase":
+
+def read_structure(
+    file_path: str | Path | BytesIO, data_block: str | None = None
+) -> "ReaderBase":
     """Open a structure file and return the appropriate reader for its format.
 
     Dispatches on the file suffix to the biotite-backed reader that can parse it
@@ -21,6 +26,9 @@ def read_structure(file_path: str | Path | BytesIO) -> "ReaderBase":
     ----------
     file_path : str | Path | BytesIO
         Path to the structure file, or an in-memory ``bcif`` buffer.
+    data_block : str | None, optional
+        For mmCIF/BinaryCIF files with several structures in separate data
+        blocks, the name of the block to read.
 
     Returns
     -------
@@ -30,20 +38,21 @@ def read_structure(file_path: str | Path | BytesIO) -> "ReaderBase":
     Raises
     ------
     InvalidFileError
-        If the file format is not supported.
+        If the file format is not supported, or (as ``MultipleStructuresError``)
+        the file holds several structures and no ``data_block`` was given.
     """
     # imported lazily: pdb/pdbx/sdf import ReaderBase from this module
     from . import pdb, pdbx, sdf
 
     if isinstance(file_path, BytesIO):
-        return pdbx.PDBXReader(file_path)
+        return pdbx.PDBXReader(file_path, data_block=data_block)
 
     if isinstance(file_path, str):
         file_path = Path(file_path)
 
     match file_path.suffix:
         case ".cif" | ".bcif":
-            return pdbx.PDBXReader(file_path)
+            return pdbx.PDBXReader(file_path, data_block=data_block)
         case ".pdb":
             return pdb.PDBReader(file_path)
         case ".sdf" | ".mol":
@@ -173,11 +182,56 @@ class ReaderBase(metaclass=ABCMeta):
             if as_json_string:
                 return json.dumps(self._assemblies())
             return self._assemblies()
-        except InvalidFileError:
+        except InvalidFileError as e:
+            logger.warning(f"Failed to parse biological assemblies: {e}")
             return ""
 
     def _assemblies(self):
         return {}
+
+    def model_data(self) -> dict[str, np.ndarray]:
+        """Occupancies and B-factors of each model, where they differ between models.
+
+        A stack takes its annotations from the first model, so the values of the
+        other models are read separately. They are keyed like the per-atom
+        `ts.data` arrays of the MDAnalysis PDBReader (``occupancy``,
+        ``tempfactor``), so each frame of the universe can carry its model's
+        values.
+
+        Returns
+        -------
+        dict[str, np.ndarray]
+            ``(n_models, n_atoms)`` arrays by `ts.data` key. Empty for a single
+            model, and without the values that are the same in every model.
+        """
+        if not isinstance(self.array, AtomArrayStack) or self.array.stack_depth() < 2:
+            return {}
+        try:
+            values = self._model_values()
+        except Exception as e:
+            logger.warning(f"Failed to read per-model B-factors and occupancies: {e}")
+            return {}
+        data = {}
+        for key, name in (("occupancy", "occupancy"), ("tempfactor", "b_factor")):
+            array = values.get(name)
+            if array is None or array.shape != self.array.coord.shape[:2]:
+                continue
+            if not np.all(array == array[0]):
+                data[key] = array
+        return data
+
+    def _model_values(self) -> dict[str, np.ndarray]:
+        """``b_factor`` and ``occupancy`` of each model, as ``(n_models, n_atoms)``."""
+        return {}
+
+    @staticmethod
+    def _stack_model_values(models: list[AtomArray]) -> dict[str, np.ndarray]:
+        """Stack the ``b_factor`` and ``occupancy`` annotations of each model."""
+        return {
+            name: np.stack([model.get_annotation(name) for model in models])
+            for name in ("b_factor", "occupancy")
+            if name in models[0].get_annotation_categories()
+        }
 
     @staticmethod
     def set_extra_annotations(
@@ -281,7 +335,10 @@ class ReaderBase(metaclass=ABCMeta):
 
     @staticmethod
     def _compute_is_alpha_carbon(array: AtomArray):
-        return array.get_annotation("atom_name") == "CA"
+        return np.logical_and(
+            array.get_annotation("atom_name") == "CA",
+            ReaderBase._compute_is_polymer(array),
+        )
 
     @staticmethod
     def _compute_is_hetero(array):
@@ -326,9 +383,8 @@ class ReaderBase(metaclass=ABCMeta):
         is_backbone_atom = np.isin(
             array.get_annotation("atom_name"), backbone_atom_names
         )
-        is_not_solvent = np.logical_not(filter.filter_solvent(array))
 
-        return np.logical_and(is_backbone_atom, is_not_solvent)
+        return np.logical_and(is_backbone_atom, ReaderBase._compute_is_polymer(array))
 
     @staticmethod
     def _compute_is_peptide(array):
@@ -337,11 +393,23 @@ class ReaderBase(metaclass=ABCMeta):
         )
 
     @staticmethod
+    def _compute_is_polymer(array):
+        # amino acid and nucleotide residues, so that ligands and ions such as
+        # calcium (atom name CA) are not flagged as alpha carbon or backbone. The
+        # N-terminal ACE cap is not an amino acid in the CCD but is part of the chain,
+        # and MDAnalysis counts it as protein
+        return np.logical_or.reduce(
+            [
+                ReaderBase._compute_is_peptide(array),
+                filter.filter_nucleotides(array),
+                array.get_annotation("res_name") == "ACE",
+            ]
+        )
+
+    @staticmethod
     def _compute_is_side_chain(array):
         backbone = ReaderBase._compute_is_backbone(array)
-        is_polymer = np.logical_or(
-            ReaderBase._compute_is_peptide(array), filter.filter_nucleotides(array)
-        )
+        is_polymer = ReaderBase._compute_is_polymer(array)
 
         return np.logical_and(
             np.logical_or(~backbone, ReaderBase._compute_is_alpha_carbon(array)),

@@ -84,7 +84,7 @@ with mol.tree.reset() as (atoms, join):
         atoms
         >> mg.SeparateAtoms(selection=~mg.IsSolvent())
         >> mg.CentreOnSelection()
-        >> mg.GeoemtryToPlanar()
+        >> mg.GeometryToPlanar()
         >> g.TransformGeometry(rotation=(0, math.pi/2, 0))
     )
 

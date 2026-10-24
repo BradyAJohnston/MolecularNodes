@@ -4,10 +4,17 @@ import biotite.structure.io.pdb as biotite_pdb
 import biotite.structure.io.pdbx as biotite_cif
 import numpy as np
 import pytest
+import molecularnodes as mn
 import molecularnodes.entities.molecule.pdb as pdb
 import molecularnodes.entities.molecule.pdbx as pdbx
+from molecularnodes.download import StructureDownloader
 
 DATA_DIR = join(dirname(realpath(__file__)), "data")
+
+
+@pytest.fixture(scope="module")
+def path_4ins():
+    return StructureDownloader(cache=DATA_DIR).download("4INS", format="pdb")
 
 
 @pytest.mark.parametrize(
@@ -40,18 +47,7 @@ def test_get_transformations(pdb_id, format):
     assembly_id = test_parser.list_assemblies()[0]
     test_transformations = test_parser.get_transformations(assembly_id)
 
-    if format == "pdb":
-        check_transformations(test_transformations, atoms, ref_assembly)
-    elif format == "cif":
-        # note we need to use the new CIF parser but it returns a list of dicts which
-        # needs to be converted to a list of 2-tuples
-        test_transformations2 = [
-            (transformation["chain_ids"], transformation["matrix"])
-            for transformation in test_transformations
-        ]
-        check_transformations(test_transformations2, atoms, ref_assembly)
-    else:
-        raise ValueError(f"Format '{format}' does not exist")
+    check_transformations(test_transformations, atoms, ref_assembly)
 
 
 @pytest.mark.parametrize("assembly_id", [str(i + 1) for i in range(5)])
@@ -76,11 +72,71 @@ def test_get_transformations_cif(assembly_id):
 
     test_transformations = test_parser.get_transformations(assembly_id)
 
-    test_transformations2 = [
-        (transformation["chain_ids"], transformation["matrix"])
-        for transformation in test_transformations
+    check_transformations(test_transformations, atoms, ref_assembly)
+
+
+@pytest.mark.parametrize("assembly_id", [str(i + 1) for i in range(7)])
+def test_get_transformations_pdb(assembly_id, path_4ins):
+    """
+    Compare each assembly of a PDB file containing multiple BIOMOLECULE
+    blocks with non-identity rotations against the assemblies built in Biotite.
+    """
+    pdb_file = biotite_pdb.PDBFile.read(str(path_4ins))
+    atoms = biotite_pdb.get_structure(pdb_file, model=1)
+    ref_assembly = biotite_pdb.get_assembly(pdb_file, model=1, assembly_id=assembly_id)
+
+    test_parser = pdb.PDBAssemblyParser(pdb_file)
+    assert test_parser.list_assemblies() == [str(i + 1) for i in range(7)]
+
+    test_transformations = test_parser.get_transformations(assembly_id)
+
+    check_transformations(test_transformations, atoms, ref_assembly)
+
+
+@pytest.mark.parametrize("format", ["pdb", "cif"])
+def test_assemblies_as_array(format):
+    """Assemblies from both formats convert to the per-chain transform array."""
+    mol = mn.Molecule.load(join(DATA_DIR, f"1cd3.{format}"))
+    transforms = mol.assemblies(as_array=True)
+    assert transforms is not None
+    assert set(np.unique(transforms["assembly_id"])) == set(
+        range(1, len(mol.assemblies()) + 1)
+    )
+
+
+def test_assemblies_parse_error_warns(caplog, tmp_path):
+    """A malformed REMARK 350 is reported, rather than looking like no assemblies."""
+    with open(join(DATA_DIR, "1f2n.pdb")) as f:
+        lines = f.read().splitlines()
+    # drop a single BIOMT line so the transformation vectors no longer come in threes
+    biomt = [
+        i for i, line in enumerate(lines) if line[11:].lstrip().startswith("BIOMT")
     ]
-    check_transformations(test_transformations2, atoms, ref_assembly)
+    del lines[biomt[0]]
+    path = tmp_path / "1f2n.pdb"
+    path.write_text("\n".join(lines))
+    reader = pdb.PDBReader(path)
+
+    with caplog.at_level("WARNING"):
+        assert reader.assemblies() == ""
+    assert "Failed to parse biological assemblies" in caplog.text
+
+
+def test_assemblies_none_is_silent(caplog, tmp_path):
+    """A PDB file without assembly records returns no assemblies and no warning."""
+    with open(join(DATA_DIR, "1f2n.pdb")) as f:
+        lines = [
+            line
+            for line in f.read().splitlines()
+            if not line.startswith(("REMARK 300", "REMARK 350"))
+        ]
+    path = tmp_path / "1f2n.pdb"
+    path.write_text("\n".join(lines))
+    reader = pdb.PDBReader(path)
+
+    with caplog.at_level("WARNING"):
+        assert reader.assemblies() == {}
+    assert "biological assemblies" not in caplog.text
 
 
 def check_transformations(transformations, atoms, ref_assembly):
@@ -89,8 +145,9 @@ def check_transformations(transformations, atoms, ref_assembly):
     results in the given reference assembly.
     """
     test_assembly = None
-    for chain_ids, matrix in transformations:
-        matrix = np.array(matrix)
+    for transformation in transformations:
+        chain_ids = transformation["chain_ids"]
+        matrix = np.array(transformation["matrix"])
         translation = matrix[:3, 3]
         rotation = matrix[:3, :3]
         sub_assembly = atoms[np.isin(atoms.chain_id, chain_ids)].copy()

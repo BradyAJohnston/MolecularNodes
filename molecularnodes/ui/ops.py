@@ -26,6 +26,7 @@ from ..entities import (
     ensemble,
     molecule,
 )
+from ..entities.molecule.pdbx import MultipleStructuresError
 from ..handlers import update_entities
 from ..nodes._utils import remove_style_node, styles_mapping, swap
 from ..scene.compositor import setup_compositor
@@ -56,6 +57,18 @@ DOWNLOAD_FORMATS = (
 # folder; MD topology + trajectory pairs are excluded, as which trajectory
 # belongs to which topology can't be matched up automatically
 FOLDER_IMPORT_EXTENSIONS = {".pdb", ".cif", ".bcif", ".xyz", ".sdf", ".mol"}
+
+
+def _load_structures(path: Path) -> list[Molecule]:
+    """Load a structure file, as one Molecule per structure when a .cif/.bcif
+    holds several structures in separate data blocks."""
+    try:
+        return [Molecule.load(path)]
+    except MultipleStructuresError as e:
+        return [
+            Molecule.load(path, data_block=block, name=f"{path.name}:{block}")
+            for block in e.blocks
+        ]
 
 
 # operator that is called by the 'button' press which calls the fetch function
@@ -133,6 +146,11 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                 "alphafold",
                 "AlphaFold",
                 "The AlphaFold computational structure database",
+            ),
+            (
+                "pubchem",
+                "PubChem",
+                "3D conformers of small molecules from PubChem, by CID or name",
             ),
         ),
     )
@@ -250,7 +268,7 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                 row = layout.row().split(factor=0.7)
                 row.prop(self, "code")
                 # file format only applies to wwPDB downloads; others pick their own
-                if self.method == "fetch":
+                if self.method == "fetch" and self.database != "pubchem":
                     row.prop(self, "file_format", text="")
                 if "," in self.code:
                     layout.prop(self, "share_node_group")
@@ -382,9 +400,16 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                         f"{int(mol.props.n_frames)} frames from '{self.trajectory}'."
                     )
                 else:
-                    mol = Molecule.load(topology)
-                    message = f"Imported '{self.filepath}' as {mol.name}"
-                mols = [mol]
+                    mols = _load_structures(topology)
+                    mol = mols[-1]
+                    if len(mols) == 1:
+                        message = f"Imported '{self.filepath}' as {mol.name}"
+                    else:
+                        message = (
+                            f"Imported {len(mols)} structures from '{self.filepath}'"
+                        )
+                if not mols:
+                    mols = [mol]
             else:
                 codes = [code.strip() for code in self.code.split(",") if code.strip()]
                 if not codes:
@@ -406,7 +431,7 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                     message = f"Downloaded {len(mols)} structures: {', '.join(codes)}"
         except FileDownloadPDBError as e:
             self.report({"ERROR"}, str(e))
-            if self.file_format == "pdb":
+            if self.file_format == "pdb" and self.database != "pubchem":
                 self.report(
                     {"ERROR"},
                     "There may not be a `.pdb` formatted file available - try a different download format.",
@@ -448,11 +473,11 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         session = get_session(context)
         for file in self.files:
             try:
-                mol = Molecule.load(Path(self.directory, file.name))
-                shared_tree = self._setup_molecule(mol, shared_tree)
-                if self.objects_only:
-                    session.remove_entity(mol.uuid)
-                imported += 1
+                for mol in _load_structures(Path(self.directory, file.name)):
+                    shared_tree = self._setup_molecule(mol, shared_tree)
+                    if self.objects_only:
+                        session.remove_entity(mol.uuid)
+                    imported += 1
             except Exception as e:
                 self.report({"WARNING"}, message=f"Failed importing {file.name}: {e}")
 
@@ -501,8 +526,9 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
             for i, path in enumerate(files):
                 window_manager.progress_update(i)
                 try:
-                    mol = Molecule.load(path)
-                    shared_tree = self._setup_molecule(mol, shared_tree)
+                    mols = _load_structures(path)
+                    for mol in mols:
+                        shared_tree = self._setup_molecule(mol, shared_tree)
                 except Exception as e:
                     failed += 1
                     self.report(
@@ -510,19 +536,21 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
                         f"Failed importing {path.relative_to(folder)}: {e}",
                     )
                     continue
-                obj = mol.object
-                for c in obj.users_collection:
-                    c.objects.unlink(obj)
-                collection_for(path.parent).objects.link(obj)
-                imported += 1
-                if self.objects_only:
-                    session.remove_entity(mol.uuid)
-                    del mol
-                    # the entity and its managers reference each other, so the
-                    # universes only free on a cycle collection - don't let
-                    # hundreds of them pile up while the import runs
-                    if imported % 50 == 0:
-                        gc.collect()
+                for mol in mols:
+                    obj = mol.object
+                    for c in obj.users_collection:
+                        c.objects.unlink(obj)
+                    collection_for(path.parent).objects.link(obj)
+                    imported += 1
+                    if self.objects_only:
+                        session.remove_entity(mol.uuid)
+                        del mol
+                        # the entity and its managers reference each other, so the
+                        # universes only free on a cycle collection - don't let
+                        # hundreds of them pile up while the import runs
+                        if imported % 50 == 0:
+                            gc.collect()
+                del mols
         finally:
             window_manager.progress_end()
             if self.objects_only:
@@ -700,7 +728,8 @@ class MN_OT_Frames_To_Collection(bpy.types.Operator):
     bl_label = "Bake Frames to Collection"
     bl_description = (
         "Bake a range of trajectory frames into a collection of objects (one per frame) "
-        "whose positions can be read inside geometry nodes with the Animate Frames node"
+        "with the positions and per-frame attributes, which can be read inside geometry "
+        "nodes with the Animate Frames node"
     )
     bl_options = {"REGISTER", "UNDO"}
 
@@ -1208,14 +1237,14 @@ class MN_OT_Setup_Compositor(Operator):
 
 class MN_OT_DSSP_init(Operator):
     """
-    Operator to initialize DSSP for trajectories
+    Operator to add DSSP as the `sec_struct` calculation, or change its selection
     """
 
     bl_idname = "mn.dssp_init"
-    bl_label = "Initialize"
+    bl_label = "Add DSSP"
     bl_description = (
-        "Initialize DSSP analysis for trajectory, or update the selection "
-        "DSSP is run on if already initialized"
+        "Calculate secondary structure with DSSP on every frame, or update the "
+        "selection DSSP is run on if already added"
     )
 
     uuid: StringProperty()  # type: ignore
@@ -1226,14 +1255,75 @@ class MN_OT_DSSP_init(Operator):
         if entity is None:
             return {"CANCELLED"}
         try:
-            if entity.dssp._DSSP is None:
-                entity.dssp.init(selection=self.selection)
-            else:
-                entity.dssp.set_selection(self.selection)
+            entity.calculations.dssp(selection=self.selection)
         except Exception as e:
             self.report({"ERROR"}, f"DSSP failed for selection '{self.selection}': {e}")
             return {"CANCELLED"}
         update_entities(context.scene)
+        return {"FINISHED"}
+
+
+class MN_OT_HBonds_init(Operator):
+    """
+    Operator to add hydrogen bonds as the `hbonds` calculation, or change its selection
+    """
+
+    bl_idname = "mn.hbonds_init"
+    bl_label = "Add Hydrogen Bonds"
+    bl_description = (
+        "Calculate hydrogen bonds on every frame, for the Style HBonds node, or "
+        "update the selection they are calculated for if already added"
+    )
+
+    uuid: StringProperty()  # type: ignore
+    selection: StringProperty(default="all")  # type: ignore
+
+    def execute(self, context: Context):
+        entity = get_session().get(self.uuid)
+        if entity is None:
+            return {"CANCELLED"}
+        try:
+            entity.calculations.hbonds(selection=self.selection)
+        except Exception as e:
+            self.report(
+                {"ERROR"},
+                f"Hydrogen bonds failed for selection '{self.selection}': {e}",
+            )
+            return {"CANCELLED"}
+        update_entities(context.scene)
+        return {"FINISHED"}
+
+
+class MN_OT_FrameAttribute_Remove(Operator):
+    """
+    Operator to remove a selection or calculation from the per-frame attributes
+    """
+
+    bl_idname = "mn.frame_attribute_remove"
+    bl_label = "Remove"
+    bl_description = (
+        "Remove this selection (and its attribute) or calculation (its attribute "
+        "keeps the values it last had)"
+    )
+    bl_options = {"REGISTER", "UNDO"}
+
+    uuid: StringProperty()  # type: ignore
+    name: StringProperty()  # type: ignore
+
+    def execute(self, context: Context):
+        entity = get_session().get(self.uuid)
+        if entity is None:
+            return {"CANCELLED"}
+        item = entity.object.mn.frame_attributes.get(self.name)
+        if item is None:
+            return {"CANCELLED"}
+        if item.source == "SELECTION":
+            entity.selections.remove(self.name)
+        elif item.source == "CALCULATION" and self.name in entity.calculations:
+            del entity.calculations[self.name]
+        else:
+            self.report({"ERROR"}, f"'{self.name}' can't be removed")
+            return {"CANCELLED"}
         return {"FINISHED"}
 
 
@@ -1257,9 +1347,11 @@ class MN_OT_DSSP_apply(Operator):
         props = entity.props.dssp
         if props.display_option == "trajectory-average":
             if self.apply_ta_threshold:
-                entity.dssp.show_trajectory_average(threshold=self.ta_threshold)
+                entity.calculations._dssp.show_trajectory_average(
+                    threshold=self.ta_threshold
+                )
             else:
-                entity.dssp.show_trajectory_average()
+                entity.calculations._dssp.show_trajectory_average()
         return {"FINISHED"}
 
 
@@ -1280,20 +1372,145 @@ class MN_OT_DSSP_cancel(Operator):
             return {"CANCELLED"}
         props = entity.props.dssp
         props.cancelling = True
-        props.display_option = entity.dssp._display_option
-        props.window_size = entity.dssp._window_size
-        if entity.dssp._sw_threshold is not None:
-            props.sw_threshold = entity.dssp._sw_threshold
+        props.display_option = entity.calculations._dssp._display_option
+        props.window_size = entity.calculations._dssp._window_size
+        if entity.calculations._dssp._sw_threshold is not None:
+            props.sw_threshold = entity.calculations._dssp._sw_threshold
             props.apply_sw_threshold = True
         else:
             props.apply_sw_threshold = False
-        if entity.dssp._ta_threshold is not None:
-            props.ta_threshold = entity.dssp._ta_threshold
+        if entity.calculations._dssp._ta_threshold is not None:
+            props.ta_threshold = entity.calculations._dssp._ta_threshold
             props.apply_ta_threshold = True
         else:
             props.apply_ta_threshold = False
         props.applied = True
         props.cancelling = False
+        return {"FINISHED"}
+
+
+class MN_OT_Align(Operator):
+    bl_idname = "mn.align"
+    bl_label = "Align Molecules"
+    bl_description = (
+        "Superimpose the selected molecules onto the active one by setting their"
+        " transforms. Residues are paired by sequence or structure, so the"
+        " sequences don't need to match"
+    )
+    bl_options = {"REGISTER", "UNDO"}
+
+    method: EnumProperty(  # type: ignore
+        name="Method",
+        items=(
+            (
+                "sequence",
+                "Sequence",
+                "Pair residues by sequence alignment and fit on their CA / P atoms,"
+                " dropping outliers",
+            ),
+            (
+                "structure",
+                "Structure",
+                "Pair residues by structural similarity (3Di), for remote homologs"
+                " with low sequence identity. Proteins only",
+            ),
+        ),
+        default="sequence",
+    )
+    selection: StringProperty(  # type: ignore
+        name="Selection",
+        description="MDAnalysis selection of the atoms to fit on in the selected"
+        " molecules, e.g. 'chainID H L'. Empty uses all protein and nucleic acid"
+        " chains",
+        default="",
+    )
+    fixed_selection: StringProperty(  # type: ignore
+        name="Selection",
+        description="MDAnalysis selection of the atoms to fit on in the active"
+        " molecule, e.g. 'chainID A'. Empty uses all protein and nucleic acid"
+        " chains",
+        default="",
+    )
+
+    @staticmethod
+    def _molecules(context):
+        session = context.scene.MNSession
+        fixed = session.match(context.active_object) if context.active_object else None
+        mobiles = [
+            session.match(obj)
+            for obj in context.selected_objects
+            if obj != context.active_object
+        ]
+        return fixed, [m for m in mobiles if isinstance(m, Molecule)]
+
+    @classmethod
+    def poll(cls, context):
+        fixed, mobiles = cls._molecules(context)
+        if not isinstance(fixed, Molecule):
+            cls.poll_message_set("The active object must be a molecule")
+            return False
+        if not mobiles:
+            cls.poll_message_set("Select molecules to align, then the reference last")
+            return False
+        return True
+
+    def invoke(self, context, event):
+        # open a dialog first: the chains often need picking before the fit
+        return context.window_manager.invoke_props_dialog(
+            self, width=450, confirm_text="Align"
+        )
+
+    @staticmethod
+    def _chain_summary(mol: Molecule) -> str:
+        """The chains of `mol` with their residue counts, e.g. 'A 102, H 117'."""
+        polymer = mol.universe.select_atoms("protein or nucleic")
+        chains = getattr(polymer, "chainIDs", polymer.segids)
+        counts = {
+            chain: len(polymer[chains == chain].residues)
+            for chain in dict.fromkeys(chains)
+        }
+        return ", ".join(f"{chain} {n}" for chain, n in counts.items()) or "none"
+
+    def _draw_side(self, layout, label: str, mols: list, prop: str) -> None:
+        box = layout.box()
+        box.label(text=label)
+        for mol in mols:
+            col = box.column(align=True)
+            col.label(text=mol.name, icon="OBJECT_DATA")
+            col.label(text=f"Chains (residues): {self._chain_summary(mol)}")
+        box.prop(self, prop)
+
+    def draw(self, context):
+        layout = self.layout
+        fixed, mobiles = self._molecules(context)
+        layout.prop(self, "method", expand=True)
+        self._draw_side(layout, "Reference (active)", [fixed], "fixed_selection")
+        self._draw_side(layout, "Move", mobiles, "selection")
+        layout.label(
+            text="Chains are paired in order; if the counts differ, each side is"
+            " joined into one chain",
+            icon="INFO",
+        )
+
+    def execute(self, context):
+        fixed, mobiles = self._molecules(context)
+        results = []
+        for mobile in mobiles:
+            try:
+                result = mobile.align_to(
+                    fixed,
+                    method=self.method,
+                    selection=self.selection or None,
+                    fixed_selection=self.fixed_selection or None,
+                )
+            except (ValueError, IndexError) as e:
+                self.report({"ERROR"}, f"Failed aligning {mobile.name}: {e}")
+                return {"CANCELLED"}
+            results.append(
+                f"{mobile.name}: RMSD {result.rmsd:.2f} Å over {result.n_anchors} atoms"
+                + (" (chains joined)" if result.merged_chains else "")
+            )
+        self.report({"INFO"}, f"Aligned to {fixed.name}. " + "; ".join(results))
         return {"FINISHED"}
 
 
@@ -1312,6 +1529,9 @@ CLASSES = [
     MN_OT_Remove_Annotation,
     MN_OT_Setup_Compositor,
     MN_OT_DSSP_init,
+    MN_OT_HBonds_init,
+    MN_OT_FrameAttribute_Remove,
     MN_OT_DSSP_apply,
     MN_OT_DSSP_cancel,
+    MN_OT_Align,
 ]

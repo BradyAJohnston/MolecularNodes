@@ -1,5 +1,5 @@
 # Node-group asset "oxDNA Realize Vectors" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -74,9 +74,9 @@ class OxDNARealizeVectors(AssetGeometryGroup):
         value = g.Value(0.15)
         oxdna_vectors = OxDNAVectors()
         for_each = g.ForEachGeometryElementZone(geometry=atoms)
-        position = for_each.inputs.vector("Position", g.Position())
-        base_vector = for_each.inputs.vector("base_vector", oxdna_vectors.o.base_vector)
-        base_normal = for_each.inputs.vector("base_normal", oxdna_vectors.o.base_normal)
+        position = for_each.items.vector(g.Position(), "Position")
+        base_vector = for_each.items.vector(oxdna_vectors.o.base_vector, "base_vector")
+        base_normal = for_each.items.vector(oxdna_vectors.o.base_normal, "base_normal")
         with g.Frame("Create edges pointing along base and normal vectors"):
             mesh_line = g.MeshLine.end_points(
                 2, position.output, position.output + base_vector.output * value
@@ -85,8 +85,8 @@ class OxDNARealizeVectors(AssetGeometryGroup):
                 2, position.output, position.output + base_normal.output * value
             )
         with g.Frame("Store attribute_ID on edge verts: 0=bbone, 1=base vec, 2=normal"):
-            string = g.String(string="attribute_ID")
-            string_1 = g.String(string="attribute_ID")
+            string = g.String("attribute_ID")
+            string_1 = g.String("attribute_ID")
             sample_nearest = g.SampleNearest.point(mesh_line, position.output)
             store_named_attribute = g.StoreNamedAttribute.point.integer(
                 mesh_line, g.Compare.integer.equal(g.Index(), sample_nearest), string
@@ -110,29 +110,29 @@ class OxDNARealizeVectors(AssetGeometryGroup):
                 2,
             )
         join_geometry = g.JoinGeometry(
-            geometry=(store_named_attribute_3, store_named_attribute_1)
+            (store_named_attribute_3, store_named_attribute_1)
         )
         with g.Frame("Transfer all attrib to new verts to retain thru Merge by Dist"):
-            integer = g.Integer(integer=0)
+            integer = g.Integer()
             transfer_attributes = g.TransferAttributes(
                 target=join_geometry,
                 target_point_id=integer,
                 source=for_each.input.o.element,
                 source_point_id=integer,
-                attribute_names=g.String(string="position,attribute_ID").o.string.split(
-                    ","
-                ),
+                attribute_names=g.String("position,attribute_ID").o.string.split(","),
                 pattern_mode="Exact",
                 exclude_names=True,
             )
         transfer_attributes >> for_each.generation.input
-        store_named_attribute_4 = (
-            for_each.output
-            >> g.StoreNamedAttribute.point.integer(name=g.String(string="attribute_ID"))
-        )
         (
             g.JoinGeometry(
-                geometry=(for_each.generation.output, store_named_attribute_4)
+                (
+                    for_each.generation.output,
+                    for_each.output
+                    >> g.StoreNamedAttribute.point.integer(
+                        name=g.String("attribute_ID")
+                    ),
+                )
             )
             >> g.MergeByDistance()
             >> geometry

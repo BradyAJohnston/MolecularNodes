@@ -1,5 +1,5 @@
 # Node-group asset "oxDNA Style Classic" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING, Literal
@@ -360,6 +360,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         with tree.inputs.panel("Backbone"):
             backbone_shape = tree.inputs.menu(
                 "Backbone Shape",
+                "Sticks",
                 description="The visual style of the backbone",
                 expanded=True,
                 optional_label=True,
@@ -393,6 +394,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         with tree.inputs.panel("Bases"):
             base_shape = tree.inputs.menu(
                 "Base Shape",
+                "Sphere",
                 description="Visual style of the bases",
                 expanded=True,
                 optional_label=True,
@@ -421,6 +423,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         with tree.inputs.panel("Base colors"):
             base_colors = tree.inputs.menu(
                 "Base Colors",
+                "Uniform",
                 description="Method used to determine base colors",
                 expanded=True,
                 optional_label=True,
@@ -445,6 +448,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         with tree.inputs.panel("Strand colors"):
             strand_colors = tree.inputs.menu(
                 "Strand Colors",
+                "Auto",
                 description="Method used to determine strand colors. `Auto` will color strands using a finite palette of distinct pastel hues.",
                 expanded=True,
                 optional_label=True,
@@ -492,7 +496,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         separate_geometry = g.SeparateGeometry.point(atoms, selection)
         with g.Frame("Color strands if Auto-color is False"):
             index_switch = g.IndexSwitch.color(
-                ChainID().o.chain_id.modulo(4), (strand_1, strand_2, strand_3, strand_4)
+                g.IntegerMath.modulo(ChainID(), 4),
+                (strand_1, strand_2, strand_3, strand_4),
             )
             menu_switch = g.MenuSwitch.color(
                 strand_colors,
@@ -510,9 +515,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         axes_to_rotation = g.AxesToRotation(
             primary_axis=vector_math, secondary_axis=oxdna_vectors.o.base_normal
         )
-        vector_math_1 = g.SampleIndex(
-            geometry=atoms, value=vector_math, data_type="FLOAT_VECTOR"
-        ).o.value.length()
+        vector_math_1 = g.SampleIndex.point.vector(atoms, vector_math).o.value.length()
         with g.Frame("Colored bases"):
             menu_switch_1 = g.MenuSwitch.color(
                 base_colors,
@@ -585,8 +588,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                         curve=reverse_curve,
                         selection=OxDNADirection(Atoms=reverse_curve),
                     )
-                curve_circle = g.CurveCircle(resolution=quality * 4)
-                switch = g.EndpointSelection(start_size=0).o.selection.switch.float(
+                curve_circle = g.CurveCircle(quality * 4)
+                switch = g.EndpointSelection(0).o.selection.switch.float(
                     angstrom_to_world,
                     angstrom_to_world.o.world - backbone_taper * angstrom_to_world,
                 )
@@ -600,7 +603,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     >> g.SetSplineResolution(resolution=quality * 2)
                 )
                 curve_to_mesh = (
-                    g.SetHandleType(curve=set_spline_resolution)
+                    g.SetHandleType(set_spline_resolution)
                     >> g.SetCurveNormal()
                     >> g.CurveToMesh(
                         profile_curve=curve_circle,
@@ -618,7 +621,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     backbone_shape,
                     {
                         "Sticks": g.JoinGeometry(
-                            geometry=(curve_to_mesh_1, instance_on_points_1)
+                            (curve_to_mesh_1, instance_on_points_1)
                         ),
                         "Ribbon": curve_to_mesh,
                     },
@@ -646,26 +649,18 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         menu_switch_3 = g.MenuSwitch.geometry(
             base_shape,
             {
-                "Sphere": g.JoinGeometry(
-                    geometry=(instance_on_points, instance_on_points_2)
-                ),
+                "Sphere": g.JoinGeometry((instance_on_points, instance_on_points_2)),
                 "Cylinder": instance_on_points_2,
                 "None": None,
             },
         )
         set_shade_smooth = g.SetShadeSmooth.face(
-            g.JoinGeometry(geometry=(menu_switch_3, menu_switch_2)),
-            shade_smooth=shade_smooth,
+            g.JoinGeometry((menu_switch_3, menu_switch_2)), shade_smooth=shade_smooth
         )
         set_shade_smooth.node.warning_propagation = "ERRORS"
         smooth_by_angle = SmoothByAngle(mesh=set_shade_smooth, angle=math.pi / 3)
         smooth_by_angle.node.warning_propagation = "ERRORS"
         smooth_by_angle >> g.SetMaterial(material=material) >> geometry
-
-        backbone_shape.default_value = "Sticks"
-        base_shape.default_value = "Sphere"
-        base_colors.default_value = "Uniform"
-        strand_colors.default_value = "Auto"
 
 
 ASSET = OxDNAStyleClassic

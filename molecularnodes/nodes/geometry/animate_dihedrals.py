@@ -1,5 +1,5 @@
 # Node-group asset "Animate Dihedrals" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -62,27 +62,15 @@ class SampleMixAngle(CustomGeometryGroup):
             "Value", description="The final mixed float", subtype="ANGLE"
         )
 
-        sample_index = g.SampleIndex(geometry=a, value=angle, index=index)
-        sample_index_1 = g.SampleIndex(geometry=b, value=angle, index=index)
-        mix = g.Mix(
-            factor_float=factor,
-            a_float=sample_index,
-            b_float=sample_index_1,
-            clamp_factor=True,
+        sample_index = g.SampleIndex.point.float(a, angle, index)
+        sample_index_1 = g.SampleIndex.point.float(b, angle, index)
+        factor.mix.float(sample_index, sample_index_1) >> value
+        vector = g.Vector((0.0, 0.0, 1.0))
+        mix = factor.mix.rotation(
+            g.AxisAngleToRotation(axis=vector, angle=sample_index),
+            g.AxisAngleToRotation(axis=vector, angle=sample_index_1),
         )
-        vector = g.Vector(vector=(0.0, 0.0, 1.0))
-        mix_1 = g.Mix(
-            factor_float=factor,
-            a_rotation=g.AxisAngleToRotation(axis=vector, angle=sample_index),
-            b_rotation=g.AxisAngleToRotation(axis=vector, angle=sample_index_1),
-            data_type="ROTATION",
-            clamp_factor=True,
-        )
-        _rotation_to_axis_angle = g.RotationToAxisAngle(
-            rotation=mix_1.o.result_rotation
-        )
-
-        mix >> value
+        _rotation_to_axis_angle = g.RotationToAxisAngle(mix)
 
 
 class AnimateDihedrals(AssetGeometryGroup):
@@ -217,7 +205,7 @@ class AnimateDihedrals(AssetGeometryGroup):
         animate_fraction = AnimateFraction(
             interpolate=interpolate, smoother_step=smoother_step, float=frame
         )
-        object_info = g.ObjectInfo(object=g.SelfObject())
+        object_info = g.ObjectInfo(g.SelfObject())
         set_position = g.SetPosition(
             geometry=atoms,
             position=SamplePosition(geometry=animate_collection_pick.o.current),

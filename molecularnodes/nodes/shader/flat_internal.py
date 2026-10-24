@@ -1,21 +1,20 @@
 # Node-group asset "Flat Internal" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import ShaderNodeTree
 from nodebpy import TreeBuilder
-from nodebpy import geometry as g
 from nodebpy import shader as s
 from nodebpy.builder import (
     AssetShaderGroup,
+    ColorSocket,
     FloatSocket,
     MenuSocket,
     PackageLibrary,
     ShaderSocket,
     SocketAccessor,
 )
-from nodebpy.types import InputFloat, InputMenu
-from .mn_color import MNColor
+from nodebpy.types import InputColor, InputFloat, InputMenu
 from .outline_mask import OutlineMask
 
 
@@ -31,6 +30,8 @@ class FlatInternal(AssetShaderGroup):
         Threshold
     thickness : InputFloat
         Thickness
+    color : InputColor
+        Color
 
     Inputs
     ------
@@ -40,6 +41,8 @@ class FlatInternal(AssetShaderGroup):
         Threshold
     i.thickness : FloatSocket
         Thickness
+    i.color : ColorSocket
+        Color
 
     Outputs
     -------
@@ -59,6 +62,8 @@ class FlatInternal(AssetShaderGroup):
         """Threshold"""
         thickness: FloatSocket
         """Thickness"""
+        color: ColorSocket
+        """Color"""
 
     class _Outputs(SocketAccessor):
         emission: ShaderSocket
@@ -76,38 +81,42 @@ class FlatInternal(AssetShaderGroup):
         outline: InputMenu | Literal["Outline", "None"] = "Outline",
         threshold: InputFloat = 0.8,
         thickness: InputFloat = 0.15,
+        color: InputColor = None,
     ):
         super().__init__(
-            **{"Outline": outline, "Threshold": threshold, "Thickness": thickness}
+            **{
+                "Outline": outline,
+                "Threshold": threshold,
+                "Thickness": thickness,
+                "Color": color,
+            }
         )
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
-        outline = tree.inputs.menu("Outline", expanded=True, optional_label=True)
+        outline = tree.inputs.menu(
+            "Outline", "Outline", expanded=True, optional_label=True
+        )
         threshold = tree.inputs.float(
             "Threshold", 0.8, min_value=0.0, max_value=10_000.0
         )
         thickness = tree.inputs.float(
             "Thickness", 0.15, min_value=0.0, max_value=10_000.0
         )
+        color = tree.inputs.color("Color", (0.0, 0.0, 0.0, 1.0))
         emission = tree.outputs.shader("Emission")
 
-        mn_color = MNColor()
-        mix = g.Mix(
-            factor_float=OutlineMask(threshold=threshold, thickness=thickness),
-            a_color=mn_color.o.color,
-            b_color=(0.0, 0.0, 0.0, 1.0),
-            data_type="RGBA",
-            clamp_factor=True,
+        mix = OutlineMask(threshold=threshold, thickness=thickness).o.outline.mix.color(
+            color, (0.0, 0.0, 0.0, 1.0)
         )
         emission_1 = s.Emission(
-            color=s.MenuSwitch.color(
-                outline, {"Outline": mix.o.result_color, "None": mn_color.o.color}
-            ).o.output
+            s.MenuSwitch.color(outline, {"Outline": mix, "None": color}).o.output
         )
 
         emission_1 >> emission
 
-        outline.default_value = "Outline"
-
 
 ASSET = FlatInternal
+
+ASSET_METADATA = {
+    "catalog_id": "fc8d3698-34f7-4b7e-8167-a2c0391b171b",
+}

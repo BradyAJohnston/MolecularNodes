@@ -1,28 +1,27 @@
 import databpy as db
 import numpy as np
-import molecularnodes as mn
 from .utils import GeometrySet
 
 
-def test_get_set(snapshot):
+def test_get_set(fetch, snapshot):
     code = "1BNA"
-    mol = mn.Molecule.fetch(code).add_style("ribbon")
+    mol = fetch(code).add_style("ribbon")
     geom = GeometrySet(mol.object)
     assert snapshot == geom.summary()
 
 
-def test_spheres_style(snapshot):
+def test_spheres_style(fetch, snapshot):
     code = "1BNA"
     # the point cloud component is the thing under test here, so ask for it
     # rather than take whatever `sphere` the render engine implies
-    mol = mn.Molecule.fetch(code).add_style("spheres", sphere="Point")
+    mol = fetch(code).add_style("spheres", sphere="Point")
     geom = GeometrySet(mol.object)
     assert snapshot == geom.summary()
 
 
-def test_specific_attribute():
+def test_specific_attribute(fetch):
     code = "1BNA"
-    mol = mn.Molecule.fetch(code).add_style("ribbon")
+    mol = fetch(code).add_style("ribbon")
     geom = GeometrySet(mol.object)
 
     mesh = geom.mesh
@@ -42,13 +41,13 @@ def test_specific_attribute():
         assert n_unique == 1
 
 
-def test_attribute_comparison():
+def test_attribute_comparison(fetch):
     code = "1BNA"
 
-    mol_ribbon = mn.Molecule.fetch(code).add_style("ribbon")
+    mol_ribbon = fetch(code).add_style("ribbon")
     geom_ribbon = GeometrySet(mol_ribbon.object)
 
-    mol_spheres = mn.Molecule.fetch(code).add_style("spheres", sphere="Point")
+    mol_spheres = fetch(code).add_style("spheres", sphere="Point")
     geom_spheres = GeometrySet(mol_spheres.object)
 
     pc = geom_spheres.pointcloud

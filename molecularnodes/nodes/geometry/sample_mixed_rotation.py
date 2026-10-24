@@ -1,5 +1,5 @@
 # Node-group asset "Sample Mixed Rotation" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -101,10 +101,9 @@ class SampleMixedRotation(AssetGeometryGroup):
         index_mix_rotation = IndexMixRotation(rotation=rotation, index=index)
         (
             geometry
-            >> g.SampleIndex(
+            >> g.SampleIndex.point.quaternion(
                 value=index_mix_rotation.o.rotation,
                 index=index_mix_rotation.o.from_,
-                data_type="QUATERNION",
                 clamp=True,
             )
             >> rotation_1

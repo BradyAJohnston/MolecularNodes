@@ -1,5 +1,5 @@
 # Node group ".Accumulate Domain Transform" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
@@ -86,7 +86,9 @@ class AccumulateDomainTransform(CustomGeometryGroup):
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        domain = tree.inputs.menu("Domain", optional_label=True, hide_value=True)
+        domain = tree.inputs.menu(
+            "Domain", "Point", optional_label=True, hide_value=True
+        )
         transform = tree.inputs.matrix("Transform", hide_value=True)
         group_id = tree.inputs.integer("Group ID", 0, hide_value=True)
         leading = tree.outputs.matrix("Leading")
@@ -122,5 +124,3 @@ class AccumulateDomainTransform(CustomGeometryGroup):
             )
             >> trailling
         )
-
-        domain.default_value = "Point"

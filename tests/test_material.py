@@ -1,8 +1,6 @@
 import bpy
 import pytest
-import molecularnodes as mn
 from molecularnodes import material
-from .constants import data_dir
 
 PRESETS = [
     material.Default,
@@ -73,8 +71,8 @@ def test_squishy_material_parameters():
     assert mat.bsdf.i.subsurface_weight.default_value == pytest.approx(1.0)
 
 
-def test_add_style_with_preset():
-    mol = mn.Molecule.fetch("1BNA", cache=data_dir)
+def test_add_style_with_preset(fetch):
+    mol = fetch("1BNA")
     mat = material.AmbientOcclusion(distance=0.5)
     mol.add_style("spheres", material=mat)
     socket = mol.tree.tree.nodes["Style Spheres"].inputs["Material"]
@@ -84,8 +82,8 @@ def test_add_style_with_preset():
     assert mat.ao.i.distance.default_value == pytest.approx(3.0)
 
 
-def test_add_style_with_material_string():
-    mol = mn.Molecule.fetch("1BNA", cache=data_dir)
+def test_add_style_with_material_string(fetch):
+    mol = fetch("1BNA")
     mol.add_style("cartoon", material="Flat")
     socket = mol.tree.tree.nodes["Style Cartoon"].inputs["Material"]
     assert socket.default_value.name.startswith("Flat")

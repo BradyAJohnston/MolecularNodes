@@ -2,9 +2,8 @@ from typing import Iterable, List, Literal
 import bpy
 from bpy.types import GeometryNodeTree, Node
 from databpy.nodes import append_from_blend, get_output, swap_tree
-from nodebpy import TreeBuilder
+from nodebpy import TreeBuilder, arrange
 from nodebpy import geometry as g
-from nodebpy.builder import arrange_tree
 from .. import color
 from ..assets import MN_DATA_FILE
 from . import geometry as mng
@@ -121,7 +120,7 @@ def remove_style_node(node: Node) -> None:
     ]
     for node_to_remove in to_remove:
         tree.nodes.remove(node_to_remove)
-    arrange_tree(tree)
+    arrange(tree)
 
 
 def custom_boolean_iswitch(

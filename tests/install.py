@@ -1,40 +1,49 @@
 import subprocess
 import sys
+import tempfile
+from pathlib import Path
 
 
-def install_dependency_group(pyproject_path, group_name):
+def install_locked(extra):
     """
-    Install packages from a specific dependency group in pyproject.toml.
+    Install the versions pinned in uv.lock into Blender's Python, so tests in Blender
+    run against the same dependencies as `uv sync`.
 
     Args:
-        pyproject_path: Path to pyproject.toml file
-        group_name: Name of the dependency group to install
+        extra: Optional dependency group to install alongside the dependencies
     """
     python_exe = sys.executable
     subprocess.check_call([python_exe, "-m", "pip", "install", "uv"])
-    subprocess.check_call([python_exe, "-m", "pip", "install", "-e", "."])
+    uv = [python_exe, "-m", "uv"]
+    with tempfile.TemporaryDirectory() as tmp:
+        requirements = str(Path(tmp) / "requirements.txt")
+        subprocess.check_call(
+            [
+                *uv,
+                "export",
+                "--quiet",
+                "--frozen",
+                "--extra",
+                extra,
+                "--no-emit-project",
+                "--output-file",
+                requirements,
+            ]
+        )
+        subprocess.check_call(
+            [*uv, "pip", "install", "--python", python_exe, "-r", requirements]
+        )
+    # the dependencies are already installed from the lockfile
     subprocess.check_call(
-        [
-            python_exe,
-            "-m",
-            "uv",
-            "pip",
-            "install",
-            "-r",
-            pyproject_path,
-            "--extra",
-            group_name,
-        ]
+        [*uv, "pip", "install", "--python", python_exe, "--no-deps", "-e", "."]
     )
 
 
-# Configuration
-PYPROJECT_PATH = "pyproject.toml"  # Change this to your file path
-GROUP_NAME = "dev"
+EXTRA = "dev"
 
 if __name__ == "__main__":
     try:
-        install_dependency_group(PYPROJECT_PATH, GROUP_NAME)
+        install_locked(EXTRA)
     except subprocess.CalledProcessError as e:
         print(f"Installation failed: {e}")
         sys.exit(e.returncode)

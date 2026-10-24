@@ -1,5 +1,5 @@
 # Node-group asset "Edge Info" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -14,7 +14,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputInteger
+from nodebpy.types import Default, InputInteger
 
 
 class EdgeInfo(AssetGeometryGroup):
@@ -24,7 +24,7 @@ class EdgeInfo(AssetGeometryGroup):
     Parameters
     ----------
     vertex_index : InputInteger
-        Vertex Index
+        Vertex Index. When unconnected: The index from the context.
     edge_index : InputInteger
         Index within the gorup of edges that are connected to this point
 
@@ -86,7 +86,7 @@ class EdgeInfo(AssetGeometryGroup):
 
     def __init__(
         self,
-        vertex_index: InputInteger = 0,
+        vertex_index: InputInteger = Default.INDEX,
         edge_index: InputInteger = 0,
     ):
         super().__init__(**{"Vertex Index": vertex_index, "Edge Index": edge_index})

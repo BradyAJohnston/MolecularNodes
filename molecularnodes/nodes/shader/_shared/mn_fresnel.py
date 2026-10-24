@@ -1,11 +1,10 @@
 # Node group "MN Fresnel" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import ShaderNodeTree
 from nodebpy import TreeBuilder
-from nodebpy import geometry as g
 from nodebpy import shader as s
 from nodebpy.builder import CustomShaderGroup, FloatSocket, SocketAccessor
 from nodebpy.types import InputFloat
@@ -74,12 +73,5 @@ class MNFresnel(CustomShaderGroup):
         )
         value = tree.outputs.float("Value")
 
-        fresnel = s.Fresnel(ior=ior)
-        mix = g.Mix(
-            factor_float=factor,
-            a_float=MN_mask_transparent(value=fresnel),
-            b_float=fresnel,
-            clamp_factor=True,
-        )
-
-        mix >> value
+        fresnel = s.Fresnel(ior)
+        factor.mix.float(MN_mask_transparent(value=fresnel), fresnel) >> value

@@ -1,5 +1,5 @@
 # Node-group asset "Fallback Matrix" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -85,7 +85,7 @@ class FallbackMatrix(AssetGeometryGroup):
             description="The named attribute read from the geometry if it exists, or the fallback value if it doesn't",
         )
 
-        named_attribute = g.NamedAttribute.input_4x4_matrix(name)
+        named_attribute = g.NamedAttribute.matrix(name)
         (
             named_attribute.o.exists.switch.matrix(
                 fallback, named_attribute.o.attribute

@@ -86,6 +86,7 @@ canvas.snapshot()
 ## Add density component
 
 We can load the density that was written-out from the analysis performed previously as a `Density` entity.
+Its values are stored at 32-bit float precision in Blender, even though `.dx` files hold 64-bit floats: Blender's grid nodes (`Get Named Grid`, `Sample Grid`) cannot read 64-bit grids.
 ```{python}
 # load density file
 canvas.engine = "EEVEE"

@@ -1,5 +1,5 @@
 # Node group ".MN_constants_atom_name_peptide" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -52,7 +52,7 @@ class MN_constants_atom_name_peptide(CustomGeometryGroup):
         @property
         def o(self) -> _Outputs: ...
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
@@ -62,11 +62,11 @@ class MN_constants_atom_name_peptide(CustomGeometryGroup):
         side_chain_upper = tree.outputs.integer("Side Chain Upper")
         alpha_carbon = tree.outputs.integer("Alpha Carbon")
 
-        integer = g.Integer(integer=5)
-        integer_1 = g.Integer(integer=49)
-        integer_2 = g.Integer(integer=4)
-        integer_3 = g.Integer()
-        integer_4 = g.Integer(integer=2)
+        integer = g.Integer(5)
+        integer_1 = g.Integer(49)
+        integer_2 = g.Integer(4)
+        integer_3 = g.Integer(1)
+        integer_4 = g.Integer(2)
 
         integer_3 >> backbone_lower
         integer_2 >> backbone_upper

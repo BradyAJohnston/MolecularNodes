@@ -9,6 +9,7 @@ import biotite.database.rcsb as rcsb
 import pytest
 import requests
 from biotite.structure.io import load_structure
+import molecularnodes as mn
 from molecularnodes.download import (
     CACHE_DIR,
     FileDownloadPDBError,
@@ -39,6 +40,7 @@ def test_download_raises_error_on_invalid_format():
     time.sleep(SLEEP_TIME)
 
 
+@pytest.mark.network
 def test_fail_download_pdb_large_structure_raises():
     downloader = StructureDownloader()
     with pytest.raises(FileDownloadPDBError):
@@ -46,6 +48,7 @@ def test_fail_download_pdb_large_structure_raises():
     time.sleep(SLEEP_TIME)
 
 
+@pytest.mark.network
 @pytest.mark.parametrize("format", ["cif", "bcif", "pdb"])
 def test_compare_biotite(format):
     with tempfile.TemporaryDirectory() as temp_dir:
@@ -60,6 +63,7 @@ def test_compare_biotite(format):
             time.sleep(SLEEP_TIME)
 
 
+@pytest.mark.network
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("database", DATABASES)
 @pytest.mark.parametrize("format", ["pdb", "cif", "bcif"])
@@ -86,6 +90,7 @@ def test_fetch_with_cache(tmpdir, code, format, database):
     time.sleep(SLEEP_TIME)
 
 
+@pytest.mark.network
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("database", DATABASES)
 @pytest.mark.parametrize("format", ["pdb", "cif", "bcif"])
@@ -395,3 +400,47 @@ class TestFileWriting:
 
         assert isinstance(result, Path)
         assert result.read_bytes() == content
+
+
+class TestPubChem:
+    def test_fetch_pubchem_cached(self, fetch):
+        # loads tests/data/2244.sdf through the PubChem cache path, no network
+        mol = fetch("2244", format="sdf", database="pubchem")
+        atoms = mol.universe.atoms
+        assert atoms.n_atoms == 21
+        assert sum(atoms.elements == "H") == 8
+        assert len(mol.universe.bonds) == 21
+        assert mol.props.database == "pubchem"
+
+    @patch("requests.get")
+    def test_pubchem_no_3d_raises(self, mock_get):
+        mock_response = Mock()
+        mock_response.status_code = 404
+        mock_response.text = (
+            "Status: 404\nMessage: No records found for the given CID(s)"
+        )
+        mock_get.return_value = mock_response
+
+        downloader = StructureDownloader(cache=None)
+        with pytest.raises(FileDownloadPDBError, match="no 3D conformer"):
+            downloader.download("5234", database="pubchem")
+
+    @pytest.mark.network
+    @pytest.mark.parametrize("code", ["2244", "aspirin"])
+    def test_fetch_pubchem(self, tmpdir, code):
+        mol = mn.Molecule.fetch(code, cache=str(tmpdir), database="pubchem")
+        assert Path(tmpdir, f"{code}.sdf").exists()
+        atoms = mol.universe.atoms
+        assert atoms.n_atoms == 21
+        assert sum(atoms.elements == "H") == 8
+        assert len(mol.universe.bonds) == 21
+        time.sleep(SLEEP_TIME)
+
+    @pytest.mark.network
+    def test_fetch_pubchem_no_3d(self, tmpdir):
+        # sodium chloride has a 2D record but no 3D conformer
+        downloader = StructureDownloader(cache=str(tmpdir))
+        with pytest.raises(FileDownloadPDBError, match="no 3D conformer"):
+            downloader.download("5234", database="pubchem")
+        assert not Path(tmpdir, "5234.sdf").exists()
+        time.sleep(SLEEP_TIME)

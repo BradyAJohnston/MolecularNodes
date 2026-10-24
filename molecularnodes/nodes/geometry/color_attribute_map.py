@@ -1,5 +1,5 @@
 # Node-group asset "Color Attribute Map" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -126,7 +126,7 @@ class ColorAttributeMap(AssetGeometryGroup):
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        color_space = tree.inputs.menu("Color Space", optional_label=True)
+        color_space = tree.inputs.menu("Color Space", "Linear", optional_label=True)
         name = tree.inputs.string(
             "Name",
             "b_factor",
@@ -185,8 +185,6 @@ class ColorAttributeMap(AssetGeometryGroup):
             )
             >> color
         )
-
-        color_space.default_value = "Linear"
 
 
 ASSET = ColorAttributeMap

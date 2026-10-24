@@ -1,5 +1,5 @@
 # Node group "Constraint Distance" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -11,7 +11,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputFloat, InputVector
+from nodebpy.types import Default, InputFloat, InputVector
 
 
 class ConstraintDistance(CustomGeometryGroup):
@@ -23,7 +23,7 @@ class ConstraintDistance(CustomGeometryGroup):
     target : InputVector
         Target
     self_2 : InputVector
-        Self
+        Self. When unconnected: The position from the context.
     distance : InputFloat
         Distance
     w1 : InputFloat
@@ -94,7 +94,7 @@ class ConstraintDistance(CustomGeometryGroup):
     def __init__(
         self,
         target: InputVector = None,
-        self_2: InputVector = None,
+        self_2: InputVector = Default.POSITION,
         distance: InputFloat = 0.5,
         w1: InputFloat = 0.5,
         w2: InputFloat = 0.5,

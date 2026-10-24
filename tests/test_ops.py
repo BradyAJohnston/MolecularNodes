@@ -10,26 +10,48 @@ from .utils import NumpySnapshotExtension, sphere_value
 
 
 @pytest.mark.parametrize("code", codes)
-def test_op_fetch(snapshot_custom: NumpySnapshotExtension, code):
+def test_op_fetch(fetch, snapshot_custom: NumpySnapshotExtension, code):
     scene = bpy.context.scene
     style = "ribbon"
     format = "cif"
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_molecule(code=code, file_format=format, style=style)
+        bpy.ops.mn.import_molecule(
+            code=code, file_format=format, style=style, cache_dir=str(data_dir)
+        )
         mol1 = scene.MNSession.match(o.latest())
 
     with ObjectTracker() as o:
         bpy.ops.mn.import_molecule(
-            code=f"pdb_{code.rjust(8, '0')}", file_format=format, style=style
+            code=f"pdb_{code.rjust(8, '0')}",
+            file_format=format,
+            style=style,
+            cache_dir=str(data_dir),
         )
         mol2 = scene.MNSession.match(o.latest())
 
-    mol3 = mn.Molecule.fetch(code, format=format, cache=data_dir)
+    mol3 = fetch(code, format=format)
     mol3.add_style(style=style)
 
     for test1, test2 in itertools.combinations([mol1, mol2, mol3], 2):
         np.testing.assert_allclose(test1.position, test2.position)
+
+
+def test_op_fetch_pubchem():
+    # tests/data/2244.sdf is the cached PubChem download, so no network is used;
+    # file_format is ignored for PubChem
+    with ObjectTracker() as o:
+        res = bpy.ops.mn.import_molecule(
+            code="2244",
+            database="pubchem",
+            file_format="bcif",
+            style="ball_and_stick",
+            cache_dir=str(data_dir),
+        )
+        mol = bpy.context.scene.MNSession.match(o.latest())
+    assert res == {"FINISHED"}
+    assert mol.props.database == "pubchem"
+    assert len(mol) == 21
 
 
 @pytest.mark.parametrize("code", codes)
@@ -233,10 +255,10 @@ def test_op_dropped_files_share_node_group():
     assert "Style Ribbon" in style_trees
 
 
-def test_share_node_group_api():
+def test_share_node_group_api(fetch):
     """Assigning one molecule's tree to another shares styling between them."""
-    mol1 = mn.Molecule.fetch(codes[0], cache=data_dir, format="cif")
-    mol2 = mn.Molecule.fetch(codes[1], cache=data_dir, format="cif")
+    mol1 = fetch(codes[0], format="cif")
+    mol2 = fetch(codes[1], format="cif")
     mol1.add_style("spheres")
 
     mol2.tree = mol1.tree
@@ -290,7 +312,7 @@ def test_op_fetch_comma_separated_codes():
     assert trees[0] != trees[1]
 
 
-def test_op_import_spheres_stay_points_under_eevee():
+def test_op_import_spheres_stay_points_under_eevee(fetch):
     """GUI imports keep spheres as a point cloud whatever the engine (#1220).
 
     The API swaps to instanced spheres under EEVEE so renders look right, but
@@ -311,7 +333,7 @@ def test_op_import_spheres_stay_points_under_eevee():
             imported = scene.MNSession.match(o.latest())
         assert sphere_value(imported) == "Point"
 
-        api = mn.Molecule.fetch(codes[0], cache=data_dir).add_style("spheres")
+        api = fetch(codes[0]).add_style("spheres")
         assert sphere_value(api) == "Instance"
     finally:
         scene.render.engine = engine
@@ -369,3 +391,21 @@ def test_op_import_bad_paths_report_errors(op, kwargs, message):
     from deep inside a file reader."""
     with pytest.raises(RuntimeError, match=message):
         getattr(bpy.ops.mn, op)(**kwargs)
+
+
+def test_op_import_multiple_structure_blocks(tmp_path):
+    """A .cif with several structures in separate data blocks imports one
+    Molecule per block."""
+    session = bpy.context.scene.MNSession
+    path = tmp_path / "two.cif"
+    path.write_text(
+        (data_dir / "1BNA.cif").read_text() + "\n" + (data_dir / "1l58.cif").read_text()
+    )
+
+    with ObjectTracker() as o:
+        res = bpy.ops.mn.import_molecule(filepath=str(path), method="local")
+        assert res == {"FINISHED"}
+        objects = o.new_objects()
+
+    mols = [session.match(obj) for obj in objects]
+    assert sorted(mol.props.data_block for mol in mols) == ["1BNA", "1L58"]

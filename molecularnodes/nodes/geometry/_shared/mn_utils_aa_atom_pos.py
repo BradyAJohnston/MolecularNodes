@@ -1,5 +1,5 @@
 # Node group ".MN_utils_aa_atom_pos" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -87,7 +87,7 @@ class MN_utils_aa_atom_pos(CustomGeometryGroup):
             group_index=accumulate_field.o.leading,
             float=g.NamedAttribute.float("b_factor").o.attribute,
             vector=g.Position(),
-            integer=g.EdgesOfVertex(vertex_index=g.Index()).o.total,
+            integer=g.EdgesOfVertex(g.Index()).o.total,
         )
         with g.Frame("If atom_name is 0, return midpoint of backbone N and C"):
             position_1 = g.Position()
@@ -101,12 +101,10 @@ class MN_utils_aa_atom_pos(CustomGeometryGroup):
                 group_index=accumulate_field.o.leading,
                 vector=position_1,
             )
-            mix = g.Mix(
-                a_vector=utils_group_field_at_selection_1.o.vector,
-                b_vector=utils_group_field_at_selection_2.o.vector,
-                factor_float=0.5,
-                data_type="VECTOR",
-                clamp_factor=True,
+            mix = g.Mix.vector(
+                0.5,
+                utils_group_field_at_selection_1.o.vector,
+                utils_group_field_at_selection_2.o.vector,
             )
             (
                 g.Compare.integer.not_equal(atom_name, 0).o.result.switch.vector(

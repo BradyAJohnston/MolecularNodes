@@ -1,7 +1,9 @@
 import json
+import math
 import bpy
 from bpy.props import (
     BoolProperty,
+    CollectionProperty,
     EnumProperty,
     FloatProperty,
     IntProperty,
@@ -111,14 +113,16 @@ def _update_dssp_display_option(self, context):
         display_option = getattr(self, "display_option")
     # call none and per-frame directly
     if display_option == "none":
-        entity.dssp.show_none()
+        entity.calculations._dssp.show_none()
         _update_entities(self, context)
     elif display_option == "per-frame":
-        entity.dssp.show_per_frame()
+        entity.calculations._dssp.show_per_frame()
         _update_entities(self, context)
     elif display_option == "sliding-window-average":
         sw_threshold = self.sw_threshold if self.apply_sw_threshold else None
-        entity.dssp.show_sliding_window_average(self.window_size, sw_threshold)
+        entity.calculations._dssp.show_sliding_window_average(
+            self.window_size, sw_threshold
+        )
         _update_entities(self, context)
     else:
         self.applied = False
@@ -214,6 +218,107 @@ class DSSPProperties(bpy.types.PropertyGroup):
     cancelling: BoolProperty(default=False)  # type: ignore
 
 
+def _update_hbonds_cutoffs(self, context):
+    entity = context.scene.MNSession.get(self.id_data.uuid)
+    if entity is None:
+        return
+    entity.calculations._hbonds._update_from_props()
+
+
+class HBondProperties(bpy.types.PropertyGroup):
+    d_a_cutoff: FloatProperty(  # type: ignore
+        name="Distance",
+        description="Maximum distance between the donor and acceptor in Angstroms",
+        min=0.0,
+        soft_max=5.0,
+        default=3.0,
+        update=_update_hbonds_cutoffs,
+    )
+    d_h_a_angle_cutoff: FloatProperty(  # type: ignore
+        name="Angle",
+        description="Minimum donor-hydrogen-acceptor angle",
+        subtype="ANGLE",
+        min=0.0,
+        max=math.pi,
+        default=math.radians(150.0),
+        update=_update_hbonds_cutoffs,
+    )
+    d_h_cutoff: FloatProperty(  # type: ignore
+        name="Donor Distance",
+        description="Maximum distance between a hydrogen and its donor in Angstroms, which pairs them",
+        min=0.0,
+        soft_max=2.0,
+        default=1.2,
+        update=_update_hbonds_cutoffs,
+    )
+    selection: StringProperty(  # type: ignore
+        name="Selection",
+        description=(
+            "MDAnalysis selection string limiting the atoms considered as "
+            "hydrogens, donors and acceptors"
+        ),
+        default="all",
+    )
+    kwargs: StringProperty(  # type: ignore
+        name="Arguments",
+        description="Other arguments to HydrogenBondAnalysis than the cutoffs, as JSON, restored with the file",
+        default="{}",
+        options={"HIDDEN"},
+    )
+
+
+FRAME_ATTRIBUTE_SOURCES = (
+    (
+        "TRAJECTORY",
+        "Trajectory",
+        "Read from each frame of the trajectory",
+        "FILE_MOVIE",
+        0,
+    ),
+    ("SELECTION", "Selection", "A selection of the molecule", "RESTRICT_SELECT_OFF", 1),
+    ("CALCULATION", "Calculation", "Calculated from the universe", "DRIVER", 2),
+)
+
+
+class FrameAttributeItem(bpy.types.PropertyGroup):
+    """An attribute that is written on frame changes, and where it comes from."""
+
+    __slots__ = []
+
+    name: StringProperty(  # type: ignore
+        name="Attribute Name",
+        description="Name of the attribute on the mesh",
+    )
+    source: EnumProperty(  # type: ignore
+        name="Source",
+        description="Where the values of the attribute come from",
+        items=FRAME_ATTRIBUTE_SOURCES,
+        default="TRAJECTORY",
+    )
+
+
+class CalculationItem(bpy.types.PropertyGroup):
+    """A calculation that writes an attribute from the universe."""
+
+    __slots__ = []
+
+    name: StringProperty(  # type: ignore
+        name="Attribute Name",
+        description="Name of the attribute the calculation writes",
+    )
+    updating: BoolProperty(  # type: ignore
+        name="Updating",
+        description="Recalculate on every frame change, rather than keeping the values from when it last ran",
+        default=True,
+        update=_update_entities,
+    )
+    object: PointerProperty(  # type: ignore
+        type=bpy.types.Object,
+        name="Object",
+        description="Object the calculation writes to, for one that writes an object rather than an attribute",
+    )
+
+
 class MolecularNodesSceneProperties(bpy.types.PropertyGroup):
     __slots__ = []
     entities_active_index: IntProperty(  # type: ignore
@@ -303,6 +408,12 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         name="File Path",
         description="Source file this entity was loaded from, used to reload it",
         subtype="FILE_PATH",
+        default="",
+        options={"HIDDEN"},
+    )
+    data_block: StringProperty(  # type: ignore
+        name="Data Block",
+        description="Data block of a multi-structure CIF file this entity was loaded from",
         default="",
         options={"HIDDEN"},
     )
@@ -487,9 +598,34 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     )
     correct_periodic: BoolProperty(  # type: ignore
         name="Correct",
-        description="Correct for periodic boundary crossing when using interpolation or averaging. Assumes cubic dimensions and only works if the unit cell is orthorhombic",
+        description="Correct for periodic boundary crossing when using interpolation or averaging, moving atoms to the nearest periodic image. Works with orthorhombic and triclinic unit cells",
         default=False,
         update=_update_entities,
+    )
+    frame_attributes: CollectionProperty(  # type: ignore
+        type=FrameAttributeItem,
+        name="Per-frame Attributes",
+        description="The attributes written on frame changes, from the trajectory, selections and calculations",
+        options={"HIDDEN"},
+    )
+    calculations: CollectionProperty(  # type: ignore
+        type=CalculationItem,
+        name="Calculations",
+        description="Calculations that write attributes from the universe, and whether they update on frame changes",
+        options={"HIDDEN"},
+    )
+    frame_attributes_index: IntProperty(  # type: ignore
+        name="Active Per-frame Attribute",
+        default=0,
+        options={"HIDDEN"},
+    )
+    frame_attributes_filter: EnumProperty(  # type: ignore
+        name="Show",
+        description="Which per-frame attributes to list, by where they come from",
+        items=(("ALL", "All", "List every per-frame attribute", "NONE", 3),)
+        + FRAME_ATTRIBUTE_SOURCES,
+        default="ALL",
+        options={"HIDDEN"},
     )
     filepath_trajectory: StringProperty(  # type: ignore
         name="Trajectory",
@@ -504,6 +640,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         default="",
     )
     dssp: PointerProperty(type=DSSPProperties)  # type: ignore
+    hbonds: PointerProperty(type=HBondProperties)  # type: ignore
 
 
 class TrajectorySelectionItem(bpy.types.PropertyGroup):
@@ -558,43 +695,6 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
     )
 
 
-class MN_UL_TrajectorySelectionListUI(bpy.types.UIList):
-    """UI List"""
-
-    def draw_item(
-        self,
-        context,
-        layout,
-        data,
-        item,
-        icon,
-        active_data,
-        active_property,
-        *,
-        index=0,
-        flt_flag=0,
-    ):
-        custom_icon = "VIS_SEL_11"
-
-        if self.layout_type in {"DEFAULT", "COMPACT"}:
-            row = layout.row()
-            if item.message != "":
-                custom_icon = "ERROR"
-                row.alert = True
-
-            col = row.column()
-            col.prop(item, "name", text="", emboss=False)
-            col.enabled = False
-            row.prop(item, "updating", icon_only=True, icon="FILE_REFRESH")
-            row.prop(item, "periodic", icon_only=True, icon="CUBE")
-            if item.from_atomgroup:
-                row.enabled = False
-
-        elif self.layout_type in {"GRID"}:
-            layout.alignment = "CENTER"
-            layout.label(text="", icon=custom_icon)
-
-
 class MN_OT_Universe_Selection_Add(bpy.types.Operator):
     "Add a new custom selection to a trajectory"
 
@@ -602,10 +702,23 @@ class MN_OT_Universe_Selection_Add(bpy.types.Operator):
     bl_label = "+"
     bl_description = "Add a new boolean attribute for the given MDA selection string"
 
+    uuid: StringProperty()  # type: ignore
+
     def execute(self, context):
-        traj = get_entity(context)
-        traj.selections.from_string("all")
+        if self.uuid:
+            traj = context.scene.MNSession.get(self.uuid)
+        else:
+            traj = get_entity(context)
+        item = traj.selections.from_string("all")
         traj.selections.ui_index = max(0, len(traj.selections) - 1)
+        # make the new selection the active row of the Attributes list, so its
+        # selection string shows for editing
+        mn = traj.object.mn
+        if mn.frame_attributes_filter not in ("ALL", "SELECTION"):
+            mn.frame_attributes_filter = "ALL"
+        index = mn.frame_attributes.find(item.name)
+        if index >= 0:
+            mn.frame_attributes_index = index
         return {"FINISHED"}
 
 
@@ -632,10 +745,12 @@ class MN_OT_Universe_Selection_Delete(bpy.types.Operator):
 
 CLASSES = [
     DSSPProperties,
+    HBondProperties,
+    FrameAttributeItem,
+    CalculationItem,
     MolecularNodesObjectProperties,
     MolecularNodesSceneProperties,
     TrajectorySelectionItem,  # item has to be registered the ListUI and to work properly
-    MN_UL_TrajectorySelectionListUI,
     MN_OT_Universe_Selection_Add,
     MN_OT_Universe_Selection_Delete,
 ]

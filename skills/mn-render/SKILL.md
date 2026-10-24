@@ -52,6 +52,9 @@ Do not call `bpy.ops.wm.read_factory_settings()` to reset between renders: it ha
 reported to strip the extension's bundled wheels mid-run, so the next `Molecule.load()`
 fails on a missing biotite file. Delete the default objects by hand, or use one Blender
 process per render.
+Don't name a scratch script after a standard-library module (`inspect.py`, `code.py`,
+`types.py`, ...). Importing `bpy` imports that module, finds the script instead, and
+Blender initialises twice and aborts with `Check failed: !IsGoogleLoggingInitialized()`.
 
 ## 3. Minimal still
 
@@ -78,7 +81,7 @@ return `None`. The canonical docs versions are in `docs/api/index.qmd` and
 | `transparent` | film transparency (alpha background). |
 | `background` | world background RGBA; shortcut into the `MN_world_shader` node. |
 | `world.hdri_strength` | lighting strength of the preset HDRI. |
-| `view_transform`, `exposure`, `gamma`, `look` | colour management. Blender defaults to AgX; use `"Standard"` when colours must come out as specified. |
+| `view_transform`, `exposure`, `gamma`, `look` | colour management. Blender defaults to AgX; use `"Standard"` when colours must come out as specified. `mn.Canvas(view_transform="Standard")` sets it on construction. |
 | `passes` | render passes: combined, z, mist, normal, position, vector, diffuse_color, emit, environment, ambient_occlusion. |
 | `frame`, `frame_start`, `frame_end`, `frame_range`, `fps` | timeline. Setting `frame` uses `frame_set`, so trajectories update. |
 | `camera` | `lens`, `clip_start`, `clip_end`, `rotation` (XYZ Euler in degrees), `basis`, `set_viewpoint(...)`, `frame_points(points, margin)`. |
@@ -106,8 +109,8 @@ u_mol = mn.Molecule(u)  # from an MDAnalysis Universe
 
 `fetch(code, format=".bcif", cache=download.CACHE_DIR, database="rcsb")`. `load` routes
 single files through biotite and topology plus coordinates through MDAnalysis; `style=`
-is optional and defaults to no style, leaving the tree empty. In tests use
-`cache=data_dir` so downloads land in `tests/data`.
+is optional and defaults to no style, leaving the tree empty. In tests use the `fetch`
+fixture instead, which loads from `tests/data` and never downloads.
 
 ## 6. Styles, materials, colour
 
@@ -133,12 +136,12 @@ mol.add_style(
   boolean socket (`lambda: mg.IsPeptide() & mg.IsSideChain()`).
 - **`assembly=True`** instances the style over the file's biological assembly.
 - **Materials.** Presets in `mn.material`: `Default(roughness, ao_distance, ao_exponent)`,
-  `AmbientOcclusion(distance, exponent)`, `Flat(outline, threshold, thickness)`,
+  `AmbientOcclusion(distance, exponent)`, `Flat(outline, threshold, thickness)` (no outline unless `outline=True`),
   `Squishy(subsurface_scale, roughness)`, `Transparent(transparency, fresnel, outline_color)`.
   Each instantiation builds an independent datablock (`"Flat.001"`), and its parameters
   are live: `mat.distance = 0.15` changes the next render. Passing the string
   `material="Flat"` reuses one shared datablock, so edits affect every style using it.
-  `"Flat Outline"` exists only as `mn.material.append_material("Flat Outline")`.
+  `"Fresnel Outline"` exists only as `mn.material.append_material("Fresnel Outline")`.
   `Transparent` needs the blended surface method, which its recipe sets. To swap the
   material on an existing style: `style.i.material.default_value = mat.material`.
 - **Colour.** `color=` takes `"common"`/`"default"` (elements, carbons random per
@@ -197,7 +200,8 @@ Per-molecule playback properties, all stored on the Blender object: `frame`,
 
 ```python
 traj = mn.Molecule(u)
-traj.dssp.init()  # secondary structure per frame, if cartoon/ribbon needs it
+# secondary structure per frame, if cartoon/ribbon needs it
+traj.calculations.dssp(updating=True)
 traj.subframes, traj.interpolate, traj.average = 1, True, 1
 traj.add_style("cartoon", color="common")
 canvas.fps = 24
@@ -260,10 +264,68 @@ Three routes, pick by what changes between frames:
 
 ## 11. Renders for pull requests
 
-The 128 px goldens are too small to show a change. Write a script outside the repo with
-`mn.Canvas(mn.scene.EEVEE(), resolution=(1200, 900))` (or Cycles CPU on a machine
-without a GPU), style, `look_at`, `snapshot(path)`, and attach the PNGs with
-`gh pr create --attach` as described in the `mn-nodes` skill, section 11.
+The 128 px goldens are too small to show a change. Write a script outside the repo,
+render at full size, and attach the PNGs with `gh pr create --attach` / `gh pr edit
+--attach` as described in the `mn-nodes` skill, section 11. Keep the images out of the
+repo.
+
+This recipe gives clean, evenly lit figures from any viewpoint (used for the Align
+Molecules PR):
+
+```python
+from molecularnodes.nodes import geometry as mg
+
+canvas = mn.Canvas(
+    mn.scene.Cycles(samples=64, device="GPU"),  # falls back to CPU without a GPU
+    resolution=(1000, 900),
+    view_transform="Standard",  # colours as specified; AgX washes them out
+    background=(1, 1, 1, 1),
+)
+canvas.world.hdri_strength = 1.0  # the preset uses 1.5
+
+ref = mn.Molecule.fetch("4HHB")  # haemoglobin
+other = mn.Molecule.fetch("1A6M")  # myoglobin
+other.align_to(ref, fixed_selection="chainID A")  # onto the alpha chain
+
+mat = mn.material.AmbientOcclusion()  # one instance, shared by every style
+context, focus, moved = (0.6, 0.6, 0.63, 1), (0.35, 0.6, 0.95, 1), (1.0, 0.45, 0.1, 1)
+ref.add_style(
+    "cartoon", selection="protein and not chainID A", color=context, material=mat
+)
+ref.add_style("cartoon", selection="protein and chainID A", color=focus, material=mat)
+other.add_style("cartoon", selection="protein", color=moved, material=mat)
+# element colours for the haems, with carbons in their protein's colour
+for mol, carbon in ((ref, context), (other, moved)):
+    mol.add_style(
+        "ball_and_stick",
+        selection="resname HEM",
+        color=lambda carbon=carbon: mg.ColorElement(c=carbon),
+        material=mat,
+    )
+
+bpy.context.view_layer.update()
+canvas.look_at(ref, viewpoint="back")  # orient
+bpy.context.view_layer.update()
+canvas.look_at(ref.get_view() + other.get_view(), margin=0.05)  # fit both
+canvas.snapshot("overview.png")
+canvas.look_at(ref.get_view("chainID A"), margin=0.1)  # close-up, same direction
+canvas.snapshot("closeup.png")
+```
+
+- **`AmbientOcclusion` is what makes it work.** The default material is lit by the
+  preset's key light, so a side facing away from it renders murky, and raising
+  `hdri_strength` barely helps. AO shades by how enclosed a surface is, independent of
+  light direction, so every viewpoint looks the same. It brightens flat colours, which
+  is why the context grey is as dark as 0.6.
+- **Pick the viewpoint from a contact sheet.** Render the six named viewpoints at
+  `render_scale=25`, tile them with PIL and look, rather than guessing Euler angles.
+- **One idea per colour:** neutral grey for context, one saturated colour per subject.
+  Show ligands or cofactors (e.g. haem) as `ball_and_stick` coloured by element with
+  `mg.ColorElement(c=...)` (`from molecularnodes.nodes import geometry as mg`), which
+  keeps carbons in their protein's colour. They make good visual checks, e.g. haems
+  landing on each other after an alignment.
+- **Before/after panels** keep the viewpoint fixed and only refit. Tile them with PIL
+  onto white (the PNGs may have alpha) with a short title per panel.
 
 ## 12. Where to read more
 

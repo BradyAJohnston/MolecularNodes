@@ -1,5 +1,5 @@
 # Material "Transparent", dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # The class is a recipe for the material's shader tree — build recreates the material and runs it into material.node_tree.
 from bpy.types import ShaderNodeTree
 from nodebpy import TreeBuilder
@@ -12,9 +12,14 @@ class Transparent(CustomShaderGroup):
     _name = "Shader Nodetree"
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
-        _material_output = TransparentOutlineInternal(
-            transparency=0.8083333, menu="Fresnel", outline_color=(0.0, 0.0, 0.0, 1.0)
-        ) >> s.MaterialOutput(is_active_output=True)
+        _material_output = (
+            TransparentOutlineInternal(
+                transparency=0.8083333,
+                menu="Fresnel",
+                outline_color=(0.0, 0.0, 0.0, 1.0),
+            )
+            >> s.MaterialOutput()
+        )
 
 
 MATERIAL = Transparent

@@ -1,5 +1,5 @@
 # Node-group asset "MN Typed Bundles" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -87,7 +87,7 @@ class MNTypedBundles(AssetGeometryGroup):
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        type = tree.inputs.menu("Type", optional_label=True)
+        type = tree.inputs.menu("Type", "MN.MeshProcess", optional_label=True)
         closure = tree.inputs.closure("Closure")
         step = tree.inputs.integer("step", 1)
         path = tree.inputs.string("Path", "", optional_label=True)
@@ -95,18 +95,16 @@ class MNTypedBundles(AssetGeometryGroup):
 
         combine_bundle = g.CombineBundle()
         combine_bundle.items.string(
-            "Type",
             g.MenuSwitch.string(type, {"MN.MeshProcess": "MN.MeshProcess"}).o.output,
+            "Type",
         )
-        combine_bundle.items.closure("closure", closure)
-        combine_bundle.items.integer("step", step)
+        combine_bundle.items.closure(closure, "closure")
+        combine_bundle.items.integer(step, "step")
         store_bundle_item = g.StoreBundleItem.bundle(
             path=path, item=combine_bundle.o.bundle
         )
 
         store_bundle_item >> bundle
-
-        type.default_value = "MN.MeshProcess"
 
 
 ASSET = MNTypedBundles

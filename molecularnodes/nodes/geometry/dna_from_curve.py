@@ -1,5 +1,5 @@
 # Node-group asset "DNA From Curve" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
 from typing import TYPE_CHECKING, Literal
@@ -45,7 +45,7 @@ class DNASequenceToID(CustomGeometryGroup):
         special_characters = g.SpecialCharacters()
         replace_string = (
             string.uppercase()
-            .replace(g.String(string=" "), "")
+            .replace(g.String(" "), "")
             .replace(special_characters.o.line_break, "")
         )
         trim_string = replace_string.replace(special_characters.o.tab, "").trim().trim()
@@ -56,7 +56,7 @@ class DNASequenceToID(CustomGeometryGroup):
             .replace("T", "")
         )
         format_string = g.String(
-            string="Non-standard base letters detected: {s}"
+            "Non-standard base letters detected: {s}"
         ).o.string.format({"s": replace_string_1})
         slice_string = trim_string.slice(g.Index(), 1)
         trim_string.length() >> length
@@ -81,7 +81,7 @@ class CustomWorldObjectSpace(CustomGeometryGroup):
     _tree_properties = {"default_group_node_width": 200}
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        space = tree.inputs.menu("Space", optional_label=True)
+        space = tree.inputs.menu("Space", "Custom Space", optional_label=True)
         custom_0_world_1_object_2 = tree.outputs.integer(
             "Custom = 0,World = 1, Object = 2"
         )
@@ -115,8 +115,6 @@ class CustomWorldObjectSpace(CustomGeometryGroup):
         menu_switch.o.world_space >> is_world_space
         menu_switch.o.object_space >> is_object_space
 
-        space.default_value = "Custom Space"
-
 
 class CustomForce(CustomGeometryGroup):
     _name = "Custom Force"
@@ -128,6 +126,7 @@ class CustomForce(CustomGeometryGroup):
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         mode = tree.inputs.menu(
             "Mode",
+            "Field",
             description="How the force field is defined.",
             optional_label=True,
             structure_type="SINGLE",
@@ -160,6 +159,7 @@ class CustomForce(CustomGeometryGroup):
         ):
             geometry_space = tree.inputs.menu(
                 "Geometry Space",
+                "World Space",
                 description="The space the geometry is transformed to before the field is evaluated.",
                 optional_label=True,
                 structure_type="SINGLE",
@@ -184,6 +184,7 @@ class CustomForce(CustomGeometryGroup):
         ):
             force_space = tree.inputs.menu(
                 "Force Space",
+                "World Space",
                 description="The space the provided force vector is in.",
                 optional_label=True,
                 structure_type="SINGLE",
@@ -228,47 +229,45 @@ class CustomForce(CustomGeometryGroup):
         with g.Frame("Force space to world space"):
             index_switch = g.IndexSwitch.matrix(
                 CustomWorldObjectSpace(Space=force_space).o.custom_0_world_1_object_2,
-                (force_space_1, None, g.ObjectInfo(object=object_1).o.transform),
+                (force_space_1, None, g.ObjectInfo(object_1).o.transform),
             )
             _string = g.String(
-                string="The computed force field needs to be transformed back into the space of the simulation."
+                "The computed force field needs to be transformed back into the space of the simulation."
             )
         with g.Frame("World space to geometry space"):
             index_switch_1 = g.IndexSwitch.matrix(
                 CustomWorldObjectSpace(
                     Space=geometry_space
                 ).o.custom_0_world_1_object_2,
-                (
-                    geometry_space_1.invert(),
-                    None,
-                    g.ObjectInfo(object=object).o.transform,
-                ),
+                (geometry_space_1.invert(), None, g.ObjectInfo(object).o.transform),
             )
             invert_matrix = index_switch_1.o.output.invert()
             _string_1 = g.String(
-                string="The geometry nodes to be transformed into the space requested by the user before evaluating the fields."
+                "The geometry nodes to be transformed into the space requested by the user before evaluating the fields."
             )
         with g.Frame("Used for type inferencing"):
             evaluate_closure = g.EvaluateClosure(closure, define_signature=True)
-            evaluate_closure.inputs.geometry("Geometry", structure_type="SINGLE")
+            evaluate_closure.inputs.geometry(name="Geometry", structure_type="SINGLE")
             evaluate_closure.inputs.matrix(
-                "To World Transform", structure_type="SINGLE"
+                name="To World Transform", structure_type="SINGLE"
             )
             evaluate_closure.outputs.geometry("Geometry", structure_type="SINGLE")
             evaluate_closure.outputs.boolean("Selection", structure_type="FIELD")
             evaluate_closure.outputs.vector("Force", structure_type="FIELD")
-        transform_direction = g.MultiplyMatrices(
-            matrix=to_world_transform.invert(), matrix_001=index_switch
-        ).o.matrix.transform_direction(force)
-        transform_geometry = geometry >> g.TransformGeometry(
+        transform_direction = force.transform_direction(
+            g.MultiplyMatrices(
+                matrix=to_world_transform.output.invert(), matrix_001=index_switch
+            )
+        )
+        transform_geometry = geometry.output >> g.TransformGeometry(
             transform=g.MultiplyMatrices(
-                matrix=invert_matrix, matrix_001=to_world_transform
+                matrix=invert_matrix, matrix_001=to_world_transform.output
             ),
             mode="Matrix",
         )
-        transform_geometry >> geometry_1
-        selection >> selection_1
-        transform_direction >> force_2
+        transform_geometry >> geometry_1.input
+        selection >> selection_1.input
+        transform_direction >> force_2.input
         menu_switch = g.MenuSwitch.closure(
             mode,
             {
@@ -283,15 +282,11 @@ class CustomForce(CustomGeometryGroup):
             },
         )
         combine_bundle = g.CombineBundle()
-        combine_bundle.items.string("Type", "Blender.Force")
-        combine_bundle.items.string("filter", filter)
-        combine_bundle.items.closure("closure", menu_switch.o.output)
+        combine_bundle.items.string("Blender.Force", "Type")
+        combine_bundle.items.string(filter, "filter")
+        combine_bundle.items.closure(menu_switch.o.output, "closure")
 
         combine_bundle.o.bundle >> force_1
-
-        mode.default_value = "Field"
-        geometry_space.default_value = "World Space"
-        force_space.default_value = "World Space"
 
 
 class StoreEdgeLength(CustomGeometryGroup):
@@ -327,7 +322,7 @@ class CurveSegment(CustomGeometryGroup):
             description="Index of previous neighboring point on segment",
         )
 
-        evaluate_on_domain = g.Boolean(boolean=True).o.boolean.spline.evaluate()
+        evaluate_on_domain = g.Boolean(True).o.boolean.spline.evaluate()
         offset_point_in_curve = g.OffsetPointInCurve(offset=-1)
         position = g.Position()
         switch = offset_point_in_curve.o.is_valid_offset.switch.integer(
@@ -445,7 +440,7 @@ class SetupStructuralRestData(CustomGeometryGroup):
             Curves=StoreSegmentLength(Curves=get_geometry_component_1.o.component)
         )
         join_geometry = g.JoinGeometry(
-            geometry=(
+            (
                 get_geometry_component_2.o.geometry,
                 StoreEdgeLength(Curves=get_geometry_component_2.o.component),
                 StoreBendRotation(Curves=store_segment_rotation_1),
@@ -472,10 +467,10 @@ class Damping(CustomGeometryGroup):
         damping = tree.outputs.bundle("Damping")
 
         combine_bundle = g.CombineBundle()
-        combine_bundle.items.string("Type", "Blender.Damping")
-        combine_bundle.items.string("filter", filter)
-        combine_bundle.items.float("linear_damping", linear)
-        combine_bundle.items.float("angular_damping", angular)
+        combine_bundle.items.string("Blender.Damping", "Type")
+        combine_bundle.items.string(filter, "filter")
+        combine_bundle.items.float(linear, "linear_damping")
+        combine_bundle.items.float(angular, "angular_damping")
 
         combine_bundle.o.bundle >> damping
 
@@ -524,11 +519,11 @@ class RodBendTwistConstraint(CustomGeometryGroup):
                 bend_rotation,
             )
         combine_bundle = g.CombineBundle()
-        combine_bundle.items.string("Type", "Blender.Constraint.RodBendTwist")
-        combine_bundle.items.string("filter", filter)
-        combine_bundle.items.rotation("rest_bend_rotation", switch)
-        combine_bundle.items.float("compliance", compliance)
-        combine_bundle.items.float("error_threshold", error_threshold)
+        combine_bundle.items.string("Blender.Constraint.RodBendTwist", "Type")
+        combine_bundle.items.string(filter, "filter")
+        combine_bundle.items.rotation(switch, "rest_bend_rotation")
+        combine_bundle.items.float(compliance, "compliance")
+        combine_bundle.items.float(error_threshold, "error_threshold")
 
         combine_bundle.o.bundle >> constraint
 
@@ -585,13 +580,13 @@ class RodStretchShearConstraint(CustomGeometryGroup):
                 g.NamedAttribute.float("rest_length").o.attribute, length
             )
         combine_bundle = g.CombineBundle()
-        combine_bundle.items.string("Type", "Blender.Constraint.RodStretchShear")
-        combine_bundle.items.string("filter", filter)
-        combine_bundle.items.float("rest_length", switch)
-        combine_bundle.items.float("compliance", compliance)
-        combine_bundle.items.float("error_threshold", error_threshold)
-        combine_bundle.items.string("lambda_position_attribute", position_lambda)
-        combine_bundle.items.string("lambda_rotation_attribute", rotation_lambda)
+        combine_bundle.items.string("Blender.Constraint.RodStretchShear", "Type")
+        combine_bundle.items.string(filter, "filter")
+        combine_bundle.items.float(switch, "rest_length")
+        combine_bundle.items.float(compliance, "compliance")
+        combine_bundle.items.float(error_threshold, "error_threshold")
+        combine_bundle.items.string(position_lambda, "lambda_position_attribute")
+        combine_bundle.items.string(rotation_lambda, "lambda_rotation_attribute")
 
         combine_bundle.o.bundle >> constraint
 
@@ -604,14 +599,7 @@ class ObjectEffector(CustomGeometryGroup):
         object = tree.inputs.object("Object", optional_label=True)
         effector = tree.outputs.bundle("Effector")
 
-        get_bundle_item = g.GetBundleItem.bundle(
-            g.GetGeometryBundle(
-                geometry=g.ObjectInfo(object=object).o.geometry
-            ).o.bundle,
-            "effectors",
-        )
-
-        get_bundle_item.o.item >> effector
+        g.ObjectInfo(object).o.geometry.bundle().get.bundle("effectors") >> effector
 
 
 class CollectionEffector(CustomGeometryGroup):
@@ -626,15 +614,13 @@ class CollectionEffector(CustomGeometryGroup):
             )
         effectors = tree.outputs.bundle("Effectors")
 
-        collection_children = g.CollectionChildren(
-            collection=collection, recursive=True
-        )
-        repeat_zone = g.RepeatZone(collection_children.o.objects.list_length())
-        bundle = repeat_zone.items.bundle("Bundle")
+        collection_children = collection.children(True)
+        repeat_zone = g.RepeatZone(collection_children.objects.list_length())
+        bundle = repeat_zone.items.bundle(name="Bundle")
         store_bundle_item = g.StoreBundleItem.bundle(
             bundle.current,
             name_pattern.format({"i": repeat_zone.iteration}),
-            ObjectEffector(Object=collection_children.o.objects[repeat_zone.iteration]),
+            ObjectEffector(Object=collection_children.objects[repeat_zone.iteration]),
         )
         store_bundle_item >> bundle.next
 
@@ -692,7 +678,7 @@ class SetEffector(CustomGeometryGroup):
         get_geometry_bundle = g.GetGeometryBundle(geometry=geometry, remove=True)
         join_strings = g.JoinStrings(
             (
-                g.String(string="effectors"),
+                g.String("effectors"),
                 g.Compare.string.equal(name, "").o.result.switch.string(
                     name, "default"
                 ),
@@ -700,9 +686,8 @@ class SetEffector(CustomGeometryGroup):
             delimiter="/",
         )
         (
-            get_geometry_bundle
-            >> g.SetGeometryBundle(
-                bundle=g.StoreBundleItem.bundle(
+            get_geometry_bundle.o.geometry.set_bundle(
+                g.StoreBundleItem.bundle(
                     get_geometry_bundle.o.bundle, join_strings, effector
                 )
             )
@@ -811,24 +796,24 @@ class Collider(CustomGeometryGroup):
 
         with g.Frame("Prepare collider geometry"):
             _string = g.String(
-                string="By convention, collider geometries are always in world space."
+                "By convention, collider geometries are always in world space."
             )
             transform_geometry = g.GeometryToInstance(geometry) >> g.TransformGeometry(
-                transform=g.ObjectInfo(object=g.SelfObject()).o.transform, mode="Matrix"
+                transform=g.ObjectInfo(g.SelfObject()).o.transform, mode="Matrix"
             )
         combine_bundle = g.CombineBundle()
-        combine_bundle.items.string("Type", "Blender.Collider.Mesh")
-        combine_bundle.items.string("filter", filter)
-        combine_bundle.items.geometry("geometry", transform_geometry)
-        combine_bundle.items.float("margin", margin)
-        combine_bundle.items.float("friction", friction)
+        combine_bundle.items.string("Blender.Collider.Mesh", "Type")
+        combine_bundle.items.string(filter, "filter")
+        combine_bundle.items.geometry(transform_geometry, "geometry")
+        combine_bundle.items.float(margin, "margin")
+        combine_bundle.items.float(friction, "friction")
         combine_bundle.items.float(
-            "compliance", SoftnessToCompliance(Softness=softness)
+            SoftnessToCompliance(Softness=softness), "compliance"
         )
-        combine_bundle.items.boolean("deforming", deforming)
-        combine_bundle.items.boolean("use_edge_contacts", edge_contacts)
-        combine_bundle.items.boolean("is_boundary", boundary)
-        combine_bundle.items.float("error_threshold", error_threshold)
+        combine_bundle.items.boolean(deforming, "deforming")
+        combine_bundle.items.boolean(edge_contacts, "use_edge_contacts")
+        combine_bundle.items.boolean(boundary, "is_boundary")
+        combine_bundle.items.float(error_threshold, "error_threshold")
         (
             SetEffector(
                 Geometry=geometry, Effector=combine_bundle.o.bundle, Name="collider"
@@ -881,13 +866,13 @@ class PinPositions(CustomGeometryGroup):
         constraint = tree.outputs.bundle("Constraint")
 
         combine_bundle = g.CombineBundle()
-        combine_bundle.items.string("Type", "Blender.Constraint.PinPosition")
-        combine_bundle.items.string("filter", filter)
-        combine_bundle.items.boolean("selection", selection)
-        combine_bundle.items.vector("position", position)
-        combine_bundle.items.float("compliance", compliance)
-        combine_bundle.items.float("error_threshold", error_threshold)
-        combine_bundle.items.string("lambda_attribute", lambda_)
+        combine_bundle.items.string("Blender.Constraint.PinPosition", "Type")
+        combine_bundle.items.string(filter, "filter")
+        combine_bundle.items.boolean(selection, "selection")
+        combine_bundle.items.vector(position, "position")
+        combine_bundle.items.float(compliance, "compliance")
+        combine_bundle.items.float(error_threshold, "error_threshold")
+        combine_bundle.items.string(lambda_, "lambda_attribute")
 
         combine_bundle.o.bundle >> constraint
 
@@ -920,12 +905,12 @@ class PinRotation(CustomGeometryGroup):
         constraint = tree.outputs.bundle("Constraint")
 
         combine_bundle = g.CombineBundle()
-        combine_bundle.items.string("Type", "Blender.Constraint.PinRotation")
-        combine_bundle.items.string("filter", filter)
-        combine_bundle.items.boolean("selection", selection)
-        combine_bundle.items.rotation("rotation", rotation)
-        combine_bundle.items.float("compliance", compliance)
-        combine_bundle.items.float("error_threshold", error_threshold)
+        combine_bundle.items.string("Blender.Constraint.PinRotation", "Type")
+        combine_bundle.items.string(filter, "filter")
+        combine_bundle.items.boolean(selection, "selection")
+        combine_bundle.items.rotation(rotation, "rotation")
+        combine_bundle.items.float(compliance, "compliance")
+        combine_bundle.items.float(error_threshold, "error_threshold")
 
         combine_bundle.o.bundle >> constraint
 
@@ -957,11 +942,7 @@ class SetGeometryTags(CustomGeometryGroup):
         store_bundle_item = g.StoreBundleItem.string(
             get_geometry_bundle.o.bundle, "tags", StringToList(String=tags)
         )
-        (
-            get_geometry_bundle
-            >> g.SetGeometryBundle(bundle=store_bundle_item)
-            >> geometry_1
-        )
+        get_geometry_bundle.o.geometry.set_bundle(store_bundle_item) >> geometry_1
 
 
 class SetFriction(CustomGeometryGroup):
@@ -1027,7 +1008,7 @@ class SetMass(CustomGeometryGroup):
                 force_non_field=True,
             )
             moment_of_inertia_mode = tree.inputs.menu(
-                "Moment of Inertia Mode", optional_label=True
+                "Moment of Inertia Mode", "Custom", optional_label=True
             )
             moment_of_inertia_1 = tree.inputs.vector(
                 "Moment of Inertia", (1.0, 1.0, 1.0), optional_label=True
@@ -1058,8 +1039,6 @@ class SetMass(CustomGeometryGroup):
             >> geometry_1
         )
 
-        moment_of_inertia_mode.default_value = "Custom"
-
 
 class SimAttributes(CustomGeometryGroup):
     _name = "Sim Attributes"
@@ -1070,12 +1049,7 @@ class SimAttributes(CustomGeometryGroup):
         sim_attributes = tree.outputs.string("Sim Attributes")
 
         join_strings = g.JoinStrings(
-            (
-                g.String(
-                    string="position, rotation, velocity, angular_velocity, sim:*"
-                ),
-                extra,
-            ),
+            (g.String("position, rotation, velocity, angular_velocity, sim:*"), extra),
             delimiter=",",
         )
         StringToList(String=join_strings) >> sim_attributes
@@ -1134,25 +1108,20 @@ class SetGeoUpdaterDeformOnly(CustomGeometryGroup):
         get_geometry_bundle = g.GetGeometryBundle(geometry=geometry, remove=True)
         apply_geo_cache_deform_only = ApplyGeoCacheDeformOnly(
             **{
-                "New Geometry": geometry_2,
-                "Cache Geometry": cache,
+                "New Geometry": geometry_2.output,
+                "Cache Geometry": cache.output,
                 "Sim Attributes": SimAttributes(Extra=extra_sim_attributes),
-                "Post Sim": post_sim,
+                "Post Sim": post_sim.output,
             }
         )
-        apply_geo_cache_deform_only >> geometry_3
-        store_bundle_item = g.StoreBundleItem(
-            bundle=get_geometry_bundle.o.bundle,
-            item=closure_zone.closure,
-            path="sim_apply_cache",
-            socket_type="CLOSURE",
+        apply_geo_cache_deform_only >> geometry_3.input
+        store_bundle_item = g.StoreBundleItem.closure(
+            get_geometry_bundle.o.bundle,
+            "sim_apply_cache",
+            closure_zone.closure,
             structure_type="SINGLE",
         )
-        (
-            get_geometry_bundle
-            >> g.SetGeometryBundle(bundle=store_bundle_item)
-            >> geometry_1
-        )
+        get_geometry_bundle.o.geometry.set_bundle(store_bundle_item) >> geometry_1
 
 
 class IsEffectorForGeometry(CustomGeometryGroup):
@@ -1179,13 +1148,11 @@ class IsEffectorForGeometry(CustomGeometryGroup):
         )
         affects_geometry = tree.outputs.boolean("Affects Geometry")
 
-        get_bundle_item = g.GetBundleItem.string(
-            g.GetGeometryBundle(geometry=geometry).o.bundle, "tags"
-        )
+        get_bundle_item = geometry.bundle().get.string("tags")
         get_bundle_item.node.warning_propagation = "NONE"
         separate_bundle = g.SeparateBundle(effector)
         filter = separate_bundle.items.string("filter")
-        tag_filter = g.TagFilter(tag_filter=filter, tags=get_bundle_item.o.item)
+        tag_filter = g.TagFilter(tag_filter=filter.output, tags=get_bundle_item)
 
         tag_filter >> affects_geometry
 
@@ -1200,26 +1167,27 @@ class ForEachSimGeometry(CustomGeometryGroup):
         closure = tree.inputs.closure("Closure")
         world_1 = tree.outputs.bundle("World")
 
-        get_nested_bundle_paths = g.GetNestedBundlePaths(
-            bundle=world, mode="Data Type", data_type="Geometry"
-        )
-        repeat_zone = g.RepeatZone(get_nested_bundle_paths.o.paths.list_length())
-        world_2 = repeat_zone.items.bundle("World", world)
-        get_list_item = get_nested_bundle_paths.o.paths[repeat_zone.iteration]
+        get_nested_bundle_paths = world.paths("Data Type", data_type="Geometry")
+        repeat_zone = g.RepeatZone(get_nested_bundle_paths.list_length())
+        world_2 = repeat_zone.items.bundle(world, "World")
+        get_list_item = get_nested_bundle_paths[repeat_zone.iteration]
         get_bundle_item = g.GetBundleItem.geometry(world_2.current, get_list_item, True)
         evaluate_closure = g.EvaluateClosure(closure, define_signature=True)
         evaluate_closure.inputs.bundle(
-            "World", get_bundle_item.o.bundle, structure_type="SINGLE"
+            get_bundle_item.o.bundle, "World", structure_type="SINGLE"
         )
         evaluate_closure.inputs.geometry(
-            "Geometry", get_bundle_item.o.item, structure_type="SINGLE"
+            get_bundle_item.o.item, "Geometry", structure_type="SINGLE"
         )
-        evaluate_closure.inputs.string("Path", get_list_item, structure_type="SINGLE")
+        evaluate_closure.inputs.string(get_list_item, "Path", structure_type="SINGLE")
         world_3 = evaluate_closure.outputs.bundle("World", structure_type="SINGLE")
         geometry = evaluate_closure.outputs.geometry(
             "Geometry", structure_type="SINGLE"
         )
-        g.StoreBundleItem.geometry(world_3, get_list_item, geometry) >> world_2.next
+        (
+            g.StoreBundleItem.geometry(world_3.output, get_list_item, geometry.output)
+            >> world_2.next
+        )
 
         world_2.result >> world_1
 
@@ -1253,86 +1221,74 @@ class EvaluateCustomEffectors(CustomGeometryGroup):
             geometry_1 = closure_zone.outputs.geometry(
                 "Geometry", structure_type="SINGLE"
             )
-            get_nested_bundle_paths = g.GetNestedBundlePaths(
-                bundle=world,
-                mode="Bundle Type",
-                bundle_type="Blender.CustomEffector.Geometry",
+            get_nested_bundle_paths = world.paths(
+                "Bundle Type", bundle_type="Blender.CustomEffector.Geometry"
             )
-            repeat_zone = g.RepeatZone(get_nested_bundle_paths.o.paths.list_length())
-            world_4 = repeat_zone.items.bundle("World", world)
-            get_list_item = g.GetListItem(
-                list=get_nested_bundle_paths,
-                index=repeat_zone.iteration,
-                socket_type="STRING",
-                structure_type="SINGLE",
+            repeat_zone = g.RepeatZone(get_nested_bundle_paths.list_length())
+            world_4 = repeat_zone.items.bundle(world, "World")
+            get_list_item = g.GetListItem.string(
+                get_nested_bundle_paths, repeat_zone.iteration, structure_type="SINGLE"
             )
-            get_bundle_item = g.GetBundleItem.bundle(world_4.current, get_list_item)
+            get_bundle_item = world_4.current.get.bundle(get_list_item)
             is_effector_for_geometry = IsEffectorForGeometry(
-                Effector=get_bundle_item.o.item,
+                Effector=get_bundle_item,
                 **{"Effector Path": get_list_item},
-                Geometry=geometry,
-                **{"Geometry Path": path},
+                Geometry=geometry.output,
+                **{"Geometry Path": path.output},
             )
-            separate_bundle = g.SeparateBundle(get_bundle_item.o.item)
+            separate_bundle = g.SeparateBundle(get_bundle_item)
             closure = separate_bundle.items.closure("closure")
             stage_1 = separate_bundle.items.string("stage")
-            evaluate_closure = g.EvaluateClosure(closure)
+            evaluate_closure = g.EvaluateClosure(closure.output)
             evaluate_closure.inputs.geometry(
-                "Geometry", geometry, structure_type="SINGLE"
+                geometry.output, "Geometry", structure_type="SINGLE"
             )
             evaluate_closure.inputs.matrix(
-                "To World Transform", to_world_transform, structure_type="SINGLE"
+                to_world_transform, "To World Transform", structure_type="SINGLE"
             )
             geometry_2 = evaluate_closure.outputs.geometry(
                 "Geometry", structure_type="SINGLE"
             )
-            world_2 >> world_3
-            (
-                is_effector_for_geometry.o.affects_geometry.switch.geometry(
-                    geometry, geometry_2
-                )
-                >> geometry_1
+            switch = is_effector_for_geometry.o.affects_geometry.switch.geometry(
+                geometry.output, geometry_2.output
             )
-            switch = g.Compare.string.equal(stage_1, stage).o.result.switch.bundle(
+            world_2.output >> world_3.input
+            switch >> geometry_1.input
+            switch_1 = g.Compare.string.equal(
+                stage_1.output, stage
+            ).o.result.switch.bundle(
                 world_4.current,
                 ForEachSimGeometry(World=world_4.current, Closure=closure_zone.closure),
             )
-            switch >> world_4.next
+            switch_1 >> world_4.next
         with g.Frame("Evaluate World Effectors"):
-            get_nested_bundle_paths_1 = g.GetNestedBundlePaths(
-                bundle=world_4.result,
-                mode="Bundle Type",
-                bundle_type="Blender.CustomEffector.World",
+            get_nested_bundle_paths_1 = world_4.result.paths(
+                "Bundle Type", bundle_type="Blender.CustomEffector.World"
             )
-            repeat_zone_1 = g.RepeatZone(
-                get_nested_bundle_paths_1.o.paths.list_length()
-            )
-            world_5 = repeat_zone_1.items.bundle("World", world_4.result)
-            get_list_item_1 = g.GetListItem(
-                list=get_nested_bundle_paths_1,
-                index=repeat_zone_1.iteration,
-                socket_type="STRING",
+            repeat_zone_1 = g.RepeatZone(get_nested_bundle_paths_1.list_length())
+            world_5 = repeat_zone_1.items.bundle(world_4.result, "World")
+            get_list_item_1 = g.GetListItem.string(
+                get_nested_bundle_paths_1,
+                repeat_zone_1.iteration,
                 structure_type="SINGLE",
             )
             separate_bundle_1 = g.SeparateBundle(
-                g.GetBundleItem.bundle(world_5.current, get_list_item_1).o.item
+                world_5.current.get.bundle(get_list_item_1)
             )
             stage_2 = separate_bundle_1.items.string("stage", structure_type="SINGLE")
             closure_1 = separate_bundle_1.items.closure("closure")
-            evaluate_closure_1 = g.EvaluateClosure(closure_1)
+            evaluate_closure_1 = g.EvaluateClosure(closure_1.output)
             evaluate_closure_1.inputs.bundle(
-                "World", world_5.current, structure_type="SINGLE"
+                world_5.current, "World", structure_type="SINGLE"
             )
-            evaluate_closure_1.inputs.matrix("To World Transform", to_world_transform)
+            evaluate_closure_1.inputs.matrix(to_world_transform, "To World Transform")
             world_6 = evaluate_closure_1.outputs.bundle(
                 "World", structure_type="SINGLE"
             )
-            (
-                g.Compare.string.equal(stage, stage_2).o.result.switch.bundle(
-                    world_5.current, world_6
-                )
-                >> world_5.next
-            )
+            switch_2 = g.Compare.string.equal(
+                stage, stage_2.output
+            ).o.result.switch.bundle(world_5.current, world_6.output)
+            switch_2 >> world_5.next
 
         world_5.result >> world_1
 
@@ -1344,7 +1300,7 @@ class RenameSimAttributes(CustomGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle("World")
-        mode = tree.inputs.menu("Mode", optional_label=True)
+        mode = tree.inputs.menu("Mode", "Single", optional_label=True)
         old = tree.inputs.string("Old", "", optional_label=True)
         new = tree.inputs.string("New", "", optional_label=True)
         world_1 = tree.outputs.bundle("World")
@@ -1355,16 +1311,14 @@ class RenameSimAttributes(CustomGeometryGroup):
         closure_zone.inputs.string("Path", structure_type="SINGLE")
         world_3 = closure_zone.outputs.bundle("World", structure_type="SINGLE")
         geometry_1 = closure_zone.outputs.geometry("Geometry", structure_type="SINGLE")
-        world_2 >> world_3
+        world_2.output >> world_3.input
         (
             g.RenameAttribute(
-                geometry=geometry, mode=mode, old=old, new=new, overwrite=True
+                geometry=geometry.output, mode=mode, old=old, new=new, overwrite=True
             )
-            >> geometry_1
+            >> geometry_1.input
         )
         ForEachSimGeometry(World=world, Closure=closure_zone.closure) >> world_1
-
-        mode.default_value = "Single"
 
 
 class SetPreviousWorldItems(CustomGeometryGroup):
@@ -1377,16 +1331,10 @@ class SetPreviousWorldItems(CustomGeometryGroup):
         cache = tree.inputs.bundle("Cache")
         world_1 = tree.outputs.bundle("World")
 
-        get_nested_bundle_paths = g.GetNestedBundlePaths(
-            bundle=world,
-            mode="Bundle Type",
-            pattern_mode="Wildcard",
-            bundle_type="*",
-            data_type="Bundle",
-        )
-        repeat_zone = g.RepeatZone(get_nested_bundle_paths.o.paths.list_length())
-        world_2 = repeat_zone.items.bundle("World", world)
-        get_list_item = get_nested_bundle_paths.o.paths[repeat_zone.iteration]
+        get_nested_bundle_paths = world.paths("Bundle Type", "Wildcard", "*", "Bundle")
+        repeat_zone = g.RepeatZone(get_nested_bundle_paths.list_length())
+        world_2 = repeat_zone.items.bundle(world, "World")
+        get_list_item = get_nested_bundle_paths[repeat_zone.iteration]
         get_bundle_item = g.GetBundleItem.bundle(world_2.current, get_list_item, True)
         get_bundle_item_1 = g.GetBundleItem.bundle(cache, get_list_item)
         store_bundle_item = g.StoreBundleItem.bundle(
@@ -1421,21 +1369,21 @@ class ApplyEachGeometryCache(CustomGeometryGroup):
         path = closure_zone.inputs.string("Path", structure_type="SINGLE")
         world_3 = closure_zone.outputs.bundle("World", structure_type="SINGLE")
         geometry_1 = closure_zone.outputs.geometry("Geometry", structure_type="SINGLE")
-        get_bundle_item = g.GetBundleItem.geometry(cache, path)
-        get_geometry_bundle = g.GetGeometryBundle(geometry=geometry)
+        get_bundle_item = g.GetBundleItem.geometry(cache, path.output)
+        get_geometry_bundle = g.GetGeometryBundle(geometry.output)
         evaluate_closure = g.EvaluateClosure(
-            g.GetBundleItem.closure(
-                get_geometry_bundle.o.bundle, "sim_apply_cache"
-            ).o.item
+            get_geometry_bundle.o.bundle.get.closure("sim_apply_cache")
         )
-        evaluate_closure.inputs.geometry("Geometry", get_geometry_bundle.o.geometry)
-        evaluate_closure.inputs.geometry("Cache", get_bundle_item.o.item)
-        evaluate_closure.inputs.boolean("Post Sim", post_sim)
+        evaluate_closure.inputs.geometry(get_geometry_bundle.o.geometry, "Geometry")
+        evaluate_closure.inputs.geometry(get_bundle_item.o.item, "Cache")
+        evaluate_closure.inputs.boolean(post_sim, "Post Sim")
         geometry_2 = evaluate_closure.outputs.geometry("Geometry")
-        world_2 >> world_3
+        world_2.output >> world_3.input
         (
-            get_bundle_item.o.exists.switch.geometry(get_geometry_bundle, geometry_2)
-            >> geometry_1
+            get_bundle_item.o.exists.switch.geometry(
+                get_geometry_bundle, geometry_2.output
+            )
+            >> geometry_1.input
         )
         ForEachSimGeometry(World=world, Closure=closure_zone.closure) >> world_1
 
@@ -1455,272 +1403,275 @@ class EvaluateEffectorAttributes(CustomGeometryGroup):
             effector = closure_zone.inputs.bundle("Effector")
             effector_path = closure_zone.inputs.string("Effector Path")
             geometry_1 = closure_zone.outputs.geometry("Geometry")
-            separate_bundle = g.SeparateBundle(effector)
+            separate_bundle = g.SeparateBundle(effector.output)
             selection = separate_bundle.items.boolean("selection")
             position = separate_bundle.items.vector("position")
             compliance = separate_bundle.items.float("compliance")
-            capture = g.CaptureAttribute.point(geometry=geometry, selection=selection)
-            position_1 = capture.items.vector("position", position)
-            compliance_1 = capture.items.float("compliance", compliance)
+            capture = g.CaptureAttribute.point(
+                geometry=geometry.output, selection=selection.output
+            )
+            position_1 = capture.items.vector(position.output, "position")
+            compliance_1 = capture.items.float(compliance.output, "compliance")
             store_named_attribute = (
                 capture.o.geometry
                 >> g.StoreNamedAttribute.point.boolean(
                     name=g.FormatString(
-                        "sim:prop:{}:selection", items={"p": effector_path}
+                        "sim:prop:{}:selection", items={"p": effector_path.output}
                     ),
                     value=capture.o.selection,
                 )
                 >> g.StoreNamedAttribute.point.vector(
                     name=g.FormatString(
-                        "sim:prop:{}:position", items={"p": effector_path}
+                        "sim:prop:{}:position", items={"p": effector_path.output}
                     ),
                     value=position_1.output,
                 )
                 >> g.StoreNamedAttribute.point.float(
                     name=g.FormatString(
-                        "sim:prop:{}:compliance", items={"p": effector_path}
+                        "sim:prop:{}:compliance", items={"p": effector_path.output}
                     ),
                     value=compliance_1.output,
                 )
             )
-            store_named_attribute >> geometry_1
+            store_named_attribute >> geometry_1.input
             combine_bundle = g.CombineBundle()
-            combine_bundle.items.string("Type", "Blender.FieldPreEvaluation")
+            combine_bundle.items.string("Blender.FieldPreEvaluation", "Type")
             combine_bundle.items.string(
-                "effector_type", g.String(string="Blender.Constraint.PinPosition")
+                g.String("Blender.Constraint.PinPosition"), "effector_type"
             )
-            combine_bundle.items.closure("closure", closure_zone.closure)
+            combine_bundle.items.closure(closure_zone.closure, "closure")
         with g.Frame("Pin Rotation Constraint"):
             closure_zone_1 = g.ClosureZone()
             geometry_2 = closure_zone_1.inputs.geometry("Geometry")
             effector_1 = closure_zone_1.inputs.bundle("Effector")
             effector_path_1 = closure_zone_1.inputs.string("Effector Path")
             geometry_3 = closure_zone_1.outputs.geometry("Geometry")
-            separate_bundle_1 = g.SeparateBundle(effector_1)
+            separate_bundle_1 = g.SeparateBundle(effector_1.output)
             selection_1 = separate_bundle_1.items.boolean("selection")
             rotation = separate_bundle_1.items.rotation("rotation")
             compliance_2 = separate_bundle_1.items.float("compliance")
             capture_1 = g.CaptureAttribute.point(
-                geometry=geometry_2, selection=selection_1
+                geometry=geometry_2.output, selection=selection_1.output
             )
-            position_2 = capture_1.items.rotation("position", rotation)
-            compliance_3 = capture_1.items.float("compliance", compliance_2)
+            position_2 = capture_1.items.rotation(rotation.output, "position")
+            compliance_3 = capture_1.items.float(compliance_2.output, "compliance")
             store_named_attribute_1 = (
                 capture_1.o.geometry
                 >> g.StoreNamedAttribute.point.boolean(
                     name=g.FormatString(
-                        "sim:prop:{}:selection", items={"p": effector_path_1}
+                        "sim:prop:{}:selection", items={"p": effector_path_1.output}
                     ),
                     value=capture_1.o.selection,
                 )
                 >> g.StoreNamedAttribute.point.quaternion(
                     name=g.FormatString(
-                        "sim:prop:{}:rotation", items={"p": effector_path_1}
+                        "sim:prop:{}:rotation", items={"p": effector_path_1.output}
                     ),
                     value=position_2.output,
                 )
                 >> g.StoreNamedAttribute.point.float(
                     name=g.FormatString(
-                        "sim:prop:{}:compliance", items={"p": effector_path_1}
+                        "sim:prop:{}:compliance", items={"p": effector_path_1.output}
                     ),
                     value=compliance_3.output,
                 )
             )
-            store_named_attribute_1 >> geometry_3
+            store_named_attribute_1 >> geometry_3.input
             combine_bundle_1 = g.CombineBundle()
-            combine_bundle_1.items.string("Type", "Blender.FieldPreEvaluation")
+            combine_bundle_1.items.string("Blender.FieldPreEvaluation", "Type")
             combine_bundle_1.items.string(
-                "effector_type", g.String(string="Blender.Constraint.PinRotation")
+                g.String("Blender.Constraint.PinRotation"), "effector_type"
             )
-            combine_bundle_1.items.closure("closure", closure_zone_1.closure)
+            combine_bundle_1.items.closure(closure_zone_1.closure, "closure")
         with g.Frame("Damping"):
             closure_zone_2 = g.ClosureZone()
             geometry_4 = closure_zone_2.inputs.geometry("Geometry")
             effector_2 = closure_zone_2.inputs.bundle("Effector")
             effector_path_2 = closure_zone_2.inputs.string("Effector Path")
             geometry_5 = closure_zone_2.outputs.geometry("Geometry")
-            separate_bundle_2 = g.SeparateBundle(effector_2)
+            separate_bundle_2 = g.SeparateBundle(effector_2.output)
             linear_damping = separate_bundle_2.items.float("linear_damping")
             angular_damping = separate_bundle_2.items.float("angular_damping")
-            capture_2 = g.CaptureAttribute.point(geometry=geometry_4)
-            linear_damping_1 = capture_2.items.float("linear_damping", linear_damping)
+            capture_2 = g.CaptureAttribute.point(geometry=geometry_4.output)
+            linear_damping_1 = capture_2.items.float(
+                linear_damping.output, "linear_damping"
+            )
             angular_damping_1 = capture_2.items.float(
-                "angular_damping", angular_damping
+                angular_damping.output, "angular_damping"
             )
             store_named_attribute_2 = (
                 capture_2.o.geometry
                 >> g.StoreNamedAttribute.point.float(
                     name=g.FormatString(
-                        "sim:prop:{}:linear", items={"p": effector_path_2}
+                        "sim:prop:{}:linear", items={"p": effector_path_2.output}
                     ),
                     value=linear_damping_1.output,
                 )
                 >> g.StoreNamedAttribute.point.float(
                     name=g.FormatString(
-                        "sim:prop:{}:angular", items={"p": effector_path_2}
+                        "sim:prop:{}:angular", items={"p": effector_path_2.output}
                     ),
                     value=angular_damping_1.output,
                 )
             )
-            store_named_attribute_2 >> geometry_5
+            store_named_attribute_2 >> geometry_5.input
             combine_bundle_2 = g.CombineBundle()
-            combine_bundle_2.items.string("Type", "Blender.FieldPreEvaluation")
-            combine_bundle_2.items.string(
-                "effector_type", g.String(string="Blender.Damping")
-            )
-            combine_bundle_2.items.closure("closure", closure_zone_2.closure)
+            combine_bundle_2.items.string("Blender.FieldPreEvaluation", "Type")
+            combine_bundle_2.items.string(g.String("Blender.Damping"), "effector_type")
+            combine_bundle_2.items.closure(closure_zone_2.closure, "closure")
         with g.Frame("Edge Length Constraint"):
             closure_zone_3 = g.ClosureZone()
             geometry_6 = closure_zone_3.inputs.geometry("Geometry")
             effector_3 = closure_zone_3.inputs.bundle("Effector")
             effector_path_3 = closure_zone_3.inputs.string("Effector Path")
             geometry_7 = closure_zone_3.outputs.geometry("Geometry")
-            separate_bundle_3 = g.SeparateBundle(effector_3)
+            separate_bundle_3 = g.SeparateBundle(effector_3.output)
             rest_length = separate_bundle_3.items.float("rest_length")
             compliance_4 = separate_bundle_3.items.float("compliance")
-            capture_3 = g.CaptureAttribute.edge(geometry=geometry_6)
-            rest_length_1 = capture_3.items.float("rest_length", rest_length)
-            compliance_5 = capture_3.items.float("compliance", compliance_4)
+            capture_3 = g.CaptureAttribute.edge(geometry=geometry_6.output)
+            rest_length_1 = capture_3.items.float(rest_length.output, "rest_length")
+            compliance_5 = capture_3.items.float(compliance_4.output, "compliance")
             store_named_attribute_3 = (
                 capture_3.o.geometry
                 >> g.StoreNamedAttribute.edge.float(
                     name=g.FormatString(
-                        "sim:prop:{}:rest_length", items={"p": effector_path_3}
+                        "sim:prop:{}:rest_length", items={"p": effector_path_3.output}
                     ),
                     value=rest_length_1.output,
                 )
                 >> g.StoreNamedAttribute.edge.float(
                     name=g.FormatString(
-                        "sim:prop:{}:compliance", items={"p": effector_path_3}
+                        "sim:prop:{}:compliance", items={"p": effector_path_3.output}
                     ),
                     value=compliance_5.output,
                 )
             )
-            store_named_attribute_3 >> geometry_7
+            store_named_attribute_3 >> geometry_7.input
             combine_bundle_3 = g.CombineBundle()
-            combine_bundle_3.items.string("Type", "Blender.FieldPreEvaluation")
+            combine_bundle_3.items.string("Blender.FieldPreEvaluation", "Type")
             combine_bundle_3.items.string(
-                "effector_type", g.String(string="Blender.Constraint.EdgeLength")
+                g.String("Blender.Constraint.EdgeLength"), "effector_type"
             )
-            combine_bundle_3.items.closure("closure", closure_zone_3.closure)
+            combine_bundle_3.items.closure(closure_zone_3.closure, "closure")
         with g.Frame("Rod Stretch Shear Constraint"):
             closure_zone_4 = g.ClosureZone()
             geometry_8 = closure_zone_4.inputs.geometry("Geometry")
             effector_4 = closure_zone_4.inputs.bundle("Effector")
             effector_path_4 = closure_zone_4.inputs.string("Effector Path")
             geometry_9 = closure_zone_4.outputs.geometry("Geometry")
-            separate_bundle_4 = g.SeparateBundle(effector_4)
+            separate_bundle_4 = g.SeparateBundle(effector_4.output)
             rest_length_2 = separate_bundle_4.items.float("rest_length")
             compliance_6 = separate_bundle_4.items.float("compliance")
-            capture_4 = g.CaptureAttribute.point(geometry=geometry_8)
-            rest_length_3 = capture_4.items.float("rest_length", rest_length_2)
-            compliance_7 = capture_4.items.float("compliance", compliance_6)
+            capture_4 = g.CaptureAttribute.point(geometry=geometry_8.output)
+            rest_length_3 = capture_4.items.float(rest_length_2.output, "rest_length")
+            compliance_7 = capture_4.items.float(compliance_6.output, "compliance")
             store_named_attribute_4 = (
                 capture_4.o.geometry
                 >> g.StoreNamedAttribute.point.float(
                     name=g.FormatString(
-                        "sim:prop:{}:rest_length", items={"p": effector_path_4}
+                        "sim:prop:{}:rest_length", items={"p": effector_path_4.output}
                     ),
                     value=rest_length_3.output,
                 )
                 >> g.StoreNamedAttribute.point.float(
                     name=g.FormatString(
-                        "sim:prop:{}:compliance", items={"p": effector_path_4}
+                        "sim:prop:{}:compliance", items={"p": effector_path_4.output}
                     ),
                     value=compliance_7.output,
                 )
             )
-            store_named_attribute_4 >> geometry_9
+            store_named_attribute_4 >> geometry_9.input
             combine_bundle_4 = g.CombineBundle()
-            combine_bundle_4.items.string("Type", "Blender.FieldPreEvaluation")
+            combine_bundle_4.items.string("Blender.FieldPreEvaluation", "Type")
             combine_bundle_4.items.string(
-                "effector_type", g.String(string="Blender.Constraint.RodStretchShear")
+                g.String("Blender.Constraint.RodStretchShear"), "effector_type"
             )
-            combine_bundle_4.items.closure("closure", closure_zone_4.closure)
+            combine_bundle_4.items.closure(closure_zone_4.closure, "closure")
         with g.Frame("Rod Bend Twist Constraint"):
             closure_zone_5 = g.ClosureZone()
             geometry_10 = closure_zone_5.inputs.geometry("Geometry")
             effector_5 = closure_zone_5.inputs.bundle("Effector")
             effector_path_5 = closure_zone_5.inputs.string("Effector Path")
             geometry_11 = closure_zone_5.outputs.geometry("Geometry")
-            separate_bundle_5 = g.SeparateBundle(effector_5)
+            separate_bundle_5 = g.SeparateBundle(effector_5.output)
             rest_bend_rotation = separate_bundle_5.items.rotation("rest_bend_rotation")
             compliance_8 = separate_bundle_5.items.float("compliance")
-            capture_5 = g.CaptureAttribute.point(geometry=geometry_10)
+            capture_5 = g.CaptureAttribute.point(geometry=geometry_10.output)
             rest_bend_rotation_1 = capture_5.items.rotation(
-                "rest_bend_rotation", rest_bend_rotation
+                rest_bend_rotation.output, "rest_bend_rotation"
             )
-            compliance_9 = capture_5.items.float("compliance", compliance_8)
+            compliance_9 = capture_5.items.float(compliance_8.output, "compliance")
             store_named_attribute_5 = (
                 capture_5.o.geometry
                 >> g.StoreNamedAttribute.point.quaternion(
                     name=g.FormatString(
-                        "sim:prop:{}:rest_bend_rotation", items={"p": effector_path_5}
+                        "sim:prop:{}:rest_bend_rotation",
+                        items={"p": effector_path_5.output},
                     ),
                     value=rest_bend_rotation_1.output,
                 )
                 >> g.StoreNamedAttribute.point.float(
                     name=g.FormatString(
-                        "sim:prop:{}:compliance", items={"p": effector_path_5}
+                        "sim:prop:{}:compliance", items={"p": effector_path_5.output}
                     ),
                     value=compliance_9.output,
                 )
             )
-            store_named_attribute_5 >> geometry_11
+            store_named_attribute_5 >> geometry_11.input
             combine_bundle_5 = g.CombineBundle()
-            combine_bundle_5.items.string("Type", "Blender.FieldPreEvaluation")
+            combine_bundle_5.items.string("Blender.FieldPreEvaluation", "Type")
             combine_bundle_5.items.string(
-                "effector_type", g.String(string="Blender.Constraint.RodBendTwist")
+                g.String("Blender.Constraint.RodBendTwist"), "effector_type"
             )
-            combine_bundle_5.items.closure("closure", closure_zone_5.closure)
+            combine_bundle_5.items.closure(closure_zone_5.closure, "closure")
         with g.Frame("Cross Edge Length Constraint"):
             closure_zone_6 = g.ClosureZone()
             geometry_12 = closure_zone_6.inputs.geometry("Geometry")
             effector_6 = closure_zone_6.inputs.bundle("Effector")
             effector_path_6 = closure_zone_6.inputs.string("Effector Path")
             geometry_13 = closure_zone_6.outputs.geometry("Geometry")
-            separate_bundle_6 = g.SeparateBundle(effector_6)
+            separate_bundle_6 = g.SeparateBundle(effector_6.output)
             rest_position = separate_bundle_6.items.vector("rest_position")
             compliance_10 = separate_bundle_6.items.float("compliance")
-            capture_6 = g.CaptureAttribute.point(geometry=geometry_12)
-            rest_position_1 = capture_6.items.vector("rest_position", rest_position)
-            compliance_11 = capture_6.items.float("compliance", compliance_10)
+            capture_6 = g.CaptureAttribute.point(geometry=geometry_12.output)
+            rest_position_1 = capture_6.items.vector(
+                rest_position.output, "rest_position"
+            )
+            compliance_11 = capture_6.items.float(compliance_10.output, "compliance")
             store_named_attribute_6 = (
                 capture_6.o.geometry
                 >> g.StoreNamedAttribute.point.vector(
                     name=g.FormatString(
-                        "sim:prop:{}:rest_position", items={"p": effector_path_6}
+                        "sim:prop:{}:rest_position", items={"p": effector_path_6.output}
                     ),
                     value=rest_position_1.output,
                 )
                 >> g.StoreNamedAttribute.edge.float(
                     name=g.FormatString(
-                        "sim:prop:{}:compliance", items={"p": effector_path_6}
+                        "sim:prop:{}:compliance", items={"p": effector_path_6.output}
                     ),
                     value=compliance_11.output,
                 )
             )
-            store_named_attribute_6 >> geometry_13
+            store_named_attribute_6 >> geometry_13.input
             combine_bundle_6 = g.CombineBundle()
-            combine_bundle_6.items.string("Type", "Blender.FieldPreEvaluation")
+            combine_bundle_6.items.string("Blender.FieldPreEvaluation", "Type")
             combine_bundle_6.items.string(
-                "effector_type", g.String(string="Blender.Constraint.CrossEdgeLength")
+                g.String("Blender.Constraint.CrossEdgeLength"), "effector_type"
             )
-            combine_bundle_6.items.closure("closure", closure_zone_6.closure)
+            combine_bundle_6.items.closure(closure_zone_6.closure, "closure")
         combine_bundle_7 = g.CombineBundle()
-        combine_bundle_7.items.bundle("Pin Position", combine_bundle.o.bundle)
-        combine_bundle_7.items.bundle("Pin Rotation", combine_bundle_1.o.bundle)
-        combine_bundle_7.items.bundle("Damping", combine_bundle_2.o.bundle)
-        combine_bundle_7.items.bundle("Edge Length", combine_bundle_3.o.bundle)
-        combine_bundle_7.items.bundle("Rod Stretch Shear", combine_bundle_4.o.bundle)
-        combine_bundle_7.items.bundle("Rod Bend Twist", combine_bundle_5.o.bundle)
-        combine_bundle_7.items.bundle("Cross Edge Length", combine_bundle_6.o.bundle)
-        get_nested_bundle_paths = g.GetNestedBundlePaths(
-            bundle=combine_bundle_7.o.bundle,
-            mode="Bundle Type",
-            bundle_type="Blender.FieldPreEvaluation",
+        combine_bundle_7.items.bundle(combine_bundle.o.bundle, "Pin Position")
+        combine_bundle_7.items.bundle(combine_bundle_1.o.bundle, "Pin Rotation")
+        combine_bundle_7.items.bundle(combine_bundle_2.o.bundle, "Damping")
+        combine_bundle_7.items.bundle(combine_bundle_3.o.bundle, "Edge Length")
+        combine_bundle_7.items.bundle(combine_bundle_4.o.bundle, "Rod Stretch Shear")
+        combine_bundle_7.items.bundle(combine_bundle_5.o.bundle, "Rod Bend Twist")
+        combine_bundle_7.items.bundle(combine_bundle_6.o.bundle, "Cross Edge Length")
+        get_nested_bundle_paths = combine_bundle_7.o.bundle.paths(
+            "Bundle Type", bundle_type="Blender.FieldPreEvaluation"
         )
-        list_length = get_nested_bundle_paths.o.paths.list_length()
+        list_length = get_nested_bundle_paths.list_length()
         with g.Frame("For each geomery > for each effector type > for each effector"):
             closure_zone_7 = g.ClosureZone()
             world_2 = closure_zone_7.inputs.bundle("World", structure_type="SINGLE")
@@ -1733,41 +1684,39 @@ class EvaluateEffectorAttributes(CustomGeometryGroup):
                 "Geometry", structure_type="SINGLE"
             )
             repeat_zone = g.RepeatZone(list_length)
-            geometry_16 = repeat_zone.items.geometry("Geometry", geometry_14)
-            get_bundle_item = g.GetBundleItem.bundle(
-                combine_bundle_7.o.bundle,
-                get_nested_bundle_paths.o.paths[repeat_zone.iteration],
+            geometry_16 = repeat_zone.items.geometry(geometry_14.output, "Geometry")
+            separate_bundle_7 = g.SeparateBundle(
+                combine_bundle_7.o.bundle.get.bundle(
+                    get_nested_bundle_paths[repeat_zone.iteration]
+                )
             )
-            separate_bundle_7 = g.SeparateBundle(get_bundle_item.o.item)
             effector_type = separate_bundle_7.items.string("effector_type")
             closure = separate_bundle_7.items.closure("closure")
-            get_nested_bundle_paths_1 = g.GetNestedBundlePaths(
-                bundle=world_2, bundle_type=effector_type, mode="Bundle Type"
+            get_nested_bundle_paths_1 = world_2.output.paths(
+                "Bundle Type", bundle_type=effector_type.output
             )
-            repeat_zone_1 = g.RepeatZone(
-                get_nested_bundle_paths_1.o.paths.list_length()
-            )
-            geometry_17 = repeat_zone_1.items.geometry("Geometry", geometry_16.current)
-            get_list_item = get_nested_bundle_paths_1.o.paths[repeat_zone_1.iteration]
-            get_bundle_item_1 = g.GetBundleItem.bundle(world_2, get_list_item)
-            evaluate_closure = g.EvaluateClosure(closure)
-            evaluate_closure.inputs.geometry("Geometry", geometry_17.current)
-            evaluate_closure.inputs.bundle("Effector", get_bundle_item_1.o.item)
-            evaluate_closure.inputs.string("Effector Path", get_list_item)
+            repeat_zone_1 = g.RepeatZone(get_nested_bundle_paths_1.list_length())
+            geometry_17 = repeat_zone_1.items.geometry(geometry_16.current, "Geometry")
+            get_list_item = get_nested_bundle_paths_1[repeat_zone_1.iteration]
+            get_bundle_item = world_2.output.get.bundle(get_list_item)
+            evaluate_closure = g.EvaluateClosure(closure.output)
+            evaluate_closure.inputs.geometry(geometry_17.current, "Geometry")
+            evaluate_closure.inputs.bundle(get_bundle_item, "Effector")
+            evaluate_closure.inputs.string(get_list_item, "Effector Path")
             geometry_18 = evaluate_closure.outputs.geometry("Geometry")
             is_effector_for_geometry = IsEffectorForGeometry(
-                Effector=get_bundle_item_1.o.item,
+                Effector=get_bundle_item,
                 **{"Effector Path": get_list_item},
                 Geometry=geometry_17.current,
-                **{"Geometry Path": path},
+                **{"Geometry Path": path.output},
             )
             switch = is_effector_for_geometry.o.affects_geometry.switch.geometry(
-                geometry_17.current, geometry_18
+                geometry_17.current, geometry_18.output
             )
             switch >> geometry_17.next
             geometry_17.result >> geometry_16.next
-            world_2 >> world_3
-            geometry_16.result >> geometry_15
+            world_2.output >> world_3.input
+            geometry_16.result >> geometry_15.input
         ForEachSimGeometry(World=world, Closure=closure_zone_7.closure) >> world_1
 
 
@@ -1788,42 +1737,45 @@ class EvaluateForces(CustomGeometryGroup):
         path = closure_zone.inputs.string("Path", structure_type="SINGLE")
         world_3 = closure_zone.outputs.bundle("World", structure_type="SINGLE")
         geometry_1 = closure_zone.outputs.geometry("Geometry", structure_type="SINGLE")
-        get_nested_bundle_paths = g.GetNestedBundlePaths(
-            bundle=world, mode="Bundle Type", bundle_type="Blender.Force"
+        get_nested_bundle_paths = world.paths(
+            "Bundle Type", bundle_type="Blender.Force"
         )
-        repeat_zone = g.RepeatZone(get_nested_bundle_paths.o.paths.list_length())
-        total_force = repeat_zone.items.vector("Total Force")
-        get_list_item = get_nested_bundle_paths.o.paths[repeat_zone.iteration]
-        get_bundle_item = g.GetBundleItem.bundle(world_2, get_list_item)
+        repeat_zone = g.RepeatZone(get_nested_bundle_paths.list_length())
+        total_force = repeat_zone.items.vector(name="Total Force")
+        get_list_item = get_nested_bundle_paths[repeat_zone.iteration]
+        get_bundle_item = world_2.output.get.bundle(get_list_item)
         is_effector_for_geometry = IsEffectorForGeometry(
-            Effector=get_bundle_item.o.item,
+            Effector=get_bundle_item,
             **{"Effector Path": get_list_item},
-            Geometry=geometry,
-            **{"Geometry Path": path},
+            Geometry=geometry.output,
+            **{"Geometry Path": path.output},
         )
-        separate_bundle = g.SeparateBundle(get_bundle_item.o.item)
+        separate_bundle = g.SeparateBundle(get_bundle_item)
         closure = separate_bundle.items.closure("closure")
-        evaluate_closure = g.EvaluateClosure(closure)
-        evaluate_closure.inputs.geometry("Geometry", geometry)
-        evaluate_closure.inputs.matrix("To World Transform", to_world_transform)
+        evaluate_closure = g.EvaluateClosure(closure.output)
+        evaluate_closure.inputs.geometry(geometry.output, "Geometry")
+        evaluate_closure.inputs.matrix(to_world_transform, "To World Transform")
         geometry_2 = evaluate_closure.outputs.geometry("Geometry")
         selection = evaluate_closure.outputs.boolean("Selection")
         force = evaluate_closure.outputs.vector("Force")
-        capture = g.CaptureAttribute.point(geometry=geometry_2, selection=selection)
-        force_1 = capture.items.vector("Force", force)
-        sample_index = capture.o.geometry >> g.SampleIndex(
-            value=force_1.output, index=g.Index(), data_type="FLOAT_VECTOR"
+        capture = g.CaptureAttribute.point(
+            geometry=geometry_2.output, selection=selection.output
+        )
+        force_1 = capture.items.vector(force.output, "Force")
+        vector_math = total_force.current + (
+            capture.o.geometry
+            >> g.SampleIndex.point.vector(value=force_1.output, index=g.Index())
         )
         switch = is_effector_for_geometry.o.affects_geometry.switch.vector(
-            total_force.current, total_force.current + sample_index
+            total_force.current, vector_math
         )
         switch >> total_force.next
-        world_2 >> world_3
+        world_2.output >> world_3.input
         (
             g.StoreNamedAttribute.point.vector(
-                geometry, name=name, value=total_force.result
+                geometry.output, name=name, value=total_force.result
             )
-            >> geometry_1
+            >> geometry_1.input
         )
         ForEachSimGeometry(World=world, Closure=closure_zone.closure) >> world_1
 
@@ -1862,9 +1814,9 @@ class XPBDSolver(CustomGeometryGroup):
         with g.Frame("Evaluate substeps one at a time"):
             math_1 = 1.0 / substeps
             repeat_zone = g.RepeatZone(substeps)
-            world_2 = repeat_zone.items.bundle("World", world)
+            world_2 = repeat_zone.items.bundle(world, "World")
             math_2 = repeat_zone.iteration * math_1
-            xpbd_solver = g.XpbdSolver(
+            xpbd_solver = g.XPBDSolver(
                 world=world_2.current,
                 delta_time=delta_time / substeps,
                 filter=filter,
@@ -1877,7 +1829,7 @@ class XPBDSolver(CustomGeometryGroup):
             )
             xpbd_solver >> world_2.next
         with g.Frame("Evaluate all substeps at once"):
-            xpbd_solver_1 = g.XpbdSolver(
+            xpbd_solver_1 = g.XPBDSolver(
                 world=world,
                 delta_time=delta_time,
                 filter=filter,
@@ -1901,20 +1853,21 @@ class ForEachTypedBundle(CustomGeometryGroup):
         closure = tree.inputs.closure("Closure")
         world_1 = tree.outputs.bundle("World")
 
-        get_nested_bundle_paths = g.GetNestedBundlePaths(
-            bundle=world, bundle_type=type, mode="Bundle Type"
-        )
-        repeat_zone = g.RepeatZone(get_nested_bundle_paths.o.paths.list_length())
-        world_2 = repeat_zone.items.bundle("World", world)
-        get_list_item = get_nested_bundle_paths.o.paths[repeat_zone.iteration]
+        get_nested_bundle_paths = world.paths("Bundle Type", bundle_type=type)
+        repeat_zone = g.RepeatZone(get_nested_bundle_paths.list_length())
+        world_2 = repeat_zone.items.bundle(world, "World")
+        get_list_item = get_nested_bundle_paths[repeat_zone.iteration]
         get_bundle_item = g.GetBundleItem.bundle(world_2.current, get_list_item, True)
         evaluate_closure = g.EvaluateClosure(closure)
-        evaluate_closure.inputs.bundle("World", get_bundle_item.o.bundle)
-        evaluate_closure.inputs.bundle("Item", get_bundle_item.o.item)
-        evaluate_closure.inputs.string("Path", get_list_item)
+        evaluate_closure.inputs.bundle(get_bundle_item.o.bundle, "World")
+        evaluate_closure.inputs.bundle(get_bundle_item.o.item, "Item")
+        evaluate_closure.inputs.string(get_list_item, "Path")
         world_3 = evaluate_closure.outputs.bundle("World")
         item = evaluate_closure.outputs.bundle("Item")
-        g.StoreBundleItem.bundle(world_3, get_list_item, item) >> world_2.next
+        (
+            g.StoreBundleItem.bundle(world_3.output, get_list_item, item.output)
+            >> world_2.next
+        )
 
         world_2.result >> world_1
 
@@ -1935,18 +1888,18 @@ class SimplifyCachedColliderInfo(CustomGeometryGroup):
             closure_zone.inputs.string("Path")
             world_3 = closure_zone.outputs.bundle("World")
             item_1 = closure_zone.outputs.bundle("Item")
-            separate_bundle = g.SeparateBundle(item)
+            separate_bundle = g.SeparateBundle(item.output)
             deforming = separate_bundle.items.boolean("deforming")
             geometry = separate_bundle.items.geometry("geometry")
-            remove_named_attribute = deforming.switch.geometry(
-                g.DeleteGeometry.point(geometry),
-                g.DeleteGeometry.only_edges_faces(geometry),
+            remove_named_attribute = deforming.output.switch.geometry(
+                g.DeleteGeometry.point(geometry.output),
+                g.DeleteGeometry.only_edges_faces(geometry.output),
             ) >> g.RemoveNamedAttribute(pattern_mode="Wildcard", name="*")
             remove_named_attribute.node.warning_propagation = "NONE"
             combine_bundle = g.CombineBundle()
-            combine_bundle.items.geometry("geometry", remove_named_attribute)
-            world_2 >> world_3
-            combine_bundle.o.bundle >> item_1
+            combine_bundle.items.geometry(remove_named_attribute, "geometry")
+            world_2.output >> world_3.input
+            combine_bundle.o.bundle >> item_1.input
             (
                 ForEachTypedBundle(
                     World=world,
@@ -1966,20 +1919,11 @@ class ClearPreviousWorldItems(CustomGeometryGroup):
         world = tree.inputs.bundle("World")
         world_1 = tree.outputs.bundle("World")
 
-        get_nested_bundle_paths = g.GetNestedBundlePaths(
-            bundle=world,
-            mode="Bundle Type",
-            pattern_mode="Wildcard",
-            bundle_type="*",
-            data_type="Bundle",
-        )
-        repeat_zone = g.RepeatZone(get_nested_bundle_paths.o.paths.list_length())
-        world_2 = repeat_zone.items.bundle("World", world)
+        get_nested_bundle_paths = world.paths("Bundle Type", "Wildcard", "*", "Bundle")
+        repeat_zone = g.RepeatZone(get_nested_bundle_paths.list_length())
+        world_2 = repeat_zone.items.bundle(world, "World")
         join_strings = g.JoinStrings(
-            (
-                get_nested_bundle_paths.o.paths[repeat_zone.iteration],
-                g.String(string="previous"),
-            ),
+            (get_nested_bundle_paths[repeat_zone.iteration], g.String("previous")),
             delimiter="/",
         )
         get_bundle_item = g.GetBundleItem.bundle(world_2.current, join_strings, True)
@@ -1996,7 +1940,7 @@ class RemoveSimAttributes(CustomGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         world = tree.inputs.bundle("World")
-        mode = tree.inputs.menu("Mode", optional_label=True)
+        mode = tree.inputs.menu("Mode", "Exact", optional_label=True)
         name = tree.inputs.string("Name", "", optional_label=True)
         world_1 = tree.outputs.bundle("World")
 
@@ -2006,14 +1950,14 @@ class RemoveSimAttributes(CustomGeometryGroup):
         closure_zone.inputs.string("Path", structure_type="SINGLE")
         world_3 = closure_zone.outputs.bundle("World", structure_type="SINGLE")
         geometry_1 = closure_zone.outputs.geometry("Geometry", structure_type="SINGLE")
-        world_2 >> world_3
+        world_2.output >> world_3.input
         (
-            g.RemoveNamedAttribute(geometry=geometry, pattern_mode=mode, name=name)
-            >> geometry_1
+            g.RemoveNamedAttribute(
+                geometry=geometry.output, pattern_mode=mode, name=name
+            )
+            >> geometry_1.input
         )
         ForEachSimGeometry(World=world, Closure=closure_zone.closure) >> world_1
-
-        mode.default_value = "Exact"
 
 
 class CopySolverData(CustomGeometryGroup):
@@ -2029,16 +1973,14 @@ class CopySolverData(CustomGeometryGroup):
         cache = tree.inputs.bundle("Cache")
         world_1 = tree.outputs.bundle("World")
 
-        get_nested_bundle_paths = g.GetNestedBundlePaths(
-            bundle=cache, mode="Bundle Type", bundle_type="Blender.XPBDSolverData"
+        get_nested_bundle_paths = cache.paths(
+            "Bundle Type", bundle_type="Blender.XPBDSolverData"
         )
-        repeat_zone = g.RepeatZone(get_nested_bundle_paths.o.paths.list_length())
-        world_2 = repeat_zone.items.bundle("World", world)
-        get_list_item = get_nested_bundle_paths.o.paths[repeat_zone.iteration]
+        repeat_zone = g.RepeatZone(get_nested_bundle_paths.list_length())
+        world_2 = repeat_zone.items.bundle(world, "World")
+        get_list_item = get_nested_bundle_paths[repeat_zone.iteration]
         store_bundle_item = g.StoreBundleItem.bundle(
-            world_2.current,
-            get_list_item,
-            g.GetBundleItem.bundle(cache, get_list_item).o.item,
+            world_2.current, get_list_item, cache.get.bundle(get_list_item)
         )
         store_bundle_item >> world_2.next
 
@@ -2070,7 +2012,7 @@ class XPBDSimulation(CustomGeometryGroup):
             **{"To World Transform": simulation_to_world},
         )
         simulation_zone = g.SimulationZone()
-        cache = simulation_zone.items.bundle("Cache")
+        cache = simulation_zone.items.bundle(name="Cache")
         rename_sim_attributes = RenameSimAttributes(
             World=cache.current, Mode="Prefix", Old="sim:prop:", New="sim:prop_prev:"
         )
@@ -2139,9 +2081,9 @@ class ConvertSpaceTransform(CustomGeometryGroup):
     _tree_properties = {"default_group_node_width": 180}
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        from_space = tree.inputs.menu("From Space", optional_label=True)
+        from_space = tree.inputs.menu("From Space", "World Space", optional_label=True)
         from_object = tree.inputs.object("From Object", optional_label=True)
-        to_space = tree.inputs.menu("To Space", optional_label=True)
+        to_space = tree.inputs.menu("To Space", "World Space", optional_label=True)
         to_object = tree.inputs.object("To Object", optional_label=True)
         custom_to_world = tree.inputs.matrix("Custom to World")
         transform = tree.outputs.matrix("Transform")
@@ -2153,7 +2095,7 @@ class ConvertSpaceTransform(CustomGeometryGroup):
         with g.Frame('"From" to world space'):
             index_switch = g.IndexSwitch.matrix(
                 CustomWorldObjectSpace(Space=from_space).o.custom_0_world_1_object_2,
-                (custom_to_world, None, g.ObjectInfo(object=from_object).o.transform),
+                (custom_to_world, None, g.ObjectInfo(from_object).o.transform),
             )
         with g.Frame('World to "To" space'):
             index_switch_1 = g.IndexSwitch.matrix(
@@ -2161,7 +2103,7 @@ class ConvertSpaceTransform(CustomGeometryGroup):
                 (
                     custom_to_world.invert(),
                     None,
-                    g.ObjectInfo(object=to_object).o.transform.invert(),
+                    g.ObjectInfo(to_object).o.transform.invert(),
                 ),
             )
         multiply_matrices = g.MultiplyMatrices(
@@ -2170,9 +2112,6 @@ class ConvertSpaceTransform(CustomGeometryGroup):
         multiply_matrices.o.matrix.invert() >> inverted
 
         multiply_matrices >> transform
-
-        from_space.default_value = "World Space"
-        to_space.default_value = "World Space"
 
 
 class SimulateDNAGuide(CustomGeometryGroup):
@@ -2373,7 +2312,7 @@ class SimulateDNAGuide(CustomGeometryGroup):
                 with g.Frame("Damping"):
                     combine_bundle = g.CombineBundle()
                     combine_bundle.items.bundle(
-                        "Damping", Damping(Linear=linear, Angular=angular)
+                        Damping(Linear=linear, Angular=angular), "Damping"
                     )
                 rod_bend_twist_constraint = RodBendTwistConstraint(
                     Compliance=0.0,
@@ -2384,12 +2323,12 @@ class SimulateDNAGuide(CustomGeometryGroup):
                 )
                 combine_bundle_1 = g.CombineBundle()
                 combine_bundle_1.items.bundle(
-                    "Stretch_Shear",
                     RodStretchShearConstraint(
                         Compliance=0.0, **{"Custom Length": True}, Length=distance
                     ),
+                    "Stretch_Shear",
                 )
-                combine_bundle_1.items.bundle("Bend_Twist", rod_bend_twist_constraint)
+                combine_bundle_1.items.bundle(rod_bend_twist_constraint, "Bend_Twist")
             with g.Frame("Effector Collection"):
                 collection_effector = CollectionEffector(
                     Collection=effectors_collection
@@ -2401,13 +2340,13 @@ class SimulateDNAGuide(CustomGeometryGroup):
                     Friction=surface_friction,
                 )
                 combine_bundle_2 = g.CombineBundle()
-                combine_bundle_2.items.bundle("Surface Collider", collider.o.collider)
+                combine_bundle_2.items.bundle(collider.o.collider, "Surface Collider")
                 switch = surface_collision.switch.bundle(true=combine_bundle_2.o.bundle)
             with g.Frame("Capture Animated"):
                 capture = g.CaptureAttribute.point(geometry=setup_structural_rest_data)
-                position = capture.items.vector("Position", g.Position())
+                position = capture.items.vector(g.Position(), "Position")
                 rotation = capture.items.rotation(
-                    "Rotation", g.NamedAttribute.quaternion("rotation").o.attribute
+                    g.NamedAttribute.quaternion("rotation").o.attribute, "Rotation"
                 )
             with g.Frame("Curve Root Pinning"):
                 endpoint_selection = g.EndpointSelection()
@@ -2416,16 +2355,16 @@ class SimulateDNAGuide(CustomGeometryGroup):
                 endpoint_selection_1 = g.EndpointSelection(start_size=2, end_size=2)
                 combine_bundle_3 = g.CombineBundle()
                 combine_bundle_3.items.bundle(
-                    "Pin Position",
                     PinPositions(
                         Selection=endpoint_selection_1, Position=position.output
                     ),
+                    "Pin Position",
                 )
                 combine_bundle_3.items.bundle(
-                    "Pin Rotation",
                     PinRotation(
                         Selection=endpoint_selection_1, Rotation=rotation.output
                     ),
+                    "Pin Rotation",
                 )
             with g.Frame("Setup Curve Geometry for Simulation"):
                 set_friction = SetFriction(
@@ -2443,10 +2382,10 @@ class SimulateDNAGuide(CustomGeometryGroup):
                 )
                 combine_bundle_4 = g.CombineBundle()
                 combine_bundle_4.items.geometry(
-                    "DNA", SetGeoUpdaterDeformOnly(Geometry=set_mass)
+                    SetGeoUpdaterDeformOnly(Geometry=set_mass), "DNA"
                 )
             join_bundle = g.JoinBundle(
-                bundle=(
+                (
                     combine_bundle_4.o.bundle,
                     combine_bundle_3.o.bundle,
                     combine_bundle_1.o.bundle,
@@ -2456,8 +2395,8 @@ class SimulateDNAGuide(CustomGeometryGroup):
                 )
             )
             combine_bundle_5 = g.CombineBundle()
-            combine_bundle_5.items.bundle("DNA", join_bundle)
-            combine_bundle_5.items.bundle("Effectors", effectors)
+            combine_bundle_5.items.bundle(join_bundle, "DNA")
+            combine_bundle_5.items.bundle(effectors, "Effectors")
             xpbd_simulation = XPBDSimulation(
                 World=combine_bundle_5.o.bundle,
                 Substeps=substeps,
@@ -2468,9 +2407,9 @@ class SimulateDNAGuide(CustomGeometryGroup):
                     "Solver Output Path": "SolverData",
                 },
             )
-            get_bundle_item = g.GetBundleItem.geometry(xpbd_simulation, "DNA/DNA")
-            _get_bundle_item_1 = g.GetBundleItem.single(
-                xpbd_simulation, "SolverData/residual_error"
+            get_bundle_item = xpbd_simulation.o.world.get.geometry("DNA/DNA")
+            _get_bundle_item_1 = g.GetBundleItem.float(
+                xpbd_simulation, "SolverData/residual_error", structure_type="SINGLE"
             )
         with g.Frame("Transform back to object space"):
             convert_space_transform = ConvertSpaceTransform(
@@ -2482,12 +2421,12 @@ class SimulateDNAGuide(CustomGeometryGroup):
                 }
             )
             transform_geometry = g.TransformGeometry(
-                geometry=get_bundle_item.o.item,
+                geometry=get_bundle_item,
                 transform=convert_space_transform.o.transform,
                 mode="Matrix",
             )
         join_geometry = g.JoinGeometry(
-            geometry=(transform_geometry, get_geometry_component.o.geometry)
+            (transform_geometry, get_geometry_component.o.geometry)
         )
 
         join_geometry >> dna_curves
@@ -2581,13 +2520,13 @@ class DNAFromCurve(AssetGeometryGroup):
         base_resolution = tree.inputs.integer(
             "Base Resolution", 0, min_value=0, max_value=4
         )
-        menu = tree.inputs.menu("Menu", expanded=True, optional_label=True)
+        menu = tree.inputs.menu("Menu", "Static", expanded=True, optional_label=True)
         wind = tree.inputs.float(
             "Wind", 1.0, min_value=0.0, max_value=1.0, subtype="FACTOR"
         )
         with tree.inputs.panel("Bases"):
             base_instance = tree.inputs.menu(
-                "Base Instance", expanded=True, optional_label=True
+                "Base Instance", "Instance", expanded=True, optional_label=True
             )
         geometry = tree.outputs.geometry("Geometry")
 
@@ -2616,29 +2555,30 @@ class DNAFromCurve(AssetGeometryGroup):
             switch = g.NamedAttribute.boolean("is_comp").o.attribute.switch.integer(
                 integer_math_1, abs(integer_math_1 - 3)
             )
+        noise_texture = g.NoiseTexture(
+            w=g.SceneTime().o.seconds,
+            scale=1.02,
+            noise_dimensions="4D",
+            normalize=False,
+        )
         with g.Frame("Base distances"):
-            mix = g.Mix(
-                factor_float=wind,
-                a_float=g.Value(0.63),
-                b_float=g.Value(0.34),
-                clamp_factor=True,
-            )
-            math_1 = integer_math * mix.o.result_float
+            math_1 = integer_math * wind.mix.float(g.Value(0.63), g.Value(0.34))
         math_2 = wind * (g.Value(math.tau).o.value / g.Value(10.5) * integer_math)
         axis_angle_to_rotation = g.AxisAngleToRotation(
             axis=g.CurveTangent(),
             angle=math_2.point.trailing(g.CurveOfPoint().o.curve_index),
         )
         store_named_attribute = g.SetHandleType(
-            curve=g.SetSplineType.bezier(curves)
+            g.SetSplineType.bezier(curves)
         ) >> g.StoreNamedAttribute.point.quaternion(
             name="rotation", value=axis_angle_to_rotation
         )
-        vector_math = g.VectorMath.scale(
-            g.NoiseTexture(
-                w=g.SceneTime().o.seconds, scale=1.02, noise_dimensions="4D"
-            ).o.color,
-            4.99,
+        join_bundle = g.JoinBundle(
+            (
+                CustomForce(
+                    Force=g.VectorMath.scale(noise_texture.o.color, 4.99).o.vector
+                ),
+            )
         )
         simulate_dna_guide = SimulateDNAGuide(
             **{"DNA Curve": store_named_attribute},
@@ -2647,18 +2587,16 @@ class DNAFromCurve(AssetGeometryGroup):
             Bendiness=0.0,
             Linear=10.0,
             Angular=30.0,
-            Effectors=g.JoinBundle(bundle=(CustomForce(Force=vector_math.o.vector),)),
+            Effectors=join_bundle,
         )
         menu_switch = g.MenuSwitch.geometry(
             menu, {"Static": store_named_attribute, "Simulate": simulate_dna_guide}
         )
         with g.Frame("Handles aren't simulated, so we reset their auto positions"):
-            set_handle_type = g.SetHandleType(curve=menu_switch)
+            set_handle_type = g.SetHandleType(menu_switch)
         duplicate_elements = g.DuplicateElements.spline(set_handle_type, amount=2)
         _curve_visualize = CurveVisualize(
-            curve=g.JoinGeometry(geometry=(set_handle_type,)),
-            handles=True,
-            arrow_size=10.0,
+            curve=g.JoinGeometry((set_handle_type,)), handles=True, arrow_size=10.0
         )
         store_named_attribute_1 = (
             duplicate_elements
@@ -2676,14 +2614,14 @@ class DNAFromCurve(AssetGeometryGroup):
                 "rotation"
             ).o.attribute.rotate(axis_angle_to_rotation_1, rotation_space="LOCAL")
             capture = g.CaptureAttribute.point(geometry=store_named_attribute_1)
-            rotation = capture.items.rotation("Rotation", rotate_rotation)
+            rotation = capture.items.rotation(rotate_rotation, "Rotation")
             set_curve_normal = capture.o.geometry >> g.SetCurveNormal(
                 normal=g.RotateVector(rotation=rotation.output, vector=(0.0, 1.0, 0.0)),
                 mode="Free",
             )
         capture_1 = g.CaptureAttribute.point(geometry=set_curve_normal)
-        capture_1.items.vector("Position", g.Position())
-        normal = capture_1.items.vector("Normal", g.Normal().o.normal)
+        capture_1.items.vector(g.Position(), "Position")
+        normal = capture_1.items.vector(g.Normal().o.normal, "Normal")
         reverse_curve = (
             capture_1.o.geometry
             >> g.SetPosition(offset=normal.output * AngstromToWorld(angstrom=7.5))
@@ -2692,7 +2630,7 @@ class DNAFromCurve(AssetGeometryGroup):
             >> g.ReverseCurve(selection=g.NamedAttribute.boolean("is_comp").o.attribute)
         )
         capture_2 = g.CaptureAttribute.point(geometry=OffsetCurve(curve=reverse_curve))
-        normal_1 = capture_2.items.vector("Normal", g.Normal().o.normal)
+        normal_1 = capture_2.items.vector(g.Normal().o.normal, "Normal")
         instance_on_points = capture_2.o.geometry >> g.InstanceOnPoints(
             instance=set_color,
             instance_index=switch,
@@ -2702,14 +2640,13 @@ class DNAFromCurve(AssetGeometryGroup):
             pick_instance=True,
         )
         with g.Frame("Rotate individual base nucleotides"):
-            transform_local_axis = TransformLocalAxis(
-                axis=normal_1.output,
-                angle=g.Mix(
-                    factor_float=wind, a_float=math.pi / 4, clamp_factor=True
-                ).o.result_float,
-            )
             capture_3 = g.CaptureAttribute.instance(geometry=instance_on_points)
-            transform = capture_3.items.matrix("Transform", transform_local_axis)
+            transform = capture_3.items.matrix(
+                TransformLocalAxis(
+                    axis=normal_1.output, angle=wind.mix.float(math.pi / 4, 0.0)
+                ),
+                "Transform",
+            )
             set_position = (
                 capture_3.o.geometry
                 >> g.RealizeInstances(depth=1)
@@ -2725,9 +2662,6 @@ class DNAFromCurve(AssetGeometryGroup):
             >> g.JoinGeometry()
             >> geometry
         )
-
-        menu.default_value = "Static"
-        base_instance.default_value = "Instance"
 
 
 ASSET = DNAFromCurve

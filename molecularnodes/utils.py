@@ -73,6 +73,72 @@ def correct_periodic_positions(
     return final_positions
 
 
+def is_periodic_box(dimensions: np.ndarray | None) -> bool:
+    """Whether unit cell dimensions describe a usable periodic box.
+
+    Parameters
+    ----------
+    dimensions : np.ndarray or None
+        Unit cell as ``[lx, ly, lz, alpha, beta, gamma]``, as returned by
+        `MDAnalysis.coordinates.timestep.Timestep.dimensions`.
+
+    Returns
+    -------
+    bool
+        False when there is no box, when a length is not positive, when the
+        angles do not form a valid cell, or for the ``[1, 1, 1, 90, 90, 90]``
+        placeholder that some PDB writers use (which MDAnalysis's DSSP also
+        ignores).
+    """
+    from MDAnalysis.lib.mdamath import triclinic_vectors
+
+    if dimensions is None:
+        return False
+    dimensions = np.asarray(dimensions, dtype=np.float64)
+    if dimensions.shape != (6,) or not np.all(np.isfinite(dimensions)):
+        return False
+    if np.any(dimensions[:3] <= 0) or np.allclose(dimensions, [1, 1, 1, 90, 90, 90]):
+        return False
+    # MDAnalysis returns all-zero vectors for angles that cannot form a cell
+    return bool(np.any(triclinic_vectors(dimensions)))
+
+
+def minimum_image_positions(
+    positions_1: np.ndarray, positions_2: np.ndarray, dimensions: np.ndarray
+) -> np.ndarray:
+    """Shift each of positions_2 to its periodic image nearest positions_1.
+
+    Triclinic boxes use the minimum image convention of
+    `MDAnalysis.lib.distances.minimize_vectors`. Orthorhombic boxes give the
+    same result with `correct_periodic_positions`, which is several times
+    faster.
+
+    Parameters
+    ----------
+    positions_1 : np.ndarray
+        Reference positions, shape (n, 3).
+    positions_2 : np.ndarray
+        Positions to shift, shape (n, 3).
+    dimensions : np.ndarray
+        Unit cell as ``[lx, ly, lz, alpha, beta, gamma]``, with lengths in the
+        same units as the positions.
+
+    Returns
+    -------
+    np.ndarray
+        A new array: positions_2 shifted by whole box vectors.
+    """
+    from MDAnalysis.lib.distances import minimize_vectors
+
+    if np.allclose(dimensions[3:], 90.0):
+        return correct_periodic_positions(positions_1, positions_2, dimensions[:3])
+    vectors = positions_2 - positions_1
+    # shift positions_2 rather than rebuilding it from positions_1, so atoms
+    # that did not cross a boundary keep their positions (up to rounding of
+    # the zero shift)
+    return positions_2 + (minimize_vectors(vectors, dimensions) - vectors)
+
+
 def frame_mapper(
     frame: int,
     subframes: int = 0,

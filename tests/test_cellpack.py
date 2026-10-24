@@ -63,3 +63,25 @@ def test_load_cellpack(snapshot, format):
     assert snapshot == round_significant(pos_eval)
 
     _obj = ens.object
+
+
+def test_load_cellpack_twice_keeps_instances_separate():
+    file_path = data_dir / "cellpack/square1.bcif"
+    first = mn.entities.ensemble.CellPack.load(file_path, name="packed")
+    second = mn.entities.ensemble.CellPack.load(file_path, name="packed")
+
+    # the second object is renamed by Blender, and its instances must follow it
+    assert second.object.name != first.object.name
+    assert first.instance_collection != second.instance_collection
+    n_molecules = len(first.file.mol_ids)
+    for ens in (first, second):
+        assert len(ens.instance_collection.objects) == n_molecules
+        trees = {obj.modifiers[0].node_group for obj in ens.instance_collection.objects}
+        assert len(trees) == 1
+        assert len(next(iter(trees)).interface.items_tree) == 2
+
+    first_trees = {o.modifiers[0].node_group for o in first.instance_collection.objects}
+    second_trees = {
+        o.modifiers[0].node_group for o in second.instance_collection.objects
+    }
+    assert first_trees.isdisjoint(second_trees)

@@ -1,5 +1,5 @@
 # Node-group asset "Offset Curve" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -89,15 +89,15 @@ class OffsetCurve(AssetGeometryGroup):
         with g.Frame("Amount of factor for this number of points to offset"):
             math_1 = points / g.SplineLength().o.point_count
         capture = g.CaptureAttribute.point(geometry=curve)
-        value = capture.items.float("Value", g.SplineParameter().o.factor + math_1)
+        value = capture.items.float(g.SplineParameter().o.factor + math_1, "Value")
         sample_curve = g.SampleCurve(
             curves=capture.o.geometry,
             factor=value.output,
             curve_index=g.CurveOfPoint().o.curve_index,
         )
         capture_1 = g.CaptureAttribute.point(geometry=capture.o.geometry)
-        position = capture_1.items.vector("Position", sample_curve.o.position)
-        normal = capture_1.items.vector("Normal", sample_curve.o.normal)
+        position = capture_1.items.vector(sample_curve.o.position, "Position")
+        normal = capture_1.items.vector(sample_curve.o.normal, "Normal")
         (
             capture_1.o.geometry
             >> g.SetPosition(position=position.output)

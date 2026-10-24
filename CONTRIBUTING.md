@@ -330,6 +330,8 @@ pytest -v tests/test_load.py # run a single tests file
 pytest -v -k centre # pattern match to 'centre' and only run tests with that in the name
 ```
 
+Tests load structures with the `fetch` fixture (`def test_x(fetch): mol = fetch("4ozs")`), which reads from `tests/data` and never downloads. If a test needs a new structure, download it into `tests/data` once and commit it. Tests that have to reach a server are marked `@pytest.mark.network`; any other test that opens a remote connection fails. CI runs the network tests in a single job, because many jobs downloading at once get rate limited. Run them locally with `pytest -m network`, or skip them with `pytest -m "not network"`.
+
 Look over other tests to see how we are structuring them. Most of the tests will involve importing data, generating a 3D model and then creating a `snapshot` of the attributes for some subset of vertices from that 3D model.
 We could snapshot _all_ of the vertices, but the snapshots are just `.txt` files so the diffs would become very large.
 When changing something that _should_ change the output of the snapshots, we end up with _very_ large number of files changed.

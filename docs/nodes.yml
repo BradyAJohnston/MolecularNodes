@@ -53,6 +53,29 @@ Style Sticks:
     Each bond terminates cleanly in a half sphere for a typical stick representation of the atoms and bonds
   videos:
     - https://imgur.com/iNqE87M
+Style HBonds:
+  description: >-
+    Draws hydrogen bonds as dashed cylinders between each hydrogen and its acceptor. With `Source::Menu`
+    set to `Data Object`, the bonds are computed by `MDAnalysis.analysis.hydrogenbonds` with
+    `mol.calculations.hbonds()` (or Hydrogen Bonds in the add menu of the Attributes panel) and stored
+    as edges on a data object that is passed in as `Data Object::Object`. Adding the node in the GUI
+    sets up the calculation and fills in the data object. The data object holds only which atoms are
+    bonded, with positions sampled from the `Atoms::Geometry` by index, so the bonds follow any movement
+    of the atoms upstream of the node. The atoms must be in their original order, so use the
+    `Selection::Bool` rather than deleting atoms before this node. With `Source::Menu` set to
+    `Find HBonds`, the bonds are found in the node tree with `Find HBonds::Node` instead, using the
+    `Distance::Float` and `Angle::Float` cutoffs, with no calculation in Python. A bond is shown when
+    both of its atoms are selected. Structures need explicit hydrogens.
+Find HBonds:
+  description: >-
+    Finds hydrogen bonds between the input `Atoms::Geometry` in the node tree, giving for each hydrogen
+    whether it is in a hydrogen bond (`Is HBonded::Bool`) and the index of its acceptor
+    (`Acceptor Index::Int`, -1 for other atoms). Each hydrogen is paired with the nearest heavy atom
+    within 1.2 Å as its donor, and nitrogen and oxygen atoms are donors and acceptors. A bond needs the
+    donor and acceptor within `Distance::Float` and a donor-hydrogen-acceptor angle of at least
+    `Angle::Float`, the same criteria and defaults as `MDAnalysis.analysis.hydrogenbonds`. A hydrogen
+    bonds to at most one acceptor, so of a bifurcated hydrogen bond only one is found. Structures need
+    explicit hydrogens.
 Separate Atoms:
   description: >-
     Separate the input atoms into the `Atoms::Geometry` and `Inverted::Geometry` based on the input `Selection::Bool`. For simply styling this
@@ -273,6 +296,27 @@ Color Attribute Map:
     _Attribute Name_ that is used for the inerpolation, specifying the start and end values of the interpolation
   videos:
     - https://imgur.com/ZWCSx19
+Color Sample Grid:
+  description: >-
+    Color each point by the value of a float grid at its position, such as an electrostatic potential from APBS
+    on a `Style Surface`. Pick the volume object with `Object::Object` and the grid with `Grid Name::String`;
+    densities loaded with Molecular Nodes name their grid `density`. Values from `Min::Float` to `Max::Float`
+    blend linearly from `A::Color` through `Intermediate::Color` to `B::Color`, and values outside the range
+    take the end colors. The default -5 to 5 suits an APBS potential in kT/e. `Value::Float` outputs the sampled
+    value, trilinearly interpolated, and is zero outside the grid. Densities are stored as 32-bit float grids, as
+    Blender's grid nodes return zero for 64-bit (`DOUBLE`) grids.
+    Place it in a `Set Color` after a style to color the style's own points (each surface vertex), or before
+    a style to color the atoms by the value at their centres. Pick the density itself in `Object::Object`,
+    styled or not: density styles turn the volume into a mesh, but a density loaded with Molecular Nodes keeps
+    its source volume in the `MN/Volume` bundle of its output (see `Set Geometry Volume::Node`), and the node
+    samples that volume when it is there, otherwise the object's own volume. The grid is sampled in world
+    space, so moving either object moves the molecule through the grid.
+Set Geometry Volume:
+  description: >-
+    Store the source `Volume::Geometry` in the `MN/Volume` bundle of `Geometry::Geometry`, such as a density's
+    iso surface, so the volume can still be sampled (by `Color Sample Grid::Node`) after a style has turned it
+    into a mesh. The bundled volume is not rendered. A volume already in either input's `MN/Volume` bundle is
+    kept. Density trees built from Python end in this node, after the join of their styles.
 Color Attribute Random:
   description: >-
     Generate a random color, based on the given attribute. Control the lightness and saturation of the color with
@@ -291,6 +335,14 @@ Color Backbone:
     Atoms that are neither maintain their current `Color` attribute
   videos:
     - https://imgur.com/nadPkJd
+Color matplotlib:
+  description: >-
+    Colour a `Value::Float` from `0` to `1` with one of matplotlib's colormaps. Pick the group with `Category::Menu`,
+    then the colormap from that group's menu; the other groups' menus are ignored. `Reverse::Bool` runs the colormap
+    from `1` to `0`, like matplotlib's `_r` maps. Values outside `0..1` are clamped. Pair with `Field Remap::Node`
+    or a Map Range node to colour an attribute such as `b_factor` over its own range. Each colormap is a Color Ramp
+    of at most 32 stops fitted to matplotlib's colours, within about 1/255 for most maps; a few busy maps such as
+    `gist_ncar`, `nipy_spectral` and `jet` lose some detail, noted in the frame next to each ramp inside the node.
 Color Mix Intermediate:
   description: >-
     Mix between two colors, potentially via an intermediate color. Use either linear or OKLab color spaces
@@ -357,6 +409,12 @@ Mass:
   description: The `mass` attribute of the point, used for centre of mass calculations
 B Factor:
   description: The `b_factor` attribute of the point, how well resolved the individual atoms are
+Force:
+  description: >-
+    The `force` attribute of the point, the force on each atom from a trajectory with forces (such as frames of `.trr`
+    files), in MDAnalysis units of kJ/(mol·Å) and not scaled by the world scale. Interpolated and averaged between frames like
+    positions. Not related to the `Force Gravity::Node` and other simulation forces. `(0, 0, 0)` if the geometry has no
+    `force` attribute
 Charge:
   description: >-
     The `charge` attribute of the point, which is only present when the file or topology provided charges (partial
@@ -522,6 +580,34 @@ Centre on Selection:
     towards the calculation of the centroid, but all points are still moved
   videos:
     - https://imgur.com/xSOH4Tr
+Best View:
+  description: >-
+    Finds the direction from which the most selected points can be seen past the occluding meshes. Directions spread
+    over a sphere are scored by casting a ray from each selected point back towards the camera and counting the rays
+    that hit nothing, then refined on shrinking rings around the best. Ties go to the direction that shows the selection
+    broadest. Plug a style's output into `Occluders::Geometry` so the view is judged against what will render; point
+    clouds and instances do not block rays. `Transform::Matrix` is a camera transform at the centre of the selection,
+    looking down its local -Z along `Direction::Vector`. `Stickiness::Float` and `Previous Direction::Vector`
+    penalise turning away from a direction already on screen, which is always scored as a candidate.
+    `Hysteresis::Float` keeps `Previous Direction::Vector` unless the best direction sees that share of the selected
+    points more, so small differences between searches do not move the view.
+Orient to Best View:
+  description: >-
+    Rotates the geometry about the centre of the selection so the camera sees the selection from its `Best View::Node`.
+    The meshes of `Geometry::Geometry` are the occluders, so put it after the styles. The node follows `Camera::Object`,
+    or the scene's active camera when that is empty: orbiting the camera turns the geometry with it, and `Factor::Float`
+    blends from the original orientation.
+    Turn on `Smoothing::Boolean` to ease towards each new best view instead of jumping, for trajectories or an animated
+    camera: every simulation step moves the translation and rotation separately by `a = lerp(a, b, 1 - 2^(-dt / Half Life))`,
+    so the remaining gap halves every `Half Life::Float` seconds at any frame rate.
+    `Stickiness::Float` makes the search favour views near the one on screen: each direction loses that share of the
+    selected atoms, scaled by (1 - cos θ) / 2 of its angle θ from the current view, so turning around must gain the
+    whole share. `Hysteresis::Float` holds the view on screen until a new one sees that share of the selected atoms
+    more. Both work with or without smoothing, and like smoothing they only advance during playback.
+    Turn off `Move Geometry::Boolean` to leave the geometry in place and move a camera instead: `Camera Transform::Matrix`
+    is where the camera goes, relative to this object, for the same view. Store it on the first point of the output and
+    give a second camera a Geometry Attribute constraint that reads it (type 4x4 matrix, Apply Target Transform on).
+    That camera must not also be `Camera::Object` or the active camera the node falls back to, or each depends on the other.
 Separate First Point:
   description: Separate out the first point for each group in the `Group ID`
 Selected Instances:
@@ -538,6 +624,13 @@ Contains Geometry:
   description: Check if a geometry contains geometry in any of the domains
 Fallback Geometry:
   description: Fallback geometry for when the input geometry is empty in all domains
+Fade Geometry:
+  description: >-
+    Fade geometry in and out by multiplying the alpha of its `Color` attribute on the point and instance
+    domains. Place it after a style node and animate `Fade::Float` from `1` to `0` to fade that style out of a scene, or
+    from `0` to `1` to fade it in. The node multiplies the existing alpha, so geometry that is already
+    partly transparent stays proportionally more transparent. Only materials that read the alpha show the
+    fade: `Default`, `Squishy` and `Ambient Occlusion` do, while `Flat` and `Transparent` ignore it.
 Plexus:
   description: Find points that are within a given distance of each other and create an edge between them
 Visualize Points: {}
@@ -603,6 +696,14 @@ Fallback Rotation:
 Fallback Matrix:
   description: >-
     Use the `Matrix` attribute specified by name. If the attribute doesn't exist, use the `Fallback` value instead
+Fallback Camera:
+  description: >-
+    Use `Camera::Object`, or the scene's active camera when it is empty, and output its `Transform::Matrix` relative to
+    this object
+Decay:
+  description: >-
+    The share of the remaining gap to close in a step of `Delta Time::Float` seconds, `1 - 2^(-dt / Half Life)`, so
+    that easing by it halves the gap every `Half Life::Float` seconds at any frame rate
 Group Info:
   description: Indices of points within each `Group ID`
 Sub Group Info:
@@ -643,6 +744,32 @@ Boolean Run Trim:
     which they are considered false
 Ensemble Instance:
   description: Instance the items of an ensemble onto the given points
+Symmetry Cyclic:
+  description: >-
+    Build a cyclic (Cn) assembly the file does not describe: `Order::Integer` copies of the geometry evenly spaced
+    about an `Axis::Vector` passing through `Centre::Vector`. Rings, pores and most homo-oligomers. The `Animate::Float`
+    input interpolates each copy from the original (0) to its final placement (1) for assembly animations. It is
+    evaluated per copy, so `Stagger Value::Node` moves the copies one after another. Every copy carries a `sym_id` attribute, readable with the
+    `Symmetry ID::Node` node.
+Symmetry Dihedral:
+  description: >-
+    Build a dihedral (Dn) assembly: a ring of `Order::Integer` copies about the `Axis::Vector`, plus the same ring
+    flipped by a two-fold perpendicular to it, giving 2n copies. Back-to-back rings such as GroEL. Shares the
+    `Animate::Float` input with `Symmetry Cyclic::Node`.
+Symmetry Helical:
+  description: >-
+    Build a helical filament: `Count::Integer` subunits, each advanced `Rise::Float` Angstrom along the `Axis::Vector`
+    and rotated `Twist::Float` about it, relative to the one before. Actin, microtubules, amyloid and pili. The defaults
+    are actin's 27.5 Angstrom rise and -166.7 degree twist. `Axial Symmetry::Integer` repeats each subunit evenly around
+    the axis for filaments with Cn symmetry, such as amyloid built from two protofilaments (C2). Shares the
+    `Animate::Float` input with `Symmetry Cyclic::Node`.
+Symmetry Cubic:
+  description: >-
+    Build a cubic assembly from one copy: `Group::Menu` picks tetrahedral (12 copies, as in Dps), octahedral (24, as in
+    ferritin) or icosahedral (60, as in small virus capsids). At zero `Orientation::Rotation` the two-folds lie along X,
+    Y and Z with a three-fold along (1, 1, 1), and for icosahedral a five-fold along (0, 1, 1.618); rotate it to match a
+    structure, and set `Centre::Vector` to the point all the axes pass through. Shares the `Animate::Float` input with
+    `Symmetry Cyclic::Node`.
 Periodic Array:
   description: Replicate the trajectory across periodic boundaries.
 Periodic Box:
@@ -678,6 +805,33 @@ Animate Value:
     to linearly interpolate the value beyond the min and max values.
   videos:
     - https://imgur.com/2oOnwRm
+Animate Action:
+  description: >-
+    A 0..1 `Value::Float` that rises from `Start::Float` over `Length::Float`, for timing one step of an
+    animation. `Time` picks the clock: the scene's `Seconds` or `Frames`, or any linked `Value`. Turn on
+    `Stagger::Boolean` to offset each `ID::Integer` as in `Stagger Value::Node`, and pick an `Interpolation`
+    and `Ease` to shape the transition as in `Ease Value::Node`. `Active::Boolean` is true while the time is
+    between `Start` and `End::Float`, which is `Start` plus `Length`.
+Ease Value:
+  description: >-
+    Reshape a linear `Value::Float` between 0 and 1 with one of Robert Penner's easing curves
+    (`Linear`, `Sinusoidal`, `Quadratic`, `Cubic`, `Quartic`, `Quintic`, `Exponential`, `Circular`,
+    `Back`, `Bounce` or `Elastic`, as listed on easings.net) applied at the start (`In`), the end
+    (`Out`) or both ends (`In Out`) of the transition, then map the result to `From::Float`..`To::Float`.
+    Works per point, so it can ease a field as well as a single value. Chain it after
+    `Animate Value::Node` or `Stagger Value::Node`, or set the same menus on `Animate Action::Node`.
+    `Overshoot::Float` shapes `Back`, and `Period::Float` and `Amplitude::Float` shape `Elastic`. With
+    `Clamp::Boolean` off the curve is evaluated outside 0..1 and the output can leave the `From`..`To`
+    range.
+Stagger Value:
+  description: >-
+    Spread a 0..1 `Value::Float` across points so that each `ID::Integer` makes its own 0..1 transition,
+    starting later than the ID before it. Every ID takes the same share of the input range, so all IDs
+    move at the same speed. `Width::Float` sets how many IDs are moving at once: small widths animate
+    one ID after another, and larger widths overlap them more. A `Width` of 0 switches each ID straight
+    from 0 to 1. `ID` defaults to the `id` attribute, or the index if there is none; link
+    `URes ID::Node` to stagger by residue. `Group ID::Integer` staggers each group over its own range
+    of IDs. Chain it into `Ease Value::Node` to ease each ID's transition.
 Animate Trails:
   description: >-
     Add trails to the atoms as they are animated, which trail the specified number of frames behind the atoms
@@ -751,3 +905,55 @@ Sample Nearest Atoms:
     mesh.
   videos:
     - https://imgur.com/UzNwLv2
+Illustrate:
+  description: >-
+    Flat, illustrative composite of the render passes, wired straight from the Render Layers node. The *Shading* panel
+    darkens the `Image::Color` by the smoothed `Shadow::Color` input (Kuwahara for a painterly look, Blur for a soft one),
+    which takes the Ambient Occlusion or Shadow pass, or the output of `Cone Shadow::Node` for shading from the depth pass
+    alone; the *Outline* panel draws lines from `Depth Outline::Node` with `Outline::Node`, by its Sobel or Goodsell method; the *Background* panel
+    composites over a flat colour. From Python, `canvas.compositor.illustrate()` enables the passes, adds the shading source
+    and inserts the node in one call.
+Depth Outline:
+  description: >-
+    Line mask from the `Depth::Float` pass by one of two methods, picked with `Method::Menu`. *Sobel* draws hard lines
+    wherever the Sobel gradient of the depth passes `Threshold::Float`. *Goodsell* follows *Illustrate*: each of the eight
+    neighbours contributes how much farther it is than the centre, clamped to [`Min Diff::Float`, `Max Diff::Float`] and
+    weighted 1.0 on the edges and 0.8 on the corners, and the sum is ramped from `Low::Float` to `High::Float` into a soft
+    opacity, optionally smoothed (`Smooth::Bool`), so lines land on the nearer side of each depth step and their weight
+    follows its size. Distances are in world units, like the depth pass. The *Normals* panel adds lines from the
+    `Normals Pass::Vector` to catch creases between surfaces at the same depth; either way the lines are anti-aliased and
+    thickened to `Size::Int` pixels. Unlike the shader `Outline Mask::Node`, lines are drawn between separate objects and
+    over transparent backgrounds; draw them with `Outline::Node`.
+Outline:
+  description: >-
+    Draws a `Mask::Float` over an `Image::Color` in `Color::Color`. The alpha is set once, deliberately, to the larger of the
+    line coverage and the image alpha, so lines survive on transparent backgrounds.
+Value to Mask:
+  description: >-
+    Compares a float pass against `Target::Float` within `Epsilon::Float` and outputs the matching pixels as `Mask::Float` and
+    the rest as `Inverse::Float`. Meant for AOV passes written by a material from an attribute such as `chain_id`
+    (`canvas.add_aov("chain_id")` and `mn.material.add_aov(material, "chain_id")`), so one chain can be recoloured, outlined
+    or left untouched in the compositor.
+Mask Pixels:
+  description: >-
+    Splits an `Image::Color` by a `Mask::Float` into the pixels inside it (`Masked::Color`) and outside it (`Inverse::Color`),
+    each with the rest made transparent, so the two can be filtered separately and recombined with an Alpha Over node.
+Cone Shadow:
+  description: >-
+    Illustrate's screen-space ambient occlusion from the `Depth::Float` pass alone. 32 samples (8 directions on 4 rings up to
+    `Pixel Radius::Float` pixels) each cast shadow on the pixel when they are closer to the camera by more than the larger of
+    `Threshold::Float` and their screen distance times `Angle::Float` (with `Pixel Size::Float` relating pixels to depth);
+    the output `Shadow::Float` starts at 1, drops with every occluding sample and never goes below `Shadow Max::Float`.
+    Feed it to the `Shadow::Color` input of `Illustrate::Node`; `canvas.compositor.illustrate(shading="cone")` does this and
+    sets `Pixel Size::Float` from the camera.
+ID Outline:
+  description: >-
+    Illustrate's chain and residue outlines: counts, over the 5x5 neighbourhood, the pixels whose `ID::Float` differs from
+    the centre by more than `Min Difference::Float` and ramps the count from `Low::Float` to `High::Float` into an opacity.
+    Feed it a float AOV such as `chain_id` or `res_id` (`canvas.add_aov("chain_id")`,
+    `mn.material.add_aov(material, "chain_id", offset=1.0)`) and draw it with `Outline::Node`.
+Composite Depth Fog:
+  description: >-
+    Illustrate's atmospheric perspective: the `Image::Color` is blended towards `Fog Color::Color` by a factor that runs from
+    `Front Fog::Float` at `Near::Float` to `Back Fog::Float` at `Far::Float` (1 keeps the colour, 0 is fully fogged). Expects
+    straight alpha and keeps the image alpha. Place it after `Illustrate::Node` for fogged, flat-shaded renders.

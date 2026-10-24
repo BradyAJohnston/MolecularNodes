@@ -1,10 +1,9 @@
 # Node-group asset "Index Mix Rotation" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
 from nodebpy import TreeBuilder
-from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
     FloatSocket,
@@ -104,15 +103,14 @@ class IndexMixRotation(AssetGeometryGroup):
         )
 
         fractionate_float = FractionateFloat(value=index)
-        mix = g.Mix(
-            factor_float=fractionate_float.o.fraction,
-            a_rotation=rotation.point.at(fractionate_float.o.floor),
-            b_rotation=rotation.point.at(fractionate_float.o.ceiling),
-            data_type="ROTATION",
-            clamp_factor=True,
+        (
+            fractionate_float.o.fraction.mix.rotation(
+                rotation.point.at(fractionate_float.o.floor),
+                rotation.point.at(fractionate_float.o.ceiling),
+            )
+            >> rotation_1
         )
 
-        mix.o.result_rotation >> rotation_1
         fractionate_float.o.floor >> from_
         fractionate_float.o.ceiling >> to
 

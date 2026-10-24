@@ -213,3 +213,20 @@ class TestOXDNAReading:
         pos3 = traj.position
 
         assert not np.allclose(pos2, pos3)
+
+    def test_session_pickle_roundtrip(self, file, tmp_path):
+        "The `.top` extension used to restore with Amber's parser and fail (#1253)"
+        session = mn.session.get_session()
+        traj = oxdna.OXDNA.load(file("holl_top_old"), file("holl_traj_old"))
+        blend_path = tmp_path / "test.blend"
+
+        session.pickle(blend_path)
+        session.clear()
+        session.load(blend_path)
+
+        restored = session.get(traj.uuid)
+        assert isinstance(restored, oxdna.OXDNA)
+        bpy.context.scene.frame_set(1)
+        pos1 = restored.position
+        bpy.context.scene.frame_set(2)
+        assert not np.allclose(pos1, restored.position)
