@@ -150,24 +150,28 @@ class DensityStyleWire(AssetGeometryGroup):
 
         named_attribute = g.NamedAttribute.float("radius")
         (
-            volume
-            >> g.VolumeToMesh(threshold=threshold)
-            >> g.DeleteGeometry.point(
-                selection=g.FaceArea().o.area.point.total(g.MeshIsland().o.island_index)
-                < hide_dust
-            )
-            >> g.StoreNamedAttribute.point.color(name="Color", value=color)
-            >> g.MeshToCurve()
-            >> g.CurveToMesh(
-                profile_curve=g.CurveCircle(
-                    resolution=wire_resolution, radius=wire_radius / 1000.0
-                ),
-                scale=named_attribute.o.exists.switch.float(
-                    1.0, named_attribute.o.attribute
-                ),
-                fill_caps=True,
-            )
-            >> g.SetMaterial(material=material)
+            (
+                volume
+                >> g.VolumeToMesh(threshold=threshold)
+                >> g.DeleteGeometry.point(
+                    selection=g.FaceArea().o.area.point.total(
+                        g.MeshIsland().o.island_index
+                    )
+                    < hide_dust
+                )
+                >> g.StoreNamedAttribute.point.color(name="Color", value=color)
+                >> g.MeshToCurve()
+                >> g.CurveToMesh(
+                    profile_curve=g.CurveCircle(
+                        resolution=wire_resolution, radius=wire_radius / 1000.0
+                    ),
+                    scale=named_attribute.o.exists.switch.float(
+                        1.0, named_attribute.o.attribute
+                    ),
+                    fill_caps=True,
+                )
+                >> g.SetMaterial(material=material)
+            ).o.geometry.set_bundle(volume.bundle())
             >> geometry
         )
 
