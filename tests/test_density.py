@@ -748,3 +748,26 @@ def test_cube_pyscf_aspirin(isolated_density_file):
     )
     assert mol.universe.atoms.elements.tolist() == ref.universe.atoms.elements.tolist()
     assert len(mol.universe.bonds) == len(ref.universe.bonds)
+
+
+def test_cube_datasets_load_as_numbered_grids(tmp_path):
+    from molecularnodes.entities.density.cube import count_datasets
+
+    shape = (4, 4, 4)
+    data = np.stack([np.full(shape, 1.0), np.full(shape, 2.0), np.full(shape, 3.0)])
+    path = _write_cube(
+        tmp_path / "orbitals.cube", data, [0, 0, 0], np.eye(3), dataset_ids=[4, 5, 6]
+    )
+    assert count_datasets(path) == 3
+    density = mn.entities.density.Grids.load(path, style=None)
+    assert len(density.files_vdb) == 3
+    assert density.vdb_path.endswith("_{index}.vdb")
+
+    # the orbitals of one file don't play over frames; Index picks them
+    with density.tree.reset() as (_, join):
+        for i in range(3):
+            density.import_volume(name=f"orbital {i}", index=i) >> join
+    point = [[1.0, 1.0, 1.0]]
+    for i in range(3):
+        values, _ = _sample_grid_at(density, point, grid_name=f"orbital {i}")
+        assert values[0] == pytest.approx(i + 1.0), i

@@ -57,6 +57,22 @@ class CubeFile:
     dataset_ids: list[int] = field(default_factory=list)
 
 
+def count_datasets(file: str | Path) -> int:
+    """
+    The number of datasets (such as orbitals) in a cube file, read from its header.
+    """
+    opener = gzip.open if str(file).endswith(".gz") else open
+    with opener(file, "rt") as f:
+        f.readline()
+        f.readline()
+        n_atoms = int(f.readline().split()[0])
+        if n_atoms >= 0:
+            return 1
+        for _ in range(3 + abs(n_atoms)):
+            f.readline()
+        return int(f.readline().split()[0])
+
+
 def read_cube(file: str | Path) -> CubeFile:
     """
     Read a cube file.
