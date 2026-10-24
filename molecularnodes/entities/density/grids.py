@@ -1,4 +1,5 @@
 import gzip
+import logging
 import os
 from pathlib import Path
 from typing import Sequence
@@ -15,6 +16,9 @@ from ...nodes.geometry import (
     ImportVolume,
 )
 from .base import Density
+from .cube import is_cube, read_cube
+
+logger = logging.getLogger(__name__)
 
 
 def cell_vectors(lengths, angles) -> np.ndarray:
@@ -84,6 +88,10 @@ class Grids(Density):
     See: https://www.mdanalysis.org/GridDataFormats/gridData/formats.html#supported-file-formats
     Plain: `.dx`, `.plt`, `.ccp4`, `.mrc`, `.map`, `.pickle`
     Compressed: `.dx.gz`, `.ccp4.gz`, `.ccp4.bz2`, `.mrc.gz`, `.mrc.bz2`, `.map.gz`, `.map.bz2`
+
+    Gaussian cube files (`.cube`, `.cub`, optionally gzipped) are read by
+    :func:`~molecularnodes.entities.density.cube.read_cube`, with Bohr converted to Å.
+    Only the first dataset of a cube file with several orbitals is loaded.
 
     It utilises `GridDataFormats` for file parsing, which is then converted into `openvdb` grids,
     that are written as `.vdb` files. The density's object is an empty mesh whose node tree
@@ -216,6 +224,9 @@ class Grids(Density):
         Returns an object with attributes: grid (np.ndarray), delta (np.ndarray),
         origin (np.ndarray), metadata (dict).
         """
+        if is_cube(file):
+            return self._parse_cube(file, metadata)
+
         # First attempt: GridDataFormats
         try:
             return Grid(file, file_format=file_format, metadata=metadata)
@@ -316,6 +327,31 @@ class Grids(Density):
             metadata=metadata,
         )
         grid.mn_axes = axes
+        return grid
+
+    @staticmethod
+    def _parse_cube(file: str, metadata: dict) -> Grid:
+        """
+        Build a grid from a Gaussian cube file.
+
+        The voxel axes, which may be sheared, are stored on the returned grid as
+        ``mn_axes`` (rows are the step in Å along each array axis).
+        """
+        cube = read_cube(file)
+        if len(cube.values) > 1:
+            logger.warning(
+                "Cube file '%s' holds %d datasets (orbitals %s); loading only the first",
+                file,
+                len(cube.values),
+                cube.dataset_ids,
+            )
+        grid = Grid(
+            grid=cube.values[0],
+            origin=cube.origin,
+            delta=np.linalg.norm(cube.axes, axis=1),
+            metadata=metadata,
+        )
+        grid.mn_axes = cube.axes
         return grid
 
     def _voxel_axes(self, file: str, gobj) -> np.ndarray:

@@ -19,7 +19,7 @@ def read_structure(
     """Open a structure file and return the appropriate reader for its format.
 
     Dispatches on the file suffix to the biotite-backed reader that can parse it
-    (mmCIF/BinaryCIF, PDB, or SDF/MOL). An in-memory ``BytesIO`` buffer is treated
+    (mmCIF/BinaryCIF, PDB, SDF/MOL, or the atoms of a Gaussian cube file). An in-memory ``BytesIO`` buffer is treated
     as BinaryCIF.
 
     Parameters
@@ -41,14 +41,18 @@ def read_structure(
         If the file format is not supported, or (as ``MultipleStructuresError``)
         the file holds several structures and no ``data_block`` was given.
     """
-    # imported lazily: pdb/pdbx/sdf import ReaderBase from this module
-    from . import pdb, pdbx, sdf
+    # imported lazily: pdb/pdbx/sdf/cube import ReaderBase from this module
+    from ..density.cube import is_cube
+    from . import cube, pdb, pdbx, sdf
 
     if isinstance(file_path, BytesIO):
         return pdbx.PDBXReader(file_path, data_block=data_block)
 
     if isinstance(file_path, str):
         file_path = Path(file_path)
+
+    if is_cube(file_path):
+        return cube.CubeReader(file_path)
 
     match file_path.suffix:
         case ".cif" | ".bcif":

@@ -633,3 +633,118 @@ def test_density_path_with_braces(tmp_path):
     assert density.vdb_path == density.file_vdb.replace("{", "{{").replace("}", "}}")
     values, _ = _sample_grid_at(density, RAMP_POINTS)
     assert np.allclose(values, RAMP_VALUES, atol=1e-3)
+
+
+# Gaussian cube files ---------------------------------------------------------------
+
+
+def _write_cube(path, data, origin, axes, angstrom=False, dataset_ids=None):
+    """Write a cube file; `data` is (n_datasets, n1, n2, n3), lengths in file units."""
+    data = np.asarray(data, dtype=float)
+    shape = data.shape[1:]
+    sign = -1 if angstrom else 1
+    n_atoms = -2 if dataset_ids else 2
+    lines = [
+        "comment one",
+        "comment two",
+        f"{n_atoms} " + " ".join(f"{v:.8f}" for v in origin),
+        *(
+            f"{sign * n} " + " ".join(f"{v:.8f}" for v in row)
+            for n, row in zip(shape, axes)
+        ),
+        "8 8.0 0.0 0.0 0.0",
+        "1 1.0 1.5 0.0 0.0",
+    ]
+    if dataset_ids:
+        lines.append(" ".join(str(x) for x in [len(dataset_ids), *dataset_ids]))
+    # datasets interleaved per voxel, last axis fastest
+    values = np.moveaxis(data, 0, -1).ravel()
+    lines += [
+        " ".join(f"{v:.6e}" for v in values[i : i + 6])
+        for i in range(0, values.size, 6)
+    ]
+    path.write_text("\n".join(lines) + "\n")
+    return path
+
+
+def test_read_cube_bohr_and_datasets(tmp_path):
+    from molecularnodes.entities.density.cube import BOHR_TO_ANGSTROM, read_cube
+
+    shape = (3, 4, 5)
+    origin = np.array([1.0, -2.0, 0.5])
+    axes = np.array([[0.4, 0.0, 0.0], [0.1, 0.5, 0.0], [0.0, 0.2, 0.6]])
+    data = np.stack([_linear_field(shape), -_linear_field(shape)])
+    path = _write_cube(tmp_path / "mo.cube", data, origin, axes, dataset_ids=[7, 8])
+
+    cube = read_cube(path)
+    assert cube.comments == ("comment one", "comment two")
+    assert cube.dataset_ids == [7, 8]
+    assert np.allclose(cube.values, data)
+    assert np.allclose(cube.origin, origin * BOHR_TO_ANGSTROM)
+    assert np.allclose(cube.axes, axes * BOHR_TO_ANGSTROM)
+    assert cube.atomic_numbers.tolist() == [8, 1]
+    assert np.allclose(cube.positions[1], [1.5 * BOHR_TO_ANGSTROM, 0, 0])
+
+
+def test_read_cube_angstrom(tmp_path):
+    from molecularnodes.entities.density.cube import read_cube
+
+    shape = (2, 3, 4)
+    axes = np.diag([0.3, 0.4, 0.5])
+    path = _write_cube(
+        tmp_path / "a.cube", _linear_field(shape)[None], [1, 2, 3], axes, angstrom=True
+    )
+    cube = read_cube(path)
+    assert cube.values.shape == (1, *shape)
+    assert np.allclose(cube.origin, [1, 2, 3])
+    assert np.allclose(cube.axes, axes)
+    assert np.allclose(cube.positions[1], [1.5, 0, 0])
+
+
+def test_read_cube_wrong_size(tmp_path):
+    from molecularnodes.entities.density.cube import read_cube
+
+    path = _write_cube(
+        tmp_path / "bad.cube", np.zeros((1, 2, 2, 2)), [0, 0, 0], np.eye(3)
+    )
+    path.write_text(path.read_text() + "1.0\n")
+    with pytest.raises(ValueError, match="holds 9 values"):
+        read_cube(path)
+
+
+def test_density_affine_transform_cube(tmp_path):
+    from molecularnodes.entities.density.cube import BOHR_TO_ANGSTROM
+
+    shape = (6, 7, 8)
+    origin = np.array([2.0, -1.0, 3.0])
+    axes = np.array([[1.0, 0.0, 0.0], [0.5, 1.0, 0.0], [0.2, 0.3, 1.2]])
+    path = _write_cube(
+        tmp_path / "sheared.cube", _linear_field(shape)[None], origin, axes
+    )
+    density = mn.entities.density.Grids.load(path, style=None)
+    origin = origin * BOHR_TO_ANGSTROM
+    axes = axes * BOHR_TO_ANGSTROM
+    assert np.allclose(density.axes, axes)
+
+    # the world position of a (fractional) voxel index holds the value at that index
+    ijk = np.array([[1.5, 2.25, 3.0], [4.0, 4.0, 4.0], [0.5, 6.0, 2.0], [0, 0, 0]])
+    values, _ = _sample_grid_at(density, origin + ijk @ axes)
+    assert np.allclose(values, ijk @ [1.0, 10.0, 100.0], atol=1e-3)
+
+
+def test_cube_pyscf_aspirin(isolated_density_file):
+    # aspirin HOMO from PySCF, made by docs/dev/pyscf_cubes.py
+    path = isolated_density_file(data_dir / "2244_homo.cube.gz")
+    density = mn.entities.density.Grids.load(path, style="density_iso_surface")
+    assert density.grid.grid.shape == (24, 24, 24)
+    # an orbital has both signs
+    assert density.grid.grid.min() < -0.1 < 0.1 < density.grid.grid.max()
+
+    # the atoms of the cube are the PubChem conformer they were computed from
+    mol = mn.Molecule.load(path)
+    ref = mn.Molecule.load(data_dir / "2244.sdf")
+    assert np.allclose(
+        mol.universe.atoms.positions, ref.universe.atoms.positions, atol=1e-4
+    )
+    assert mol.universe.atoms.elements.tolist() == ref.universe.atoms.elements.tolist()
+    assert len(mol.universe.bonds) == len(ref.universe.bonds)
