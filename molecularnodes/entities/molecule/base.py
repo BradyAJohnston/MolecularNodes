@@ -855,7 +855,7 @@ class Molecule(MolecularEntity):
         """Load a single structure file, or an MD topology + trajectory.
 
         With only ``topology`` given, it is treated as a single structure file
-        (``.pdb``/``.cif``/``.bcif``/``.sdf``/``.mol``) and routed through the biotite
+        (``.pdb``/``.cif``/``.bcif``/``.sdf``/``.mol``/``.cube``) and routed through the biotite
         reader and converter (see :meth:`from_file`). When ``coordinates`` is also
         given, the two are read as an MD topology and trajectory into an
         MDAnalysis ``Universe``.
@@ -911,7 +911,7 @@ class Molecule(MolecularEntity):
     ) -> "Molecule":
         """Load a single structure file into a Universe-backed entity.
 
-        The file (``.pdb``/``.cif``/``.bcif``/``.sdf``/``.mol``) is parsed by the biotite
+        The file (``.pdb``/``.cif``/``.bcif``/``.sdf``/``.mol``/``.cube``) is parsed by the biotite
         readers and converted into an MDAnalysis ``Universe`` via
         :func:`~molecularnodes.converters.universe_from_atoms`. Multi-model files become
         multi-frame universes. Biological assembly and entity/chain metadata parsed from
