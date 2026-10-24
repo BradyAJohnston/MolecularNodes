@@ -136,15 +136,19 @@ class DensityStyleSurface(AssetGeometryGroup):
         )
 
         (
-            volume
-            >> g.VolumeToMesh(threshold=threshold)
-            >> g.DeleteGeometry.point(
-                selection=g.FaceArea().o.area.point.total(g.MeshIsland().o.island_index)
-                < hide_dust
-            )
-            >> g.StoreNamedAttribute.point.color(name="Color", value=color)
-            >> g.SetMaterial(material=material)
-            >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
+            (
+                volume
+                >> g.VolumeToMesh(threshold=threshold)
+                >> g.DeleteGeometry.point(
+                    selection=g.FaceArea().o.area.point.total(
+                        g.MeshIsland().o.island_index
+                    )
+                    < hide_dust
+                )
+                >> g.StoreNamedAttribute.point.color(name="Color", value=color)
+                >> g.SetMaterial(material=material)
+                >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
+            ).o.mesh.set_bundle(volume.bundle())
             >> geometry
         )
 

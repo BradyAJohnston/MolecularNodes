@@ -127,6 +127,7 @@ from .group_pick_first import GroupPickFirst
 from .group_pick_index import GroupPickIndex
 from .group_pick_vector import GroupPickVector
 from .image_id import ImageID
+from .import_volume import ImportVolume
 from .index_distance import IndexDistance
 from .index_mix_color import IndexMixColor
 from .index_mix_float import IndexMixFloat
@@ -230,7 +231,6 @@ from .separate_first_point import SeparateFirstPoint
 from .separate_polymers import SeparatePolymers
 from .set_chi_angle import SetChiAngle
 from .set_color import SetColor
-from .set_geometry_volume import SetGeometryVolume
 from .set_nucleic_dihedral import SetNucleicDihedral
 from .set_phi_psi_angle import SetPhiPsiAngle
 from .set_ures_id import SetUResID
@@ -409,6 +409,7 @@ __all__ = (
     "GroupPickIndex",
     "GroupPickVector",
     "ImageID",
+    "ImportVolume",
     "IndexDistance",
     "IndexMixColor",
     "IndexMixFloat",
@@ -510,7 +511,6 @@ __all__ = (
     "SeparatePolymers",
     "SetChiAngle",
     "SetColor",
-    "SetGeometryVolume",
     "SetNucleicDihedral",
     "SetPhiPsiAngle",
     "SetUResID",

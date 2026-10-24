@@ -23,9 +23,9 @@ Load the grid as a density and show it with `Density Style ISO Surface`, which m
 ```{python}
 esp = mn.entities.density.Grids.load("../../tests/data/1brs_AD_apbs.dx.gz")
 
-with esp.tree.reset(input="Volume") as (volume, join):
+with esp.tree.reset() as (_, join):
     (
-        volume
+        esp.import_volume()
         >> mg.DensityStyleISOSurface(
             threshold=1.0,
             positive=(0.1, 0.3, 1.0, 1.0),
@@ -40,7 +40,7 @@ with esp.tree.reset(input="Volume") as (volume, join):
 
 ## Colour the surface
 
-Passing the density as `color` samples the potential at every vertex of the surface, from -5 kT/e (red) to 5 kT/e (blue). The density keeps its source volume in the `MN/Volume` bundle of its styled output, so it can be sampled while it shows its own style. The coordinates of 1BRS line up with the grid because pdb2pqr keeps the input coordinates.
+Passing the density as `color` samples the potential at every vertex of the surface, from -5 kT/e (red) to 5 kT/e (blue). The density's `Import Volume` node keeps the grid in the bundle of its output, and density styles pass it on to the mesh they make, so it can be sampled while the density shows its own style. The coordinates of 1BRS line up with the grid because pdb2pqr keeps the input coordinates.
 
 ```{python}
 mol = mn.Molecule.fetch("1BRS")

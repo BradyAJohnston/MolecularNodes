@@ -1,4 +1,5 @@
 import itertools
+from pathlib import Path
 import bpy
 import databpy
 import numpy as np
@@ -179,7 +180,33 @@ def _input_default(group_name, socket_name):
     )
 
 
-def _sample_grid_at(density, points_angstrom):
+def _grid_matrix(density, name="density"):
+    """The 4x4 transform Blender gives a density's grid, read with `Grid Info`."""
+    from nodebpy import TreeBuilder
+    from nodebpy import geometry as g
+
+    obj = bpy.data.objects.new("grid_matrix", bpy.data.meshes.new("grid_matrix"))
+    bpy.context.scene.collection.objects.link(obj)
+    tree = bpy.data.node_groups.new("grid_matrix", "GeometryNodeTree")
+    obj.modifiers.new("probe", "NODES").node_group = tree
+    with TreeBuilder(tree) as t:
+        result = t.outputs.geometry("Geometry")
+        grid = g.GetBundleItem.float(
+            g.ObjectInfo(density.object).o.geometry.bundle(),
+            f"MN Grid {name}",
+            structure_type="GRID",
+        )
+        (
+            g.Points(1)
+            >> g.StoreNamedAttribute.point.matrix(
+                name="matrix", value=g.GridInfo(grid.o.item).o.transform
+            )
+            >> result
+        )
+    return databpy.GeometrySet(obj).named_attribute("matrix")[0]
+
+
+def _sample_grid_at(density, points_angstrom, grid_name="density"):
     """Evaluate `Color Sample Grid` at points (Å) on a separate mesh object."""
     from nodebpy import TreeBuilder
     from nodebpy import geometry as g
@@ -194,7 +221,7 @@ def _sample_grid_at(density, points_angstrom):
     with TreeBuilder(tree) as t:
         geometry = t.inputs.geometry("Geometry")
         result = t.outputs.geometry("Geometry")
-        node = ColorSampleGrid(object=density.object)
+        node = ColorSampleGrid(object=density.object, grid_name=grid_name)
         (
             geometry
             >> g.StoreNamedAttribute.point.float(name="value", value=node.o.value)
@@ -224,9 +251,9 @@ def test_iso_surface_signed_threshold(tmp_path, threshold):
     data = 3.0 * blob(centres["positive"]) - 3.0 * blob(centres["negative"])
     path = _write_dx(tmp_path / "signed.dx", data, [x[0]] * 3, np.eye(3) * 0.5)
     density = mn.entities.density.Grids.load(path, style=None)
-    with density.tree.reset(input="Volume") as (volume, join):
+    with density.tree.reset() as (_, join):
         (
-            volume
+            density.import_volume()
             >> DensityStyleISOSurface(threshold=threshold)
             >> g.StoreNamedAttribute.point.vector(name="normal", value=g.Normal())
             >> join
@@ -268,12 +295,10 @@ def test_density_orthogonal_transform_unchanged(tmp_path):
     density = mn.entities.density.Grids.load(path, style=None)
     assert np.array_equal(density.axes, np.diag(delta))
 
-    density.object.data.grids.load()
-    grid = density.object.data.grids["density"]
     expected = np.eye(4)
     expected[:3, :3] = np.diag(delta * 0.1)
     expected[:3, 3] = origin * 0.1
-    assert np.allclose(np.array(grid.matrix_object), expected, atol=1e-7)
+    assert np.allclose(_grid_matrix(density), expected, atol=1e-7)
 
     bpy.utils.expose_bundled_modules()
     import openvdb as vdb  # type: ignore
@@ -297,12 +322,10 @@ def test_density_affine_transform_dx(tmp_path):
     density = mn.entities.density.Grids.load(path, style=None)
     assert np.allclose(density.axes, axes)
 
-    density.object.data.grids.load()
-    grid = density.object.data.grids["density"]
     expected = np.eye(4)
     expected[:3, :3] = axes.T * 0.1  # Blender's matrix holds the axes as columns
     expected[:3, 3] = origin * 0.1
-    assert np.allclose(np.array(grid.matrix_object), expected, atol=1e-7)
+    assert np.allclose(_grid_matrix(density), expected, atol=1e-7)
 
     # the world position of a (fractional) voxel index holds the value at that index
     ijk = np.array([[1.5, 2.25, 3.0], [4.0, 4.0, 4.0], [0.5, 6.0, 2.0], [0, 0, 0]])
@@ -424,7 +447,7 @@ def test_styled_density_keeps_volume_in_bundle(tmp_path):
     geometry = databpy.GeometrySet(density.object)
     assert geometry.volume is None
     assert geometry.mesh is not None
-    # but the grid is still there to sample, through the `MN/Volume` bundle
+    # but the grid is still there to sample, through the `MN Grid density` bundle item
     values, _ = _sample_grid_at(density, RAMP_POINTS)
     assert np.allclose(values, RAMP_VALUES, atol=1e-3)
 
@@ -440,26 +463,26 @@ def test_density_styles_joined_keep_volume(tmp_path):
     from molecularnodes.nodes.geometry import (
         DensityStyleISOSurface,
         DensityStyleSurface,
-        SetGeometryVolume,
+        ImportVolume,
     )
 
     density = _ramp_density(tmp_path, None)
-    with density.tree.reset(input="Volume") as (volume, join):
-        volume >> DensityStyleISOSurface(threshold=300.0) >> join
-        volume >> DensityStyleSurface(threshold=500.0) >> join
+    with density.tree.reset() as (_, join):
+        density.import_volume() >> DensityStyleISOSurface(threshold=300.0) >> join
+        density.import_volume() >> DensityStyleSurface(threshold=500.0) >> join
     # a third style added to the existing tree goes into the same join
     with density.tree as tree:
-        tree.atoms >> DensityStyleSurface(threshold=200.0) >> tree.join
+        density.import_volume() >> DensityStyleSurface(threshold=200.0) >> tree.join
 
     nodes = density.modifier_node_tree.nodes
-    keep = [
+    imports = [
         n
         for n in nodes
         if n.bl_idname == "GeometryNodeGroup"
-        and n.node_tree.name.startswith(SetGeometryVolume._name)
+        and n.node_tree.name.startswith(ImportVolume._name)
     ]
     joins = [n for n in nodes if n.bl_idname == "GeometryNodeJoinGeometry"]
-    assert len(keep) == 1 and len(joins) == 1
+    assert len(imports) == 3 and len(joins) == 1
     assert len(joins[0].inputs[0].links) == 3
     assert len(get_final_style_nodes(density.modifier_node_tree)) == 3
 
@@ -542,3 +565,71 @@ def test_apbs_1brs_example_grid(isolated_density_file):
     assert np.allclose(values, expected, atol=1.0)
     for name, value in zip(atoms, values):
         assert (value > 10) if "LYS" in name else (value < -10), (name, value)
+
+
+# importing volumes in the node tree --------------------------------------------------
+
+
+def _constant_dx(path, value, shape=(4, 4, 4)):
+    return _write_dx(path, np.full(shape, float(value)), [0, 0, 0], np.eye(3))
+
+
+def test_density_object_is_empty_mesh(tmp_path):
+    # the volume is imported by the node tree, not by an operator (#893)
+    density = _ramp_density(tmp_path, "density_surface")
+    assert density.object.type == "MESH"
+    assert len(density.object.data.vertices) == 0
+    assert len(density.named_attribute("position")) > 0
+
+
+def test_density_tree_has_no_input(tmp_path):
+    density = _ramp_density(tmp_path, None)
+    with density.tree.reset() as (unused, join):
+        assert unused is None
+        density.import_volume() >> join
+    inputs = [
+        item
+        for item in density.modifier_node_tree.interface.items_tree
+        if item.item_type == "SOCKET" and item.in_out == "INPUT"
+    ]
+    assert inputs == []
+    with pytest.raises(AttributeError, match="ImportVolume"):
+        density.tree.atoms
+
+
+def test_density_sequence_follows_frame(tmp_path):
+    # several files load into one density and play one per frame (#1100)
+    paths = [_constant_dx(tmp_path / f"frame_{i}.dx", 10 * (i + 1)) for i in range(3)]
+    density = mn.entities.density.Grids.load(paths, style=None, frame_start=5)
+    assert len(density.files_vdb) == 3
+    assert all(Path(f).exists() for f in density.files_vdb)
+    assert density.vdb_path.endswith("_{index}.vdb")
+
+    point = [[1.5, 1.5, 1.5]]
+    # before the start holds the first file, past the end holds the last
+    for frame, expected in [(1, 10), (5, 10), (6, 20), (7, 30), (20, 30)]:
+        bpy.context.scene.frame_set(frame)
+        values, _ = _sample_grid_at(density, point)
+        assert values[0] == pytest.approx(expected), frame
+
+
+def test_density_sequence_by_index(tmp_path):
+    paths = [_constant_dx(tmp_path / f"grid_{i}.dx", i + 1) for i in range(2)]
+    density = mn.entities.density.Grids.load(paths, style=None, follow_frame=False)
+    # two branches import different files, kept apart by their names
+    with density.tree.reset() as (_, join):
+        density.import_volume(name="first", index=0) >> join
+        density.import_volume(name="second", index=1) >> join
+    point = [[1.5, 1.5, 1.5]]
+    for name, expected in [("first", 1.0), ("second", 2.0)]:
+        values, _ = _sample_grid_at(density, point, grid_name=name)
+        assert values[0] == pytest.approx(expected), name
+
+
+def test_density_path_with_braces(tmp_path):
+    folder = tmp_path / "{index} dir"
+    folder.mkdir()
+    density = _ramp_density(folder, None)
+    assert density.vdb_path == density.file_vdb.replace("{", "{{").replace("}", "}}")
+    values, _ = _sample_grid_at(density, RAMP_POINTS)
+    assert np.allclose(values, RAMP_VALUES, atol=1e-3)

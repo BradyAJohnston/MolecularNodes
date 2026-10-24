@@ -1,15 +1,18 @@
 import gzip
 import os
 from pathlib import Path
+from typing import Sequence
 import bpy
 import databpy
 import numpy as np
 from gridData import Grid
+from ... import blender as bl
 from ...blender import coll
 from ...nodes.geometry import (
     DensityStyleISOSurface,
     DensityStyleSurface,
     DensityStyleWire,
+    ImportVolume,
 )
 from .base import Density
 
@@ -48,6 +51,11 @@ def cell_vectors(lengths, angles) -> np.ndarray:
     return vectors
 
 
+def _escape_format(path: str) -> str:
+    """Escape braces in a path, for the `Format String` node in `Import Volume`."""
+    return path.replace("{", "{{").replace("}", "}}")
+
+
 def _dx_delta(file: str) -> np.ndarray | None:
     """
     Read the full ``delta`` matrix from the header of an OpenDX file.
@@ -78,7 +86,9 @@ class Grids(Density):
     Compressed: `.dx.gz`, `.ccp4.gz`, `.ccp4.bz2`, `.mrc.gz`, `.mrc.bz2`, `.map.gz`, `.map.bz2`
 
     It utilises `GridDataFormats` for file parsing, which is then converted into `openvdb` grids,
-    that can be written as `.vdb` files and the imported into Blender as volumetric objects.
+    that are written as `.vdb` files. The density's object is an empty mesh whose node tree
+    imports them with `Import VDB`, so several files can load into one density and play
+    as an animation.
 
     Float64 data, which includes every `.dx` file, is written as a 32-bit float grid:
     Blender loads 64-bit grids as `DOUBLE` grids, which its grid nodes (Get Named Grid,
@@ -87,35 +97,70 @@ class Grids(Density):
 
     def __init__(
         self,
-        file_path: str | Path,
+        file_path: str | Path | Sequence[str | Path],
         center: bool = False,
         invert: bool = False,
         overwrite: bool = False,
     ):
-        super().__init__(file_path=file_path)
-        self.grid: Grid = None  # GridDataFormats Grid object
-        self.file_vdb = self.grid_to_vdb(
-            str(self.file_path), center=center, invert=invert, overwrite=overwrite
+        paths = [file_path] if isinstance(file_path, (str, Path)) else list(file_path)
+        if not paths:
+            raise ValueError("No grid files given")
+        super().__init__(file_path=paths[0])
+        self.file_paths: list[Path] = [bl.path_resolve(p) for p in paths]
+        self.grid: Grid = None  # GridDataFormats Grid object, of the first file
+        if len(self.file_paths) == 1:
+            targets = [None]
+        else:
+            # several files are written as numbered .vdb files next to the first,
+            # which `Import Volume` picks between by index
+            base = self.path_to_vdb(
+                str(self.file_paths[0]), center=center, invert=invert
+            ).removesuffix(".vdb")
+            targets = [f"{base}_{i}.vdb" for i in range(len(self.file_paths))]
+        self.files_vdb: list[str] = []
+        for path, target in reversed(list(zip(self.file_paths, targets))):
+            # converted last to first, so `grid` and `axes` describe the first file
+            self.files_vdb.insert(
+                0,
+                self.grid_to_vdb(
+                    str(path),
+                    center=center,
+                    invert=invert,
+                    overwrite=overwrite,
+                    file_vdb=target,
+                ),
+            )
+        self.file_vdb = self.files_vdb[0]
+        #: path for `Import Volume`, with `{index}` in place of the number when
+        #: there are several files
+        self.vdb_path = (
+            _escape_format(self.file_vdb)
+            if len(self.files_vdb) == 1
+            else _escape_format(base) + "_{index}.vdb"
         )
 
     @classmethod
     def load(
         cls,
-        file_path: str | Path,
+        file_path: str | Path | Sequence[str | Path],
         name: str | None = None,
         style: str | None = "density_surface",
         invert: bool = False,
         center: bool = False,
         overwrite: bool = False,
+        follow_frame: bool | None = None,
+        frame_start: int | None = None,
     ) -> "Grids":
-        """Load a density grid file and create its volumetric object.
+        """Load density grid files and create their density object.
 
         Parameters
         ----------
-        file_path : str | Path
-            Path to the grid file (see the class docstring for supported formats).
+        file_path : str | Path | Sequence[str | Path]
+            Path to the grid file (see the class docstring for supported formats), or
+            a list of paths to load as one density, such as the frames of an animation.
+            The `Index` input of the tree's `Import Density` node picks the grid shown.
         name : str | None, optional
-            Name for the created object. If None, the file name is used.
+            Name for the created object. If None, the name of the first file is used.
         style : str | None, optional
             The density style to apply, by default "density_surface". If None, no
             style is added.
@@ -125,6 +170,12 @@ class Grids(Density):
             Whether to center the density at the origin, by default False.
         overwrite : bool, optional
             Whether to overwrite an existing converted ``.vdb`` file, by default False.
+        follow_frame : bool | None, optional
+            Whether the scene frame picks the grid, playing the files as an animation
+            with one file per frame. Defaults to True when several files are given.
+        frame_start : int | None, optional
+            Scene frame that shows the first file when following the frame. Defaults
+            to the scene's start frame.
 
         Returns
         -------
@@ -140,9 +191,16 @@ class Grids(Density):
         density = cls(
             file_path=file_path, center=center, invert=invert, overwrite=overwrite
         )
-        density.create_object(name=name or Path(file_path).name, style=style)
+        density.create_object(
+            name=name or density.file_paths[0].name,
+            style=style,
+            follow_frame=len(density.files_vdb) > 1
+            if follow_frame is None
+            else follow_frame,
+            frame_start=frame_start,
+        )
         # record the source so the entity can be reloaded into a fresh session
-        density.object.mn.filepath = str(file_path)
+        density.object.mn.filepath = str(density.file_paths[0])
         return density
 
     def _parse_grid_with_fallback(
@@ -277,47 +335,106 @@ class Grids(Density):
         return np.diag(np.asarray(gobj.delta, dtype=float))
 
     def create_object(
-        self, name="NewDensity", style="density_surface"
+        self,
+        name="NewDensity",
+        style="density_surface",
+        follow_frame: bool = False,
+        frame_start: int | None = None,
     ) -> bpy.types.Object:
         """
-        Loads a grid into Blender as a volumetric object.
+        Create the density's object: an empty mesh whose node tree imports the grids.
+
+        The tree starts with an `Import Volume` node that reads the converted
+        ``.vdb`` files, followed by the style.
 
         Parameters
         ----------
         name : str, optional
             If not empty, renames the object with the new name. Default is "NewDensity".
         style : str, optional
-            The style of the density object. Default is "density_surface".
+            The style of the density object. Default is "density_surface". If None,
+            the imported volume is shown unstyled.
+        follow_frame : bool, optional
+            Whether the scene frame picks the grid, by default False.
+        frame_start : int | None, optional
+            Scene frame that shows the first grid when following the frame. Defaults
+            to the scene's start frame.
 
         Returns
         -------
         bpy.types.Object
-            The loaded volumetric object.
+            The density's object.
         """
-        # import and ensure object is at world origin to get corect alignment with
-        # structures
-        self.object = databpy.import_vdb(self.file_vdb, collection=coll.mn())
-        self.object.location = (0, 0, 0)
+        # an empty mesh at the world origin, so the grids line up with structures
+        self.object = databpy.create_object(
+            name=name or "NewDensity", collection=coll.mn()
+        )
         self.object.mn.entity_type = self._entity_type.value
-
-        threshold = float(np.quantile(self.grid.grid, 0.995))
 
         if name and name != "":
             self.name = name
 
-        if style is not None:
-            with self.tree.reset(input="Volume") as (volume, join):
-                (
-                    volume
-                    >> {
+        threshold = float(np.quantile(self.grid.grid, 0.995))
+        with self.tree.reset() as (_, join):
+            (
+                self.import_volume(follow_frame=follow_frame, frame_start=frame_start)
+                >> (
+                    None
+                    if style is None
+                    else {
                         "density_iso_surface": DensityStyleISOSurface,
                         "density_surface": DensityStyleSurface,
                         "density_wire": DensityStyleWire,
                     }[style](threshold=threshold)
-                    >> join
                 )
+                >> join
+            )
 
         return self.object
+
+    def import_volume(
+        self,
+        name: str = "density",
+        index: int = 0,
+        follow_frame: bool = False,
+        frame_start: int | None = None,
+    ) -> ImportVolume:
+        """
+        An `Import Volume` node that reads this density's ``.vdb`` files.
+
+        Start each branch of the density's tree with one, inside the tree:
+
+        >>> with density.tree.reset() as (_, join):
+        ...     density.import_volume() >> DensityStyleSurface() >> join
+
+        Parameters
+        ----------
+        name : str, optional
+            Name the grid is kept under for `Color Sample Grid`, by default "density".
+            Give each branch that imports a different grid its own name.
+        index : int, optional
+            Which of several files to import, when not following the frame.
+        follow_frame : bool, optional
+            Whether the scene frame picks the file, to play the files as an animation.
+        frame_start : int | None, optional
+            Scene frame that shows the first file when following the frame. Defaults
+            to the scene's start frame.
+
+        Returns
+        -------
+        ImportVolume
+            The node, added to the tree being built.
+        """
+        return ImportVolume(
+            path=self.vdb_path,
+            index=index,
+            follow_frame=follow_frame,
+            frame_start=bpy.context.scene.frame_start
+            if frame_start is None
+            else frame_start,
+            count=len(self.files_vdb),
+            name=name,
+        )
 
     def grid_to_vdb(
         self,
@@ -326,6 +443,7 @@ class Grids(Density):
         world_scale=0.1,
         center: bool = False,
         overwrite=False,
+        file_vdb: str | None = None,
     ) -> str:
         """
         Converts an grid file to a .vdb file using openvdb.
@@ -343,6 +461,8 @@ class Grids(Density):
             Whether to center the volume on the origin. Defaults to False.
         overwrite : bool, optional
             If True, the .vdb file will be overwritten if it already exists. Defaults to False.
+        file_vdb : str | None, optional
+            Path to write the .vdb file to. Defaults to one next to `file`, named after it.
 
         Returns
         -------
@@ -353,7 +473,7 @@ class Grids(Density):
         bpy.utils.expose_bundled_modules()
         import openvdb as vdb  # type: ignore
 
-        file_path = self.path_to_vdb(file, center=center, invert=invert)
+        file_path = file_vdb or self.path_to_vdb(file, center=center, invert=invert)
 
         file_format = None
         if file.endswith((".map", ".map.gz", ".map.bz2")):
@@ -387,6 +507,8 @@ class Grids(Density):
                 # have a wrong transform, so only reuse ones flagged as affine
                 and (orthogonal or ("MN_affine" in vdb_grid and vdb_grid["MN_affine"]))
                 and vdb_grid.valueTypeName != "double"
+                # numbered files of a sequence are reused only for the same source
+                and ("MN_source" not in vdb_grid or vdb_grid["MN_source"] == file)
             ):
                 return file_path
 
@@ -442,6 +564,7 @@ class Grids(Density):
         # been converted correctly
         vdb_grid["MN_invert"] = invert
         vdb_grid["MN_center"] = center
+        vdb_grid["MN_source"] = file
         if not orthogonal:
             vdb_grid["MN_affine"] = True
 

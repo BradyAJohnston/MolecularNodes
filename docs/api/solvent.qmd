@@ -95,9 +95,9 @@ d = mn.entities.density.Grids.load(
     overwrite=True,
 )
 
-with d.tree.reset() as (geo, join):
+with d.tree.reset() as (_, join):
     (
-        geo
+        d.import_volume()
         >> mg.DensityStyleISOSurface()
         >> g.SetMaterial(material=mn.material.Transparent().material)
         >> join
