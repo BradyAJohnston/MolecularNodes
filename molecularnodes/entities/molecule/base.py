@@ -1346,10 +1346,18 @@ class Molecule(MolecularEntity):
     ) -> np.typing.NDArray[np.bool_]:
         """A per-atom boolean mask from a selection.
 
-        Use it to index any attribute, combining masks with ``&``, ``|`` and ``~``::
+        Use it to index any attribute, combining masks with ``&``, ``|`` and ``~``.
+        Indexing an attribute writes the changed values back to Blender::
 
             mol["b_factor"][mol.select("resid 19:26")] = 1.0
             mask = mol.select("protein") & ~mol.select("name H*")
+
+        A new attribute has to be stored for every atom, such as with `np.where`::
+
+            mol["highlight"] = np.where(mol.select("resid 19:26"), 1.0, 0.0)
+            mol["is_site"] = mol.select("resid 19:26")
+
+        For the ``Color`` attribute, `set_color` also takes colour names.
 
         Parameters
         ----------
@@ -1384,49 +1392,6 @@ class Molecule(MolecularEntity):
         mask = np.zeros(self.universe.atoms.n_atoms, dtype=bool)
         mask[slice(None) if selection is None else selection] = True
         return mask
-
-    def set_attribute(
-        self,
-        name: str,
-        value,
-        selection: str | AtomGroup | np.ndarray | None = None,
-        atype: db.AttributeTypes | str | None = None,
-    ) -> None:
-        """Set an attribute's values for the selected atoms.
-
-        ::
-
-            mol.set_attribute("b_factor", 0.0, selection="not protein")
-
-        Parameters
-        ----------
-        name : str
-            Name of the attribute. A new attribute is created with zeros for the
-            atoms outside the selection, with its type inferred from ``value``.
-        value
-            A single value given to every selected atom, or for an existing
-            attribute an array with one value per selected atom.
-        selection : str | AtomGroup | np.ndarray | None
-            Atoms to set, as for `select`. None sets every atom.
-        atype : db.AttributeTypes | str | None
-            Type of a new attribute, such as ``"FLOAT_COLOR"`` for an RGBA value
-            that ``add_style(color=name)`` can read. None infers it from ``value``.
-            An existing attribute keeps its type.
-
-        Notes
-        -----
-        Attributes written on frame changes (see `frame_attributes`) are
-        overwritten on the next frame change.
-        """
-        mask = self.select(selection)
-        if name in self.list_attributes(drop_hidden=False):
-            # writes the changed values back to Blender
-            self[name][mask] = value
-            return
-        value = np.asarray(value)
-        data = np.zeros((len(mask), *value.shape), dtype=value.dtype)
-        data[mask] = value
-        self.store_named_attribute(data, name, atype=atype)
 
     def set_color(
         self,

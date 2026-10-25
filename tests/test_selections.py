@@ -155,26 +155,23 @@ def test_select_mask(fetch):
         mol.select("Color")
 
 
-def test_set_attribute(fetch):
+def test_select_indexing(fetch):
     mol = fetch("1BNA")
     mask = mol.select("resid 1:5")
     before = mol.named_attribute("b_factor")
 
-    mol.set_attribute("b_factor", 0.0, selection="resid 1:5")
+    # indexing an existing attribute writes back only the selected atoms
+    mol["b_factor"][mask] = 0.0
     after = mol.named_attribute("b_factor")
     assert np.all(after[mask] == 0.0)
     assert np.array_equal(after[~mask], before[~mask])
 
-    # one value per selected atom
-    mol.set_attribute("b_factor", np.arange(mask.sum()), selection=mask)
-    assert np.array_equal(mol.named_attribute("b_factor")[mask], np.arange(mask.sum()))
-
-    # a new attribute is zero outside the selection
-    mol.set_attribute("highlight", True, selection="resid 1:5")
+    # a new attribute is stored for every atom
+    mol["highlight"] = np.where(mask, 1.0, 0.0)
     assert np.array_equal(mol.named_attribute("highlight"), mask)
-    mol.set_attribute("tint", (1.0, 0.0, 0.0, 1.0), "resid 1:5", atype="FLOAT_COLOR")
-    assert mol.object.data.attributes["tint"].data_type == "FLOAT_COLOR"
-    assert np.all(mol.named_attribute("tint")[~mask] == 0.0)
+    mol["is_site"] = mask
+    assert mol.object.data.attributes["is_site"].data_type == "BOOLEAN"
+    assert np.array_equal(mol.select("is_site"), mask)
 
 
 def test_set_color(fetch):
