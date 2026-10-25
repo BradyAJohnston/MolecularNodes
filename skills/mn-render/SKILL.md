@@ -153,7 +153,11 @@ mol.add_style(
   its own geometry, so a cartoon or ribbon is cut at every boundary (blocky helix ends,
   stubs at the cuts). Add each style once and colour it from a per-atom attribute:
   ```python
-  mol["Color"][mol.universe.select_atoms("chainID A and resid 19-26").ix, :3] = (0.1, 0.7, 0.7)
+  mol["Color"][mol.universe.select_atoms("chainID A and resid 19-26").ix, :3] = (
+      0.1,
+      0.7,
+      0.7,
+  )
   # color=None reads Color; or store under another name and pass color="name"
   mol.add_style("cartoon")
   mol.add_style("sticks", selection="chainID A and resid 19-26")
