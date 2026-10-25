@@ -44,6 +44,14 @@ Without the `BLENDER_USER_EXTENSIONS` line, an installed MN extension's bundled 
 shadow the venv. `tests/conftest.py` does the same thing. Keep scratch scripts outside
 the repo.
 
+**Inside Blender with the installed extension** (`blender -b --python script.py`), the
+package is `import bl_ext.blender_org.molecularnodes as mn`; `import molecularnodes`
+fails there. Install headless with `blender --online-mode --command extension install
+--enable molecularnodes` (without `--online-mode` Blender refuses to reach the platform).
+Do not call `bpy.ops.wm.read_factory_settings()` to reset between renders: it has been
+reported to strip the extension's bundled wheels mid-run, so the next `Molecule.load()`
+fails on a missing biotite file. Delete the default objects by hand, or use one Blender
+process per render.
 Don't name a scratch script after a standard-library module (`inspect.py`, `code.py`,
 `types.py`, ...). Importing `bpy` imports that module, finds the script instead, and
 Blender initialises twice and aborts with `Check failed: !IsGoogleLoggingInitialized()`.
@@ -140,6 +148,23 @@ mol.add_style(
   chain), `"plddt"`, the name of an existing *colour* attribute, an RGBA sequence, or a
   callable returning a colour socket. Any other string warns and applies nothing (this
   replaced a silent black render). Arrays go on directly with `mol["Color"] = rgba_array`.
+- **Colouring part of a representation.** Do not add the same style once per selection
+  to colour regions (a cartoon per section, sticks per nucleotide): each style builds
+  its own geometry, so a cartoon or ribbon is cut at every boundary (blocky helix ends,
+  stubs at the cuts). Add each style once and colour it from a per-atom attribute:
+  ```python
+  mol["Color"][mol.universe.select_atoms("chainID A and resid 19-26").ix, :3] = (
+      0.1,
+      0.7,
+      0.7,
+  )
+  # color=None reads Color; or store under another name and pass color="name"
+  mol.add_style("cartoon")
+  mol.add_style("sticks", selection="chainID A and resid 19-26")
+  ```
+  A new attribute needs `atype="FLOAT_COLOR"`: `mol["name"] = rgba` infers a `FLOAT4`,
+  which `add_style` rejects (it warns and applies nothing). Cartoon colour follows the
+  backbone atoms, so colouring only side-chain atoms leaves the cartoon unchanged.
 - **Spheres in EEVEE.** Point clouds are ray-traced only by Cycles; on other engines
   `add_style` switches `StyleSpheres` from `sphere="Point"` to `"Instance"` for you.
   If you build the tree by hand, set `sphere="Instance"` or `"Mesh"` yourself, and use
@@ -254,6 +279,7 @@ This recipe gives clean, evenly lit figures from any viewpoint (used for the Ali
 Molecules PR):
 
 ```python
+import numpy as np
 from molecularnodes.nodes import geometry as mg
 
 canvas = mn.Canvas(
@@ -270,10 +296,11 @@ other.align_to(ref, fixed_selection="chainID A")  # onto the alpha chain
 
 mat = mn.material.AmbientOcclusion()  # one instance, shared by every style
 context, focus, moved = (0.6, 0.6, 0.63, 1), (0.35, 0.6, 0.95, 1), (1.0, 0.45, 0.1, 1)
-ref.add_style(
-    "cartoon", selection="protein and not chainID A", color=context, material=mat
-)
-ref.add_style("cartoon", selection="protein and chainID A", color=focus, material=mat)
+# one cartoon per molecule; the chain colours come from an attribute (section 6)
+rgba = np.tile(context, (ref.universe.atoms.n_atoms, 1))
+rgba[ref.universe.select_atoms("chainID A").ix] = focus
+ref.store_named_attribute(rgba, "chain_color", atype="FLOAT_COLOR")
+ref.add_style("cartoon", selection="protein", color="chain_color", material=mat)
 other.add_style("cartoon", selection="protein", color=moved, material=mat)
 # element colours for the haems, with carbons in their protein's colour
 for mol, carbon in ((ref, context), (other, moved)):
