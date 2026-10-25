@@ -343,6 +343,22 @@ Color matplotlib:
     or a Map Range node to colour an attribute such as `b_factor` over its own range. Each colormap is a Color Ramp
     of at most 32 stops fitted to matplotlib's colours, within about 1/255 for most maps; a few busy maps such as
     `gist_ncar`, `nipy_spectral` and `jet` lose some detail, noted in the frame next to each ramp inside the node.
+Color PyMOL:
+  description: >-
+    A named colour from PyMOL, with the value PyMOL gives it, so a scene can match a figure or session made in PyMOL.
+    Pick the group with `Category::Menu`, then the colour from that group's menu; the groups follow PyMOL's own Color
+    menu, with PyMOL's element colours as the `Elements` group. The colours are the same as `mol.set_color("pymol:salmon")`
+    from Python. PyMOL's values for some names differ from the CSS colours of the same name, such as `green` and
+    `orange`; `Color CSS::Node` has those.
+Color VMD:
+  description: >-
+    A named colour from VMD, with the value VMD gives it by default, in VMD's colour ID order (`blue` is ID 0). The
+    colours are the same as `mol.set_color("vmd:mauve")` from Python. VMD's values for some names differ from the CSS
+    colours of the same name, such as `gray` and `green`; `Color CSS::Node` has those.
+Color CSS:
+  description: >-
+    A named CSS colour, the colour names MolViewSpec and ChimeraX use. The colours are the same as
+    `mol.set_color("salmon")` from Python, where a name without a prefix is a CSS name.
 Color Mix Intermediate:
   description: >-
     Mix between two colors, potentially via an intermediate color. Use either linear or OKLab color spaces

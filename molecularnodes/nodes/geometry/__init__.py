@@ -52,6 +52,7 @@ from .color_attribute_map import ColorAttributeMap
 from .color_attribute_random import ColorAttributeRandom
 from .color_backbone import ColorBackbone
 from .color_common import ColorCommon
+from .color_css import ColorCSS
 from .color_element import ColorElement
 from .color_goodsell import ColorGoodsell
 from .color_matplotlib import ColorMatplotlib
@@ -59,12 +60,14 @@ from .color_mix_intermediate import ColorMixIntermediate
 from .color_oklab_mix import ColorOKLabMix
 from .color_oklab_offset import ColorOKLabOffset
 from .color_plddt import ColorPLDDT
+from .color_pymol import ColorPyMOL
 from .color_rainbow import ColorRainbow
 from .color_res_name import ColorResName
 from .color_sample_grid import ColorSampleGrid
 from .color_secondary_structure import ColorSecondaryStructure
 from .color_to_lch import ColorToLCh
 from .color_to_oklab import ColorToOKLab
+from .color_vmd import ColorVMD
 from .contains_geometry import ContainsGeometry
 from .cumulative_length import CumulativeLength
 from .curve_custom_profile import CurveCustomProfile
@@ -331,6 +334,7 @@ __all__ = (
     "ColorAttributeMap",
     "ColorAttributeRandom",
     "ColorBackbone",
+    "ColorCSS",
     "ColorCommon",
     "ColorElement",
     "ColorGoodsell",
@@ -339,12 +343,14 @@ __all__ = (
     "ColorOKLabMix",
     "ColorOKLabOffset",
     "ColorPLDDT",
+    "ColorPyMOL",
     "ColorRainbow",
     "ColorResName",
     "ColorSampleGrid",
     "ColorSecondaryStructure",
     "ColorToLCh",
     "ColorToOKLab",
+    "ColorVMD",
     "ContainsGeometry",
     "CumulativeLength",
     "CurveCustomProfile",

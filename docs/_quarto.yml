@@ -327,6 +327,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.ColorAttributeRandom
         children: embedded
+      - name: nodes.geometry.ColorCSS
+        children: embedded
       - name: nodes.geometry.ColorCommon
         children: embedded
       - name: nodes.geometry.ColorElement
@@ -342,6 +344,8 @@ quartodoc:
       - name: nodes.geometry.ColorOKLabOffset
         children: embedded
       - name: nodes.geometry.ColorPLDDT
+        children: embedded
+      - name: nodes.geometry.ColorPyMOL
         children: embedded
       - name: nodes.geometry.ColorRainbow
         children: embedded
@@ -857,6 +861,8 @@ quartodoc:
         desc: ''
       contents:
       - name: nodes.geometry.ColorToOKLab
+        children: embedded
+      - name: nodes.geometry.ColorVMD
         children: embedded
       - name: nodes.geometry.LChToOKLab
         children: embedded

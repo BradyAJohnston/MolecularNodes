@@ -514,19 +514,13 @@ class Molecule(MolecularEntity):
         "BB",
     )
 
-    def _sel_bool(self, selection: str) -> np.ndarray:
-        """Evaluate an MDAnalysis selection string to a per-atom boolean mask."""
-        return _ag_to_bool(self.universe.select_atoms(selection))
-
     def _compute_is_peptide(self) -> np.ndarray:
         # MDAnalysis' selection covers force field residue names (HIE, HSD, ...) and
         # the CCD names cover modified residues (HIC, MSE, ...)
         from biotite.structure.info import amino_acid_names
 
         is_ccd_amino_acid = _isin(self.atoms.resnames, list(amino_acid_names()))
-        return np.logical_or(
-            is_ccd_amino_acid, self._sel_bool("protein or (name BB SC*)")
-        )
+        return np.logical_or(is_ccd_amino_acid, self.select("protein or (name BB SC*)"))
 
     def _compute_is_polymer(self) -> np.ndarray:
         # amino acid and nucleotide residues, so that ligands and ions such as calcium
@@ -538,7 +532,7 @@ class Molecule(MolecularEntity):
             [
                 self._compute_is_peptide(),
                 is_ccd_nucleotide,
-                self._sel_bool("nucleic"),
+                self.select("nucleic"),
             ]
         )
 
@@ -679,7 +673,7 @@ class Molecule(MolecularEntity):
         for name, item in self._blender_attributes.items():
             try:
                 if isinstance(item, str):
-                    data = _ag_to_bool(self.universe.select_atoms(item))
+                    data = self.select(item)
                 elif callable(item):
                     data = item()
                 else:
@@ -1347,6 +1341,124 @@ class Molecule(MolecularEntity):
     def __repr__(self) -> str:
         return f"<Molecule, `universe`: {self.universe}, `object`: {self.object}"
 
+    def select(
+        self, selection: str | AtomGroup | np.ndarray | None = None
+    ) -> np.typing.NDArray[np.bool_]:
+        """A per-atom boolean mask from a selection.
+
+        Use it to index any attribute, combining masks with ``&``, ``|`` and ``~``::
+
+            mol["b_factor"][mol.select("resid 19:26")] = 1.0
+            mask = mol.select("protein") & ~mol.select("name H*")
+
+        Parameters
+        ----------
+        selection : str | AtomGroup | np.ndarray | None
+            A string names an existing boolean attribute, or is otherwise an
+            MDAnalysis selection phrase. An array is a boolean mask or atom indices.
+            None selects every atom.
+
+        Returns
+        -------
+        np.ndarray
+            Boolean mask, True for the selected atoms
+
+        Raises
+        ------
+        TypeError
+            If the string names an attribute that isn't boolean
+        """
+        if isinstance(selection, AtomGroup):
+            return _ag_to_bool(selection)
+        if isinstance(selection, str):
+            # an existing attribute is used directly, as in `add_style`
+            if selection in self.list_attributes(drop_hidden=False):
+                values = self.named_attribute(selection)
+                if values.dtype != bool:
+                    raise TypeError(
+                        f"Attribute '{selection}' is {values.dtype}, not a boolean "
+                        "attribute, so it can't be used as a selection"
+                    )
+                return values
+            return _ag_to_bool(self.universe.select_atoms(selection))
+        mask = np.zeros(self.universe.atoms.n_atoms, dtype=bool)
+        mask[slice(None) if selection is None else selection] = True
+        return mask
+
+    def set_attribute(
+        self,
+        name: str,
+        value,
+        selection: str | AtomGroup | np.ndarray | None = None,
+        atype: db.AttributeTypes | str | None = None,
+    ) -> None:
+        """Set an attribute's values for the selected atoms.
+
+        ::
+
+            mol.set_attribute("b_factor", 0.0, selection="not protein")
+
+        Parameters
+        ----------
+        name : str
+            Name of the attribute. A new attribute is created with zeros for the
+            atoms outside the selection, with its type inferred from ``value``.
+        value
+            A single value given to every selected atom, or for an existing
+            attribute an array with one value per selected atom.
+        selection : str | AtomGroup | np.ndarray | None
+            Atoms to set, as for `select`. None sets every atom.
+        atype : db.AttributeTypes | str | None
+            Type of a new attribute, such as ``"FLOAT_COLOR"`` for an RGBA value
+            that ``add_style(color=name)`` can read. None infers it from ``value``.
+            An existing attribute keeps its type.
+
+        Notes
+        -----
+        Attributes written on frame changes (see `frame_attributes`) are
+        overwritten on the next frame change.
+        """
+        mask = self.select(selection)
+        if name in self.list_attributes(drop_hidden=False):
+            # writes the changed values back to Blender
+            self[name][mask] = value
+            return
+        value = np.asarray(value)
+        data = np.zeros((len(mask), *value.shape), dtype=value.dtype)
+        data[mask] = value
+        self.store_named_attribute(data, name, atype=atype)
+
+    def set_color(
+        self,
+        color: str | Sequence[float],
+        selection: str | AtomGroup | np.ndarray | None = None,
+    ) -> None:
+        """Set the ``Color`` attribute of the selected atoms.
+
+        Styles added without a ``color`` show this attribute::
+
+            mol.set_color((0.1, 0.7, 0.7), selection="chainID A and resid 19:26")
+            mol.set_color("#00FFCC", "protein")
+            mol.set_color("pymol:slate", "chainID B")
+
+        Parameters
+        ----------
+        color : str | Sequence[float]
+            A hex string such as ``"#00FFCC"`` or a colour name such as
+            ``"salmon"`` or ``"pymol:slate"``, which are sRGB and converted to
+            linear (see `color.parse_color`), or linear RGB or RGBA from 0 to 1.
+            Colours without an alpha keep the atoms' current alpha.
+        selection : str | AtomGroup | np.ndarray | None
+            Atoms to color, as for `select`. None colors every atom.
+        """
+        from ... import color as mn_color
+
+        if isinstance(color, str):
+            color = mn_color.parse_color(color)
+        if len(color) not in (3, 4):
+            raise ValueError(f"Color must be RGB or RGBA, not {color}")
+        self["Color"][self.select(selection), : len(color)] = color
+
     def _resolve_style_selection(self, selection: str | AtomGroup | None) -> str | None:
         """Resolve an ``add_style`` selection to a boolean-attribute name (or None).
 
@@ -1399,8 +1511,9 @@ class Molecule(MolecularEntity):
         """Resolve `add_style`'s color argument into the `Set Color` node input.
 
         Returns ``None`` if no ``Set Color`` node should be added, which happens when
-        the argument names neither a known keyword nor an existing attribute.
+        the argument names neither a known keyword, an existing attribute nor a colour.
         """
+        from ... import color as mn_color
         from ...nodes import geometry as g
 
         # a callable is evaluated here, inside the tree context, so that it can build
@@ -1424,10 +1537,19 @@ class Molecule(MolecularEntity):
         ]
         if color in color_attributes:
             return NamedAttribute.color(color)
+        # otherwise a hex colour or colour name, such as "#00FFCC" or "pymol:slate"
+        try:
+            rgba = mn_color.parse_color(color)
+        except ValueError:
+            pass
+        else:
+            alpha = rgba[3] if len(rgba) == 4 else 1.0
+            return (*rgba[:3], alpha)
         warnings.warn(
-            f"Color '{color}' is neither a known color keyword {COLOR_KEYWORDS} nor a "
-            f"color attribute on this molecule (available: {color_attributes}). No "
-            "color will be applied. For coloring beyond the keywords, pass a callable "
+            f"Color '{color}' is neither a known color keyword {COLOR_KEYWORDS}, a "
+            f"color attribute on this molecule (available: {color_attributes}) nor a "
+            "hex color or color name (see `mn.color.parse_color`). No color will be "
+            "applied. For coloring beyond the keywords, pass a callable "
             "that builds the color nodes:\n"
             "    from molecularnodes.nodes import geometry as mg\n"
             "    mol.add_style('cartoon', color=lambda: mg.ColorRainbow())",
@@ -1496,6 +1618,9 @@ class Molecule(MolecularEntity):
               colored randomly per chain
             - ``"plddt"`` to color by pLDDT (B-factor) confidence
             - the name of an existing *color* attribute on the geometry
+            - a hex color or color name for a single uniform color, such as
+              ``"#00FFCC"``, ``"salmon"`` (CSS) or ``"pymol:slate"`` (see
+              `color.parse_color`)
             - an RGBA sequence of floats for a single uniform color
             - a zero-argument callable returning a color socket, evaluated inside the
               node tree context, e.g. ``lambda: mg.ColorRainbow()``. This is the way
