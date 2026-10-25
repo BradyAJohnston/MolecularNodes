@@ -219,6 +219,28 @@ def test_add_style_valid_color_adds_node(fetch, color):
     assert _nodes_using_tree(mol.modifier_node_tree, "Set Color")
 
 
+@pytest.mark.parametrize("color", ["pymol:slate", "slate", "salmon", "#00FFCC80"])
+def test_add_style_named_color(fetch, color):
+    mol = fetch("4ozs")
+    mol.add_style("cartoon", color=color)
+    (set_color,) = _nodes_using_tree(mol.modifier_node_tree, "Set Color")
+    expected = mn.color.parse_color(color)
+    if len(expected) == 3:
+        expected = (*expected, 1.0)
+    assert tuple(set_color.inputs["Color"].default_value) == pytest.approx(expected)
+
+
+def test_add_style_attribute_wins_over_color_name(fetch):
+    "An attribute named like a colour is read, not replaced by the named colour."
+    mol = fetch("4ozs")
+    mol.store_named_attribute(
+        mol.named_attribute("Color"), "salmon", atype="FLOAT_COLOR"
+    )
+    mol.add_style("cartoon", color="salmon")
+    (set_color,) = _nodes_using_tree(mol.modifier_node_tree, "Set Color")
+    assert set_color.inputs["Color"].links
+
+
 def test_add_style_callable_color(fetch):
     "A callable is evaluated inside the tree context, reaching any Color* node."
     from molecularnodes.nodes import geometry as mg

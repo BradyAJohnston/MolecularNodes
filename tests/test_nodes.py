@@ -36,7 +36,10 @@ from molecularnodes.nodes.geometry import (
     BreakBonds,
     BuildElasticNetwork,
     Charge,
+    ColorCSS,
+    ColorPyMOL,
     ColorToOKLab,
+    ColorVMD,
     EaseValue,
     FadeGeometry,
     FindBonds,
@@ -1259,6 +1262,49 @@ def test_color_matplotlib_matches_matplotlib(fetch, param, name):
         tolerance = _COLORMAP_LOSSY.get(name, 2.5)
     srgb = _evaluate_colormap(fetch, x, param, name)
     assert np.abs(srgb - cmap(x)[:, :3]).max() * 255 <= tolerance
+
+
+@pytest.mark.parametrize(
+    "node_class, prefix", [(ColorPyMOL, "pymol:"), (ColorVMD, "vmd:"), (ColorCSS, "")]
+)
+def test_named_color_nodes_match_parse_color(fetch, node_class, prefix):
+    """Every colour on the named colour nodes is the one `parse_color` gives."""
+    import inspect
+    from typing import Literal, get_args, get_origin
+
+    params = inspect.signature(node_class.__init__).parameters
+    menus = {
+        param.replace("_", " ").title(): [
+            name
+            for arg in get_args(p.annotation)
+            if get_origin(arg) is Literal
+            for name in get_args(arg)
+        ]
+        for param, p in params.items()
+        if param != "self"
+    }
+    mol = fetch("1BNA")
+    with mol.tree.reset() as (atoms, join):
+        node = node_class()
+        (
+            atoms
+            >> StoreNamedAttribute.point.color(name="named", value=node.o.color)
+            >> join
+        )
+    inputs = node.node.inputs
+    n_checked = 0
+    for menu, names in menus.items():
+        if menu == "Category":
+            continue
+        if "Category" in menus:
+            inputs["Category"].default_value = menu
+        for name in names:
+            inputs[menu].default_value = name
+            color = mol.named_attribute("named", evaluate=True)[0, :3]
+            expected = mn.color.parse_color(prefix + name)
+            assert np.allclose(color, expected, atol=1e-5), f"{menu}: {name}"
+            n_checked += 1
+    assert n_checked >= {ColorPyMOL: 190, ColorVMD: 33, ColorCSS: 148}[node_class]
 
 
 @pytest.mark.parametrize("mode", ["LINEAR", "B_SPLINE"])

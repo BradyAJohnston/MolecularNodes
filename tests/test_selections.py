@@ -135,3 +135,73 @@ def test_selections_node_in_add_style_callable(fetch):
         and n.node_tree.name == "Style Spheres"
     ][0]
     assert style.inputs["Selection"].links
+
+
+def test_select_mask(fetch):
+    mol = fetch("1BNA")
+    ag = mol.universe.select_atoms("chainID A and resid 1:5")
+    n_atoms = mol.universe.atoms.n_atoms
+
+    mask = mol.select("chainID A and resid 1:5")
+    assert mask.dtype == bool and mask.shape == (n_atoms,)
+    assert np.array_equal(np.flatnonzero(mask), ag.ix)
+    assert np.array_equal(mol.select(ag), mask)
+    assert np.array_equal(mol.select(ag.ix), mask)
+    assert np.array_equal(mol.select(mask), mask)
+    assert mol.select().all()
+    # an existing boolean attribute is read rather than parsed as a phrase
+    assert np.array_equal(mol.select("is_nucleic"), mol.named_attribute("is_nucleic"))
+    with pytest.raises(TypeError):
+        mol.select("Color")
+
+
+def test_select_indexing(fetch):
+    mol = fetch("1BNA")
+    mask = mol.select("resid 1:5")
+    before = mol.named_attribute("b_factor")
+
+    # indexing an existing attribute writes back only the selected atoms
+    mol["b_factor"][mask] = 0.0
+    after = mol.named_attribute("b_factor")
+    assert np.all(after[mask] == 0.0)
+    assert np.array_equal(after[~mask], before[~mask])
+
+    # a new attribute is stored for every atom
+    mol["highlight"] = np.where(mask, 1.0, 0.0)
+    assert np.array_equal(mol.named_attribute("highlight"), mask)
+    mol["is_site"] = mask
+    assert mol.object.data.attributes["is_site"].data_type == "BOOLEAN"
+    assert np.array_equal(mol.select("is_site"), mask)
+
+
+def test_set_color(fetch):
+    mol = fetch("1BNA")
+    mask = mol.select("chainID A and resid 1:5")
+    before = mol.named_attribute("Color")
+
+    # RGB keeps the current alpha
+    mol.set_color((0.1, 0.7, 0.7), selection="chainID A and resid 1:5")
+    after = mol.named_attribute("Color")
+    assert np.allclose(after[mask, :3], (0.1, 0.7, 0.7))
+    assert np.allclose(after[:, 3], before[:, 3])
+    assert np.allclose(after[~mask], before[~mask])
+
+    mol.set_color((1.0, 0.0, 0.0, 0.5), selection=mask)
+    assert np.allclose(mol.named_attribute("Color")[mask], (1.0, 0.0, 0.0, 0.5))
+
+    with pytest.raises(ValueError):
+        mol.set_color((1.0, 0.0))
+
+
+def test_set_color_hex(fetch):
+    mol = fetch("1BNA")
+    mask = mol.select("chainID A")
+    before = mol.named_attribute("Color")
+
+    mol.set_color("#00FFCC", selection="chainID A")
+    after = mol.named_attribute("Color")
+    assert np.allclose(after[mask, :3], mn.color.parse_color("#00FFCC"))
+    assert np.allclose(after[:, 3], before[:, 3])
+
+    mol.set_color("#FF000080", selection=mask)
+    assert np.allclose(mol.named_attribute("Color")[mask, 3], 128 / 255)
