@@ -2,7 +2,7 @@ import gc
 import os
 import re
 from pathlib import Path
-from typing import cast
+from typing import List, cast
 import bpy
 import MDAnalysis as mda
 import nodebpy
@@ -260,9 +260,11 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
     def draw(self, context):
         layout = self.layout
         assert layout
+        show_assembly = True
         if self.files:
             topologies, trajectories = self._split_dropped_files()
             if trajectories:
+                show_assembly = False
                 layout.label(
                     text=f"Importing {len(trajectories)} trajectory files",
                     icon="FILE_MOVIE",
@@ -316,7 +318,8 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         col = row.column()
         col.prop(self, "style")
         col.enabled = self.node_setup
-        layout.prop(self, "assembly")
+        if show_assembly and not self.trajectory:
+            layout.prop(self, "assembly")
 
     def invoke(self, context, event):
         prefs = addon_preferences()
