@@ -17,9 +17,19 @@ from ...utils import (
     frames_to_average,
     is_periodic_box,
     minimum_image_positions,
+    pca_dejitter,
+    rigid_group_fit,
 )
 
 logger = logging.getLogger(__name__)
+
+# atoms a residue is fitted on when it is carried rigidly onto the averaged
+# positions: the protein backbone, or the sugar ring of a nucleotide. Residues
+# with fewer than 3 of these are fitted on all of their atoms
+RIGID_REFERENCE_NAMES = {"N", "CA", "C", "C1'", "C2'", "C3'", "C4'", "O4'"}
+# atoms of the next residue that a residue is also fitted on when linked: the N
+# of the peptide bond, or the P of the phosphodiester bond
+RIGID_LINK_NAMES = ["N", "P"]
 
 
 def _ag_to_bool(ag: AtomGroup) -> np.typing.NDArray[np.bool_]:
@@ -442,7 +452,8 @@ class FrameManager:
                 means[name] = current[name]
                 continue
             cache = self.caches[name]
-            array = np.stack([cache[f] for f in window if f in cache])
+            frames = [f for f in window if f in cache]
+            array = np.stack([cache[f] for f in frames])
             if name == "position" and self.trajectory.correct_periodic:
                 # correct each frame against its (corrected) predecessor:
                 # consecutive frames are where the nearest-image assumption
@@ -455,8 +466,49 @@ class FrameManager:
                     array[i] = self.adjust_periodic_positions(
                         array[i - 1], array[i], frame
                     )
-            means[name] = np.mean(array, axis=0)
+            if self.trajectory.average_method == "PCA" and len(array) > 2:
+                means[name] = pca_dejitter(array, frames.index(frame))
+            else:
+                means[name] = np.mean(array, axis=0)
+            if name == "position" and self.trajectory.average_rigid:
+                groups, reference, links = self._rigid_groups()
+                means[name] = rigid_group_fit(
+                    array[frames.index(frame)],
+                    means[name],
+                    groups,
+                    reference,
+                    links if self.trajectory.average_rigid_linked else None,
+                )
         return means
+
+    def _rigid_groups(
+        self,
+    ) -> tuple[np.ndarray, np.ndarray, tuple[np.ndarray, np.ndarray]]:
+        """Residue of each atom (as 0..n-1), the atoms each residue is fitted
+        on when carried rigidly onto the averaged positions, and the atoms of
+        the next residue in the same segment that link to it, as `(atom
+        indices, residue)`."""
+        cached = getattr(self, "_rigid_groups_cache", None)
+        if cached is not None:
+            return cached
+        atoms = self.trajectory.atoms
+        _, groups = np.unique(atoms.resindices, return_inverse=True)
+        try:
+            names = atoms.names
+        except NoDataError:
+            names = np.full(len(atoms), "", dtype=object)
+        reference = _isin(names, list(RIGID_REFERENCE_NAMES))
+        n_reference = np.bincount(groups[reference], minlength=groups.max() + 1)
+        reference |= n_reference[groups] < 3
+        link = np.flatnonzero(_isin(names, RIGID_LINK_NAMES) & (groups > 0))
+        # residues are numbered in order, so the previous group is the previous
+        # residue; only link within a segment, so separate chains stay apart
+        segments = atoms.segindices
+        first_of_group = np.unique(groups, return_index=True)[1]
+        previous_segment = segments[first_of_group][groups[link] - 1]
+        link = link[segments[link] == previous_segment]
+        self._rigid_groups_cache = (groups, reference, (link, groups[link] - 1))
+        return self._rigid_groups_cache
 
     def position_cache_mean(self, frame: int) -> np.ndarray:
         """Get mean positions from cached frames, see `cache_mean`."""

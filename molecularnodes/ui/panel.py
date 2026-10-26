@@ -215,7 +215,15 @@ def layout_trajectory_playback(
     row.prop(obj.mn, "update_with_scene")
     row = playback.row()
     col = row.column()
-    col.prop(obj.mn, "average")
+    subrow = col.row(align=True)
+    subrow.prop(obj.mn, "average")
+    subrow.prop(obj.mn, "average_method", text="")
+    subrow = col.row(align=True)
+    subrow.prop(obj.mn, "average_rigid")
+    subsubrow = subrow.row(align=True)
+    subsubrow.prop(obj.mn, "average_rigid_linked", text="Link")
+    subsubrow.enabled = obj.mn.average_rigid
+    subrow.enabled = obj.mn.average > 0
     col.prop(obj.mn, "subframes")
     # the offset shifts where playback starts on the timeline, so it only
     # applies when updating with the scene

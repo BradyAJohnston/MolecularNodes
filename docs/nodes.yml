@@ -839,6 +839,18 @@ Ease Value:
     `Overshoot::Float` shapes `Back`, and `Period::Float` and `Amplitude::Float` shape `Elastic`. With
     `Clamp::Boolean` off the curve is evaluated outside 0..1 and the output can leave the `From`..`To`
     range.
+PCA Dejitter:
+  description: >-
+    Remove frame-to-frame jitter from a `Value::Vector` field, such as the position, while keeping its main
+    motion. A simulation zone keeps each point's value over the last 4 frames. Each frame of that window is
+    treated as one sample of a principal component analysis, and the current frame is rebuilt with the
+    components faded out from the first (kept in full) to the last (dropped), adapted from SideFX's
+    [PCA De-Jitter tutorial](https://www.sidefx.com/tutorials/pca-dejitter/) for Houdini. Plain averaging over the same frames blurs real motion and lags behind it. The smoothed
+    value is captured on the output `Geometry::Geometry` as `Value::Vector`; pipe it into a Set Position
+    node to smooth the atoms. The history only builds up during forward playback (or a bake). The point
+    count must stay the same between frames. Molecules have the same smoothing on the Python side, which
+    also works when scrubbing: set `Average` to the number of frames on either side and the method to `PCA`.
+
 Stagger Value:
   description: >-
     Spread a 0..1 `Value::Float` across points so that each `ID::Integer` makes its own 0..1 transition,

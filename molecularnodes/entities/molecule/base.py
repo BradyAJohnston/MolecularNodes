@@ -190,6 +190,16 @@ class Molecule(MolecularEntity):
         Frame offset for playback
     average : int
         Number of frames to average (smoothing)
+    average_method : str
+        How the frames are averaged: ``"MEAN"`` for their mean, or ``"PCA"`` to
+        keep the window's dominant motion and remove frame-to-frame jitter
+    average_rigid : bool
+        Carry each residue of the current frame rigidly onto the averaged
+        positions, fitted on its backbone, so averaging keeps bond lengths and
+        side chains don't pass through each other
+    average_rigid_linked : bool
+        Also fit each residue on the next residue's N (or P), so neighbouring
+        residues are placed with the bond between them in mind
     correct_periodic : bool
         Apply periodic boundary corrections
     interpolate : bool
@@ -216,6 +226,9 @@ class Molecule(MolecularEntity):
     subframes = IntObjectMNProperty("subframes", validate_fn=_validate_non_negative)
     offset = IntObjectMNProperty("offset")
     average = IntObjectMNProperty("average", validate_fn=_validate_non_negative)
+    average_method = StringObjectMNProperty("average_method")
+    average_rigid = BoolObjectMNProperty("average_rigid")
+    average_rigid_linked = BoolObjectMNProperty("average_rigid_linked")
     correct_periodic = BoolObjectMNProperty("correct_periodic")
     interpolate = BoolObjectMNProperty("interpolate")
 
@@ -623,6 +636,9 @@ class Molecule(MolecularEntity):
         self.subframes = 0
         self.offset = 0
         self.average = 0
+        self.average_method = "MEAN"
+        self.average_rigid = False
+        self.average_rigid_linked = False
         self.correct_periodic = False
         self.interpolate = False
 

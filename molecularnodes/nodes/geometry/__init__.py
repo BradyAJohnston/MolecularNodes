@@ -185,6 +185,7 @@ from .oxdna_realize_vectors import OxDNARealizeVectors
 from .oxdna_recover_vectors import OxDNARecoverVectors
 from .oxdna_style_classic import OxDNAStyleClassic
 from .oxdna_vectors import OxDNAVectors
+from .pca_dejitter import PCADejitter
 from .peptide_chi import PeptideChi
 from .peptide_dihedral import PeptideDihedral
 from .periodic_array import PeriodicArray
@@ -468,6 +469,7 @@ __all__ = (
     "OxDNARecoverVectors",
     "OxDNAStyleClassic",
     "OxDNAVectors",
+    "PCADejitter",
     "PeptideChi",
     "PeptideDihedral",
     "PeriodicArray",

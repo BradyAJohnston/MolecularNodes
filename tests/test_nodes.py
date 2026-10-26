@@ -48,6 +48,7 @@ from molecularnodes.nodes.geometry import (
     NucleicDihedral,
     OKLabToColor,
     OrientToBestView,
+    PCADejitter,
     PeptideChi,
     PeptideDihedral,
     PeriodicArray,
@@ -1135,6 +1136,38 @@ def test_color_to_oklab(fetch, rgb):
     back = mol.named_attribute("rgb", evaluate=True)[0, :3]
     assert np.allclose(lab, OKLAB_REFERENCE[rgb], atol=1e-3), lab
     assert np.allclose(back, rgb, atol=1e-4), back
+
+
+def test_pca_dejitter_matches_numpy():
+    """Played forward, the node gives what `pca_dejitter` gives on the last 4
+    frames of the trajectory, and the raw value until there is any history."""
+    mol = mn.Molecule(mda.Universe(PSF, DCD))
+    with mol.tree.reset() as (atoms, join):
+        dejitter = PCADejitter(geometry=atoms)
+        (
+            dejitter
+            >> StoreNamedAttribute.point.vector(
+                name="dejittered", value=dejitter.o.value
+            )
+            >> join
+        )
+    scene = bpy.context.scene
+    frame_start, frame_current = scene.frame_start, scene.frame_current
+    scene.frame_start = 0
+    raw = []
+    try:
+        for frame in range(8):
+            scene.frame_set(frame)
+            raw.append(mol.named_attribute("position"))
+            dejittered = mol.named_attribute("dejittered", evaluate=True)
+            if frame == 0:
+                assert np.allclose(dejittered, raw[0], atol=1e-5)
+        expected = mn.utils.pca_dejitter(np.stack(raw[-4:]), 3)
+        assert not np.allclose(dejittered, raw[-1], atol=1e-3)
+        assert np.allclose(dejittered, expected, atol=1e-4)
+    finally:
+        scene.frame_start = frame_start
+        scene.frame_set(frame_current)
 
 
 def _simulate_two_point_network(mol, frames: int):

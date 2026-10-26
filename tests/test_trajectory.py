@@ -1518,3 +1518,163 @@ class TestPeriodicTriclinic:
             )
             assert np.allclose(shown, expected, atol=1e-5)
         traj.correct_periodic = False
+
+
+class TestPCADejitter:
+    @pytest.fixture(scope="class")
+    def adk(self):
+        from MDAnalysis.tests.datafiles import DCD, PSF
+
+        return mda.Universe(PSF, DCD)
+
+    def test_molecule_average_pca(self, adk):
+        traj = mn.entities.Molecule(adk)
+        traj.update_with_scene = False
+        traj.frame = 50
+        traj.average = 3
+        pos_mean = traj.position
+        traj.average_method = "PCA"
+        frames = np.stack(
+            [traj.frame_manager._position_at_frame(f) for f in range(47, 54)]
+        )
+        assert not np.allclose(traj.position, pos_mean)
+        assert np.allclose(traj.position, mn.utils.pca_dejitter(frames, 3))
+
+    def test_removes_jitter_from_trajectory(self, adk):
+        # jitter added to a window of a real trajectory: PCA gets closer to the
+        # original frame than both the jittered frame and the window mean
+        clean = np.stack([adk.atoms.positions.copy() for _ in adk.trajectory[40:49]])
+        rng = np.random.default_rng(0)
+        noisy = clean + rng.normal(scale=0.3, size=clean.shape).astype(np.float32)
+        error_raw = np.abs(noisy[4] - clean[4]).mean()
+        error_mean = np.abs(noisy.mean(axis=0) - clean[4]).mean()
+        error_pca = np.abs(mn.utils.pca_dejitter(noisy, 4) - clean[4]).mean()
+        assert error_pca < error_raw
+        assert error_pca < error_mean
+
+    @pytest.fixture
+    def motion(self):
+        # atoms moving along one direction by an amount that curves in time, so
+        # the window mean lags behind the true position while PCA can keep it
+        rng = np.random.default_rng(0)
+        base = rng.normal(size=(100, 3)).astype(np.float32)
+        direction = rng.normal(size=(100, 3)).astype(np.float32)
+        amount = np.array([0.0, 0.1, 0.4, 0.9, 1.6, 2.5, 3.6], dtype=np.float32)
+        return base + amount[:, None, None] * direction, rng
+
+    def test_keeps_clean_motion(self, motion):
+        clean, _ = motion
+        result = mn.utils.pca_dejitter(clean, 3)
+        assert result.shape == clean[3].shape
+        assert result.dtype == clean.dtype
+        assert np.allclose(result, clean[3], atol=1e-4)
+
+    def test_removes_jitter(self, motion):
+        clean, rng = motion
+        noisy = clean + rng.normal(scale=0.05, size=clean.shape).astype(np.float32)
+        error_raw = np.abs(noisy[3] - clean[3]).mean()
+        error_mean = np.abs(noisy.mean(axis=0) - clean[3]).mean()
+        error_pca = np.abs(mn.utils.pca_dejitter(noisy, 3) - clean[3]).mean()
+        assert error_pca < error_raw
+        assert error_pca < error_mean
+
+
+class TestRigidResidues:
+    def test_fit_recovers_rigid_motion(self):
+        from scipy.spatial.transform import Rotation
+
+        rng = np.random.default_rng(0)
+        current = rng.normal(size=(30, 3))
+        groups = np.repeat(np.arange(3), 10)
+        reference = np.ones(30, dtype=bool)
+        reference[[3, 4, 15]] = False
+        rotations = Rotation.random(3, random_state=1)
+        shifts = rng.normal(size=(3, 3)) * 5
+        target = np.concatenate(
+            [rotations[i].apply(current[groups == i]) + shifts[i] for i in range(3)]
+        )
+        assert np.allclose(
+            mn.utils.rigid_group_fit(current, target, groups, reference), target
+        )
+
+    def test_fit_keeps_group_shape(self):
+        rng = np.random.default_rng(0)
+        current = rng.normal(size=(20, 3))
+        groups = np.repeat(np.arange(2), 10)
+        target = current + rng.normal(scale=0.5, size=current.shape)
+        moved = mn.utils.rigid_group_fit(
+            current, target, groups, np.ones(20, dtype=bool)
+        )
+        for i in range(2):
+            a, b = current[groups == i], moved[groups == i]
+            assert np.allclose(
+                np.linalg.norm(a[:, None] - a, axis=-1),
+                np.linalg.norm(b[:, None] - b, axis=-1),
+            )
+
+    @pytest.mark.parametrize("method", ["MEAN", "PCA"])
+    def test_molecule_keeps_residue_bonds(self, method):
+        from MDAnalysis.tests.datafiles import DCD, PSF
+
+        universe = mda.Universe(PSF, DCD)
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        traj.frame = 50
+        raw = traj.position
+        traj.average = 3
+        traj.average_method = method
+        averaged = traj.position
+        traj.average_rigid = True
+        rigid = traj.position
+
+        bonds = universe.bonds.indices
+        resindices = universe.atoms.resindices
+        within = resindices[bonds[:, 0]] == resindices[bonds[:, 1]]
+
+        def bond_error(positions):
+            lengths = np.linalg.norm(
+                positions[bonds[:, 0]] - positions[bonds[:, 1]], axis=1
+            )
+            raw_lengths = np.linalg.norm(raw[bonds[:, 0]] - raw[bonds[:, 1]], axis=1)
+            return np.abs(lengths - raw_lengths)
+
+        # bonds inside a residue keep their length exactly, those between
+        # residues (fitted separately) only approximately
+        assert bond_error(rigid)[within].max() < 1e-5
+        assert bond_error(averaged)[within].max() > 1e-2
+        assert bond_error(rigid).mean() < bond_error(averaged).mean()
+        # the residues still follow the averaged positions, not the raw frame
+        ca = universe.select_atoms("name CA").indices
+        assert (
+            np.abs(rigid[ca] - averaged[ca]).mean()
+            < np.abs(raw[ca] - averaged[ca]).mean()
+        )
+
+    def test_linked_residues(self):
+        from MDAnalysis.tests.datafiles import DCD, PSF
+
+        universe = mda.Universe(PSF, DCD)
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        groups, _, (link, link_groups) = traj.frame_manager._rigid_groups()
+        # each residue after the first gives its N to the residue before it
+        assert len(link) == universe.residues.n_residues - 1
+        assert np.all(universe.atoms.names[link] == "N")
+        assert np.array_equal(link_groups, groups[link] - 1)
+
+        traj.frame = 50
+        raw = traj.position
+        traj.average = 3
+        traj.average_method = "PCA"
+        traj.average_rigid = True
+        unlinked = traj.position
+        traj.average_rigid_linked = True
+        linked = traj.position
+        assert not np.allclose(linked, unlinked)
+
+        bonds = universe.bonds.indices
+        resindices = universe.atoms.resindices
+        within = resindices[bonds[:, 0]] == resindices[bonds[:, 1]]
+        lengths = np.linalg.norm(linked[bonds[:, 0]] - linked[bonds[:, 1]], axis=1)
+        raw_lengths = np.linalg.norm(raw[bonds[:, 0]] - raw[bonds[:, 1]], axis=1)
+        assert np.abs(lengths - raw_lengths)[within].max() < 1e-5

@@ -596,6 +596,33 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         min=0,
         soft_max=4,
     )
+    average_method: EnumProperty(  # type: ignore
+        name="Average Method",
+        description="How the frames on either side of the current frame are averaged",
+        items=(
+            ("MEAN", "Mean", "The mean of the frames, which also blurs real motion"),
+            (
+                "PCA",
+                "PCA",
+                "Principal component analysis of the frames, keeping their dominant "
+                "motion and removing frame-to-frame jitter",
+            ),
+        ),
+        default="MEAN",
+        update=_update_entities,
+    )
+    average_rigid: BoolProperty(  # type: ignore
+        name="Rigid Residues",
+        description="Move each residue of the current frame rigidly onto the averaged positions, fitted on its backbone (or nucleotide sugar), so bonds keep their length and side chains don't pass through each other. Side chains keep their own motion relative to the backbone",
+        default=False,
+        update=_update_entities,
+    )
+    average_rigid_linked: BoolProperty(  # type: ignore
+        name="Link Residues",
+        description="Also fit each residue on the N (or nucleotide P) of the next residue in its chain, so neighbouring residues are placed with the bond between them in mind",
+        default=False,
+        update=_update_entities,
+    )
     correct_periodic: BoolProperty(  # type: ignore
         name="Correct",
         description="Correct for periodic boundary crossing when using interpolation or averaging, moving atoms to the nearest periodic image. Works with orthorhombic and triclinic unit cells",

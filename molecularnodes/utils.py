@@ -177,6 +177,114 @@ def frames_to_average(
     return frames
 
 
+def pca_dejitter(frames: np.ndarray, index: int) -> np.ndarray:
+    """Smooth one frame of a window by PCA across the window's frames.
+
+    Each frame of the window, flattened, is one sample. The frame at `index` is
+    projected onto the window's principal components, the weights of the
+    components are faded out linearly from the first (kept in full) to the last
+    (dropped), and the frame is rebuilt from them. The dominant motion of the
+    window survives while frame-to-frame jitter, spread over the later
+    components, is removed. With every weight at zero this is the window mean.
+
+    Adapted from the PCA De-Jitter tutorial for Houdini by SideFX:
+    https://www.sidefx.com/tutorials/pca-dejitter/
+
+    Parameters
+    ----------
+    frames : np.ndarray
+        Values for each frame of the window, shape `(n_frames, ...)`.
+    index : int
+        Index into `frames` of the frame to smooth.
+
+    Returns
+    -------
+    np.ndarray
+        The smoothed frame, with the shape and dtype of `frames[index]`.
+    """
+    samples = frames.reshape(len(frames), -1).astype(np.float64)
+    mean = samples.mean(axis=0)
+    _, _, components = np.linalg.svd(samples - mean, full_matrices=False)
+    # centring leaves at most n_frames - 1 components that carry anything
+    components = components[: len(frames) - 1]
+    weights = components @ (samples[index] - mean)
+    weights *= np.linspace(1.0, 0.0, len(components))
+    smoothed = mean + weights @ components
+    return smoothed.reshape(frames.shape[1:]).astype(frames.dtype)
+
+
+def rigid_group_fit(
+    current: np.ndarray,
+    target: np.ndarray,
+    groups: np.ndarray,
+    reference: np.ndarray,
+    extra_reference: tuple[np.ndarray, np.ndarray] | None = None,
+) -> np.ndarray:
+    """Move each group of `current` rigidly onto `target`.
+
+    For every group the rotation and translation that best superimpose its
+    `reference` points in `current` onto the same points in `target` (Kabsch)
+    are applied to all of the group's points. The shape of each group is kept
+    from `current` while its placement follows `target`, so averaging `target`
+    over frames can't shorten bonds or pass atoms of a group through each other.
+
+    Parameters
+    ----------
+    current : np.ndarray
+        Positions to move, shape `(n, 3)`.
+    target : np.ndarray
+        Positions to fit onto, shape `(n, 3)`.
+    groups : np.ndarray
+        Group of each point as integers `0..n_groups-1`, shape `(n,)`.
+    reference : np.ndarray
+        Boolean mask of the points each group is fitted on, shape `(n,)`. Every
+        group needs at least one; with one the group is only translated.
+    extra_reference : tuple[np.ndarray, np.ndarray] | None, optional
+        Points of other groups to also fit a group on, as `(point indices,
+        groups)`, such as the next residue's N so neighbouring residues agree
+        on the bond between them.
+
+    Returns
+    -------
+    np.ndarray
+        The moved positions, with the shape and dtype of `current`.
+    """
+    n_groups = int(groups.max()) + 1
+    ref_index = np.flatnonzero(reference)
+    ref_groups = groups[ref_index]
+    if extra_reference is not None:
+        ref_index = np.concatenate([ref_index, extra_reference[0]])
+        ref_groups = np.concatenate([ref_groups, extra_reference[1]])
+    counts = np.bincount(ref_groups, minlength=n_groups)[:, None]
+    p = current[ref_index].astype(np.float64)
+    q = target[ref_index].astype(np.float64)
+
+    def centroid(values):
+        return np.stack(
+            [np.bincount(ref_groups, values[:, i], n_groups) for i in range(3)],
+            axis=1,
+        ) / np.maximum(counts, 1)
+
+    p_centre = centroid(p)
+    q_centre = centroid(q)
+    p = p - p_centre[ref_groups]
+    q = q - q_centre[ref_groups]
+    covariance = np.empty((n_groups, 3, 3))
+    for i in range(3):
+        for j in range(3):
+            covariance[:, i, j] = np.bincount(ref_groups, p[:, i] * q[:, j], n_groups)
+    u, _, vt = np.linalg.svd(covariance)
+    # flip the last axis where needed so each fit is a rotation, not a reflection
+    sign = np.sign(np.linalg.det(np.einsum("gji,gkj->gik", vt, u)))
+    vt[:, 2, :] *= np.where(sign == 0, 1.0, sign)[:, None]
+    rotation = np.einsum("gji,gkj->gik", vt, u)
+    moved = (
+        np.einsum("nij,nj->ni", rotation[groups], current - p_centre[groups])
+        + q_centre[groups]
+    )
+    return moved.astype(current.dtype)
+
+
 # data types for the np.array that will store per-chain symmetry operations
 
 
