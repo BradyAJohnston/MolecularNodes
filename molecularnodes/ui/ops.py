@@ -1,8 +1,10 @@
 import gc
 import os
+import re
 from pathlib import Path
 from typing import cast
 import bpy
+import MDAnalysis as mda
 import nodebpy
 from biotite import InvalidFileError
 from bpy.props import (
@@ -35,12 +37,36 @@ from ..utils import _increase_view_distance
 from .pref import addon_preferences
 from .style import STYLE_ITEMS
 
+# MD file formats accepted when dropped into the viewport. Trajectory files hold
+# only coordinates, so they are paired with the single other (topology) file
+# dropped alongside them; topology files dropped on their own are read with
+# MDAnalysis when they carry coordinates (e.g. a `.gro`)
+MD_TOPOLOGY_EXTENSIONS = {".gro", ".tpr", ".psf", ".prmtop", ".parm7", ".data"}
+MD_TRAJECTORY_EXTENSIONS = {
+    ".xtc",
+    ".trr",
+    ".dcd",
+    ".nc",
+    ".ncdf",
+    ".mdcrd",
+    ".lammpstrj",
+    ".h5md",
+}
+
+
+def _natural_key(path: Path) -> list:
+    """Sort key ordering `md_2.xtc` before `md_10.xtc`."""
+    return [int(t) if t.isdigit() else t.lower() for t in re.split(r"(\d+)", path.name)]
+
 
 class MN_FH_Import_Molecule(bpy.types.FileHandler):
     bl_idname = "MN_FH_import_molecule"
     bl_label = "File handler for import molecular data files."
     bl_import_operator = "mn.import_molecule"
-    bl_file_extensions = ".pdb;.cif;.mmcif;.bcif;.pdbx;.xyz"
+    bl_file_extensions = ";".join(
+        [".pdb", ".cif", ".mmcif", ".bcif", ".pdbx", ".xyz"]
+        + sorted(MD_TOPOLOGY_EXTENSIONS | MD_TRAJECTORY_EXTENSIONS)
+    )
 
     @classmethod
     def poll_drop(cls, context):
@@ -235,8 +261,21 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         layout = self.layout
         assert layout
         if self.files:
-            layout.label(text=f"Importing {len(self.files)} molecules")
-            if len(self.files) > 1:
+            topologies, trajectories = self._split_dropped_files()
+            if trajectories:
+                layout.label(
+                    text=f"Importing {len(trajectories)} trajectory files",
+                    icon="FILE_MOVIE",
+                )
+                if len(topologies) != 1:
+                    layout.label(
+                        text="Drop exactly one topology file with the trajectory",
+                        icon="ERROR",
+                    )
+                layout.prop(self, "additional_arguments")
+            else:
+                layout.label(text=f"Importing {len(self.files)} molecules")
+            if len(self.files) > 1 and not trajectories:
                 layout.prop(self, "share_node_group")
                 layout.prop(self, "objects_only")
         else:
@@ -466,20 +505,81 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         _increase_view_distance()
         return {"FINISHED"}
 
+    def _split_dropped_files(self) -> tuple[list[Path], list[Path]]:
+        """The dropped files split into topology/structure files and MD
+        trajectory files, the trajectories in natural filename order."""
+        paths = [Path(self.directory, file.name) for file in self.files]
+        trajectories = sorted(
+            (p for p in paths if p.suffix.lower() in MD_TRAJECTORY_EXTENSIONS),
+            key=_natural_key,
+        )
+        topologies = [p for p in paths if p not in trajectories]
+        return topologies, trajectories
+
+    def _execute_dropped_trajectory(
+        self, context, topology: Path, trajectories: list[Path]
+    ):
+        """Import a dropped topology with one or more trajectory files, which
+        MDAnalysis chains together into a single trajectory."""
+        try:
+            mol = Molecule.load(
+                topology,
+                trajectories[0] if len(trajectories) == 1 else trajectories,
+                **self._universe_kwargs(),
+            )
+        except Exception as e:
+            self.report({"ERROR"}, f"Failed importing {topology.name}: {e}")
+            return {"CANCELLED"}
+        self.apply_import_options(mol)
+
+        n_frames = int(mol.props.n_frames)
+        if n_frames > 1:
+            context.scene.frame_start = 0
+            context.scene.frame_end = n_frames
+        self.report(
+            {"INFO"},
+            message=(
+                f"Imported '{topology.name}' as {mol.name} with {n_frames} frames "
+                f"from {len(trajectories)} trajectory files"
+            ),
+        )
+        _increase_view_distance()
+        return {"FINISHED"}
+
     def _execute_dropped_files(self, context):
-        """Import each structure file dropped into the viewport."""
+        """Import each structure file dropped into the viewport, or a topology
+        with its trajectory files when any are dropped."""
+        topologies, trajectories = self._split_dropped_files()
+        if trajectories:
+            if len(topologies) != 1:
+                names = ", ".join(p.name for p in topologies) or "none"
+                self.report(
+                    {"ERROR"},
+                    "Trajectory files need exactly one topology file dropped "
+                    f"with them (got: {names})",
+                )
+                return {"CANCELLED"}
+            return self._execute_dropped_trajectory(
+                context, topologies[0], trajectories
+            )
+
         imported = 0
         shared_tree = None
         session = get_session(context)
-        for file in self.files:
+        for path in topologies:
             try:
-                for mol in _load_structures(Path(self.directory, file.name)):
+                if path.suffix.lower() in MD_TOPOLOGY_EXTENSIONS:
+                    # an MD topology with its own coordinates (e.g. a `.gro`)
+                    mols = [Molecule(mda.Universe(path), name=path.name)]
+                else:
+                    mols = _load_structures(path)
+                for mol in mols:
                     shared_tree = self._setup_molecule(mol, shared_tree)
                     if self.objects_only:
                         session.remove_entity(mol.uuid)
                     imported += 1
             except Exception as e:
-                self.report({"WARNING"}, message=f"Failed importing {file.name}: {e}")
+                self.report({"WARNING"}, message=f"Failed importing {path.name}: {e}")
 
         if imported == 0:
             return {"CANCELLED"}

@@ -187,6 +187,54 @@ def test_op_import_folder_objects_only(tmp_path):
     assert session.match(objects[0]) is entity
 
 
+def test_op_dropped_topology_and_trajectories():
+    """Dropping a topology with several trajectory files chains them together."""
+    session = bpy.context.scene.MNSession
+    md_dir = data_dir / "md_ppr"
+    # the topology is listed last and the trajectory twice, as a drop can be in
+    # any order and a run split over several files reads as one trajectory
+    names = ["first_5_frames.xtc", "first_5_frames.xtc", "box.gro"]
+
+    with ObjectTracker() as o:
+        res = bpy.ops.mn.import_molecule(
+            directory=str(md_dir),
+            files=[{"name": name} for name in names],
+            style="ribbon",
+        )
+        assert res == {"FINISHED"}
+        objects = o.new_objects()
+
+    assert len(objects) == 1
+    mol = session.match(objects[0])
+    assert mol.name == "box.gro"
+    assert int(mol.props.n_frames) == 10
+    assert len(mol.universe.trajectory.filenames) == 2
+
+
+def test_op_dropped_trajectory_needs_one_topology():
+    """Trajectory files without exactly one topology file are not imported."""
+    md_dir = data_dir / "md_ppr"
+    for names in (["first_5_frames.xtc"], ["box.gro", "md.gro", "first_5_frames.xtc"]):
+        with ObjectTracker() as o:
+            with pytest.raises(RuntimeError, match="exactly one topology file"):
+                bpy.ops.mn.import_molecule(
+                    directory=str(md_dir), files=[{"name": name} for name in names]
+                )
+            assert not o.new_objects()
+
+
+def test_op_dropped_md_topology_alone():
+    """A dropped `.gro` on its own is read as a single-frame MD structure."""
+    session = bpy.context.scene.MNSession
+    with ObjectTracker() as o:
+        res = bpy.ops.mn.import_molecule(
+            directory=str(data_dir / "md_ppr"), files=[{"name": "box.gro"}]
+        )
+        assert res == {"FINISHED"}
+        objects = o.new_objects()
+    assert session.match(objects[0]).name == "box.gro"
+
+
 def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
     bpy.context.scene.frame_set(0)
 
