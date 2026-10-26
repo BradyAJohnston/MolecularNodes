@@ -2,7 +2,7 @@ import gc
 import os
 import re
 from pathlib import Path
-from typing import List, cast
+from typing import cast
 import bpy
 import MDAnalysis as mda
 import nodebpy
