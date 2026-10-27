@@ -49,6 +49,7 @@ from .helpers import (
 from .selections import SelectionManager
 
 if TYPE_CHECKING:
+    from ...scene.layers import RenderLayer
     from ..density import Density
 
 logger = logging.getLogger(__name__)
@@ -155,6 +156,14 @@ def add_style_to_tree(
             >> style_node
             >> tree.join
         )
+
+
+def _resolve_layer(layer: "int | str | RenderLayer") -> int:
+    from ...scene.layers import RenderLayers
+
+    scene = bpy.context.scene
+    assert scene is not None
+    return RenderLayers(scene).resolve(layer)
 
 
 class Molecule(MolecularEntity):
@@ -1605,6 +1614,7 @@ class Molecule(MolecularEntity):
         color: "str | Sequence[float] | Callable | Density | None" = None,
         assembly: bool = False,
         name: str | None = None,
+        layer: "int | str | RenderLayer | None" = None,
         **kwargs,
     ) -> "Molecule":
         """
@@ -1685,6 +1695,13 @@ class Molecule(MolecularEntity):
         name : str | None, optional
             Optional label for the added style node, shown in the node editor and
             style lists. Default is None.
+
+        layer : int | str | RenderLayer | None, optional
+            Render layer to draw the style on, through a ``Set Render Layer``
+            node: a layer index, a layer name, or a layer from
+            ``canvas.layers``. None (default) draws it on every layer. For
+            part of a style, add ``Set Render Layer`` with a selection in the
+            tree instead.
 
         **kwargs : optional
             Additional keyword arguments passed to the style node, matching that
@@ -1772,6 +1789,7 @@ class Molecule(MolecularEntity):
             *self._style_color_groups(color),
             g.ColorSampleGrid if color_by_density else None,
             g.AssemblyInstance if assembly else None,
+            g.SetRenderLayer if layer is not None else None,
         ]
         link_asset_groups([group for group in groups if group is not None])
 
@@ -1812,8 +1830,20 @@ class Molecule(MolecularEntity):
                     if assembly
                     else None
                 )
+                >> (
+                    g.SetRenderLayer(layer=_resolve_layer(layer))
+                    if layer is not None
+                    else None
+                )
                 >> tree.join
             )
+
+        if layer is not None:
+            from ...scene.layers import RenderLayers
+
+            scene = bpy.context.scene
+            assert scene is not None
+            RenderLayers(scene).sync()
 
         return self
 

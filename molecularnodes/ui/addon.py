@@ -25,11 +25,18 @@ from bpy.props import CollectionProperty, PointerProperty
 from .. import assets, session
 from ..handlers import render_pre_handler, update_entities
 from ..nodes import handlers as node_handlers
+from ..scene import layers
 from ..templates import register_templates_menu, unregister_templates_menu
+from . import layers as layers_ui
 from . import ops, panel, pref, props
 
 all_classes = (
-    panel.CLASSES + ops.CLASSES + props.CLASSES + pref.CLASSES + session.CLASSES
+    panel.CLASSES
+    + ops.CLASSES
+    + props.CLASSES
+    + pref.CLASSES
+    + session.CLASSES
+    + layers_ui.CLASSES
 )
 
 _is_registered = False
@@ -75,6 +82,7 @@ def register():
     frame_change_pre.append(update_entities)
     render_pre.append(render_pre_handler)
     blend_import_post.append(node_handlers.node_asset_import_post)
+    layers.register()
 
     # attributes registered onto Blender types are unknown to the bpy stubs, and
     # are read elsewhere through molecularnodes.blender.registered
@@ -125,6 +133,7 @@ def unregister():
     frame_change_pre.remove(update_entities)
     render_pre.remove(render_pre_handler)
     blend_import_post.remove(node_handlers.node_asset_import_post)
+    layers.unregister()
     node_handlers.unregister_pending()
 
     session._remove_draw_handlers(filepath=None)

@@ -22,6 +22,7 @@ from ..utils import _UNSET, Unset, suppress_stdout, temp_override_properties
 from .camera import Camera, Viewpoint
 from .compositor import CompositorTree, add_view_layer_aov, setup_compositor
 from .engines import EEVEE, Cycles
+from .layers import RenderLayers
 from .recorder import _ANIMATION_FORMATS, FrameRecorder, _resolve_format, _write_gif
 from .world import WorldTree
 
@@ -520,6 +521,20 @@ class Canvas:
         if self._compositor is None:
             self._compositor = CompositorTree(self.scene)
         return self._compositor
+
+    @property
+    def layers(self) -> RenderLayers:
+        """
+        The render layers of the scene: groups of styles rendered separately
+        and composited in order, such as outlined cartoon under a partially
+        transparent, outlined surface.
+
+        Returns
+        -------
+        molecularnodes.scene.layers.RenderLayers
+            The scene's render layers.
+        """
+        return RenderLayers(self.scene)
 
     @property
     def world(self) -> WorldTree:
