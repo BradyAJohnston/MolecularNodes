@@ -1,6 +1,6 @@
 import warnings
 from abc import ABC
-from typing import Literal
+from typing import Literal, cast
 import bpy
 from .render import enable_optimal_gpu
 
@@ -101,7 +101,7 @@ class Cycles(RenderEngine):
 
     @device.setter
     def device(self, value: _CyclesDeviceTypes):
-        value = value.upper()
+        value = cast(_CyclesDeviceTypes, value.upper())
         self.engine.device = value
         if value == "GPU":
             try:

@@ -14,7 +14,7 @@ from .assembly import AssemblyParser
 from .reader import ReaderBase
 
 
-class PDBReader(ReaderBase):
+class PDBReader(ReaderBase[pdb.PDBFile]):
     extra_fields = ["b_factor", "occupancy", "charge", "atom_id"]
     _extra_annotations = {}
 
@@ -22,7 +22,7 @@ class PDBReader(ReaderBase):
     def set_extra_annotations(annotations, array, file):
         return array
 
-    def read(self, file_path):
+    def read(self, file_path) -> pdb.PDBFile:
         return pdb.PDBFile.read(file_path)
 
     def get_structure(self, model: int | None = None):

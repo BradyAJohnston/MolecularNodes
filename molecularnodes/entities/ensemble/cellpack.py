@@ -4,6 +4,7 @@ import bpy
 from nodebpy.builder import TreeBuilder
 from ... import blender as bl
 from ... import material
+from ...blender.registered import object_props
 from ...nodes import geometry
 from ..utilities import create_object
 from .base import Ensemble, EntityType
@@ -11,9 +12,10 @@ from .reader import CellPackReader
 
 
 class CellPack(Ensemble):
+    _entity_type = EntityType.ENSEMBLE_CELLPACK
+
     def __init__(self, file_path: str | Path) -> None:
         super().__init__(file_path)
-        self._entity_type = EntityType.ENSEMBLE_CELLPACK
         self.file = CellPackReader(file_path)
         self.transformations = self.file.get_assemblies()
 
@@ -48,8 +50,11 @@ class CellPack(Ensemble):
         if node_setup:
             # a new group rather than `TreeBuilder.geometry(name)`, which would
             # build into an existing group of the same name from an earlier import
-            tree = bpy.data.node_groups.new(
-                f"MN_pack_instance_{name}", "GeometryNodeTree"
+            tree = cast(
+                bpy.types.GeometryNodeTree,
+                bpy.data.node_groups.new(
+                    f"MN_pack_instance_{name}", "GeometryNodeTree"
+                ),
             )
             with TreeBuilder.geometry(tree) as instance_tree:
                 atoms = instance_tree.inputs.geometry("Atoms")
@@ -66,7 +71,7 @@ class CellPack(Ensemble):
                 name=mol_id,
                 collection=collection,
             )
-            obj.mn.entity_type = self._entity_type.value
+            object_props(obj).entity_type = self._entity_type.value
 
             if node_setup:
                 mod = cast(

@@ -1,8 +1,15 @@
 import logging
+from typing import TYPE_CHECKING, Any
 import MDAnalysis as mda
 import numpy as np
 from MDAnalysis.analysis.dssp import DSSP, translate
-from ..base import EntityType, MolecularEntity
+from MDAnalysis.analysis.results import Results
+from MDAnalysis.core.groups import AtomGroup, ResidueGroup
+from ..base import EntityType
+
+if TYPE_CHECKING:
+    from ...ui.props import DSSPProperties
+    from .base import Molecule
 
 logger = logging.getLogger(__name__)
 
@@ -17,32 +24,36 @@ class DSSPCalculation:
     Uses `MDAnalysis.analysis.dssp`.
     """
 
-    def __init__(self, entity: MolecularEntity):
+    def __init__(self, entity: "Molecule"):
         self._entity = entity
-        self._DSSP = None
-        self._dssp_atoms = None
+        self._DSSP: DSSP | None = None
+        self._dssp_atoms: AtomGroup | None = None
         self._dssp_trajectory = None
-        self._protein_residues = None
-        self._dssp_residues = None
-        self._dssp_results = None
-        self._trajectory_average = None
-        self._dssp_resindices = None
+        self._protein_residues: ResidueGroup | None = None
+        self._dssp_residues: ResidueGroup | None = None
+        self._dssp_results: Results | None = None
+        self._trajectory_average: np.ndarray | None = None
+        self._dssp_resindices: np.ndarray | None = None
         self._dssp_vmap = np.vectorize({"H": 1, "E": 2, "-": 3}.get)
-        self._props = None
         self._display_option = "none"
         self._window_size = 5
-        self._ta_threshold = None
-        self._sw_threshold = None
-        self._no_sec_struct = None
+        self._ta_threshold: float | None = None
+        self._sw_threshold: float | None = None
+        self._no_sec_struct: np.ndarray | None = None
         self._restore_failed = False
+
+    @property
+    def _props(self) -> "DSSPProperties":
+        return self._entity.props.dssp
 
     def _set_dssp_resindices(self, resids: list) -> None:
         """Internal: Set resindices for DSSP resids"""
         if self._dssp_resindices is None:
+            assert self._dssp_residues is not None
             mask = np.isin(self._dssp_residues.resids, resids)
             self._dssp_resindices = self._dssp_residues.resindices[mask]
 
-    def _get_sliding_window_indices(self, index: int) -> None:
+    def _get_sliding_window_indices(self, index: int) -> np.ndarray:
         """Internal: Get sliding window indices based on current index"""
         half = self._window_size // 2
         indices = np.arange(index - half, index + half + 1)
@@ -50,7 +61,7 @@ class DSSPCalculation:
         mask = (indices >= 0) & (indices < n)
         return indices[mask]
 
-    def _run_dssp(self, window: list) -> DSSP:
+    def _run_dssp(self, window: list | np.ndarray) -> Results | None:
         """Internal: Run DSSP for a subset of frames"""
         trajectory = self._entity.universe.trajectory
         # save current frame
@@ -65,7 +76,7 @@ class DSSPCalculation:
             trajectory[current_frame]
         return dssp_results
 
-    def _calculate_sec_struct(self, universe: mda.Universe) -> np.ndarray:
+    def _calculate_sec_struct(self, universe: mda.Universe) -> np.ndarray | None:
         """Internal: Calculate secondary structures on frame change event"""
         if self._display_option == "none" or self._DSSP is None:
             return self._no_sec_struct
@@ -99,12 +110,13 @@ class DSSPCalculation:
         dssp_ints = self._dssp_vmap(dssp_chars)
         # start from protein - 3 (loop), rest - 0 (none) so that protein
         # residues outside the DSSP selection are still drawn as loops
+        assert universe.atoms is not None and self._protein_residues is not None
         attribute_data = np.zeros(len(universe.atoms), dtype=int)
         attribute_data[self._protein_residues.resindices] = 3
         attribute_data[self._dssp_resindices] = dssp_ints
         return attribute_data[universe.atoms.resindices]
 
-    def _set_prop(self, name: str, value: any) -> None:
+    def _set_prop(self, name: str, value: Any) -> None:
         """Internal: Set the property value only when different"""
         if getattr(self._props, name) != value:
             setattr(self._props, name, value)
@@ -160,8 +172,10 @@ class DSSPCalculation:
         reader was replaced (e.g. by `load_new` when the session is saved), as
         it reads frames through the reader it was created with"""
         if self._dssp_trajectory is not self._entity.universe.trajectory:
+            assert self._dssp_atoms is not None
             self._DSSP = DSSP(self._dssp_atoms)
             self._dssp_trajectory = self._entity.universe.trajectory
+        assert self._DSSP is not None
         return self._DSSP
 
     @property
@@ -189,11 +203,11 @@ class DSSPCalculation:
         """Internal: Set up DSSP and add the `sec_struct` calculation"""
         universe = self._entity.universe
         self._setup_dssp(selection)
-        self._props = self._entity.props.dssp
         self._set_prop("selection", selection)
         # calculate no secondary structs attribute
         # protein - 3 (loop), rest - 0 (none)
         self._protein_residues = universe.select_atoms("protein").residues
+        assert universe.atoms is not None
         no_sec_struct = np.zeros(len(universe.atoms), dtype=int)
         no_sec_struct[self._protein_residues.resindices] = 3
         self._no_sec_struct = no_sec_struct[universe.atoms.resindices]
@@ -267,6 +281,7 @@ class DSSPCalculation:
         universe = self._entity.universe
         # reuse the set up analysis for its selection, as creating one is slow
         if self.is_setup and self._props.selection == selection:
+            assert self._dssp_atoms is not None
             atoms = self._dssp_atoms
             dssp = self._analysis()
         else:
@@ -275,6 +290,7 @@ class DSSPCalculation:
         results = dssp.run(frames=[universe.trajectory.frame]).results
         mask = np.isin(atoms.residues.resids, results.resids)
         resindices = atoms.residues.resindices[mask]
+        assert universe.atoms is not None
         attribute_data = np.zeros(len(universe.atoms), dtype=int)
         attribute_data[universe.select_atoms("protein").residues.resindices] = 3
         attribute_data[resindices] = self._dssp_vmap(results.dssp[0])

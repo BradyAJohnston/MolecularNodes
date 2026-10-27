@@ -1,9 +1,12 @@
+from typing import Any
 import bpy
 
 
 def enable_gpus(device_type, use_cpus=False):
     preferences = bpy.context.preferences
-    cycles_preferences = preferences.addons["cycles"].preferences
+    assert preferences is not None
+    # the Cycles add-on preferences are defined by the add-on, not in the bpy stubs
+    cycles_preferences: Any = preferences.addons["cycles"].preferences
     cycles_preferences.refresh_devices()
 
     activated_gpus = []
@@ -22,7 +25,10 @@ def enable_gpus(device_type, use_cpus=False):
         raise RuntimeError(f"No {device_type} devices found")
 
     cycles_preferences.compute_device_type = device_type
-    bpy.context.scene.cycles.device = "GPU"
+    assert bpy.context.scene is not None
+    # `Scene.cycles` is registered by the Cycles add-on, and typed None in the stubs
+    cycles: Any = bpy.context.scene.cycles
+    cycles.device = "GPU"
 
     return activated_gpus
 

@@ -2,12 +2,15 @@ import copy
 import functools
 import inspect
 from abc import ABCMeta
+from collections.abc import Iterator
+from typing import TYPE_CHECKING, cast
 from uuid import uuid1
 import bpy
 import databpy as db
 import numpy as np
 from databpy.object import LinkedObjectError
 from mathutils import Vector
+from PIL import Image
 from ..blender import coll
 from ..blender.utils import (
     get_viewport_region_from_context,
@@ -29,6 +32,9 @@ from .utils import (
     get_view_matrix,
     is_perspective_projection,
 )
+
+if TYPE_CHECKING:
+    from ..entities.base import EntityType
 
 
 def _validate_annotation_update(self, context, attr):
@@ -76,28 +82,30 @@ class BaseAnnotationManager(metaclass=ABCMeta):
 
     """
 
-    _entity_type = None  # Derived classes need to specify
-    _classes = {}  # All annotation classes across all entities
+    _entity_type: "EntityType | None" = None  # Derived classes need to specify
+    _classes: dict[str, type[BaseAnnotation]] = {}  # All annotation classes
+    # Entity instance specific annotation interfaces, set by derived classes
+    _interfaces: dict[str, AnnotationInterface]
 
     def __init__(self, entity):
         # Access to the entity to which this manager is attached
         self._entity = entity
         self._draw_handler = None
-        self._scene = None
+        self._scene: bpy.types.Scene | None = None
         self._render_mode = False
         # annotation blender object
-        self.bob = None
+        self.bob: db.BlenderObject | None = None
         # viewport params
-        self._region = None
-        self._rv3d = None
+        self._region: bpy.types.Region | None = None
+        self._rv3d: bpy.types.RegionView3D | None = None
         # render params
         self._render_scale = 1.0
-        self._image = None
+        self._image: Image.Image | None = None
         self._image_scale = 1
         # add draw handler by default
         self._draw_handler_add()
 
-    def __iter__(self) -> iter:
+    def __iter__(self) -> Iterator[AnnotationInterface]:
         """To support iteration"""
         return iter(self._interfaces.values())
 
@@ -184,7 +192,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             )
             parameters.append(param)
         # Create method signature to match annotation class inputs
-        method.func.__signature__ = inspect.Signature(
+        method.func.__signature__ = inspect.Signature(  # ty: ignore[invalid-assignment]  # inspect reads __signature__ off any callable
             parameters, return_annotation=AnnotationInterface
         )
         # Update annotation properties
@@ -192,7 +200,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         setattr(cls, method_name, method)
 
     @classmethod
-    def _update_annotation_props(cls, annotation_class: BaseAnnotation):
+    def _update_annotation_props(cls, annotation_class: type[BaseAnnotation]):
         """Update annotation properties attached to Object"""
         attributes = {"__slots__": []}
         AnnotationProperties = type(
@@ -216,7 +224,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         # Re-register the new AnnotationProperties class
         bpy.utils.register_class(AnnotationProperties)
         # Re-assign the annotation properties to Object - old data is retained
-        bpy.types.Object.mn_annotations = bpy.props.CollectionProperty(
+        bpy.types.Object.mn_annotations = bpy.props.CollectionProperty(  # ty: ignore[unresolved-attribute]  # registers the property
             type=AnnotationProperties
         )
 
@@ -234,6 +242,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         # Delete from Entity class specific registry
         del cls._classes[annotation_type]
         # Delete from all annotation classes
+        assert cls._entity_type is not None
         entity_annotation_type = f"{cls._entity_type.value}_{annotation_type}"
         del BaseAnnotationManager._classes[entity_annotation_type]
         # Remove method from Entity specific manager
@@ -290,7 +299,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         viewport_tag_redraw()
 
     @classmethod
-    def _validate_annotation_class(cls, annotation_class: BaseAnnotation) -> None:
+    def _validate_annotation_class(cls, annotation_class: type[BaseAnnotation]) -> None:
         """Internal method to validate an annotation class"""
         if not issubclass(annotation_class, BaseAnnotation):
             raise ValueError(f"{annotation_class} is not an annotation class")
@@ -300,7 +309,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             raise ValueError("draw method not found in class")
 
     def _create_annotation_instance(
-        self, annotation_class: BaseAnnotation, prop=None, **kwargs
+        self, annotation_class: type[BaseAnnotation], prop=None, **kwargs
     ) -> AnnotationInterface:
         """
         Create annotation instance and return a dynamic Annotation Interface
@@ -313,6 +322,8 @@ class BaseAnnotationManager(metaclass=ABCMeta):
 
         """
         new_prop = prop is None
+        entity_type = self._entity_type
+        assert entity_type is not None
         # validations for required and invalid inputs
         py_annotations = get_all_class_annotations(annotation_class)
         if new_prop:
@@ -325,7 +336,8 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                         f"Unknown input {attr}. Valid values are {py_annotations}"
                     )
         # create an annotations instance
-        annotation_instance = annotation_class(self._entity)
+        # entity specific annotation classes take the entity
+        annotation_instance = annotation_class(self._entity)  # ty: ignore[too-many-positional-arguments]
         # create a new dynamic interface class
         inteface_class_name = f"{annotation_class.__name__}_interface"
         DynamicInterface = type(inteface_class_name, (AnnotationInterface,), {})
@@ -354,7 +366,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 if new_prop:
                     value = kwargs.get(attr, None)
                 else:
-                    entity_annotation_type = f"{self._entity_type.value}_{prop.type}"
+                    entity_annotation_type = f"{entity_type.value}_{prop.type}"
                     inputs = getattr(prop, entity_annotation_type, None)
                     value = None if inputs is None else getattr(inputs, attr, None)
                 if value is None:
@@ -398,7 +410,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         setattr(interface.__class__, "name", prop_interface)
         # iterate though all the annotation inputs, set passed values and
         # create property interfaces
-        entity_annotation_type = f"{self._entity_type.value}_{prop.type}"
+        entity_annotation_type = f"{entity_type.value}_{prop.type}"
         inputs = getattr(prop, entity_annotation_type, None)
         if inputs is not None:
             inputs.uuid = uuid  # add annotation uuid for lookup in update callback
@@ -579,8 +591,10 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         # check if object is in current scene
         if self._scene is None:
             self._scene = bpy.context.scene
+        scene = self._scene
+        assert scene is not None
         try:
-            if object.name not in self._scene.objects:
+            if object.name not in scene.objects:
                 return
         except ReferenceError:
             return
@@ -639,13 +653,14 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                 interface._instance._set_distance_params(min_dist, max_dist)
                 if self._render_mode:
                     # set the render params
+                    assert self._image is not None
                     interface._instance._set_render_params(
-                        self._scene, self._render_scale, self._image, self._image_scale
+                        scene, self._render_scale, self._image, self._image_scale
                     )
                 else:
                     # set the viewport region params
                     interface._instance._set_viewport_params(
-                        self._scene, self._region, self._rv3d
+                        scene, self._region, self._rv3d
                     )
             # handle exceptions to allow other annotations to be drawn
             try:
@@ -683,19 +698,25 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             # attach the annotations node tree
             tree = annotations_node_tree()
             tree.name = name
-            object.modifiers[0].node_group = tree
+            cast(bpy.types.NodesModifier, object.modifiers[0]).node_group = tree
             object.parent = self._entity.object
         # save the BlenderObject for further updates
         self.bob = db.BlenderObject(object)
 
+    def _annotation_mesh(self) -> bpy.types.Mesh:
+        """Internal: Mesh of the annotation object"""
+        assert self.bob is not None
+        return cast(bpy.types.Mesh, self.bob.object.data)
+
     def _clear_annotation_object(self):
         """Internal: Clear annotation object"""
-        if len(self.bob.object.data.vertices) == 0:
+        mesh = self._annotation_mesh()
+        if len(mesh.vertices) == 0:
             return
         # clear existing geometry
-        self.bob.object.data.clear_geometry()
+        mesh.clear_geometry()
         # clear existing material slots
-        self.bob.object.data.materials.clear()
+        mesh.materials.clear()
 
     def _update_annotation_object(self):
         """Internal: Update the annotation object mesh and attributes"""
@@ -761,7 +782,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                         for face in bm_to_add.faces:
                             try:
                                 add_face(
-                                    (bm.verts[i.index + offset] for i in face.verts)
+                                    [bm.verts[i.index + offset] for i in face.verts]
                                 )
                             except ValueError:
                                 # face exists! - can happen with n=2 (flat) objects
@@ -773,7 +794,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                         object_material_index = objects["material_index"][i]
                         object_shade_smooth = objects["shade_smooth"][i]
                         for edge in bm_to_add.edges:
-                            edge_seq = (bm.verts[i.index + offset] for i in edge.verts)
+                            edge_seq = [bm.verts[i.index + offset] for i in edge.verts]
                             try:
                                 add_edge(edge_seq)
                             except ValueError:
@@ -795,32 +816,35 @@ class BaseAnnotationManager(metaclass=ABCMeta):
                     bm_to_add.free()
 
             # update the object mesh
-            bm.to_mesh(self.bob.object.data)
+            bm.to_mesh(self._annotation_mesh())
 
+        bob = self.bob
+        assert bob is not None
+        mesh = self._annotation_mesh()
         # add materials to object material slots
         for material_name in geometry["materials"]:
             material = bpy.data.materials[material_name]
             # add material slot
-            self.bob.object.data.materials.append(material)
+            mesh.materials.append(material)
 
         # add edge attributes
         if len(attr_is_line) > 0:
             # add the is_line attribute to distinguish lines
-            self.bob.store_named_attribute(
+            bob.store_named_attribute(
                 np.array(attr_is_line),
                 name="is_line",
                 atype=db.AttributeTypes.BOOLEAN,
                 domain=db.AttributeDomains.EDGE,
             )
             # add the Color attribute for line color
-            self.bob.store_named_attribute(
+            bob.store_named_attribute(
                 np.array(attr_color),
                 name="Color",
                 atype=db.AttributeTypes.FLOAT_COLOR,
                 domain=db.AttributeDomains.EDGE,
             )
             # add a thickness attribute for line thickness
-            self.bob.store_named_attribute(
+            bob.store_named_attribute(
                 np.array(attr_thickness),
                 name="thickness",
                 atype=db.AttributeTypes.FLOAT,
@@ -828,14 +852,14 @@ class BaseAnnotationManager(metaclass=ABCMeta):
             )
             # add material_slot_index attribute
             # Note: material_index is a reserved attribute
-            self.bob.store_named_attribute(
+            bob.store_named_attribute(
                 np.array(attr_material_index),
                 name="material_slot_index",
                 atype=db.AttributeTypes.INT,
                 domain=db.AttributeDomains.EDGE,
             )
             # add the shade_smooth attribute
-            self.bob.store_named_attribute(
+            bob.store_named_attribute(
                 np.array(attr_shade_smooth),
                 name="shade_smooth",
                 atype=db.AttributeTypes.BOOLEAN,

@@ -1,3 +1,5 @@
+import typing
+from collections.abc import Generator
 from contextlib import contextmanager
 from pathlib import Path
 import bmesh
@@ -58,7 +60,8 @@ def set_obj_active(
 
 def set_object_visibility(object: bpy.types.Object, visible: bool) -> None:
     """Set visibility of Blender object"""
-    if object.name not in bpy.context.view_layer.objects:
+    view_layer = bpy.context.view_layer
+    if view_layer is None or object.name not in view_layer.objects:
         return
     try:
         object.hide_set(not visible)
@@ -73,7 +76,9 @@ def set_object_visibility(object: bpy.types.Object, visible: bool) -> None:
 
 def viewport_tag_redraw() -> None:
     """Tag all the viewport areas for a redraw"""
-    for window in bpy.context.window_manager.windows:
+    window_manager = bpy.context.window_manager
+    assert window_manager is not None
+    for window in window_manager.windows:
         for area in window.screen.areas:
             if area.type == "VIEW_3D":
                 area.tag_redraw()
@@ -231,6 +236,7 @@ def evaluated_points(obj: bpy.types.Object) -> np.ndarray:
     geometry included.
     """
     # evaluated geometry is stale until the depsgraph catches up
+    assert bpy.context.view_layer is not None
     bpy.context.view_layer.update()
     geometry = db.GeometrySet(obj)
 
@@ -256,7 +262,7 @@ def evaluated_points(obj: bpy.types.Object) -> np.ndarray:
 
 
 @contextmanager
-def new_bmesh() -> bmesh.types.BMesh:  # type: ignore
+def new_bmesh() -> Generator[bmesh.types.BMesh]:
     # create a new bmesh
     bm = bmesh.new()
     try:
@@ -265,3 +271,17 @@ def new_bmesh() -> bmesh.types.BMesh:  # type: ignore
     finally:
         # free bmesh
         bm.free()
+
+
+def annotated_props(cls):
+    """Class decorator letting Blender properties be declared with a Python type.
+
+    Properties written as ``name: Annotated[int, IntProperty(...)]`` give type
+    checkers the type, while Blender only registers a bare ``IntProperty(...)``
+    annotation. This unwraps each ``Annotated`` to its property before
+    ``bpy.utils.register_class`` reads the class annotations.
+    """
+    for name, annotation in list(cls.__annotations__.items()):
+        if typing.get_origin(annotation) is typing.Annotated:
+            cls.__annotations__[name] = annotation.__metadata__[0]
+    return cls

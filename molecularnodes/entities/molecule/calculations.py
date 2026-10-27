@@ -138,7 +138,7 @@ class CalculationManager:
     @property
     def ui_items(self):
         """The saved calculation items on the object, ``obj.mn.calculations``."""
-        return self._entity.object.mn.calculations
+        return self._entity.props.calculations
 
     def _item(self, name: str):
         """The saved item of a calculation, or None without one or an object."""

@@ -20,7 +20,7 @@ class Label2D(BaseAnnotation):
     text: str
     location: tuple[float, float] = (0.5, 0.5)
 
-    def validate(self, input_name: str = None) -> bool:
+    def validate(self, input_name: str | None = None) -> bool:
         params = self.interface
         if input_name in (None, "location"):
             x, y = params.location

@@ -1,13 +1,11 @@
-from typing import TYPE_CHECKING
 import bpy
 import numpy as np
 from bpy.app.handlers import persistent
 from PIL import Image
 from .annotations.utils import render_annotations
+from .blender.registered import scene_session
+from .entities import Molecule
 from .scene.compositor import annotations_image
-
-if TYPE_CHECKING:
-    from .session import MNSession
 
 
 # this update function requires a self and context input, as funcitons with these inputs
@@ -28,8 +26,9 @@ def _update_selections(self, context: bpy.types.Context) -> None:
     selections on the owning entity directly, rather than going through the frame
     update machinery which skips single-frame entities entirely
     """
-    entity = context.scene.MNSession.match(self.id_data)
-    if entity is not None and hasattr(entity, "selections"):
+    assert context.scene is not None
+    entity = scene_session(context.scene).match(self.id_data)
+    if isinstance(entity, Molecule):
         entity.selections.update_attributes()
 
 
@@ -66,10 +65,11 @@ def render_pre_handler(scene: bpy.types.Scene) -> None:
     """
     if not hasattr(scene, "MNSession"):
         return
-    session: MNSession = scene.MNSession  # type: ignore
+    session = scene_session(scene)
     if len(session.entities) == 0:
         return
-    if not any([len(e.annotations) for e in session.entities.values()]):
+    # ensembles have no annotations
+    if not any(len(getattr(e, "annotations", ())) for e in session.entities.values()):
         return
 
     # frame_change_pre is supposed to be called before render_pre
@@ -77,6 +77,7 @@ def render_pre_handler(scene: bpy.types.Scene) -> None:
     # update entities here to ensure annotations match entity frame
     update_entities(scene)
     # Render annotations to an image
+    assert bpy.context.view_layer is not None
     bpy.context.view_layer.update()
     render_scale = scene.render.resolution_percentage / 100
     width = int(scene.render.resolution_x * render_scale)

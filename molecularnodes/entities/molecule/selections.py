@@ -47,7 +47,7 @@ import databpy as db
 import numpy as np
 from bpy.types import Object
 from MDAnalysis import AtomGroup, Universe
-from ..utilities import IntObjectMNProperty, _unique_aname
+from ..utilities import _unique_aname
 from .helpers import _ag_to_bool
 
 
@@ -113,16 +113,23 @@ class SelectionManager:
     ----------
     atomgroups : dict[str, AtomGroup]
         Cached ``AtomGroup`` objects keyed by selection name.
-    ui_index : IntObjectMNProperty
-        Property descriptor for current UI selection index.
+    ui_index : int
+        Index of the current UI selection.
     """
-
-    ui_index = IntObjectMNProperty("trajectory_selection_index")
 
     def __init__(self, trajectory: Molecule):
         self.trajectory = trajectory
         self.atomgroups: dict[str, AtomGroup] = {}
         self._is_frozen: bool = False
+
+    @property
+    def ui_index(self) -> int:
+        """Index of the current UI selection."""
+        return self.trajectory.props.trajectory_selection_index
+
+    @ui_index.setter
+    def ui_index(self, value: int) -> None:
+        self.trajectory.props.trajectory_selection_index = value
 
     @property
     def ui_items(self) -> bpy.types.bpy_prop_collection_idprop:

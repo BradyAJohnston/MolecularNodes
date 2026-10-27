@@ -8,8 +8,9 @@ from bpy.app.handlers import persistent
 from bpy.props import StringProperty
 from bpy.types import Context
 from databpy.object import LinkedObjectError, get_from_uuid
+from .blender.registered import object_uuid, scene_session
 from .entities import Molecule
-from .entities.base import MolecularEntity
+from .entities.density.base import Density
 from .entities.ensemble.base import Ensemble
 from .entities.reload import can_reload, reload_entity
 
@@ -98,8 +99,11 @@ def _make_path_absolute(filepath):
 
 
 class MNSession:
+    # set only on the stash written by `pickle()`: uuid -> (name, pickled entity)
+    _pickled_entities: dict[str, tuple[str, bytes]]
+
     def __init__(self) -> None:
-        self.entities: Dict[str, Union[Molecule, Ensemble]] = {}
+        self.entities: Dict[str, Union[Molecule, Ensemble, Density]] = {}
 
     @property
     def molecules(self) -> Dict[str, Molecule]:
@@ -109,7 +113,7 @@ class MNSession:
     def ensembles(self) -> Dict[str, Ensemble]:
         return {k: v for k, v in self.entities.items() if isinstance(v, Ensemble)}
 
-    def register_entity(self, item: MolecularEntity) -> None:
+    def register_entity(self, item: Molecule | Ensemble | Density) -> None:
         """Add entity to the session, keyed by its uuid."""
         self.entities[item.uuid] = item
 
@@ -117,8 +121,8 @@ class MNSession:
         """Remove entity from the session."""
         del self.entities[uuid]
 
-    def match(self, obj: bpy.types.Object) -> Union[Molecule, Ensemble]:
-        return self.get(obj.uuid)
+    def match(self, obj: bpy.types.Object) -> Molecule | Ensemble | Density | None:
+        return self.get(object_uuid(obj))
 
     def get_object(self, uuid: str) -> bpy.types.Object | None:
         """
@@ -131,7 +135,7 @@ class MNSession:
         except LinkedObjectError:
             return None
 
-    def get(self, uuid: str) -> Union[Molecule, Ensemble] | None:
+    def get(self, uuid: str) -> Union[Molecule, Ensemble, Density] | None:
         return self.entities.get(uuid)
 
     def prune(self) -> None:
@@ -235,14 +239,16 @@ class MNSession:
 
     def remove_draw_handlers(self) -> None:
         for e in self.entities.values():
-            if hasattr(e, "annotations"):
-                e.annotations._draw_handler_remove()
+            annotations = getattr(e, "annotations", None)
+            if annotations is not None:
+                annotations._draw_handler_remove()
 
     def add_draw_handlers(self) -> None:
         self.prune()
         for e in self.entities.values():
-            if hasattr(e, "annotations") and e.annotations.visible:
-                e.annotations._draw_handler_add()
+            annotations = getattr(e, "annotations", None)
+            if annotations is not None and annotations.visible:
+                annotations._draw_handler_add()
 
     def stashpath(self, filepath) -> Path:
         return Path(f"{filepath}.MNSession")
@@ -265,8 +271,9 @@ class MNSession:
         obj = self.get_object(uuid)
         if obj is not None:
             bpy.data.objects.remove(obj, do_unlink=True)
-        if hasattr(entity, "annotations"):
-            bob = entity.annotations.bob
+        annotations = getattr(entity, "annotations", None)
+        if annotations is not None:
+            bob = annotations.bob
             if bob is not None and self.get_object(bob.uuid) is not None:
                 bpy.data.objects.remove(bob.object, do_unlink=True)
         self.remove_entity(uuid)
@@ -275,12 +282,18 @@ class MNSession:
 def get_session(context: Context | None = None) -> MNSession:
     if not context:
         context = bpy.context
-    return context.scene.MNSession
+    assert context.scene is not None
+    return scene_session(context.scene)
 
 
 def get_entity(context: Context | None = None) -> Molecule | Ensemble:
+    if not context:
+        context = bpy.context
     session = get_session(context)
-    return session.match(context.active_object)
+    assert context.active_object is not None
+    # the active object can also be a Density or have no entity; the narrower
+    # return type is kept for the UI callers
+    return session.match(context.active_object)  # ty: ignore[invalid-return-type]
 
 
 @persistent
@@ -350,6 +363,7 @@ class MN_OT_Session_Remove_Item(bpy.types.Operator):
     def invoke(self, context: Context, event):
         session = get_session()
 
+        assert context.window_manager is not None
         return context.window_manager.invoke_confirm(
             self,
             event=event,
@@ -379,6 +393,7 @@ class MN_OT_Session_Reload_Item(bpy.types.Operator):
 
     def execute(self, context: Context):
         obj = context.active_object
+        assert obj is not None
         try:
             reload_entity(obj)
         except Exception as e:

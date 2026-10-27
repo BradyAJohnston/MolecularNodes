@@ -1,20 +1,29 @@
+from typing import cast
 import bpy
 from bpy.props import BoolProperty, StringProperty
-from .. import __package__, assets, download
+from .. import __package__ as _addon_package
+from .. import assets, download
+
+assert _addon_package is not None
+_ADDON_KEY: str = _addon_package
 
 
 def addon_preferences(
     context: bpy.types.Context | None = None,
-) -> bpy.types.AddonPreferences:
+) -> "MolecularNodesPreferences | None":
     if context is None:
         context = bpy.context
+    preferences = context.preferences
+    if preferences is None:
+        return None
     try:
-        return context.preferences.addons[__package__].preferences
+        addon = preferences.addons[_ADDON_KEY]
     except KeyError:
         key = "bl_ext.vscode_development.molecularnodes"
-        if key in context.preferences.addons:
-            return context.preferences.addons[key].preferences
-        return None
+        if key not in preferences.addons:
+            return None
+        addon = preferences.addons[key]
+    return cast("MolecularNodesPreferences | None", addon.preferences)
 
 
 class MN_OT_Template_Install(bpy.types.Operator):
@@ -48,7 +57,7 @@ class MN_OT_Template_Uninstall(bpy.types.Operator):
 
 
 class MolecularNodesPreferences(bpy.types.AddonPreferences):
-    bl_idname = __package__
+    bl_idname = _ADDON_KEY
 
     cache_dir: StringProperty(  # type: ignore
         name="Cache Directory",
@@ -65,6 +74,7 @@ class MolecularNodesPreferences(bpy.types.AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
+        assert layout is not None
         layout.label(
             text="Where and if to store downloaded files for faster subsequent loading:"
         )

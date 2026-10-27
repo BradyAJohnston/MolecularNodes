@@ -40,6 +40,7 @@ title: "Changelog"
 - Trajectory periodic correction (`correct_periodic`) works with triclinic boxes, such as rhombic dodecahedra and hexagonal cells, as well as orthorhombic ones, using MDAnalysis's minimum image convention (`MDAnalysis.lib.distances.minimize_vectors`). Interpolation uses the box of the current frame and averaging the box of the averaged frame. Frames with no box, or the `1 1 1 90 90 90` placeholder box, are not corrected.
 - `Density Style ISO Surface` is simplified: its `Negative Color` and `Positive Color` inputs are renamed `Negative` and `Positive`, a `Process Grid` closure can modify the grid before it is meshed, and the `Visible`, contour and slice inputs are removed. The new `Mesh Contours` node turns the edges of a mesh, such as an ISO surface, into tubes.
 - The Reload operator (`mn.session_reload_item`) relinks any entity object to the session from its recorded source files or PDB code, replacing `mn.reload_trajectory`. [#1244](https://github.com/BradyAJohnston/MolecularNodes/pull/1244)
+- `ty` type checking runs in CI alongside ruff. Properties registered on Blender types are read through typed accessors in `molecularnodes.blender.registered`.
 
 ## Fixed
 - `.cif` files from Phenix (such as `phenix.real_space_refine` output) now import. Biotite failed on their indented `loop_` tags and on the atom-free restraint blocks (`data_link_SS`) appended after the model. A `.cif` with several structures in separate data blocks imports as one Molecule per block; from a script, `Molecule.load(path, data_block=...)` chooses the block.
@@ -59,6 +60,8 @@ title: "Changelog"
 - Density grids with non-orthogonal or rotated axes are placed correctly. A `.dx` file's full `delta` matrix and an MRC/CCP4 map's cell angles now give the voxel axes, written to the `.vdb` as a full affine transform; previously only the axis lengths were used, so sheared grids such as monoclinic or hexagonal crystallographic maps came out misaligned with their structures. MRC/CCP4 maps with non-90° cells also honour their axis order (`mapc`/`mapr`/`maps`) and start indices. Orthogonal grids are written as before.
 - `Density Style ISO Surface` no longer clamps `Threshold` to 0-1, so electrostatic potentials, orbitals and other grids outside that range can be contoured. It meshes at +|Threshold| and -|Threshold|, and the surface of the negative lobe now has outward-facing normals instead of inward ones.
 - Density grids with 64-bit float values, which includes every `.dx` file, are stored as 32-bit float grids so Blender's grid nodes (`Get Named Grid`, `Sample Grid`) can read them; they ignore double-precision grids. Previously converted `.vdb` files are converted again on load.
+- Rendering no longer fails when the session holds a starfile or CellPack ensemble, which has no annotations to draw.
+- Toggling the visibility of a starfile or CellPack ensemble object no longer raises an error.
 
 # v520.2.0 - 2026-09-18
 

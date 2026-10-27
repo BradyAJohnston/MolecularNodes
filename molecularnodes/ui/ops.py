@@ -18,6 +18,7 @@ from bpy.props import (
 from bpy.types import Context, Operator
 from ..annotations.props import create_annotation_type_inputs
 from ..blender import coll
+from ..blender.registered import object_props
 from ..blender.utils import path_resolve, resolve_file_path
 from ..download import CACHE_DIR, FileDownloadPDBError
 from ..entities import (
@@ -1060,7 +1061,8 @@ class MN_OT_Add_Style(Operator):
         selection = self.selection.strip() or None
         name = self.name.strip() or None
         if entity is not None:
-            entity.add_style(
+            # the Styles panel only enables adding for molecules
+            cast(Molecule, entity).add_style(
                 style=self.style,
                 color=self.uniform_color
                 if self.use_uniform_color
@@ -1076,7 +1078,7 @@ class MN_OT_Add_Style(Operator):
         obj = bpy.data.objects.get(self.name_object)
         mod = obj.modifiers.get("Molecular Nodes") if obj is not None else None
         tree = getattr(mod, "node_group", None)
-        if tree is None:
+        if obj is None or tree is None:
             self.report({"ERROR"}, "Object has no Molecular Nodes node tree")
             return {"CANCELLED"}
 
@@ -1148,7 +1150,7 @@ class MN_OT_Remove_Style(Operator):
         for obj in bpy.data.objects:
             mod = obj.modifiers.get("Molecular Nodes")
             if mod is not None and getattr(mod, "node_group", None) == tree:
-                obj.mn.styles_active_index = last
+                object_props(obj).styles_active_index = last
         return {"FINISHED"}
 
     def invoke(self, context, event):
@@ -1229,6 +1231,7 @@ def _register_temp_annotation_add_op(entity):
 
         def draw(self, context):
             layout = self.layout
+            assert layout is not None
             layout.prop(self.props, "type")
             entity_annotation_type = (
                 f"{entity._get_annotation_entity_type()}_{self.props.type}"
@@ -1297,7 +1300,8 @@ class MN_OT_Add_Annotation(Operator):
         # register the temporary operator with required type inputs
         MN_OT_Add_Annotation._temp_classes = _register_temp_annotation_add_op(entity)
         # invoke the temporary add operator
-        bpy.ops.mn.temp_annotation_add("INVOKE_DEFAULT")
+        # operators registered at runtime aren't in the bpy stubs
+        bpy.ops.mn.temp_annotation_add("INVOKE_DEFAULT")  # ty: ignore[unresolved-attribute]
         return {"FINISHED"}
 
 
@@ -1315,6 +1319,8 @@ class MN_OT_Remove_Annotation(Operator):
 
     def execute(self, context: Context):
         entity = get_session().get(self.uuid)
+        if not isinstance(entity, (Molecule, density.Density)):
+            return {"CANCELLED"}
         entity.annotations._remove_annotation_by_uuid(self.annotation_uuid)
         return {"FINISHED"}
 
@@ -1334,6 +1340,7 @@ class MN_OT_Setup_Compositor(Operator):
     bl_description = "Setup Molecular Nodes Compositor"
 
     def execute(self, context: Context):
+        assert context.scene is not None
         setup_compositor(context.scene)
         return {"FINISHED"}
 
@@ -1355,7 +1362,7 @@ class MN_OT_DSSP_init(Operator):
 
     def execute(self, context: Context):
         entity = get_session().get(self.uuid)
-        if entity is None:
+        if not isinstance(entity, Molecule):
             return {"CANCELLED"}
         try:
             entity.calculations.dssp(selection=self.selection)
@@ -1383,7 +1390,7 @@ class MN_OT_HBonds_init(Operator):
 
     def execute(self, context: Context):
         entity = get_session().get(self.uuid)
-        if entity is None:
+        if not isinstance(entity, Molecule):
             return {"CANCELLED"}
         try:
             entity.calculations.hbonds(selection=self.selection)
@@ -1415,9 +1422,9 @@ class MN_OT_FrameAttribute_Remove(Operator):
 
     def execute(self, context: Context):
         entity = get_session().get(self.uuid)
-        if entity is None:
+        if not isinstance(entity, Molecule):
             return {"CANCELLED"}
-        item = entity.object.mn.frame_attributes.get(self.name)
+        item = entity.props.frame_attributes.get(self.name)
         if item is None:
             return {"CANCELLED"}
         if item.source == "SELECTION":
@@ -1445,7 +1452,7 @@ class MN_OT_DSSP_apply(Operator):
 
     def execute(self, context: Context):
         entity = get_session().get(self.uuid)
-        if entity is None:
+        if not isinstance(entity, Molecule):
             return {"CANCELLED"}
         props = entity.props.dssp
         if props.display_option == "trajectory-average":
@@ -1471,7 +1478,7 @@ class MN_OT_DSSP_cancel(Operator):
 
     def execute(self, context: Context):
         entity = get_session().get(self.uuid)
-        if entity is None:
+        if not isinstance(entity, Molecule):
             return {"CANCELLED"}
         props = entity.props.dssp
         props.cancelling = True
@@ -1585,6 +1592,7 @@ class MN_OT_Align(Operator):
 
     def draw(self, context):
         layout = self.layout
+        assert layout is not None
         fixed, mobiles = self._molecules(context)
         layout.prop(self, "method", expand=True)
         self._draw_side(layout, "Reference (active)", [fixed], "fixed_selection")
