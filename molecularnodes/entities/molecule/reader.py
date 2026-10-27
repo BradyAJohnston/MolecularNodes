@@ -1,4 +1,3 @@
-import json
 import logging
 from abc import ABCMeta
 from io import BytesIO
@@ -177,10 +176,8 @@ class ReaderBase[F: File](metaclass=ABCMeta):
     def chain_ids(self) -> list[str] | None:
         return np.unique(self.array.get_annotation("chain_id")).tolist()
 
-    def assemblies(self, as_json_string: bool = False) -> dict | str:
+    def assemblies(self) -> dict | str:
         try:
-            if as_json_string:
-                return json.dumps(self._assemblies())
             return self._assemblies()
         except InvalidFileError as e:
             logger.warning(f"Failed to parse biological assemblies: {e}")

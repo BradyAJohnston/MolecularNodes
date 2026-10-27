@@ -63,6 +63,7 @@ title: "Changelog"
 - Rendering no longer fails when the session holds a starfile or CellPack ensemble, which has no annotations to draw.
 - Toggling the visibility of a starfile or CellPack ensemble object no longer raises an error.
 - The style menus of Import Molecule, Add Style and Swap Style no longer offer `Preset 1`-`4`, whose node groups no longer exist; choosing one raised an error.
+- Entity descriptions containing commas, such as `(2R,3S,5R)-...` in 6ZPA, are no longer split into several entities, which put the entity names in the Color and Select Entity menus out of step with the entities. Chain, entity and segment IDs and unique atom types are stored as JSON; files saved with the earlier comma-joined values still load.
 
 # v520.2.0 - 2026-09-18
 

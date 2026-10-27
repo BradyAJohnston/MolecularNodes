@@ -1,4 +1,3 @@
-import json
 import math
 from typing import Annotated, cast
 import bpy
@@ -13,7 +12,7 @@ from bpy.props import (
 )
 from nodebpy.nodes.geometry import NamedAttribute
 from ..blender.registered import object_props, object_uuid
-from ..blender.utils import annotated_props, set_object_visibility
+from ..blender.utils import JSONProperty, annotated_props, set_object_visibility
 from ..entities import Density, Molecule
 from ..entities.base import EntityType
 from ..handlers import _update_entities, _update_selections
@@ -450,22 +449,8 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         ),
     ]
 
-    @property
-    def biological_assemblies(self) -> dict:
-        """Return the biological assemblies for the entity object"""
-        if not self.internal_biological_assemblies:
-            return {}
-        return json.loads(self.internal_biological_assemblies)
-
-    @biological_assemblies.setter
-    def biological_assemblies(self, value: dict | str | None) -> None:
-        """Set the biological assemblies for the entity object"""
-        if value is None or value == "":
-            self.internal_biological_assemblies = ""
-        elif isinstance(value, str):
-            self.internal_biological_assemblies = value
-        else:
-            self.internal_biological_assemblies = json.dumps(value)
+    #: The biological assemblies for the entity object, stored as JSON
+    biological_assemblies = JSONProperty[dict]("internal_biological_assemblies", dict)
 
     entity_type: Annotated[
         str,
@@ -535,18 +520,8 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         ),
     ]
 
-    @property
-    def chain_ids(self) -> list[str]:
-        """Return a list of chain IDs for the entity object"""
-        return self.internal_chain_ids.split(",") if self.internal_chain_ids else []
-
-    @chain_ids.setter
-    def chain_ids(self, value: list[str] | None) -> None:
-        """Set the list of chain IDs for the entity object"""
-        if value is None:
-            self.internal_chain_ids = ""
-        else:
-            self.internal_chain_ids = ",".join(value)
+    #: The chain IDs of the entity object, stored as JSON
+    chain_ids = JSONProperty[list[str]]("internal_chain_ids", list)
 
     internal_entity_ids: Annotated[
         str,
@@ -558,18 +533,8 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         ),
     ]
 
-    @property
-    def entity_ids(self) -> list[str]:
-        """Return a list of entity IDs for the entity object"""
-        return self.internal_entity_ids.split(",") if self.internal_entity_ids else []
-
-    @entity_ids.setter
-    def entity_ids(self, value: list[str] | None) -> None:
-        """Set the list of entity IDs for the entity object"""
-        if value is None:
-            self.internal_entity_ids = ""
-        else:
-            self.internal_entity_ids = ",".join(value)
+    #: The entity IDs of the entity object, stored as JSON
+    entity_ids = JSONProperty[list[str]]("internal_entity_ids", list)
 
     internal_segments: Annotated[
         str,
@@ -581,18 +546,8 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         ),
     ]
 
-    @property
-    def segments(self) -> list[str]:
-        """Return a list of segment IDs for the entity object"""
-        return self.internal_segments.split(",") if self.internal_segments else []
-
-    @segments.setter
-    def segments(self, value: list[str] | None) -> None:
-        """Set the list of segment IDs for the entity object"""
-        if value is None:
-            self.internal_segments = ""
-        else:
-            self.internal_segments = ",".join(str(v) for v in value)
+    #: The segment IDs of the entity object, stored as JSON
+    segments = JSONProperty[list[str]]("internal_segments", list)
 
     internal_atom_type_unique: Annotated[
         str,
@@ -604,22 +559,8 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         ),
     ]
 
-    @property
-    def atom_type_unique(self) -> list[str]:
-        """Return a list of the unique atom types for the entity object"""
-        return (
-            self.internal_atom_type_unique.split(",")
-            if self.internal_atom_type_unique
-            else []
-        )
-
-    @atom_type_unique.setter
-    def atom_type_unique(self, value: list[str] | None) -> None:
-        """Set the list of the unique atom types for the entity object"""
-        if value is None:
-            self.internal_atom_type_unique = ""
-        else:
-            self.internal_atom_type_unique = ",".join(str(v) for v in value)
+    #: The unique atom types of the entity object, stored as JSON
+    atom_type_unique = JSONProperty[list[str]]("internal_atom_type_unique", list)
 
     internal_categories: Annotated[
         str,
@@ -631,22 +572,8 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         ),
     ]
 
-    @property
-    def categories(self) -> dict[str, list[str]]:
-        """Return the per-column category labels for the entity object"""
-        if not self.internal_categories:
-            return {}
-        return json.loads(self.internal_categories)
-
-    @categories.setter
-    def categories(self, value: dict[str, list[str]] | str | None) -> None:
-        """Set the per-column category labels for the entity object"""
-        if value is None or value == "":
-            self.internal_categories = ""
-        elif isinstance(value, str):
-            self.internal_categories = value
-        else:
-            self.internal_categories = json.dumps(value)
+    #: The per-column category labels of the entity object, stored as JSON
+    categories = JSONProperty[dict[str, list[str]]]("internal_categories", dict)
 
     @property
     def is_entity(self) -> bool:

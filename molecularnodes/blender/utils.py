@@ -1,5 +1,6 @@
+import json
 import typing
-from collections.abc import Generator
+from collections.abc import Callable, Generator
 from contextlib import contextmanager
 from pathlib import Path
 import bmesh
@@ -285,3 +286,37 @@ def annotated_props(cls):
         if typing.get_origin(annotation) is typing.Annotated:
             cls.__annotations__[name] = annotation.__metadata__[0]
     return cls
+
+
+class JSONProperty[T]:
+    """A value stored as JSON in a hidden ``StringProperty`` of a property group.
+
+    ``chain_ids = JSONProperty[list[str]]("internal_chain_ids", list)`` reads and
+    writes ``internal_chain_ids`` as JSON. An empty string reads as
+    ``default()``, and setting ``None`` clears it. Each read decodes a new
+    object, so changing the returned value doesn't store it: set it again.
+    """
+
+    def __init__(self, attr: str, default: Callable[[], T]):
+        self.attr = attr
+        self.default = default
+
+    @typing.overload
+    def __get__(self, obj: None, objtype: type) -> "JSONProperty[T]": ...
+
+    @typing.overload
+    def __get__(self, obj: object, objtype: type | None = None) -> T: ...
+
+    def __get__(self, obj, objtype=None):
+        if obj is None:
+            return self
+        text: str = getattr(obj, self.attr)
+        if not text:
+            return self.default()
+        if not text.startswith(("[", "{")):
+            # lists saved before they were stored as JSON were joined with commas
+            return text.split(",")
+        return json.loads(text)
+
+    def __set__(self, obj: object, value: T | None) -> None:
+        setattr(obj, self.attr, "" if value is None else json.dumps(value))

@@ -1077,7 +1077,11 @@ class Molecule(MolecularEntity):
         self.props.entity_type = EntityType.MOLECULE
         self.props.entity_ids = reader.entity_ids()
         self.props.chain_ids = reader.chain_ids()
-        self.props.biological_assemblies = reader.assemblies(as_json_string=True)
+        assemblies = reader.assemblies()
+        # "" when the assemblies couldn't be parsed
+        self.props.biological_assemblies = (
+            assemblies if isinstance(assemblies, dict) else None
+        )
         # record the source so the entity can be reloaded into a fresh session
         if not isinstance(file_path, io.BytesIO):
             self.props.filepath = str(file_path)
