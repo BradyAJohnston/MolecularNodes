@@ -166,9 +166,20 @@ class CalculationManager:
         calculations = calculations_from_code(text.as_string(), self._entity)
         if not calculations:
             raise ValueError(f"No BaseCalculation subclasses found in '{text.name}'")
+        n_atoms = len(self._entity.universe.atoms)
+        values = {}
         for calculation in calculations:
-            self.add(calculation.name, calculation, updating=updating)
-        return [calculation.name for calculation in calculations]
+            result = calculation.calculate()
+            if len(result) != n_atoms:
+                raise ValueError(
+                    f"'{calculation.name}' returned {len(result)} values, "
+                    f"expected one for each of the {n_atoms} atoms"
+                )
+            values[calculation.name] = result
+        for calculation in calculations:
+            self.add(calculation.name, calculation, updating=updating, refresh=False)
+        self._entity._store_frame_attributes(values, "CALCULATION")
+        return list(values)
 
     @property
     def ui_items(self):
