@@ -31,22 +31,29 @@ class DensityTree(MolecularTree):
     def join(self) -> GeometrySocket:
         output = self.geometry
         links = output.socket.links
-        if links and _is_set_geometry_volume(links[0].from_socket.node):
-            keep = links[0].from_socket.node
+        from_socket = links[0].from_socket if links else None
+        keep = from_socket.node if from_socket is not None else None
+        if keep is not None and _is_set_geometry_volume(keep):
             upstream = keep.inputs[0].links
+            upstream_socket = upstream[0].from_socket if upstream else None
+            upstream_node = (
+                upstream_socket.node if upstream_socket is not None else None
+            )
             if (
-                upstream
-                and upstream[0].from_socket.node.bl_idname == "GeometryNodeJoinGeometry"
+                upstream_node is not None
+                and upstream_node.bl_idname == "GeometryNodeJoinGeometry"
             ):
-                return self._wrap(upstream[0].from_socket.node.inputs[0])
+                return self._wrap(upstream_node.inputs[0])
             join = g.JoinGeometry()
-            if upstream:
-                self._wrap(upstream[0].from_socket) >> join
+            if upstream_socket is not None:
+                self._wrap(upstream_socket) >> join
             join >> self._wrap(keep.inputs[0])
             return join.i.geometry
 
         join_input = super().join
-        join_output = self._wrap(join_input.socket.node.outputs[0])
+        join_node = join_input.socket.node
+        assert join_node is not None
+        join_output = self._wrap(join_node.outputs[0])
         SetGeometryVolume(geometry=join_output, volume=self.atoms) >> output
         return join_input
 
@@ -58,10 +65,10 @@ class Density(MolecularEntity, metaclass=ABCMeta):
     """
 
     _tree_class = DensityTree
+    _entity_type = EntityType.DENSITY
 
     def __init__(self, file_path: Union[str, Path]):
         super().__init__()
-        self._entity_type = EntityType.DENSITY
         self.file_path: Path = bl.path_resolve(file_path)
         self.file_vdb: str
         self.annotations = DensityAnnotationManager(self)

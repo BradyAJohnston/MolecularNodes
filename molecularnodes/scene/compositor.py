@@ -1,6 +1,7 @@
 import math
+from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Iterator, Literal, NamedTuple
+from typing import Any, Literal, NamedTuple, cast
 import bpy
 from bpy.types import CompositorNodeTree
 from nodebpy import compositor as c
@@ -25,6 +26,13 @@ def add_view_layer_aov(
         aov.name = name
     aov.type = type
     return aov
+
+
+def _links(socket: bpy.types.NodeSocket) -> bpy.types.NodeLinks:
+    """The links of a socket, which the bpy stubs type as optional."""
+    links = socket.links
+    assert links is not None
+    return links
 
 
 def _entity_corner_depths(scene: bpy.types.Scene) -> list[float]:
@@ -63,7 +71,8 @@ def _depth_range(scene: bpy.types.Scene) -> tuple[float, float]:
     camera = scene.camera
     if camera is None:
         return 0.0, 100.0
-    return camera.data.clip_start, camera.data.clip_end
+    data = cast(bpy.types.Camera, camera.data)
+    return data.clip_start, data.clip_end
 
 
 def _pixel_size_angstrom(scene: bpy.types.Scene) -> float:
@@ -76,7 +85,7 @@ def _pixel_size_angstrom(scene: bpy.types.Scene) -> float:
     pixels *= render.resolution_percentage / 100.0
     if camera is None or pixels <= 0:
         return 1.0
-    data = camera.data
+    data = cast(bpy.types.Camera, camera.data)
     if data.type == "ORTHO":
         width = data.ortho_scale
     else:
@@ -149,6 +158,7 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
             scene.compositing_node_group = bpy.data.node_groups.new(
                 "Compositor Nodes", "CompositorNodeTree"
             )
+        assert scene.compositing_node_group is not None
         super().__init__(scene.compositing_node_group)
 
     def _wrap(self, socket: bpy.types.NodeSocket) -> ColorSocket:
@@ -240,9 +250,11 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
             tree.image >> c.Glare() >> tree.output
         ```
         """
-        for item in self.tree.interface.items_tree:
+        interface = self.tree.interface
+        assert interface is not None
+        for item in interface.items_tree:
             if (
-                item.item_type == "SOCKET"
+                isinstance(item, bpy.types.NodeTreeInterfaceSocket)
                 and item.in_out == "OUTPUT"
                 and item.socket_type == "NodeSocketColor"
             ):
@@ -250,7 +262,7 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
         return self.outputs.color("Image")
 
     @contextmanager
-    def reset(self) -> Iterator[ResetCompositorSockets]:
+    def reset(self) -> Generator[ResetCompositorSockets]:
         """Clear the tree back to a default state and build within it.
 
         Discards the existing tree — including any annotation overlay, which can
@@ -284,12 +296,10 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
         """
         with self:
             output = self.output
-            links = output.socket.links
-            source = (
-                links[0].from_socket
-                if links
-                else self._render_layers_node().outputs["Image"]
-            )
+            links = _links(output.socket)
+            source = links[0].from_socket if links else None
+            if source is None:
+                source = self._render_layers_node().outputs["Image"]
             annotations = c.Image(image=_annotations_image())
             c.AlphaOver(self._wrap(source), annotations, 1.0) >> output
 
@@ -300,20 +310,26 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
         ``with self``."""
         rl_node = self._render_layers_node()
         for node in list(self.tree.nodes):
-            if node.bl_idname != "CompositorNodeGroup" or node.node_tree is None:
+            if (
+                not isinstance(node, bpy.types.CompositorNodeGroup)
+                or node.node_tree is None
+            ):
                 continue
             if node.node_tree.name != Illustrate._asset_name:
                 continue
-            for link in node.inputs["Shadow"].links:
+            for link in _links(node.inputs["Shadow"]):
                 upstream = link.from_node
                 if (
-                    upstream.bl_idname == "CompositorNodeGroup"
+                    isinstance(upstream, bpy.types.CompositorNodeGroup)
                     and upstream.node_tree is not None
                     and upstream.node_tree.name == ConeShadow._asset_name
                 ):
                     self.tree.nodes.remove(upstream)
             consumers = [
-                link.to_socket for output in node.outputs for link in output.links
+                to_socket
+                for output in node.outputs
+                for link in _links(output)
+                if (to_socket := link.to_socket) is not None
             ]
             for to_socket in consumers:
                 self.tree.links.new(rl_node.outputs["Image"], to_socket)
@@ -325,9 +341,9 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
         output when nothing consumed it. Call inside ``with self``."""
         rl_node = self._render_layers_node()
         consumers = [
-            link.to_socket
-            for link in rl_node.outputs["Image"].links
-            if link.to_node != node.node
+            to_socket
+            for link in _links(rl_node.outputs["Image"])
+            if link.to_node != node.node and (to_socket := link.to_socket) is not None
         ]
         if consumers:
             for to_socket in consumers:
@@ -404,7 +420,7 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
             self._remove_composites()
             rl_node = self._render_layers_node()
             render = c.RenderLayers._from_node(rl_node)
-            links: dict[str, object] = {}
+            links: dict[str, Any] = {}
             if outline_normals:
                 links["normal"] = render.o.normal
             if shading == "cone":

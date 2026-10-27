@@ -55,6 +55,7 @@ dev = [
     "rdkit",
     "ruff",
     "syrupy",
+    "ty==0.0.92",
 ]
 
 [tool.extbpy]
@@ -142,6 +143,26 @@ order-by-type = true
 
 [tool.ruff.format]
 exclude = ["molecularnodes/assets/data.py"]
+
+[tool.ty.src]
+include = ["molecularnodes", "tests"]
+
+# Node groups under these directories are written by `nodebpy.assets dump`, so a
+# fix made by hand doesn't survive the round trip. These rules flag gaps in
+# nodebpy's socket and node typing there, to be fixed in nodebpy itself.
+[[tool.ty.overrides]]
+include = [
+    "molecularnodes/nodes/geometry",
+    "molecularnodes/nodes/shader",
+    "molecularnodes/nodes/materials",
+    "molecularnodes/nodes/compositor",
+]
+
+[tool.ty.overrides.rules]
+invalid-argument-type = "ignore"
+invalid-assignment = "ignore"
+not-subscriptable = "ignore"
+unresolved-attribute = "ignore"
 
 # The node-asset pipeline (python -m nodebpy.assets build|dump|ensure|check):
 # molecularnodes/nodes/ is the source of truth, nodes.blend the built,

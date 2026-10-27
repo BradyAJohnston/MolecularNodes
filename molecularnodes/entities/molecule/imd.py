@@ -8,6 +8,7 @@ import logging
 from pathlib import Path
 from typing import Optional
 import MDAnalysis as mda
+from ...nodes._utils import STYLE_LITERALS
 from ..base import EntityType
 from .base import Molecule
 
@@ -114,12 +115,12 @@ class StreamingTrajectory(Molecule):
             raise
 
     @classmethod
-    def load(
+    def load(  # ty: ignore[invalid-method-override]  # positional order differs from Molecule.load; changing it would break callers
         cls,
         topology: Path | str,
         coordinates: Path | str,
         name: str = "StreamingTrajectory",
-        style: str | None = "spheres",
+        style: STYLE_LITERALS | None = "spheres",
         selection: str | None = None,
         create_object: bool = True,
     ):

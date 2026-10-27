@@ -53,7 +53,9 @@ def test_fail_download_pdb_large_structure_raises():
 def test_compare_biotite(format):
     with tempfile.TemporaryDirectory() as temp_dir:
         downloader = StructureDownloader(cache=temp_dir)
-        struc_download = load_structure(downloader.download("4ozs", format=format))
+        path = downloader.download("4ozs", format=format)
+        assert isinstance(path, Path)
+        struc_download = load_structure(path)
 
         with tempfile.TemporaryDirectory() as biotite_temp_dir:
             struc_biotite = load_structure(
@@ -176,6 +178,7 @@ class TestStructureDownloaderInit:
         nonexistent_path = tmpdir.join("new_cache")
         assert not nonexistent_path.exists()
         downloader = StructureDownloader(cache=str(nonexistent_path))
+        assert downloader.cache is not None
         assert downloader.cache.exists()
 
 
@@ -406,7 +409,7 @@ class TestPubChem:
     def test_fetch_pubchem_cached(self, fetch):
         # loads tests/data/2244.sdf through the PubChem cache path, no network
         mol = fetch("2244", format="sdf", database="pubchem")
-        atoms = mol.universe.atoms
+        atoms = mol.atoms
         assert atoms.n_atoms == 21
         assert sum(atoms.elements == "H") == 8
         assert len(mol.universe.bonds) == 21
@@ -430,7 +433,7 @@ class TestPubChem:
     def test_fetch_pubchem(self, tmpdir, code):
         mol = mn.Molecule.fetch(code, cache=str(tmpdir), database="pubchem")
         assert Path(tmpdir, f"{code}.sdf").exists()
-        atoms = mol.universe.atoms
+        atoms = mol.atoms
         assert atoms.n_atoms == 21
         assert sum(atoms.elements == "H") == 8
         assert len(mol.universe.bonds) == 21

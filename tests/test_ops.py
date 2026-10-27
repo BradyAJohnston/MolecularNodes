@@ -1,34 +1,64 @@
 import itertools
 import shutil
+from pathlib import Path
 import bpy
 import numpy as np
 import pytest
 from databpy import ObjectTracker
 import molecularnodes as mn
+from molecularnodes.entities import Molecule
+from molecularnodes.entities.base import EntityType
+from molecularnodes.entities.reload import can_reload, reload_entity
+from molecularnodes.session import get_session
 from .constants import codes, data_dir
-from .utils import NumpySnapshotExtension, sphere_value
+from .utils import NumpySnapshotExtension, mn_ops, scene, sphere_value
+
+
+def _molecule(obj: bpy.types.Object) -> Molecule:
+    """The Molecule in the session for an object an operator imported."""
+    mol = get_session().match(obj)
+    assert isinstance(mol, Molecule)
+    return mol
+
+
+def _cached_path(code: str, format: str) -> Path:
+    """Download into the test data cache, which gives a path rather than a buffer."""
+    path = mn.download.StructureDownloader(cache=data_dir).download(
+        code=code, format=format
+    )
+    assert isinstance(path, Path)
+    return path
+
+
+def _style_tree_names(tree: bpy.types.GeometryNodeTree) -> list[str]:
+    """Names of the node groups used by the group nodes in a tree."""
+    names = []
+    for node in tree.nodes:
+        if isinstance(node, bpy.types.GeometryNodeGroup):
+            assert node.node_tree is not None
+            names.append(node.node_tree.name)
+    return names
 
 
 @pytest.mark.parametrize("code", codes)
 def test_op_fetch(fetch, snapshot_custom: NumpySnapshotExtension, code):
-    scene = bpy.context.scene
     style = "ribbon"
     format = "cif"
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_molecule(
+        mn_ops.import_molecule(
             code=code, file_format=format, style=style, cache_dir=str(data_dir)
         )
-        mol1 = scene.MNSession.match(o.latest())
+        mol1 = _molecule(o.latest())
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_molecule(
+        mn_ops.import_molecule(
             code=f"pdb_{code.rjust(8, '0')}",
             file_format=format,
             style=style,
             cache_dir=str(data_dir),
         )
-        mol2 = scene.MNSession.match(o.latest())
+        mol2 = _molecule(o.latest())
 
     mol3 = fetch(code, format=format)
     mol3.add_style(style=style)
@@ -41,14 +71,14 @@ def test_op_fetch_pubchem():
     # tests/data/2244.sdf is the cached PubChem download, so no network is used;
     # file_format is ignored for PubChem
     with ObjectTracker() as o:
-        res = bpy.ops.mn.import_molecule(
+        res = mn_ops.import_molecule(
             code="2244",
             database="pubchem",
             file_format="bcif",
             style="ball_and_stick",
             cache_dir=str(data_dir),
         )
-        mol = bpy.context.scene.MNSession.match(o.latest())
+        mol = _molecule(o.latest())
     assert res == {"FINISHED"}
     assert mol.props.database == "pubchem"
     assert len(mol) == 21
@@ -57,31 +87,22 @@ def test_op_fetch_pubchem():
 @pytest.mark.parametrize("code", codes)
 @pytest.mark.parametrize("file_format", ["bcif", "cif", "pdb"])
 def test_op_local(snapshot_custom, code, file_format):
-    session = bpy.context.scene.MNSession
-    path = mn.download.StructureDownloader(cache=data_dir).download(
-        code=code, format=file_format
-    )
+    path = _cached_path(code, file_format)
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_molecule(method="local", filepath=str(path), node_setup=False)
-        mol = session.match(o.latest())
-        assert mol.props.entity_type == mn.entities.base.EntityType.MOLECULE.value
+        mn_ops.import_molecule(method="local", filepath=str(path), node_setup=False)
+        mol = _molecule(o.latest())
+        assert mol.props.entity_type == EntityType.MOLECULE.value
 
     assert snapshot_custom == mol.position
 
 
 def test_op_dropped_files():
     """The file handler invokes mn.import_molecule with directory + files set."""
-    session = bpy.context.scene.MNSession
-    paths = [
-        mn.download.StructureDownloader(cache=data_dir).download(
-            code=code, format="cif"
-        )
-        for code in codes[:2]
-    ]
+    paths = [_cached_path(code, "cif") for code in codes[:2]]
 
     with ObjectTracker() as o:
-        res = bpy.ops.mn.import_molecule(
+        res = mn_ops.import_molecule(
             directory=str(paths[0].parent),
             files=[{"name": path.name} for path in paths],
             style="ribbon",
@@ -89,17 +110,12 @@ def test_op_dropped_files():
         assert res == {"FINISHED"}
         objects = o.new_objects()
 
-    mols = [session.match(obj) for obj in objects]
+    mols = [_molecule(obj) for obj in objects]
     assert len(mols) == len(paths)
     for mol, path in zip(mols, paths):
-        assert mol is not None
         assert mol.name == path.name
         # dropped files get the same node setup as dialog imports
-        style_trees = [
-            node.node_tree.name
-            for node in mol.modifier_node_tree.nodes
-            if isinstance(node, bpy.types.GeometryNodeGroup)
-        ]
+        style_trees = _style_tree_names(mol.modifier_node_tree)
         assert "Style Ribbon" in style_trees
         assert "Set Color" in style_trees
 
@@ -122,11 +138,11 @@ def _build_structure_folder(tmp_path, name):
 def test_op_import_folder(tmp_path):
     """A folder filepath imports every structure file in it recursively, placing
     the objects in nested collections that mirror the folder layout."""
-    session = bpy.context.scene.MNSession
+    session = get_session()
     root = _build_structure_folder(tmp_path, "folder_import")
 
     with ObjectTracker() as o:
-        res = bpy.ops.mn.import_molecule(
+        res = mn_ops.import_molecule(
             method="local", filepath=str(root), node_setup=False
         )
         assert res == {"FINISHED"}
@@ -148,14 +164,14 @@ def test_op_import_folder(tmp_path):
 
     # a second import into the same folder reuses the collections
     with ObjectTracker() as o:
-        bpy.ops.mn.import_molecule(method="local", filepath=str(root), node_setup=False)
+        mn_ops.import_molecule(method="local", filepath=str(root), node_setup=False)
         assert len(o.new_objects()) == 4
     assert "folder_import.001" not in bpy.data.collections
     assert len(group_a.objects) == 2
 
     # non-recursive only imports the folder's top level
     with ObjectTracker() as o:
-        bpy.ops.mn.import_molecule(
+        mn_ops.import_molecule(
             method="local", filepath=str(root), node_setup=False, recursive=False
         )
         top_level = o.new_objects()
@@ -167,11 +183,11 @@ def test_op_import_folder(tmp_path):
 def test_op_import_folder_objects_only(tmp_path):
     """With objects_only set, the folder import keeps the created objects but
     discards the Python entities, which stay individually relinkable."""
-    session = bpy.context.scene.MNSession
+    session = get_session()
     root = _build_structure_folder(tmp_path, "folder_objects_only")
 
     with ObjectTracker() as o:
-        res = bpy.ops.mn.import_molecule(
+        res = mn_ops.import_molecule(
             method="local", filepath=str(root), node_setup=False, objects_only=True
         )
         assert res == {"FINISHED"}
@@ -180,23 +196,22 @@ def test_op_import_folder_objects_only(tmp_path):
     assert len(objects) == 4
     for obj in objects:
         assert session.match(obj) is None
-        assert mn.entities.reload.can_reload(obj)
+        assert can_reload(obj)
 
     # a discarded entity can be reconstructed from the object's recorded source
-    entity = mn.entities.reload.reload_entity(objects[0])
+    entity = reload_entity(objects[0])
     assert session.match(objects[0]) is entity
 
 
 def test_op_dropped_topology_and_trajectories():
     """Dropping a topology with several trajectory files chains them together."""
-    session = bpy.context.scene.MNSession
     md_dir = data_dir / "md_ppr"
     # the topology is listed last and the trajectory twice, as a drop can be in
     # any order and a run split over several files reads as one trajectory
     names = ["first_5_frames.xtc", "first_5_frames.xtc", "box.gro"]
 
     with ObjectTracker() as o:
-        res = bpy.ops.mn.import_molecule(
+        res = mn_ops.import_molecule(
             directory=str(md_dir),
             files=[{"name": name} for name in names],
             style="ribbon",
@@ -205,7 +220,7 @@ def test_op_dropped_topology_and_trajectories():
         objects = o.new_objects()
 
     assert len(objects) == 1
-    mol = session.match(objects[0])
+    mol = _molecule(objects[0])
     assert mol.name == "box.gro"
     assert int(mol.props.n_frames) == 10
     assert len(mol.universe.trajectory.filenames) == 2
@@ -217,7 +232,7 @@ def test_op_dropped_trajectory_needs_one_topology():
     for names in (["first_5_frames.xtc"], ["box.gro", "md.gro", "first_5_frames.xtc"]):
         with ObjectTracker() as o:
             with pytest.raises(RuntimeError, match="exactly one topology file"):
-                bpy.ops.mn.import_molecule(
+                mn_ops.import_molecule(
                     directory=str(md_dir), files=[{"name": name} for name in names]
                 )
             assert not o.new_objects()
@@ -225,25 +240,24 @@ def test_op_dropped_trajectory_needs_one_topology():
 
 def test_op_dropped_md_topology_alone():
     """A dropped `.gro` on its own is read as a single-frame MD structure."""
-    session = bpy.context.scene.MNSession
     with ObjectTracker() as o:
-        res = bpy.ops.mn.import_molecule(
+        res = mn_ops.import_molecule(
             directory=str(data_dir / "md_ppr"), files=[{"name": "box.gro"}]
         )
         assert res == {"FINISHED"}
         objects = o.new_objects()
-    assert session.match(objects[0]).name == "box.gro"
+    assert _molecule(objects[0]).name == "box.gro"
 
 
 def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
-    bpy.context.scene.frame_set(0)
+    scene().frame_set(0)
 
     topo = str(data_dir / "md_ppr/box.gro")
     traj = str(data_dir / "md_ppr/first_5_frames.xtc")
     name = "AnotherNewTrajectory"
 
     with ObjectTracker() as o:
-        bpy.ops.mn.import_molecule(
+        mn_ops.import_molecule(
             method="local",
             filepath=topo,
             trajectory=traj,
@@ -251,20 +265,20 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
         )
         obj_1 = o.latest()
 
-    traj_op = bpy.context.scene.MNSession.match(obj_1)
+    traj_op = _molecule(obj_1)
     assert traj_op.name == "box.gro"
     traj_op.name = name
     assert traj_op.name == name
-    assert traj_op._mn_entity_type == mn.entities.base.EntityType.MOLECULE
+    assert traj_op._mn_entity_type == EntityType.MOLECULE
 
     traj_func = mn.entities.molecule.Molecule.load(
         topo, traj, name="test", style="ribbon"
     )
 
-    bpy.context.scene.frame_set(2)
+    scene().frame_set(2)
     assert np.allclose(traj_func.position, traj_op.position)
     pos_2 = traj_func.position.copy()
-    bpy.context.scene.frame_set(4)
+    scene().frame_set(4)
     traj_op.set_frame(4)
     traj_func.set_frame(4)
 
@@ -274,16 +288,10 @@ def test_op_api_mda(snapshot_custom: NumpySnapshotExtension):
 
 def test_op_dropped_files_share_node_group():
     """With Share Node Group enabled, all dropped structures use one tree."""
-    session = bpy.context.scene.MNSession
-    paths = [
-        mn.download.StructureDownloader(cache=data_dir).download(
-            code=code, format="cif"
-        )
-        for code in codes[:2]
-    ]
+    paths = [_cached_path(code, "cif") for code in codes[:2]]
 
     with ObjectTracker() as o:
-        res = bpy.ops.mn.import_molecule(
+        res = mn_ops.import_molecule(
             directory=str(paths[0].parent),
             files=[{"name": path.name} for path in paths],
             style="ribbon",
@@ -292,14 +300,10 @@ def test_op_dropped_files_share_node_group():
         assert res == {"FINISHED"}
         objects = o.new_objects()
 
-    mols = [session.match(obj) for obj in objects]
+    mols = [_molecule(obj) for obj in objects]
     trees = [mol.modifier_node_tree for mol in mols]
     assert trees[0] == trees[1]
-    style_trees = [
-        node.node_tree.name
-        for node in trees[0].nodes
-        if isinstance(node, bpy.types.GeometryNodeGroup)
-    ]
+    style_trees = _style_tree_names(trees[0])
     assert "Style Ribbon" in style_trees
 
 
@@ -325,10 +329,9 @@ def test_share_node_group_api(fetch):
 
 def test_op_fetch_comma_separated_codes():
     """Comma-separated codes fetch multiple structures, sharing one tree."""
-    session = bpy.context.scene.MNSession
 
     with ObjectTracker() as o:
-        res = bpy.ops.mn.import_molecule(
+        res = mn_ops.import_molecule(
             code=f"{codes[0]}, {codes[1]}",
             file_format="cif",
             style="ribbon",
@@ -339,14 +342,14 @@ def test_op_fetch_comma_separated_codes():
         objects = o.new_objects()
 
     assert len(objects) == 2
-    mols = [session.match(obj) for obj in objects]
+    mols = [_molecule(obj) for obj in objects]
     assert sorted(mol.props.code for mol in mols) == sorted(codes[:2])
     trees = [mol.modifier_node_tree for mol in mols]
     assert trees[0] == trees[1]
 
     # without sharing, each fetched structure gets its own tree
     with ObjectTracker() as o:
-        res = bpy.ops.mn.import_molecule(
+        res = mn_ops.import_molecule(
             code=f"{codes[0]},{codes[1]}",
             file_format="cif",
             style="ribbon",
@@ -355,7 +358,7 @@ def test_op_fetch_comma_separated_codes():
         assert res == {"FINISHED"}
         objects = o.new_objects()
 
-    mols = [session.match(obj) for obj in objects]
+    mols = [_molecule(obj) for obj in objects]
     trees = [mol.modifier_node_tree for mol in mols]
     assert trees[0] != trees[1]
 
@@ -367,24 +370,24 @@ def test_op_import_spheres_stay_points_under_eevee(fetch):
     an import from the dialog has to stay interactive on large systems, so it
     keeps the point cloud regardless.
     """
-    scene = bpy.context.scene
-    engine = scene.render.engine
-    scene.render.engine = "BLENDER_EEVEE"
+    render = scene().render
+    engine = render.engine
+    render.engine = "BLENDER_EEVEE"
     try:
         with ObjectTracker() as o:
-            bpy.ops.mn.import_molecule(
+            mn_ops.import_molecule(
                 code=codes[0],
                 file_format="cif",
                 style="spheres",
                 cache_dir=str(data_dir),
             )
-            imported = scene.MNSession.match(o.latest())
+            imported = _molecule(o.latest())
         assert sphere_value(imported) == "Point"
 
         api = fetch(codes[0]).add_style("spheres")
         assert sphere_value(api) == "Instance"
     finally:
-        scene.render.engine = engine
+        render.engine = engine
 
 
 @pytest.mark.parametrize(
@@ -438,22 +441,21 @@ def test_op_import_bad_paths_report_errors(op, kwargs, message):
     """Bad file paths are reported by the operator rather than raising a traceback
     from deep inside a file reader."""
     with pytest.raises(RuntimeError, match=message):
-        getattr(bpy.ops.mn, op)(**kwargs)
+        getattr(mn_ops, op)(**kwargs)
 
 
 def test_op_import_multiple_structure_blocks(tmp_path):
     """A .cif with several structures in separate data blocks imports one
     Molecule per block."""
-    session = bpy.context.scene.MNSession
     path = tmp_path / "two.cif"
     path.write_text(
         (data_dir / "1BNA.cif").read_text() + "\n" + (data_dir / "1l58.cif").read_text()
     )
 
     with ObjectTracker() as o:
-        res = bpy.ops.mn.import_molecule(filepath=str(path), method="local")
+        res = mn_ops.import_molecule(filepath=str(path), method="local")
         assert res == {"FINISHED"}
         objects = o.new_objects()
 
-    mols = [session.match(obj) for obj in objects]
+    mols = [_molecule(obj) for obj in objects]
     assert sorted(mol.props.data_block for mol in mols) == ["1BNA", "1L58"]

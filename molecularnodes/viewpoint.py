@@ -126,10 +126,10 @@ def without_near(
     whose surface sits just in front of every atom centre and would hide all
     of them from every direction.
     """
-    from scipy.spatial import cKDTree
+    from scipy.spatial import KDTree
 
     points = as_points(points)
-    near = cKDTree(as_points(target)).query(points, distance_upper_bound=distance)[0]
+    near = KDTree(as_points(target)).query(points, distance_upper_bound=distance)[0]
     return points[~np.isfinite(near)]
 
 

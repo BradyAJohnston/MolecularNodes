@@ -17,6 +17,7 @@ __all__ = ["data", "install", "uninstall", "MN_DATA_FILE"]
 def _libs(context: bpy.types.Context | None = None) -> bpy.types.AssetLibraryCollection:
     if not context:
         context = bpy.context
+    assert context.preferences is not None
     return context.preferences.filepaths.asset_libraries
 
 

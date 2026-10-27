@@ -93,7 +93,7 @@ class Grids(Density):
         overwrite: bool = False,
     ):
         super().__init__(file_path=file_path)
-        self.grid: Grid = None  # GridDataFormats Grid object
+        self.grid: Grid | None = None  # GridDataFormats Grid object
         self.file_vdb = self.grid_to_vdb(
             str(self.file_path), center=center, invert=invert, overwrite=overwrite
         )
@@ -142,7 +142,7 @@ class Grids(Density):
         )
         density.create_object(name=name or Path(file_path).name, style=style)
         # record the source so the entity can be reloaded into a fresh session
-        density.object.mn.filepath = str(file_path)
+        density.props.filepath = str(file_path)
         return density
 
     def _parse_grid_with_fallback(
@@ -257,7 +257,7 @@ class Grids(Density):
             delta=np.linalg.norm(axes, axis=1),
             metadata=metadata,
         )
-        grid.mn_axes = axes
+        grid.mn_axes = axes  # ty: ignore[unresolved-attribute]  # stashed on the Grid for _voxel_axes
         return grid
 
     def _voxel_axes(self, file: str, gobj) -> np.ndarray:
@@ -298,8 +298,9 @@ class Grids(Density):
         # structures
         self.object = databpy.import_vdb(self.file_vdb, collection=coll.mn())
         self.object.location = (0, 0, 0)
-        self.object.mn.entity_type = self._entity_type.value
+        self.props.entity_type = self._entity_type.value
 
+        assert self.grid is not None
         threshold = float(np.quantile(self.grid.grid, 0.995))
 
         if name and name != "":

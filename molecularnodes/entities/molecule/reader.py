@@ -1,8 +1,8 @@
-import json
 import logging
 from abc import ABCMeta
 from io import BytesIO
 from pathlib import Path
+from typing import Any, Callable, cast
 import numpy as np
 from biotite.file import File, InvalidFileError
 from biotite.structure import AtomArray, AtomArrayStack, BondType, filter
@@ -61,7 +61,7 @@ def read_structure(
             raise InvalidFileError("The file format is not supported.")
 
 
-class ReaderBase(metaclass=ABCMeta):
+class ReaderBase[F: File](metaclass=ABCMeta):
     """
     Abstract base class for reading molecular data from a file.
     """
@@ -69,7 +69,7 @@ class ReaderBase(metaclass=ABCMeta):
     def __init__(self, file_path: str | Path | BytesIO):
         self._extra_annotations: dict
         self.file_path = file_path
-        self.file = self.read(file_path)
+        self.file: F = self.read(file_path)
         self.array: AtomArray | AtomArrayStack = self.get_structure()
         self.array = self._connect_cyclic_peptides(self.array)
         self.array = self.set_extra_annotations(
@@ -79,16 +79,15 @@ class ReaderBase(metaclass=ABCMeta):
 
     @property
     def n_models(self) -> int:
+        assert isinstance(self.array, AtomArrayStack)
         return self.array.stack_depth()
 
-    def read(self, file_path: str | Path | BytesIO) -> File:
+    def read(self, file_path: str | Path | BytesIO) -> F:
         raise NotImplementedError("Subclasses must implement this method.")
 
     @classmethod
-    def set_standard_annotations(
-        cls, array: AtomArray | AtomArrayStack
-    ) -> AtomArray | AtomArrayStack:
-        annotations = {
+    def set_standard_annotations[A: AtomArray | AtomArrayStack](cls, array: A) -> A:
+        annotations: dict[str, Callable[[Any], Any]] = {
             "mass": cls._compute_mass,
             "atomic_number": cls._compute_atomic_number,
             "res_name_int": cls._compute_res_name_int,
@@ -177,10 +176,8 @@ class ReaderBase(metaclass=ABCMeta):
     def chain_ids(self) -> list[str] | None:
         return np.unique(self.array.get_annotation("chain_id")).tolist()
 
-    def assemblies(self, as_json_string: bool = False) -> dict | str:
+    def assemblies(self) -> dict | str:
         try:
-            if as_json_string:
-                return json.dumps(self._assemblies())
             return self._assemblies()
         except InvalidFileError as e:
             logger.warning(f"Failed to parse biological assemblies: {e}")
@@ -234,9 +231,9 @@ class ReaderBase(metaclass=ABCMeta):
         }
 
     @staticmethod
-    def set_extra_annotations(
-        annotations: dict, array, file
-    ) -> AtomArray | AtomArrayStack:
+    def set_extra_annotations[A: AtomArray | AtomArrayStack](
+        annotations: dict, array: A, file
+    ) -> A:
         for name, func in annotations.items():
             try:
                 # for the getting of some custom attributes, we get it for the full atom_site
@@ -297,7 +294,7 @@ class ReaderBase(metaclass=ABCMeta):
     def _compute_vdw_radii(array):
         return np.array(
             [
-                data.elements.get(x, {}).get("vdw_radii", 100.0) / 100
+                cast(float, data.elements.get(x, {}).get("vdw_radii", 100.0)) / 100
                 for x in np.char.title(array.element)
             ],
             dtype=float,

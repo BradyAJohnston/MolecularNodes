@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 import molecularnodes as mn
 from .constants import data_dir
+from .utils import scene, view_layer
 
 
 @pytest.fixture
@@ -94,6 +95,7 @@ def test_look_at_object(canvas):
     # Create test object
     bpy.ops.mesh.primitive_cube_add()
     test_obj = bpy.context.active_object
+    assert test_obj is not None
 
     # Test looking at a plain Blender object
     canvas.look_at(test_obj)
@@ -115,7 +117,8 @@ def test_look_at_views(canvas, universe):
     # view of whole trajectory
     v0 = t1.get_view()
 
-    camera = bpy.context.scene.camera
+    camera = scene().camera
+    assert camera is not None
     initial_location = camera.location.copy()
 
     # frame v1 (resid 1 of trajectory)
@@ -433,7 +436,9 @@ def test_compositor_reset_and_annotations(canvas):
 def test_clear_removes_content_but_keeps_lighting(fetch, canvas):
     "clear() removes content objects, not just the Molecular Nodes entities."
     cube = bpy.data.objects.new("UserCube", bpy.data.meshes.new("UserCubeMesh"))
-    bpy.context.collection.objects.link(cube)
+    collection = bpy.context.collection
+    assert collection is not None
+    collection.objects.link(cube)
     fetch("4ozs").add_style("cartoon")
 
     canvas.clear()
@@ -631,7 +636,7 @@ def test_get_view_is_not_stale_after_adding_a_style(fetch, canvas):
     mol.add_style("cartoon", selection="chainID A")
 
     before = np.asarray(mol.get_view())
-    bpy.context.view_layer.update()
+    view_layer().update()
     after = np.asarray(mol.get_view())
     assert np.allclose(before.min(axis=0), after.min(axis=0))
     assert np.allclose(before.max(axis=0), after.max(axis=0))

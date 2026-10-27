@@ -1,6 +1,7 @@
 import json
 import logging
 import math
+from typing import TYPE_CHECKING, Any, cast
 import bpy
 import databpy as db
 import MDAnalysis as mda
@@ -9,7 +10,10 @@ from MDAnalysis.analysis.hydrogenbonds import HydrogenBondAnalysis
 from ...blender import coll
 from ...nodes import handlers as node_handlers
 from ...nodes.geometry import StyleHBonds
-from ..base import EntityType, MolecularEntity
+from ..base import EntityType
+
+if TYPE_CHECKING:
+    from .base import Molecule
 
 logger = logging.getLogger(__name__)
 
@@ -29,13 +33,13 @@ class HBondCalculation:
     `MDAnalysis.analysis.hydrogenbonds.HydrogenBondAnalysis`.
     """
 
-    def __init__(self, entity: MolecularEntity):
+    def __init__(self, entity: "Molecule"):
         self._entity = entity
-        self._hba = None
-        self._hba_kwargs = None
+        self._hba: HydrogenBondAnalysis | None = None
+        self._hba_kwargs: dict | None = None
         self._hba_trajectory = None
         self._kwargs = {}
-        self._cutoffs = None
+        self._cutoffs: dict[str, float] | None = None
         self._setting_props = False
         self._uframe = None
         self._restore_failed = False
@@ -80,7 +84,7 @@ class HBondCalculation:
         finally:
             self._setting_props = False
 
-    def _set_prop(self, name: str, value: any) -> None:
+    def _set_prop(self, name: str, value: Any) -> None:
         """Internal: Set the property value only when different"""
         if getattr(self._props, name) != value:
             setattr(self._props, name, value)
@@ -154,7 +158,7 @@ class HBondCalculation:
                 db.create_object(
                     name=f".data_{self._entity.name}_hbonds",
                     collection=coll.data(),
-                    vertices=np.zeros((len(self._entity.universe.atoms), 3)),
+                    vertices=np.zeros((len(self._entity.atoms), 3)),
                 )
             calculations.add(
                 "hbonds",
@@ -180,8 +184,10 @@ class HBondCalculation:
         frames through the reader it was created with"""
         universe = self._entity.universe
         if self._hba_trajectory is not universe.trajectory:
+            assert self._hba_kwargs is not None
             self._hba = HydrogenBondAnalysis(universe, **self._hba_kwargs)
             self._hba_trajectory = universe.trajectory
+        assert self._hba is not None
         return self._hba
 
     def _update_from_props(self) -> None:
@@ -192,6 +198,7 @@ class HBondCalculation:
             self._setup_hba(self._props.selection, self._kwargs)
         except Exception as e:
             logger.error(f"Hydrogen bonds failed with the new cutoffs: {e}")
+            assert self._cutoffs is not None
             self._set_cutoffs(self._cutoffs)
             return
         self._calculate(self._entity.universe)
@@ -235,8 +242,11 @@ class HBondCalculation:
         # columns are frame, donor, hydrogen, acceptor, distance, angle
         pairs = results.hbonds[:, 2:4].astype(np.int32)
         # edges can't be removed from a mesh, so rebuild it each time
-        mesh = self.object.data
+        obj = self.object
+        assert obj is not None
+        mesh = cast(bpy.types.Mesh, obj.data)
         mesh.clear_geometry()
+        assert universe.atoms is not None
         mesh.vertices.add(len(universe.atoms))
         mesh.edges.add(len(pairs))
         mesh.edges.foreach_set("vertices", pairs.ravel())

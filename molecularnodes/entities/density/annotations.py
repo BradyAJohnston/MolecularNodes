@@ -1,4 +1,6 @@
 import os
+from typing import cast
+import bpy
 import numpy as np
 from ...annotations.base import BaseAnnotation
 from ...annotations.manager import BaseAnnotationManager
@@ -90,7 +92,7 @@ class DensityInfo(DensityAnnotation):
         params = self.interface
         params.text_align = "left"
 
-    def validate(self, input_name: str = None) -> bool:
+    def validate(self, input_name: str | None = None) -> bool:
         params = self.interface
         if input_name in (None, "location"):
             x, y = params.location
@@ -110,7 +112,10 @@ class DensityInfo(DensityAnnotation):
                 style_node = get_final_style_nodes(self.density.modifier_node_tree)[0]
                 iso_socket = style_node.inputs.get("ISO Value")
                 if iso_socket is None:
-                    threshold = style_node.inputs["Threshold"].default_value
+                    threshold_socket = cast(
+                        bpy.types.NodeSocketFloat, style_node.inputs["Threshold"]
+                    )
+                    threshold = threshold_socket.default_value
                     text = text + f"|Threshold: {threshold:.2f}"
                 else:
                     text = text + f"|ISO Value: {iso_socket.default_value:.2f}"

@@ -2,6 +2,7 @@ import bpy
 import MDAnalysis as mda
 import pytest
 import molecularnodes as mn
+from molecularnodes.blender.registered import object_props, object_uuid
 from molecularnodes.session import MNSession
 from .constants import data_dir
 
@@ -11,8 +12,8 @@ def test_session_present():
 
 
 def test_persistent_handlers_added():
-    load_handlers = [handler.__name__ for handler in bpy.app.handlers.load_post]
-    save_handlers = [handler.__name__ for handler in bpy.app.handlers.save_post]
+    load_handlers = [handler.__name__ for handler in bpy.app.handlers.load_post]  # ty: ignore[unresolved-attribute]  # handlers are plain functions
+    save_handlers = [handler.__name__ for handler in bpy.app.handlers.save_post]  # ty: ignore[unresolved-attribute]  # handlers are plain functions
     assert "_pickle" in save_handlers
     assert "_load" in load_handlers
 
@@ -35,16 +36,16 @@ def test_reload_molecule_from_file(tmp_path):
     mol = mn.Molecule.load(data_dir / "1cd3.cif")
     obj = mol.object
     # the source file is recorded so the entity can be reloaded
-    assert obj.mn.filepath != ""
+    assert object_props(obj).filepath != ""
     assert can_reload(obj)
 
     # simulate a lost session link (e.g. re-opening a .blend without the pickle)
-    session.remove_entity(obj.uuid)
-    assert session.get(obj.uuid) is None
+    session.remove_entity(object_uuid(obj))
+    assert session.get(object_uuid(obj)) is None
 
     reloaded = reload_entity(obj)
     assert isinstance(reloaded, mn.Molecule)
-    assert session.get(obj.uuid) is reloaded
+    assert session.get(object_uuid(obj)) is reloaded
     assert reloaded.object is obj
 
 
@@ -81,13 +82,13 @@ def test_reload_trajectory_from_file():
         coordinates=data_dir / "md_ppr/first_5_frames.xtc",
     )
     obj = traj.object
-    assert obj.mn.filepath_topology != ""
+    assert object_props(obj).filepath_topology != ""
     assert can_reload(obj)
 
-    session.remove_entity(obj.uuid)
+    session.remove_entity(object_uuid(obj))
     reloaded = reload_entity(obj)
     assert isinstance(reloaded, mn.Molecule)
-    assert session.get(obj.uuid) is reloaded
+    assert session.get(object_uuid(obj)) is reloaded
 
 
 def test_reload_density_from_file():
@@ -96,13 +97,13 @@ def test_reload_density_from_file():
     session = mn.session.get_session()
     density = mn.entities.density.Grids.load(data_dir / "emd_24805.map.gz")
     obj = density.object
-    assert obj.mn.filepath != ""
+    assert object_props(obj).filepath != ""
     assert can_reload(obj)
 
-    session.remove_entity(obj.uuid)
+    session.remove_entity(object_uuid(obj))
     reloaded = reload_entity(obj)
     assert isinstance(reloaded, mn.entities.density.Density)
-    assert session.get(obj.uuid) is reloaded
+    assert session.get(object_uuid(obj)) is reloaded
 
 
 def test_color_by_styled_density_survives_save_and_reload(fetch, tmp_path):
@@ -135,10 +136,11 @@ def test_color_by_styled_density_survives_save_and_reload(fetch, tmp_path):
     bpy.ops.wm.open_mainfile(filepath=str(filepath))
 
     restored = session.get(mol.uuid)
+    assert isinstance(restored, mn.Molecule)
     assert np.allclose(restored.named_attribute("Color", evaluate=True), before)
 
     density_obj = bpy.data.objects[density.name]
-    session.remove_entity(density_obj.uuid)
+    session.remove_entity(object_uuid(density_obj))
     reload_entity(density_obj)
     assert np.allclose(restored.named_attribute("Color", evaluate=True), before)
 
@@ -151,10 +153,10 @@ def test_reload_ensemble_star_from_file():
     obj = ensemble.object
     assert can_reload(obj)
 
-    session.remove_entity(obj.uuid)
+    session.remove_entity(object_uuid(obj))
     reloaded = reload_entity(obj)
     assert isinstance(reloaded, mn.entities.ensemble.StarFile)
-    assert session.get(obj.uuid) is reloaded
+    assert session.get(object_uuid(obj)) is reloaded
 
 
 def test_reload_ensemble_cellpack_from_file():
@@ -167,13 +169,13 @@ def test_reload_ensemble_cellpack_from_file():
         node_setup=False,
     )
     obj = ensemble.object
-    assert obj.mn.filepath != ""
+    assert object_props(obj).filepath != ""
     assert can_reload(obj)
 
-    session.remove_entity(obj.uuid)
+    session.remove_entity(object_uuid(obj))
     reloaded = reload_entity(obj)
     assert isinstance(reloaded, mn.entities.ensemble.CellPack)
-    assert session.get(obj.uuid) is reloaded
+    assert session.get(object_uuid(obj)) is reloaded
 
 
 def test_session_pickle_roundtrip_cellpack(tmp_path):
@@ -199,7 +201,7 @@ def test_session_pickle_skips_unpicklable_entity(tmp_path):
     session = mn.session.get_session()
     good = mn.Molecule.load(data_dir / "1cd3.cif")
     bad = mn.Molecule.load(data_dir / "1cd3.cif")
-    bad._unpicklable = threading.Lock()
+    setattr(bad, "_unpicklable", threading.Lock())
     blend_path = tmp_path / "test.blend"
 
     with pytest.warns(UserWarning, match="cannot be serialized"):
@@ -269,6 +271,7 @@ def test_session_pickle_roundtrip_multi_file_trajectory(tmp_path):
         session.load(blend_path)
 
     restored = session.get(traj.uuid)
+    assert isinstance(restored, mn.Molecule)
     filenames = [Path(f) for f in restored.universe.trajectory.filenames]
     assert len(filenames) == 2
     assert all(f.is_absolute() for f in filenames)
@@ -283,12 +286,12 @@ def test_entity_blender_properties(session: MNSession, universe):
     assert t1.uuid in session.entities
     obj = bpy.data.objects["u1"]
     # entity type is stored on the object properties
-    assert obj.mn.entity_type == "molecule"
-    assert obj.uuid == t1.uuid
+    assert object_props(obj).entity_type == "molecule"
+    assert object_uuid(obj) == t1.uuid
     # visibility is driven through the object properties
-    assert obj.mn.visible
+    assert object_props(obj).visible
     assert obj.visible_get()
-    obj.mn.visible = False
+    object_props(obj).visible = False
     assert not obj.visible_get()
     # removal drops the entity from the session
     session.remove_entity(t1.uuid)

@@ -1,20 +1,30 @@
+from typing import Annotated, cast
 import bpy
 from bpy.props import BoolProperty, StringProperty
-from .. import __package__, assets, download
+from .. import __package__ as _addon_package
+from .. import assets, download
+from ..blender.utils import annotated_props
+
+assert _addon_package is not None
+_ADDON_KEY: str = _addon_package
 
 
 def addon_preferences(
     context: bpy.types.Context | None = None,
-) -> bpy.types.AddonPreferences:
+) -> "MolecularNodesPreferences | None":
     if context is None:
         context = bpy.context
+    preferences = context.preferences
+    if preferences is None:
+        return None
     try:
-        return context.preferences.addons[__package__].preferences
+        addon = preferences.addons[_ADDON_KEY]
     except KeyError:
         key = "bl_ext.vscode_development.molecularnodes"
-        if key in context.preferences.addons:
-            return context.preferences.addons[key].preferences
-        return None
+        if key not in preferences.addons:
+            return None
+        addon = preferences.addons[key]
+    return cast("MolecularNodesPreferences | None", addon.preferences)
 
 
 class MN_OT_Template_Install(bpy.types.Operator):
@@ -47,24 +57,32 @@ class MN_OT_Template_Uninstall(bpy.types.Operator):
         return {"FINISHED"}
 
 
+@annotated_props
 class MolecularNodesPreferences(bpy.types.AddonPreferences):
-    bl_idname = __package__
+    bl_idname = _ADDON_KEY
 
-    cache_dir: StringProperty(  # type: ignore
-        name="Cache Directory",
-        description="Where to store the structures downloaded from the Protein Data Bank",
-        default=str(download.CACHE_DIR),
-        subtype="DIR_PATH",
-    )
+    cache_dir: Annotated[
+        str,
+        StringProperty(
+            name="Cache Directory",
+            description="Where to store the structures downloaded from the Protein Data Bank",
+            default=str(download.CACHE_DIR),
+            subtype="DIR_PATH",
+        ),
+    ]
 
-    cache_download: BoolProperty(  # type: ignore
-        name="Cache Downloads",
-        description="Cache downloaded files from the Protein Data Bank",
-        default=True,
-    )
+    cache_download: Annotated[
+        bool,
+        BoolProperty(
+            name="Cache Downloads",
+            description="Cache downloaded files from the Protein Data Bank",
+            default=True,
+        ),
+    ]
 
     def draw(self, context):
         layout = self.layout
+        assert layout is not None
         layout.label(
             text="Where and if to store downloaded files for faster subsequent loading:"
         )

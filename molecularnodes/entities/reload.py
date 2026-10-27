@@ -9,8 +9,11 @@ reconstructs that Python entity from the source data recorded on the object's
 existing Blender object, without rebuilding its geometry.
 """
 
+from io import BytesIO
+from pathlib import Path
 import bpy
 import MDAnalysis as mda
+from ..blender.registered import object_props
 from ..blender.utils import path_resolve, resolve_file_path
 from ..converters import universe_from_atoms
 from ..download import StructureDownloader
@@ -24,7 +27,7 @@ from .molecule.reader import read_structure
 
 
 def _reload_molecule(obj: bpy.types.Object) -> Molecule:
-    mn = obj.mn
+    mn = object_props(obj)
     # a molecule loaded from topology (+ trajectory) files records those paths;
     # one parsed from a structure file or fetched records filepath/code instead
     if mn.filepath_topology:
@@ -33,6 +36,8 @@ def _reload_molecule(obj: bpy.types.Object) -> Molecule:
         file_path = StructureDownloader().download(
             code=mn.code, format="bcif", database=mn.database or "rcsb"
         )
+        # binary CIF is never downloaded as text
+        assert isinstance(file_path, (Path, BytesIO))
     elif mn.filepath:
         file_path = path_resolve(mn.filepath)
     else:
@@ -45,7 +50,7 @@ def _reload_molecule(obj: bpy.types.Object) -> Molecule:
 
 
 def _reload_trajectory(obj: bpy.types.Object) -> Molecule:
-    mn = obj.mn
+    mn = object_props(obj)
     path_topo = resolve_file_path(mn.filepath_topology, "Topology file")
     if mn.entity_type == EntityType.MD_OXDNA:
         # an oxDNA topology carries no positions, so the trajectory is required
@@ -64,12 +69,14 @@ def _reload_trajectory(obj: bpy.types.Object) -> Molecule:
         # a topology-only universe (e.g. a `.gro` with its own coordinates)
         entity = Molecule(mda.Universe(path_topo), create_object=False)
     entity.object = obj
-    entity.set_frame(bpy.context.scene.frame_current)
+    scene = bpy.context.scene
+    assert scene is not None
+    entity.set_frame(scene.frame_current)
     return entity
 
 
 def _reload_density(obj: bpy.types.Object) -> Grids:
-    mn = obj.mn
+    mn = object_props(obj)
     if not mn.filepath:
         raise ValueError("No source file recorded for this density")
     entity = Grids(file_path=path_resolve(mn.filepath))
@@ -83,7 +90,7 @@ def _reload_ensemble_star(obj: bpy.types.Object) -> StarFile:
 
 
 def _reload_ensemble_cellpack(obj: bpy.types.Object) -> CellPack:
-    mn = obj.mn
+    mn = object_props(obj)
     if not mn.filepath:
         raise ValueError("No source file recorded for this ensemble")
     entity = CellPack(path_resolve(mn.filepath))
@@ -104,7 +111,7 @@ _RELOADERS = {
 
 def can_reload(obj: bpy.types.Object) -> bool:
     """Whether ``obj`` is an entity object that can be reloaded into the session."""
-    return obj is not None and obj.mn.entity_type in _RELOADERS
+    return obj is not None and object_props(obj).entity_type in _RELOADERS
 
 
 def reload_entity(obj: bpy.types.Object) -> MolecularEntity:
@@ -127,9 +134,8 @@ def reload_entity(obj: bpy.types.Object) -> MolecularEntity:
         If the object's entity type cannot be reloaded, or the source data
         needed to reload it is missing.
     """
-    reloader = _RELOADERS.get(obj.mn.entity_type)
+    entity_type = object_props(obj).entity_type
+    reloader = _RELOADERS.get(entity_type)
     if reloader is None:
-        raise ValueError(
-            f"Cannot reload an object with entity type '{obj.mn.entity_type}'"
-        )
+        raise ValueError(f"Cannot reload an object with entity type '{entity_type}'")
     return reloader(obj)

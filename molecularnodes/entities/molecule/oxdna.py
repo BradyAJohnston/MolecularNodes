@@ -15,6 +15,7 @@ from MDAnalysis.core.topologyattrs import (
 from MDAnalysis.lib import util
 from MDAnalysis.topology.base import TopologyReaderBase
 from ... import color
+from ...nodes._utils import STYLE_LITERALS
 from ..base import EntityType
 from .base import Molecule
 
@@ -417,12 +418,12 @@ class OXDNA(Molecule):
         )
 
     @classmethod
-    def load(
+    def load(  # ty: ignore[invalid-method-override]  # positional order differs from Molecule.load; changing it would break callers
         cls,
         topology: str | Path,
         coordinates: str | Path,
         name: str = "oxDNA",
-        style: str | None = "ribbon",
+        style: STYLE_LITERALS | None = "ribbon",
         selection: str | None = None,
         create_object: bool = True,
     ) -> "OXDNA":

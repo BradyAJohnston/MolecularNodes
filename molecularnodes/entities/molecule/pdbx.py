@@ -31,7 +31,7 @@ def structure_blocks(file: pdbx.CIFFile | pdbx.BinaryCIFFile) -> list[str]:
     ]
 
 
-class PDBXReader(ReaderBase):
+class PDBXReader(ReaderBase[pdbx.CIFFile | pdbx.BinaryCIFFile]):
     def __init__(self, file_path: str | Path | BytesIO, data_block: str | None = None):
         self._data_block = data_block
         self._extra_annotations = {
@@ -41,7 +41,7 @@ class PDBXReader(ReaderBase):
         self._extra_fields = ["b_factor", "occupancy", "atom_id", "charge"]
         super().__init__(file_path)
 
-    def read(self, file_path):
+    def read(self, file_path) -> pdbx.CIFFile | pdbx.BinaryCIFFile:
         match file_path.suffix:
             case ".cif":
                 # biotite only recognises tags that start the line, but some

@@ -4,7 +4,7 @@ import tempfile
 from contextlib import ExitStack, contextmanager
 from enum import StrEnum
 from pathlib import Path
-from typing import Literal, Sequence, Tuple
+from typing import Any, Literal, Sequence, Tuple
 import bpy
 import numpy as np
 import numpy.typing as npt
@@ -257,7 +257,7 @@ class Canvas:
         self._world: WorldTree | None = None
 
         requested = template is not _UNSET
-        if not requested:
+        if isinstance(template, Unset):
             template = _DEFAULT_TEMPLATE
 
         session = get_session()
@@ -833,7 +833,7 @@ class Canvas:
         return ViewTransform(self._view_settings.view_transform)
 
     @view_transform.setter
-    def view_transform(self, value: ViewTransform) -> None:
+    def view_transform(self, value: ViewTransform | str) -> None:
         """
         Set the view transform setting.
 
@@ -1356,7 +1356,8 @@ class Canvas:
         render_settings = scene.render
         image_settings = render_settings.image_settings
         # temporary properties to override
-        override_props = [
+        # (owner, property name, temporary value)
+        override_props: list[tuple[Any, str, Any]] = [
             (render_settings, "use_lock_interface", True),
             (render_settings, "use_file_extension", True),
             (render_settings, "resolution_percentage", render_scale),
