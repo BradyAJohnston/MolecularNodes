@@ -1,8 +1,9 @@
-from typing import cast
+from typing import Annotated, cast
 import bpy
 from bpy.props import BoolProperty, StringProperty
 from .. import __package__ as _addon_package
 from .. import assets, download
+from ..blender.utils import annotated_props
 
 assert _addon_package is not None
 _ADDON_KEY: str = _addon_package
@@ -56,21 +57,28 @@ class MN_OT_Template_Uninstall(bpy.types.Operator):
         return {"FINISHED"}
 
 
+@annotated_props
 class MolecularNodesPreferences(bpy.types.AddonPreferences):
     bl_idname = _ADDON_KEY
 
-    cache_dir: StringProperty(  # type: ignore
-        name="Cache Directory",
-        description="Where to store the structures downloaded from the Protein Data Bank",
-        default=str(download.CACHE_DIR),
-        subtype="DIR_PATH",
-    )
+    cache_dir: Annotated[
+        str,
+        StringProperty(
+            name="Cache Directory",
+            description="Where to store the structures downloaded from the Protein Data Bank",
+            default=str(download.CACHE_DIR),
+            subtype="DIR_PATH",
+        ),
+    ]
 
-    cache_download: BoolProperty(  # type: ignore
-        name="Cache Downloads",
-        description="Cache downloaded files from the Protein Data Bank",
-        default=True,
-    )
+    cache_download: Annotated[
+        bool,
+        BoolProperty(
+            name="Cache Downloads",
+            description="Cache downloaded files from the Protein Data Bank",
+            default=True,
+        ),
+    ]
 
     def draw(self, context):
         layout = self.layout

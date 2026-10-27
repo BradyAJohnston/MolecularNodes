@@ -62,6 +62,7 @@ title: "Changelog"
 - Density grids with 64-bit float values, which includes every `.dx` file, are stored as 32-bit float grids so Blender's grid nodes (`Get Named Grid`, `Sample Grid`) can read them; they ignore double-precision grids. Previously converted `.vdb` files are converted again on load.
 - Rendering no longer fails when the session holds a starfile or CellPack ensemble, which has no annotations to draw.
 - Toggling the visibility of a starfile or CellPack ensemble object no longer raises an error.
+- The style menus of Import Molecule, Add Style and Swap Style no longer offer `Preset 1`-`4`, whose node groups no longer exist; choosing one raised an error.
 
 # v520.2.0 - 2026-09-18
 

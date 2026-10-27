@@ -25,10 +25,6 @@ STYLE_LITERALS = Literal[
 # an existing style node for a different style. Keys match the enum identifiers
 # in ui.style.STYLE_ITEMS and ui.ops.DENSITY_STYLE_ITEMS
 styles_mapping = {
-    "preset_1": "Style Preset 1",
-    "preset_2": "Style Preset 2",
-    "preset_3": "Style Preset 3",
-    "preset_4": "Style Preset 4",
     "spheres": "Style Spheres",
     "cartoon": "Style Cartoon",
     "sticks": "Style Sticks",

@@ -1,8 +1,9 @@
 import gc
 import os
 import re
+from collections.abc import Sequence
 from pathlib import Path
-from typing import cast
+from typing import Annotated, Any, cast
 import bpy
 import MDAnalysis as mda
 import nodebpy
@@ -19,7 +20,7 @@ from bpy.types import Context, Operator
 from ..annotations.props import create_annotation_type_inputs
 from ..blender import coll
 from ..blender.registered import object_props
-from ..blender.utils import path_resolve, resolve_file_path
+from ..blender.utils import annotated_props, path_resolve, resolve_file_path
 from ..download import CACHE_DIR, FileDownloadPDBError
 from ..entities import (
     OXDNA,
@@ -31,7 +32,7 @@ from ..entities import (
 )
 from ..entities.molecule.pdbx import MultipleStructuresError
 from ..handlers import update_entities
-from ..nodes._utils import remove_style_node, styles_mapping, swap
+from ..nodes._utils import STYLE_LITERALS, remove_style_node, styles_mapping, swap
 from ..scene.compositor import setup_compositor
 from ..session import get_session
 from ..utils import _increase_view_distance
@@ -101,6 +102,7 @@ def _load_structures(path: Path) -> list[Molecule]:
 # operator that is called by the 'button' press which calls the fetch function
 
 
+@annotated_props
 class MN_OT_Import_Molecule(bpy.types.Operator):
     bl_idname = "mn.import_molecule"
     bl_label = "Import Molecule"
@@ -110,138 +112,183 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
     )
     bl_options = {"REGISTER", "UNDO"}
 
-    style: EnumProperty(  # type: ignore
-        name="Style",
-        default="spheres",
-        description="Starting style for the structure on import",
-        items=STYLE_ITEMS,
-    )
-    node_setup: BoolProperty(  # type: ignore
-        name="Node Setup",
-        default=True,
-        description="Whether to setup the starting default node tree on import",
-    )
-    assembly: BoolProperty(  # type: ignore
-        default=False,
-        name="Build Biological Assembly",
-        description="Build the biological assembly for the structure on import",
-    )
-    share_node_group: BoolProperty(  # type: ignore
-        default=False,
-        name="Share Node Group",
-        description=(
-            "When importing multiple structures, style them all with the same "
-            "node group instead of creating one per structure, so tweaks apply "
-            "to every structure at once (useful for conformations of one protein)"
+    style: Annotated[
+        STYLE_LITERALS,
+        EnumProperty(
+            name="Style",
+            default="spheres",
+            description="Starting style for the structure on import",
+            items=STYLE_ITEMS,
         ),
-    )
+    ]
+    node_setup: Annotated[
+        bool,
+        BoolProperty(
+            name="Node Setup",
+            default=True,
+            description="Whether to setup the starting default node tree on import",
+        ),
+    ]
+    assembly: Annotated[
+        bool,
+        BoolProperty(
+            default=False,
+            name="Build Biological Assembly",
+            description="Build the biological assembly for the structure on import",
+        ),
+    ]
+    share_node_group: Annotated[
+        bool,
+        BoolProperty(
+            default=False,
+            name="Share Node Group",
+            description=(
+                "When importing multiple structures, style them all with the same "
+                "node group instead of creating one per structure, so tweaks apply "
+                "to every structure at once (useful for conformations of one protein)"
+            ),
+        ),
+    ]
     # filled in by the file handler when structure files are dropped into the 3D
     # viewport, in place of the dialog's own filepath field
-    directory: StringProperty(  # type: ignore
-        subtype="FILE_PATH", options={"SKIP_SAVE", "HIDDEN"}
-    )
-    files: CollectionProperty(  # type: ignore
-        type=bpy.types.OperatorFileListElement, options={"SKIP_SAVE", "HIDDEN"}
-    )
+    directory: Annotated[
+        str, StringProperty(subtype="FILE_PATH", options={"SKIP_SAVE", "HIDDEN"})
+    ]
+    files: Annotated[
+        "bpy.types.bpy_prop_collection_idprop[bpy.types.OperatorFileListElement]",
+        CollectionProperty(
+            type=bpy.types.OperatorFileListElement, options={"SKIP_SAVE", "HIDDEN"}
+        ),
+    ]
 
-    method: EnumProperty(  # type: ignore
-        name="Database",
-        default="fetch",
-        items=(
-            (
-                "fetch",
-                "Fetch",
-                "Download a structure from a database",
-            ),
-            (
-                "local",
-                "Local File",
-                "Open a structure file or MD topology + trajectory already on disk",
-            ),
-        ),
-    )
-    database: EnumProperty(  # type: ignore
-        name="Database",
-        default="wwpdb",
-        items=(
-            (
-                "wwpdb",
-                "wwPDB",
-                "The world-wide Protein Data Bank (wwPDB)",
-            ),
-            (
-                "alphafold",
-                "AlphaFold",
-                "The AlphaFold computational structure database",
-            ),
-            (
-                "pubchem",
-                "PubChem",
-                "3D conformers of small molecules from PubChem, by CID or name",
+    method: Annotated[
+        str,
+        EnumProperty(
+            name="Database",
+            default="fetch",
+            items=(
+                (
+                    "fetch",
+                    "Fetch",
+                    "Download a structure from a database",
+                ),
+                (
+                    "local",
+                    "Local File",
+                    "Open a structure file or MD topology + trajectory already on disk",
+                ),
             ),
         ),
-    )
-    code: StringProperty(  # type: ignore
-        name="PDB",
-        description=(
-            "The code to download (4-character e.g. '1abc' or 12-character e.g."
-            " 'pdb_00001abc'). Separate multiple codes with commas to download"
-            " several structures at once"
+    ]
+    database: Annotated[
+        str,
+        EnumProperty(
+            name="Database",
+            default="wwpdb",
+            items=(
+                (
+                    "wwpdb",
+                    "wwPDB",
+                    "The world-wide Protein Data Bank (wwPDB)",
+                ),
+                (
+                    "alphafold",
+                    "AlphaFold",
+                    "The AlphaFold computational structure database",
+                ),
+                (
+                    "pubchem",
+                    "PubChem",
+                    "3D conformers of small molecules from PubChem, by CID or name",
+                ),
+            ),
         ),
-        options={"TEXTEDIT_UPDATE"},
-    )
-    filepath: StringProperty(  # type: ignore
-        name="File",
-        description=(
-            "Path of the local structure (or MD topology) file to open, or a "
-            "folder to recursively import every structure file inside of it"
+    ]
+    code: Annotated[
+        str,
+        StringProperty(
+            name="PDB",
+            description=(
+                "The code to download (4-character e.g. '1abc' or 12-character e.g."
+                " 'pdb_00001abc'). Separate multiple codes with commas to download"
+                " several structures at once"
+            ),
+            options={"TEXTEDIT_UPDATE"},
         ),
-        subtype="FILE_PATH",
-    )
-    recursive: BoolProperty(  # type: ignore
-        name="Recursive",
-        default=True,
-        description=(
-            "Import structure files from all subfolders too, rather than just "
-            "the top level of the folder"
+    ]
+    filepath: Annotated[
+        str,
+        StringProperty(
+            name="File",
+            description=(
+                "Path of the local structure (or MD topology) file to open, or a "
+                "folder to recursively import every structure file inside of it"
+            ),
+            subtype="FILE_PATH",
         ),
-    )
-    objects_only: BoolProperty(  # type: ignore
-        name="Objects Only",
-        default=False,
-        description=(
-            "Discard the Python `Molecule` (and its `mda.Universe`) after each "
-            "import, keeping only the created Blender object - saves memory when "
-            "importing many structures. Objects can be relinked later with the "
-            "session Reload operator"
+    ]
+    recursive: Annotated[
+        bool,
+        BoolProperty(
+            name="Recursive",
+            default=True,
+            description=(
+                "Import structure files from all subfolders too, rather than just "
+                "the top level of the folder"
+            ),
         ),
-    )
-    trajectory: StringProperty(  # type: ignore
-        name="Trajectory",
-        description=(
-            "Optional trajectory file to load alongside the topology, "
-            "or an imd:// URL to stream frames from a running simulation"
+    ]
+    objects_only: Annotated[
+        bool,
+        BoolProperty(
+            name="Objects Only",
+            default=False,
+            description=(
+                "Discard the Python `Molecule` (and its `mda.Universe`) after each "
+                "import, keeping only the created Blender object - saves memory when "
+                "importing many structures. Objects can be relinked later with the "
+                "session Reload operator"
+            ),
         ),
-        subtype="FILE_PATH",
-    )
-    additional_arguments: StringProperty(  # type: ignore
-        name="Arguments",
-        description="Additional arguments to pass to the `mda.Universe(topology, trajectory, **kwargs)` constructor",
-        default="",
-    )
-    file_format: EnumProperty(  # type: ignore
-        name="Format",
-        description="Format to download as from the PDB",
-        default="bcif",
-        items=DOWNLOAD_FORMATS,
-    )
+    ]
+    trajectory: Annotated[
+        str,
+        StringProperty(
+            name="Trajectory",
+            description=(
+                "Optional trajectory file to load alongside the topology, "
+                "or an imd:// URL to stream frames from a running simulation"
+            ),
+            subtype="FILE_PATH",
+        ),
+    ]
+    additional_arguments: Annotated[
+        str,
+        StringProperty(
+            name="Arguments",
+            description="Additional arguments to pass to the `mda.Universe(topology, trajectory, **kwargs)` constructor",
+            default="",
+        ),
+    ]
+    file_format: Annotated[
+        str,
+        EnumProperty(
+            name="Format",
+            description="Format to download as from the PDB",
+            default="bcif",
+            items=DOWNLOAD_FORMATS,
+        ),
+    ]
 
-    cache_dir: StringProperty(  # type: ignore
-        name="Cache Directory",
-        description="Where to store the structures downloaded from the Protein Data Bank",
-        default=str(CACHE_DIR),
-        subtype="DIR_PATH",
-    )
+    cache_dir: Annotated[
+        str,
+        StringProperty(
+            name="Cache Directory",
+            description="Where to store the structures downloaded from the Protein Data Bank",
+            default=str(CACHE_DIR),
+            subtype="DIR_PATH",
+        ),
+    ]
 
     def apply_import_options(self, mol: Molecule) -> None:
         """Set up the default node tree on a freshly imported molecule."""
@@ -680,29 +727,39 @@ ENSEMBLE_TYPES = (
 )
 
 
+@annotated_props
 class MN_OT_Import_Ensemble(bpy.types.Operator):
     bl_idname = "mn.import_ensemble"
     bl_label = "Import Ensemble"
     bl_description = "Import an ensemble as a Starfile or CellPack model"
     bl_options = {"REGISTER", "UNDO"}
 
-    ensemble_type: EnumProperty(  # type: ignore
-        name="Type",
-        description="The kind of ensemble to import",
-        default="starfile",
-        items=ENSEMBLE_TYPES,
-    )
-    filepath: StringProperty(  # type: ignore
-        name="File",
-        description="File path for the ensemble to import",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-    node_setup: BoolProperty(  # type: ignore
-        name="Setup Nodes",
-        default=True,
-        description="Create and set up a Geometry Nodes tree on import",
-    )
+    ensemble_type: Annotated[
+        str,
+        EnumProperty(
+            name="Type",
+            description="The kind of ensemble to import",
+            default="starfile",
+            items=ENSEMBLE_TYPES,
+        ),
+    ]
+    filepath: Annotated[
+        str,
+        StringProperty(
+            name="File",
+            description="File path for the ensemble to import",
+            subtype="FILE_PATH",
+            maxlen=0,
+        ),
+    ]
+    node_setup: Annotated[
+        bool,
+        BoolProperty(
+            name="Setup Nodes",
+            default=True,
+            description="Create and set up a Geometry Nodes tree on import",
+        ),
+    ]
 
     def draw(self, context):
         layout = self.layout
@@ -758,42 +815,61 @@ DENSITY_STYLE_ITEMS = (
 )
 
 
+@annotated_props
 class MN_OT_Import_Map(bpy.types.Operator):
     bl_idname = "mn.import_density"
     bl_label = "Import Density"
     bl_description = "Import an EM density map into Blender"
     bl_options = {"REGISTER", "UNDO"}
 
-    filepath: StringProperty(  # type: ignore
-        name="File",
-        description="File path for the map file.",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-    invert: BoolProperty(  # type: ignore
-        name="Invert Data",
-        description="Invert the values in the map. Low becomes high, high becomes low.",
-        default=False,
-    )
-    center: BoolProperty(  # type: ignore
-        name="Center Density",
-        description="Translate the density so that the center of the box is at the origin.",
-        default=False,
-    )
-    overwrite: BoolProperty(  # type: ignore
-        name="Overwrite Intermediate File",
-        description="Overwrite generated intermediate .vdb file.",
-        default=False,
-    )
-    setup_nodes: BoolProperty(  # type: ignore
-        name="Setup Nodes",
-        default=True,
-        description="Create and set up a Geometry Nodes tree on import",
-    )
-    style: EnumProperty(  # type: ignore
-        name="Style",
-        items=DENSITY_STYLE_ITEMS,
-    )
+    filepath: Annotated[
+        str,
+        StringProperty(
+            name="File",
+            description="File path for the map file.",
+            subtype="FILE_PATH",
+            maxlen=0,
+        ),
+    ]
+    invert: Annotated[
+        bool,
+        BoolProperty(
+            name="Invert Data",
+            description="Invert the values in the map. Low becomes high, high becomes low.",
+            default=False,
+        ),
+    ]
+    center: Annotated[
+        bool,
+        BoolProperty(
+            name="Center Density",
+            description="Translate the density so that the center of the box is at the origin.",
+            default=False,
+        ),
+    ]
+    overwrite: Annotated[
+        bool,
+        BoolProperty(
+            name="Overwrite Intermediate File",
+            description="Overwrite generated intermediate .vdb file.",
+            default=False,
+        ),
+    ]
+    setup_nodes: Annotated[
+        bool,
+        BoolProperty(
+            name="Setup Nodes",
+            default=True,
+            description="Create and set up a Geometry Nodes tree on import",
+        ),
+    ]
+    style: Annotated[
+        str,
+        EnumProperty(
+            name="Style",
+            items=DENSITY_STYLE_ITEMS,
+        ),
+    ]
 
     def draw(self, context):
         layout = self.layout
@@ -827,6 +903,7 @@ class MN_OT_Import_Map(bpy.types.Operator):
         return {"FINISHED"}
 
 
+@annotated_props
 class MN_OT_Frames_To_Collection(bpy.types.Operator):
     bl_idname = "mn.frames_to_collection"
     bl_label = "Bake Frames to Collection"
@@ -837,24 +914,33 @@ class MN_OT_Frames_To_Collection(bpy.types.Operator):
     )
     bl_options = {"REGISTER", "UNDO"}
 
-    start: IntProperty(  # type: ignore
-        name="Start",
-        default=0,
-        min=0,
-        description="First trajectory frame to bake",
-    )
-    stop: IntProperty(  # type: ignore
-        name="Stop",
-        default=0,
-        min=0,
-        description="One past the last frame to bake (0 bakes through the final frame)",
-    )
-    step: IntProperty(  # type: ignore
-        name="Step",
-        default=1,
-        min=1,
-        description="Stride between baked frames",
-    )
+    start: Annotated[
+        int,
+        IntProperty(
+            name="Start",
+            default=0,
+            min=0,
+            description="First trajectory frame to bake",
+        ),
+    ]
+    stop: Annotated[
+        int,
+        IntProperty(
+            name="Stop",
+            default=0,
+            min=0,
+            description="One past the last frame to bake (0 bakes through the final frame)",
+        ),
+    ]
+    step: Annotated[
+        int,
+        IntProperty(
+            name="Step",
+            default=1,
+            min=1,
+            description="Stride between baked frames",
+        ),
+    ]
 
     @classmethod
     def poll(cls, context):
@@ -893,30 +979,40 @@ class MN_OT_Frames_To_Collection(bpy.types.Operator):
         return {"FINISHED"}
 
 
+@annotated_props
 class MN_OT_Import_OxDNA(bpy.types.Operator):
     bl_idname = "mn.import_oxdna"
     bl_label = "Import oxDNA"
     bl_description = "Load an oxDNA topology and trajectory"
     bl_options = {"REGISTER", "UNDO"}
 
-    topology: StringProperty(  # type: ignore
-        name="Topology",
-        description="File path for the topology file for the trajectory",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-    trajectory: StringProperty(  # type: ignore
-        name="Trajectory",
-        description="File path for the trajectory file for the trajectory",
-        subtype="FILE_PATH",
-        maxlen=0,
-    )
-    name: StringProperty(  # type: ignore
-        name="Name",
-        description="Name of the molecule on import",
-        default="oxDNA",
-        maxlen=0,
-    )
+    topology: Annotated[
+        str,
+        StringProperty(
+            name="Topology",
+            description="File path for the topology file for the trajectory",
+            subtype="FILE_PATH",
+            maxlen=0,
+        ),
+    ]
+    trajectory: Annotated[
+        str,
+        StringProperty(
+            name="Trajectory",
+            description="File path for the trajectory file for the trajectory",
+            subtype="FILE_PATH",
+            maxlen=0,
+        ),
+    ]
+    name: Annotated[
+        str,
+        StringProperty(
+            name="Name",
+            description="Name of the molecule on import",
+            default="oxDNA",
+            maxlen=0,
+        ),
+    ]
 
     def draw(self, context):
         layout = self.layout
@@ -943,6 +1039,7 @@ class MN_OT_Import_OxDNA(bpy.types.Operator):
         return {"FINISHED"}
 
 
+@annotated_props
 class MN_OT_add_selection_to_style(Operator):
     """
     Create a new selection and add the corresponding `Named Attribute` node to the node tree's style
@@ -952,8 +1049,8 @@ class MN_OT_add_selection_to_style(Operator):
     bl_label = "Add Style Selection"
     bl_description = ""
 
-    node_tree: StringProperty()  # type: ignore
-    node_name: StringProperty()  # type: ignore
+    node_tree: Annotated[str, StringProperty()]
+    node_name: Annotated[str, StringProperty()]
 
     def execute(self, context: bpy.types.Context):
         obj = context.active_object
@@ -987,6 +1084,7 @@ class MN_OT_add_selection_to_style(Operator):
         return {"FINISHED"}
 
 
+@annotated_props
 class MN_OT_Add_Style(Operator):
     """
     Operator to add a new style to an entity
@@ -997,51 +1095,70 @@ class MN_OT_Add_Style(Operator):
     bl_description = "Add a new style to the entity"
     bl_options = {"REGISTER", "UNDO"}
 
-    uuid: StringProperty()  # type: ignore
+    uuid: Annotated[str, StringProperty()]
     # fallback identifier for objects not linked to a session entity, whose
     # style branch is built directly in the object's node tree
-    name_object: StringProperty()  # type: ignore
+    name_object: Annotated[str, StringProperty()]
 
-    style: EnumProperty(  # type: ignore
-        name="Style",
-        default="spheres",
-        description="Style type",
-        items=STYLE_ITEMS,
-    )
+    style: Annotated[
+        STYLE_LITERALS,
+        EnumProperty(
+            name="Style",
+            default="spheres",
+            description="Style type",
+            items=STYLE_ITEMS,
+        ),
+    ]
 
-    use_uniform_color: BoolProperty(  # type: ignore
-        name="Use uniform color",
-        description="Use uniform color for style",
-        default=False,
-    )
+    use_uniform_color: Annotated[
+        bool,
+        BoolProperty(
+            name="Use uniform color",
+            description="Use uniform color for style",
+            default=False,
+        ),
+    ]
 
-    uniform_color: bpy.props.FloatVectorProperty(  # type: ignore
-        name="Uniform color",
-        description="Uniform color for style",
-        subtype="COLOR",
-        size=4,
-        default=(0.162, 0.624, 0.196, 1),
-        min=0.0,
-        max=1.0,
-    )
+    # a bpy_prop_array at runtime, which the stubs don't type as a sequence
+    uniform_color: Annotated[
+        Sequence[float],
+        bpy.props.FloatVectorProperty(
+            name="Uniform color",
+            description="Uniform color for style",
+            subtype="COLOR",
+            size=4,
+            default=(0.162, 0.624, 0.196, 1),
+            min=0.0,
+            max=1.0,
+        ),
+    ]
 
-    color_scheme: StringProperty(  # type: ignore
-        name="Coloring scheme",
-        description="Coloring scheme for style",
-        default="common",
-    )
+    color_scheme: Annotated[
+        str,
+        StringProperty(
+            name="Coloring scheme",
+            description="Coloring scheme for style",
+            default="common",
+        ),
+    ]
 
-    selection: StringProperty(  # type: ignore
-        name="Selection",
-        description="Selection for which the style applies",
-        default="all",
-    )
+    selection: Annotated[
+        str,
+        StringProperty(
+            name="Selection",
+            description="Selection for which the style applies",
+            default="all",
+        ),
+    ]
 
-    name: StringProperty(  # type: ignore
-        name="Name",
-        description="Label for the style",
-        default="",
-    )
+    name: Annotated[
+        str,
+        StringProperty(
+            name="Name",
+            description="Label for the style",
+            default="",
+        ),
+    ]
 
     def draw(self, context):
         layout = self.layout
@@ -1117,6 +1234,7 @@ class MN_OT_Add_Style(Operator):
         return context.window_manager.invoke_props_dialog(self)
 
 
+@annotated_props
 class MN_OT_Remove_Style(Operator):
     """
     Operator to remove a style from an entity
@@ -1132,8 +1250,8 @@ class MN_OT_Remove_Style(Operator):
     # the node is identified by tree + node name, as operators can't take
     # pointers; working on Blender data directly (rather than through the
     # session) keeps removal available for unlinked objects
-    name_tree: StringProperty()  # type: ignore
-    name_node: StringProperty()  # type: ignore
+    name_tree: Annotated[str, StringProperty()]
+    name_node: Annotated[str, StringProperty()]
 
     def execute(self, context: Context):
         tree = bpy.data.node_groups.get(self.name_tree)
@@ -1166,6 +1284,7 @@ def _swap_style_items(self, context):
     return STYLE_ITEMS
 
 
+@annotated_props
 class MN_OT_Swap_Style(Operator):
     """
     Operator to swap a style node for a different style, keeping its connections.
@@ -1177,9 +1296,9 @@ class MN_OT_Swap_Style(Operator):
     bl_options = {"REGISTER", "UNDO"}
 
     # the node is identified by tree + node name, as operators can't take pointers
-    name_tree: StringProperty()  # type: ignore
-    name_node: StringProperty()  # type: ignore
-    style: EnumProperty(items=_swap_style_items)  # type: ignore
+    name_tree: Annotated[str, StringProperty()]
+    name_node: Annotated[str, StringProperty()]
+    style: Annotated[str, EnumProperty(items=_swap_style_items)]
 
     def execute(self, context: Context):
         tree = bpy.data.node_groups.get(self.name_tree)
@@ -1222,12 +1341,13 @@ def _register_temp_annotation_add_op(entity):
     register(AnnotationProps)
 
     # Temporary annotation add operator
+    @annotated_props
     class TempAnnotationAddOperator(bpy.types.Operator):
         bl_idname = "mn.temp_annotation_add"
         bl_label = "Add annotation"
         bl_description = "Add a new annotation"
 
-        props: bpy.props.PointerProperty(type=AnnotationProps)  # type: ignore
+        props: Annotated[Any, bpy.props.PointerProperty(type=AnnotationProps)]
 
         def draw(self, context):
             layout = self.layout
@@ -1272,6 +1392,7 @@ def _register_temp_annotation_add_op(entity):
     return registered_classes
 
 
+@annotated_props
 class MN_OT_Add_Annotation(Operator):
     """
     Operator to add a new annotation to an entity
@@ -1281,7 +1402,7 @@ class MN_OT_Add_Annotation(Operator):
     bl_label = "Add annotation"
     bl_description = "Add annotation to entity"
 
-    uuid: StringProperty()  # type: ignore
+    uuid: Annotated[str, StringProperty()]
 
     _temp_classes = []
 
@@ -1305,6 +1426,7 @@ class MN_OT_Add_Annotation(Operator):
         return {"FINISHED"}
 
 
+@annotated_props
 class MN_OT_Remove_Annotation(Operator):
     """
     Operator to remove an annotation from an entity
@@ -1314,8 +1436,8 @@ class MN_OT_Remove_Annotation(Operator):
     bl_label = "Remove annotation"
     bl_description = "Remove annotation from entity"
 
-    uuid: StringProperty()  # type: ignore
-    annotation_uuid: StringProperty()  # type: ignore
+    uuid: Annotated[str, StringProperty()]
+    annotation_uuid: Annotated[str, StringProperty()]
 
     def execute(self, context: Context):
         entity = get_session().get(self.uuid)
@@ -1345,6 +1467,7 @@ class MN_OT_Setup_Compositor(Operator):
         return {"FINISHED"}
 
 
+@annotated_props
 class MN_OT_DSSP_init(Operator):
     """
     Operator to add DSSP as the `sec_struct` calculation, or change its selection
@@ -1357,8 +1480,8 @@ class MN_OT_DSSP_init(Operator):
         "selection DSSP is run on if already added"
     )
 
-    uuid: StringProperty()  # type: ignore
-    selection: StringProperty(default="protein")  # type: ignore
+    uuid: Annotated[str, StringProperty()]
+    selection: Annotated[str, StringProperty(default="protein")]
 
     def execute(self, context: Context):
         entity = get_session().get(self.uuid)
@@ -1373,6 +1496,7 @@ class MN_OT_DSSP_init(Operator):
         return {"FINISHED"}
 
 
+@annotated_props
 class MN_OT_HBonds_init(Operator):
     """
     Operator to add hydrogen bonds as the `hbonds` calculation, or change its selection
@@ -1385,8 +1509,8 @@ class MN_OT_HBonds_init(Operator):
         "update the selection they are calculated for if already added"
     )
 
-    uuid: StringProperty()  # type: ignore
-    selection: StringProperty(default="all")  # type: ignore
+    uuid: Annotated[str, StringProperty()]
+    selection: Annotated[str, StringProperty(default="all")]
 
     def execute(self, context: Context):
         entity = get_session().get(self.uuid)
@@ -1404,6 +1528,7 @@ class MN_OT_HBonds_init(Operator):
         return {"FINISHED"}
 
 
+@annotated_props
 class MN_OT_FrameAttribute_Remove(Operator):
     """
     Operator to remove a selection or calculation from the per-frame attributes
@@ -1417,8 +1542,8 @@ class MN_OT_FrameAttribute_Remove(Operator):
     )
     bl_options = {"REGISTER", "UNDO"}
 
-    uuid: StringProperty()  # type: ignore
-    name: StringProperty()  # type: ignore
+    uuid: Annotated[str, StringProperty()]
+    name: Annotated[str, StringProperty()]
 
     def execute(self, context: Context):
         entity = get_session().get(self.uuid)
@@ -1437,6 +1562,7 @@ class MN_OT_FrameAttribute_Remove(Operator):
         return {"FINISHED"}
 
 
+@annotated_props
 class MN_OT_DSSP_apply(Operator):
     """
     Operator to apply changed DSSP options
@@ -1446,9 +1572,9 @@ class MN_OT_DSSP_apply(Operator):
     bl_label = "Apply"
     bl_description = "Apply changed DSSP options"
 
-    uuid: StringProperty()  # type: ignore
-    apply_ta_threshold: BoolProperty()  # type: ignore
-    ta_threshold: FloatProperty()  # type: ignore
+    uuid: Annotated[str, StringProperty()]
+    apply_ta_threshold: Annotated[bool, BoolProperty()]
+    ta_threshold: Annotated[float, FloatProperty()]
 
     def execute(self, context: Context):
         entity = get_session().get(self.uuid)
@@ -1465,6 +1591,7 @@ class MN_OT_DSSP_apply(Operator):
         return {"FINISHED"}
 
 
+@annotated_props
 class MN_OT_DSSP_cancel(Operator):
     """
     Operator to cancel and restore current DSSP options
@@ -1474,7 +1601,7 @@ class MN_OT_DSSP_cancel(Operator):
     bl_label = "Cancel"
     bl_description = "Restore current DSSP options"
 
-    uuid: StringProperty()  # type: ignore
+    uuid: Annotated[str, StringProperty()]
 
     def execute(self, context: Context):
         entity = get_session().get(self.uuid)
@@ -1499,6 +1626,7 @@ class MN_OT_DSSP_cancel(Operator):
         return {"FINISHED"}
 
 
+@annotated_props
 class MN_OT_Align(Operator):
     bl_idname = "mn.align"
     bl_label = "Align Molecules"
@@ -1509,38 +1637,47 @@ class MN_OT_Align(Operator):
     )
     bl_options = {"REGISTER", "UNDO"}
 
-    method: EnumProperty(  # type: ignore
-        name="Method",
-        items=(
-            (
-                "sequence",
-                "Sequence",
-                "Pair residues by sequence alignment and fit on their CA / P atoms,"
-                " dropping outliers",
+    method: Annotated[
+        str,
+        EnumProperty(
+            name="Method",
+            items=(
+                (
+                    "sequence",
+                    "Sequence",
+                    "Pair residues by sequence alignment and fit on their CA / P atoms,"
+                    " dropping outliers",
+                ),
+                (
+                    "structure",
+                    "Structure",
+                    "Pair residues by structural similarity (3Di), for remote homologs"
+                    " with low sequence identity. Proteins only",
+                ),
             ),
-            (
-                "structure",
-                "Structure",
-                "Pair residues by structural similarity (3Di), for remote homologs"
-                " with low sequence identity. Proteins only",
-            ),
+            default="sequence",
         ),
-        default="sequence",
-    )
-    selection: StringProperty(  # type: ignore
-        name="Selection",
-        description="MDAnalysis selection of the atoms to fit on in the selected"
-        " molecules, e.g. 'chainID H L'. Empty uses all protein and nucleic acid"
-        " chains",
-        default="",
-    )
-    fixed_selection: StringProperty(  # type: ignore
-        name="Selection",
-        description="MDAnalysis selection of the atoms to fit on in the active"
-        " molecule, e.g. 'chainID A'. Empty uses all protein and nucleic acid"
-        " chains",
-        default="",
-    )
+    ]
+    selection: Annotated[
+        str,
+        StringProperty(
+            name="Selection",
+            description="MDAnalysis selection of the atoms to fit on in the selected"
+            " molecules, e.g. 'chainID H L'. Empty uses all protein and nucleic acid"
+            " chains",
+            default="",
+        ),
+    ]
+    fixed_selection: Annotated[
+        str,
+        StringProperty(
+            name="Selection",
+            description="MDAnalysis selection of the atoms to fit on in the active"
+            " molecule, e.g. 'chainID A'. Empty uses all protein and nucleic acid"
+            " chains",
+            default="",
+        ),
+    ]
 
     @staticmethod
     def _molecules(context):
