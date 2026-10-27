@@ -135,6 +135,41 @@ class CalculationManager:
         self._hbonds._init(selection=selection, updating=updating, **kwargs)
         return self._hbonds
 
+    def from_text(
+        self, text: bpy.types.Text | str, *, updating: bool = True
+    ) -> list[str]:
+        """Add the `BaseCalculation` subclasses defined in a text block.
+
+        The text is run as Python, with `BaseCalculation` and `np` already
+        available, and each subclass it defines is added as a calculation
+        named after the subclass, replacing any with the same name.
+
+        Parameters
+        ----------
+        text : bpy.types.Text or str
+            The text block, or its name in `bpy.data.texts`.
+        updating : bool, default=True
+            Whether the calculations recalculate on every frame change.
+
+        Returns
+        -------
+        list[str]
+            The names of the calculations that were added.
+
+        Raises
+        ------
+        ValueError
+            When the text defines no `BaseCalculation` subclasses.
+        """
+        if isinstance(text, str):
+            text = bpy.data.texts[text]
+        calculations = calculations_from_code(text.as_string(), self._entity)
+        if not calculations:
+            raise ValueError(f"No BaseCalculation subclasses found in '{text.name}'")
+        for calculation in calculations:
+            self.add(calculation.name, calculation, updating=updating)
+        return [calculation.name for calculation in calculations]
+
     @property
     def ui_items(self):
         """The saved calculation items on the object, ``obj.mn.calculations``."""
@@ -279,3 +314,50 @@ class CalculationManager:
 
     def get(self, name: str, default=None):
         return self._funcs.get(name, default)
+
+
+class BaseCalculation:
+    """
+    A base class for custom calculations that are run on every frame.
+
+    Create a subclass and write the calculation inside its `calculate()`
+    method. The result is stored as an attribute on the molecule, named
+    after the subclass, with its type inferred from the returned array.
+    """
+
+    def __init__(self, molecule: Molecule, name: str | None = None):
+        self.molecule = molecule
+        self.name = name or type(self).__name__
+
+    @property
+    def universe(self) -> Universe:
+        return self.molecule.universe
+
+    def calculate(self) -> np.ndarray:
+        """
+        Calculate the values for the current frame.
+
+        Use `self.universe` to access the data for the current frame.
+
+        Returns
+        -------
+        np.ndarray
+            One value for each atom, so the length must match the number
+            of atoms in the molecule.
+        """
+        raise NotImplementedError("Subclasses must implement calculate()")
+
+    def __call__(self, universe: Universe) -> np.ndarray:
+        return self.calculate()
+
+
+def calculations_from_code(code: str, molecule: Molecule) -> list[BaseCalculation]:
+    namespace = {"BaseCalculation": BaseCalculation, "np": np}
+    exec(code, namespace)
+    return [
+        obj(molecule)
+        for obj in namespace.values()
+        if isinstance(obj, type)
+        and issubclass(obj, BaseCalculation)
+        and obj is not BaseCalculation
+    ]
