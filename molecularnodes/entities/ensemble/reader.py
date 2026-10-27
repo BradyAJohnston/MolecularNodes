@@ -63,9 +63,9 @@ class CellPackReader(PDBXReader):
     def read(self, file_path):
         suffix = Path(file_path).suffix
         if suffix == ".bcif":
-            return pdbx.BinaryCIFFile.read(self.file_path)
+            return pdbx.BinaryCIFFile.read(file_path)
         elif suffix == ".cif":
-            return CellPackCIFFileReader.read(self.file_path)
+            return CellPackCIFFileReader.read(file_path)
         else:
             raise ValueError(f"Invalid file format: '{suffix}")
 

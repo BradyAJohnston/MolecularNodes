@@ -43,6 +43,7 @@ title: "Changelog"
 - `ty` type checking runs in CI alongside ruff. Properties registered on Blender types are read through typed accessors in `molecularnodes.blender.registered`.
 
 ## Fixed
+- `Molecule.fetch(..., cache=None)` failed for every format; the downloaded buffer is now read with the requested format. `Molecule.from_file()` takes a `format` for in-memory buffers. [#1306](https://github.com/BradyAJohnston/MolecularNodes/issues/1306)
 - `.cif` files from Phenix (such as `phenix.real_space_refine` output) now import. Biotite failed on their indented `loop_` tags and on the atom-free restraint blocks (`data_link_SS`) appended after the model. A `.cif` with several structures in separate data blocks imports as one Molecule per block; from a script, `Molecule.load(path, data_block=...)` chooses the block.
 - Importing a CellPack model whose name is already taken no longer adds its molecules to the earlier import's instance collection and node tree.
 - The `atom_types` attribute of structure files (`.pdb`, `.cif`, `.bcif`, `.sdf`, `.mol`) comes from each atom's element instead of being guessed by MDAnalysis from its atom name. Calcium ions (atom name `CA`) are no longer typed as carbon, and `.sdf` / `.mol` files, which have no atom names, no longer give every atom the same type. Loading is also slightly faster.

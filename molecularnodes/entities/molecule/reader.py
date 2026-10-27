@@ -1,6 +1,6 @@
 import logging
 from abc import ABCMeta
-from io import BytesIO
+from io import BytesIO, StringIO
 from pathlib import Path
 from typing import Any, Callable, cast
 import numpy as np
@@ -14,21 +14,26 @@ logger = logging.getLogger(__name__)
 
 
 def read_structure(
-    file_path: str | Path | BytesIO, data_block: str | None = None
+    file_path: str | Path | BytesIO | StringIO,
+    data_block: str | None = None,
+    format: str | None = None,
 ) -> "ReaderBase":
     """Open a structure file and return the appropriate reader for its format.
 
-    Dispatches on the file suffix to the biotite-backed reader that can parse it
-    (mmCIF/BinaryCIF, PDB, or SDF/MOL). An in-memory ``BytesIO`` buffer is treated
-    as BinaryCIF.
+    Dispatches on ``format``, or the file suffix, to the biotite-backed reader that
+    can parse it (mmCIF/BinaryCIF, PDB, or SDF/MOL). An in-memory ``BytesIO`` buffer
+    without a ``format`` is treated as BinaryCIF.
 
     Parameters
     ----------
-    file_path : str | Path | BytesIO
-        Path to the structure file, or an in-memory ``bcif`` buffer.
+    file_path : str | Path | BytesIO | StringIO
+        Path to the structure file, or an in-memory buffer of its contents.
     data_block : str | None, optional
         For mmCIF/BinaryCIF files with several structures in separate data
         blocks, the name of the block to read.
+    format : str | None, optional
+        The file format (e.g. ``"cif"`` or ``".pdb"``). Needed for a ``StringIO``
+        buffer, otherwise taken from the file suffix.
 
     Returns
     -------
@@ -44,13 +49,15 @@ def read_structure(
     # imported lazily: pdb/pdbx/sdf import ReaderBase from this module
     from . import pdb, pdbx, sdf
 
-    if isinstance(file_path, BytesIO):
-        return pdbx.PDBXReader(file_path, data_block=data_block)
+    if format is None:
+        if isinstance(file_path, BytesIO):
+            format = "bcif"
+        elif isinstance(file_path, StringIO):
+            raise ValueError("A `format` is needed to read a StringIO buffer.")
+        else:
+            format = Path(file_path).suffix
 
-    if isinstance(file_path, str):
-        file_path = Path(file_path)
-
-    match file_path.suffix:
+    match "." + format.strip("."):
         case ".cif" | ".bcif":
             return pdbx.PDBXReader(file_path, data_block=data_block)
         case ".pdb":
@@ -66,7 +73,7 @@ class ReaderBase[F: File](metaclass=ABCMeta):
     Abstract base class for reading molecular data from a file.
     """
 
-    def __init__(self, file_path: str | Path | BytesIO):
+    def __init__(self, file_path: str | Path | BytesIO | StringIO):
         self._extra_annotations: dict
         self.file_path = file_path
         self.file: F = self.read(file_path)
@@ -82,7 +89,7 @@ class ReaderBase[F: File](metaclass=ABCMeta):
         assert isinstance(self.array, AtomArrayStack)
         return self.array.stack_depth()
 
-    def read(self, file_path: str | Path | BytesIO) -> F:
+    def read(self, file_path: str | Path | BytesIO | StringIO) -> F:
         raise NotImplementedError("Subclasses must implement this method.")
 
     @classmethod

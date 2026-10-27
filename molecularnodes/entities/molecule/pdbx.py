@@ -1,6 +1,6 @@
 import itertools
 import re
-from io import BytesIO
+from io import BytesIO, StringIO
 from pathlib import Path
 import biotite.structure as struc
 import biotite.structure.io.pdbx as pdbx
@@ -32,7 +32,11 @@ def structure_blocks(file: pdbx.CIFFile | pdbx.BinaryCIFFile) -> list[str]:
 
 
 class PDBXReader(ReaderBase[pdbx.CIFFile | pdbx.BinaryCIFFile]):
-    def __init__(self, file_path: str | Path | BytesIO, data_block: str | None = None):
+    def __init__(
+        self,
+        file_path: str | Path | BytesIO | StringIO,
+        data_block: str | None = None,
+    ):
         self._data_block = data_block
         self._extra_annotations = {
             "sec_struct": self._get_secondary_structure,
@@ -42,20 +46,27 @@ class PDBXReader(ReaderBase[pdbx.CIFFile | pdbx.BinaryCIFFile]):
         super().__init__(file_path)
 
     def read(self, file_path) -> pdbx.CIFFile | pdbx.BinaryCIFFile:
-        match file_path.suffix:
+        if isinstance(file_path, BytesIO):
+            suffix = ".bcif"
+        elif isinstance(file_path, StringIO):
+            suffix = ".cif"
+        else:
+            suffix = Path(file_path).suffix
+        match suffix:
             case ".cif":
                 # biotite only recognises tags that start the line, but some
                 # writers (e.g. Phenix) indent the tags under `loop_`
-                text = Path(file_path).read_text()
+                if isinstance(file_path, StringIO):
+                    text = file_path.read()
+                else:
+                    text = Path(file_path).read_text()
                 file = pdbx.CIFFile.deserialize(
                     re.sub(r"^[ \t]+(?=_)", "", text, flags=re.MULTILINE)
                 )
             case ".bcif":
                 file = pdbx.BinaryCIFFile.read(file_path)
             case _:
-                raise NotImplementedError(
-                    f"File type {file_path.suffix} not supported."
-                )
+                raise NotImplementedError(f"File type {suffix} not supported.")
         return self._select_block(file)
 
     def _select_block(self, file):

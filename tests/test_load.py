@@ -1,3 +1,4 @@
+import io
 import itertools
 import re
 import bpy
@@ -89,6 +90,18 @@ def test_local_pdb(fetch, snapshot_custom):
     molecules.append(fetch("1l58", format="bcif"))
     for mol in molecules:
         assert snapshot_custom == mol.named_attribute("position")
+
+
+@pytest.mark.parametrize("format", ["bcif", "cif", "pdb"])
+def test_load_from_buffer(format):
+    # `fetch(cache=None)` loads the download from an in-memory buffer (#1306)
+    path = data_dir / f"1l58.{format}"
+    if format == "bcif":
+        buffer = io.BytesIO(path.read_bytes())
+    else:
+        buffer = io.StringIO(path.read_text())
+    mol = mn.Molecule.from_file(buffer, format=format)
+    assert np.allclose(mol.position, mn.Molecule.load(path).position)
 
 
 def test_pdb_blank_res_id(snapshot):

@@ -952,9 +952,10 @@ class Molecule(MolecularEntity):
     @classmethod
     def from_file(
         cls,
-        file_path: str | Path | io.BytesIO,
+        file_path: str | Path | io.BytesIO | io.StringIO,
         name: str | None = None,
         data_block: str | None = None,
+        format: str | None = None,
     ) -> "Molecule":
         """Load a single structure file into a Universe-backed entity.
 
@@ -972,8 +973,8 @@ class Molecule(MolecularEntity):
 
         Parameters
         ----------
-        file_path : str | Path | io.BytesIO
-            Path to the structure file (or an in-memory ``bcif`` buffer).
+        file_path : str | Path | io.BytesIO | io.StringIO
+            Path to the structure file, or an in-memory buffer of its contents.
         name : str | None, optional
             Name for the Blender object. Defaults to the file name (extension included).
         data_block : str | None, optional
@@ -983,6 +984,9 @@ class Molecule(MolecularEntity):
             block holds a structure; otherwise a
             :class:`~molecularnodes.entities.molecule.pdbx.MultipleStructuresError`
             listing the blocks is raised.
+        format : str | None, optional
+            The file format (e.g. ``"cif"``). Needed for a ``StringIO`` buffer,
+            otherwise taken from the file suffix.
 
         Returns
         -------
@@ -996,7 +1000,7 @@ class Molecule(MolecularEntity):
         # dialect that biotite cannot parse; route them through the dedicated
         # MDAnalysis parser, which expands the asymmetric unit to a unit cell
         if (
-            not isinstance(file_path, io.BytesIO)
+            isinstance(file_path, (str, Path))
             and Path(file_path).suffix == ".cif"
             and corecif.is_core_cif(file_path)
         ):
@@ -1009,7 +1013,7 @@ class Molecule(MolecularEntity):
 
         # .xyz files are read natively by MDAnalysis; the atom names are the
         # element symbols, which the element-derived attributes need
-        if not isinstance(file_path, io.BytesIO) and Path(file_path).suffix == ".xyz":
+        if isinstance(file_path, (str, Path)) and Path(file_path).suffix == ".xyz":
             universe = mda.Universe(str(file_path))
             assert universe.atoms is not None
             if not hasattr(universe.atoms, "elements"):
@@ -1022,10 +1026,10 @@ class Molecule(MolecularEntity):
                 )
             return cls(universe, name=name or Path(file_path).name)
 
-        reader = read_structure(file_path, data_block=data_block)
+        reader = read_structure(file_path, data_block=data_block, format=format)
         universe = universe_from_atoms(reader.array, frame_data=reader.model_data())
         if name is None:
-            name = Path(file_path).name if not isinstance(file_path, io.BytesIO) else ""
+            name = Path(file_path).name if isinstance(file_path, (str, Path)) else ""
         entity = cls(universe, name=name)
         entity._store_structure_metadata(reader, file_path)
         return entity
@@ -1062,16 +1066,18 @@ class Molecule(MolecularEntity):
         file_path = download.StructureDownloader(cache=cache).download(
             code=code, format=format, database=database
         )
-        # without a cache the download is an in-memory buffer that `from_file` can't
-        # read: https://github.com/BradyAJohnston/MolecularNodes/issues/1306
-        entity = cls.from_file(file_path, name=code)  # ty: ignore[invalid-argument-type]
+        # without a cache the download is an in-memory buffer, so pass the format
+        # (PubChem always serves SDF)
+        entity = cls.from_file(
+            file_path, name=code, format="sdf" if database == "pubchem" else format
+        )
         # record the source so the entity can be re-fetched into a fresh session
         entity.props.code = code
         entity.props.database = database
         return entity
 
     def _store_structure_metadata(
-        self, reader, file_path: str | Path | io.BytesIO
+        self, reader, file_path: str | Path | io.BytesIO | io.StringIO
     ) -> None:
         """Store file-parsed assembly/entity/chain metadata on the Blender object."""
         self.props.entity_type = EntityType.MOLECULE
@@ -1083,7 +1089,7 @@ class Molecule(MolecularEntity):
             assemblies if isinstance(assemblies, dict) else None
         )
         # record the source so the entity can be reloaded into a fresh session
-        if not isinstance(file_path, io.BytesIO):
+        if isinstance(file_path, (str, Path)):
             self.props.filepath = str(file_path)
         self.props.data_block = getattr(reader, "_data_block", None) or ""
 
