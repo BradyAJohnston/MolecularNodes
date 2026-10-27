@@ -1882,7 +1882,7 @@ class Molecule(MolecularEntity):
 
                     pickle.dumps(calc_func)
                     preserved_calculations[name] = calc_func
-                except (TypeError, AttributeError):
+                except (TypeError, AttributeError, pickle.PicklingError):
                     logger.debug(f"Skipping unpicklable calculation function: {name}")
 
             if preserved_calculations:
