@@ -17,9 +17,7 @@ class AmbientOcclusion(CustomShaderGroup):
         mix_shader = s.MixShader(
             factor=mn_color.o.alpha,
             shader=s.TransparentBSDF(),
-            shader_001=AmbientOcclusionInternal(
-                color=mn_color.o.color, ao_space="Local", exponent=1.5
-            ),
+            shader_001=AmbientOcclusionInternal(color=mn_color.o.color, exponent=1.5),
         )
         _material_output = s.MaterialOutput(mix_shader)
 

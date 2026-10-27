@@ -394,3 +394,42 @@ def test_render_viewpoint(fetch, golden_canvas, tmp_path, image_snapshot, viewpo
         mol.get_view("resname REA or (protein and around 6 resname REA)")
     )
     assert image_snapshot == _render(golden_canvas, tmp_path)
+
+
+def _style_surface(m):
+    return lambda: mn.nodes.geometry.StyleSurface(quality=4, scale=1.0, material=m)
+
+
+def _material_flat():
+    return mn.material.Flat(outline=True)
+
+
+@pytest.mark.parametrize(
+    "name,style,material",
+    list(
+        product(
+            ["caffeine"],
+            [
+                "spheres",
+                "sticks",
+                _style_surface,
+                "ball_and_stick",
+            ],
+            [
+                mn.material.Default,
+                _material_flat,
+                mn.material.AmbientOcclusion,
+            ],
+        )
+    ),
+)
+def test_render_small_molecule(
+    fetch, golden_canvas, tmp_path, image_snapshot, name, style, material
+):
+    mol = fetch(name, format="sdf", database="pubchem")
+    if isinstance(style, str):
+        mol.add_style(style, material=material().material)
+    else:
+        mol.add_style(style(material().material))
+    golden_canvas.look_at(mol, viewpoint="top")
+    assert image_snapshot == _render(golden_canvas, tmp_path)
