@@ -68,7 +68,14 @@ from molecularnodes.nodes.geometry import (
     UResID,
 )
 from .constants import codes, data_dir
-from .utils import GeometrySet, NumpySnapshotExtension
+from .utils import (
+    GeometrySet,
+    NumpySnapshotExtension,
+    interface_items,
+    interface_socket,
+    scene,
+    view_layer,
+)
 
 random.seed(6)
 
@@ -76,23 +83,30 @@ random.seed(6)
 def _input_sockets(tree: bpy.types.NodeTree) -> dict:
     return {
         item.name: item
-        for item in tree.interface.items_tree
-        if item.item_type == "SOCKET" and item.in_out == "INPUT"
+        for item in interface_items(tree)
+        if isinstance(item, bpy.types.NodeTreeInterfaceSocket)
+        and item.in_out == "INPUT"
     }
 
 
 def test_get_nodes(fetch):
     mol = fetch("4ozs").add_style("spheres")
 
-    last = get_output(mol.node_group).inputs[0].links[0].from_node
+    links = get_output(mol.node_group).inputs[0].links
+    assert links is not None
+    last = links[0].from_node
+    assert last is not None
     assert last.name == "Join Geometry"
     style = get_final_style_nodes(mol.node_group)[0]
     assert style.name == "Style Spheres"
+    assert style.node_tree is not None
     assert style.node_tree.name == "Style Spheres"
 
     mol2 = fetch("1cd3").add_style("cartoon")
 
-    assert get_final_style_nodes(mol2.node_group)[0].node_tree.name == "Style Cartoon"
+    style2 = get_final_style_nodes(mol2.node_group)[0]
+    assert style2.node_tree is not None
+    assert style2.node_tree.name == "Style Cartoon"
 
 
 def test_selection():
@@ -125,7 +139,7 @@ def test_selection_working(
         pos = mol.named_attribute("position", evaluate=True)
         assert snapshot_custom == pos.shape
         assert snapshot_custom == pos
-        inp.default_value = False
+        inp.default_value = False  # ty: ignore[unresolved-attribute]  # nodebpy sockets don't declare default_value
 
 
 @pytest.mark.parametrize("code", codes)
@@ -154,18 +168,18 @@ def test_iswitch_creation():
     items = [str(x) for x in range(10)]
     tree_boolean = custom_boolean_iswitch("newboolean", items).tree
     # ensure there isn't an item called 'Color' in the created interface
-    assert not tree_boolean.interface.items_tree.get("Color")
-    assert tree_boolean.interface.items_tree["Selection"].in_out == "OUTPUT"
-    assert tree_boolean.interface.items_tree["Inverted"].in_out == "OUTPUT"
+    assert not interface_items(tree_boolean).get("Color")
+    assert interface_socket(tree_boolean, "Selection").in_out == "OUTPUT"
+    assert interface_socket(tree_boolean, "Inverted").in_out == "OUTPUT"
     for i in items:
-        assert tree_boolean.interface.items_tree[str(i)].in_out == "INPUT"
+        assert interface_socket(tree_boolean, str(i)).in_out == "INPUT"
 
     tree_rgba = custom_color_iswitch("newcolor", items).tree
     # ensure there isn't an item called 'selection'
-    assert not tree_rgba.interface.items_tree.get("Selection")
-    assert tree_rgba.interface.items_tree["Color"].in_out == "OUTPUT"
+    assert not interface_items(tree_rgba).get("Selection")
+    assert interface_socket(tree_rgba, "Color").in_out == "OUTPUT"
     for i in items:
-        assert tree_rgba.interface.items_tree[str(i)].in_out == "INPUT"
+        assert interface_socket(tree_rgba, str(i)).in_out == "INPUT"
 
 
 def test_op_custom_color():
@@ -176,9 +190,9 @@ def test_op_custom_color():
     ).tree
 
     assert group
-    assert group.interface.items_tree["G"].name == "G"
-    assert group.interface.items_tree[-1].name == "G"
-    assert group.interface.items_tree[0].name == "Color"
+    assert interface_socket(group, "G").name == "G"
+    assert interface_socket(group, -1).name == "G"
+    assert interface_socket(group, 0).name == "Color"
 
 
 def test_color_lookup_supplied():
@@ -231,6 +245,7 @@ def test_topo_bonds(fetch):
         atoms >> BreakBonds(cutoff=0.0) >> FindBonds() >> join
 
     gs_new = GeometrySet(mol.object)
+    assert gs_new.mesh is not None
     assert len(mol.object.data.edges) == len(gs_new.mesh.edges)
 
 
@@ -238,6 +253,7 @@ def test_is_modifier(fetch):
     bpy.ops.wm.open_mainfile(filepath=str(mn.assets.MN_DATA_FILE))
     for tree in bpy.data.node_groups:
         if tree.name.startswith("Style") and "Preset" not in tree.name:
+            assert isinstance(tree, bpy.types.GeometryNodeTree)
             assert tree.is_modifier
     mol = fetch("4ozs").add_style("spheres")
     assert mol.modifier_node_tree.is_modifier
@@ -246,7 +262,7 @@ def test_is_modifier(fetch):
 def test_node_setup(fetch):
     fetch("4ozs").add_style("spheres")
     tree = bpy.data.node_groups["MN_4ozs"]
-    assert tree.interface.items_tree["Atoms"].name == "Atoms"
+    assert interface_socket(tree, "Atoms").name == "Atoms"
     assert list(get_input(tree).outputs.keys()) == ["Atoms", ""]
     assert list(get_output(tree).inputs.keys()) == ["Geometry", ""]
 
@@ -370,7 +386,7 @@ SYMMETRY_EXAMPLES = {
     "code", ["1STP", "6ZPA", "8QUK", "4PNO", "2C2U", "1H05", "6B8F", "2BUK"]
 )
 def test_symmetry_matches_deposited_assembly(fetch, code):
-    from scipy.spatial import cKDTree
+    from scipy.spatial import KDTree
 
     mol = fetch(code)
     positions = mol.named_attribute("position")
@@ -387,7 +403,7 @@ def test_symmetry_matches_deposited_assembly(fetch, code):
     generated = mol.named_attribute("position", evaluate=True)
 
     assert len(generated) == len(deposited)
-    distance, _ = cKDTree(deposited).query(generated)
+    distance, _ = KDTree(deposited).query(generated)
     assert distance.max() < 1e-3
 
 
@@ -617,7 +633,7 @@ def test_symmetry_helical_axial_symmetry(fetch):
 
 
 def test_symmetry_helical_matches_deposited_filament(fetch):
-    from scipy.spatial import cKDTree
+    from scipy.spatial import KDTree
 
     # 8AZT deposits layers k = -1..1 and the node builds k = 0..2. Both sets are
     # closed under the helix, so the node's copies are the deposit stepped up
@@ -644,7 +660,7 @@ def test_symmetry_helical_matches_deposited_filament(fetch):
     generated = mol.named_attribute("position", evaluate=True)
 
     assert len(generated) == len(expected)
-    distance, _ = cKDTree(expected).query(generated)
+    distance, _ = KDTree(expected).query(generated)
     assert distance.max() < 1e-3
 
 
@@ -1098,6 +1114,8 @@ def test_animate_action(fetch):
     assert np.allclose(mol.named_attribute("end", evaluate=True), 20.0)
 
     scene = bpy.context.scene
+
+    assert scene is not None
     frame = scene.frame_current
     try:
         scene.frame_set(15)
@@ -1155,6 +1173,7 @@ def _simulate_two_point_network(mol, frames: int):
             >> join
         )
     scene = bpy.context.scene
+    assert scene is not None
     start = scene.frame_current
     try:
         for f in range(start, start + frames + 1):
@@ -1316,11 +1335,16 @@ def test_colormap_generator_ramp_model(mode):
 
     path = Path(__file__).parents[1] / "docs/dev/colormap_node.py"
     spec = importlib.util.spec_from_file_location("colormap_node", path)
+    assert spec is not None and spec.loader is not None
     generator = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(generator)
 
     tree = bpy.data.node_groups.new("ramp_model", "GeometryNodeTree")
-    ramp = tree.nodes.new("ShaderNodeValToRGB").color_ramp
+    assert tree is not None
+    ramp_node = tree.nodes.new("ShaderNodeValToRGB")
+    assert isinstance(ramp_node, bpy.types.ShaderNodeValToRGB)
+    ramp = ramp_node.color_ramp
+    assert ramp is not None
     ramp.interpolation = mode
     rng = np.random.default_rng(0)
     x = np.concatenate([np.linspace(0, 1, 101), rng.random(100)])
@@ -1331,7 +1355,7 @@ def test_colormap_generator_ramp_model(mode):
             ramp.elements.remove(ramp.elements[-1])
         ramp.elements[0].position = 0.0
         ramp.elements[0].color = (*colors[0], 1.0)
-        for p, c in zip(pos[1:], colors[1:]):
+        for p, c in zip(pos[1:], colors[1:].tolist()):
             ramp.elements.new(p).color = (*c, 1.0)
         blender = np.array([ramp.evaluate(v)[:3] for v in x])
         model = np.clip(generator.ramp_basis(pos, x, mode) @ colors, 0, 1)
@@ -1421,10 +1445,10 @@ def test_orient_to_best_view_faces_the_camera(fetch, factor):
     ligand = _flag_ligand(mol)
     positions = mol.named_attribute("position")
     camera = bpy.data.objects.new("best_view", bpy.data.cameras.new("best_view"))
-    bpy.context.scene.collection.objects.link(camera)
+    scene().collection.objects.link(camera)
     camera.rotation_euler = (1.2, 0.3, 2.5)
-    bpy.context.view_layer.update()
-    forward = -np.array(camera.matrix_world.col[2][:3])
+    view_layer().update()
+    forward = -np.array(camera.matrix_world)[:3, 2]
 
     with mol.tree.reset() as (atoms, join):
         orient = OrientToBestView(
@@ -1471,6 +1495,7 @@ def test_orient_to_best_view_smooths_with_half_life(fetch):
     mol = fetch("1cbs")
     _flag_ligand(mol)
     scene = bpy.context.scene
+    assert scene is not None
     camera = bpy.data.objects.new("best_view", bpy.data.cameras.new("best_view"))
     scene.collection.objects.link(camera)
     camera.rotation_euler = (1.2, 0.3, 2.5)
@@ -1537,6 +1562,7 @@ def test_orient_to_best_view_moves_a_camera_instead(fetch):
     mol = fetch("1cbs")
     ligand = _flag_ligand(mol)
     scene = bpy.context.scene
+    assert scene is not None
 
     def camera(name):
         obj = bpy.data.objects.new(name, bpy.data.cameras.new(name))
@@ -1573,7 +1599,7 @@ def test_orient_to_best_view_moves_a_camera_instead(fetch):
             )
         )
         JoinGeometry([marker, orient.o.geometry]) >> join
-    bpy.context.view_layer.update()
+    view_layer().update()
 
     depsgraph = bpy.context.evaluated_depsgraph_get()
     mesh = mol.object.evaluated_get(depsgraph).data
@@ -1590,7 +1616,7 @@ def test_orient_to_best_view_moves_a_camera_instead(fetch):
     # the same tree without Orient, to compare the geometry against
     with mol.tree.reset() as (atoms, join):
         JoinGeometry([MeshLine(count=1), StyleCartoon(atoms)]) >> join
-    bpy.context.view_layer.update()
+    view_layer().update()
     depsgraph = bpy.context.evaluated_depsgraph_get()
     vertices = mol.object.evaluated_get(depsgraph).data.vertices
     unmoved = np.array([v.co for v in vertices][1:])

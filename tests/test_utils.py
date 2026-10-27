@@ -6,6 +6,7 @@ from bpy.types import Camera, SpaceView3D
 import molecularnodes as mn
 from molecularnodes.utils import frame_mapper
 from .constants import codes, data_dir
+from .utils import mn_ops
 
 
 def _viewport_spaces():
@@ -23,11 +24,12 @@ def test_view_distance_increases():
     context = bpy.context
     scene = context.scene
     assert scene
+    assert scene.camera is not None
     camera = cast(Camera, scene.camera.data)
     assert camera.clip_end == pytest.approx(100.0)
     for space in _viewport_spaces():
         assert space.clip_end == pytest.approx(1000.0)
-    bpy.ops.mn.import_molecule(code=codes[0], cache_dir=str(data_dir))
+    mn_ops.import_molecule(code=codes[0], cache_dir=str(data_dir))
     assert camera.clip_end == pytest.approx(mn.utils._INCREASED_CLIP_END)
     for space in _viewport_spaces():
         assert space.clip_end == pytest.approx(mn.utils._INCREASED_CLIP_END)

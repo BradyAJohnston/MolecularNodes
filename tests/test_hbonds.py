@@ -8,6 +8,7 @@ from nodebpy import geometry as g
 import molecularnodes as mn
 from molecularnodes.nodes.geometry import FindHBonds, StyleHBonds
 from .constants import data_dir
+from .utils import mn_ops
 
 pytestmark = [
     pytest.mark.filterwarnings("ignore:.*Empty string to select atoms.*:UserWarning"),
@@ -26,9 +27,12 @@ def universe():
     )
 
 
-def edges(obj: bpy.types.Object) -> np.ndarray:
-    pairs = np.zeros(len(obj.data.edges) * 2, dtype=int)
-    obj.data.edges.foreach_get("vertices", pairs)
+def edges(obj: bpy.types.Object | None) -> np.ndarray:
+    assert obj is not None
+    mesh = obj.data
+    assert isinstance(mesh, bpy.types.Mesh)
+    pairs = np.zeros(len(mesh.edges) * 2, dtype=int)
+    mesh.edges.foreach_get("vertices", pairs)
     return pairs.reshape(-1, 2)
 
 
@@ -40,14 +44,18 @@ def expected_pairs(universe: mda.Universe, frame: int, **kwargs) -> np.ndarray:
 
 def evaluated_vertex_count(obj: bpy.types.Object) -> int:
     depsgraph = bpy.context.evaluated_depsgraph_get()
-    return len(obj.evaluated_get(depsgraph).data.vertices)
+    mesh = obj.evaluated_get(depsgraph).data
+    assert isinstance(mesh, bpy.types.Mesh)
+    return len(mesh.vertices)
 
 
 def test_hbonds_trajectory(universe):
     mol = mn.Molecule(universe)
     obj = mol.calculations.hbonds().object
+    assert obj is not None
+    assert isinstance(obj.data, bpy.types.Mesh)
     assert mol.frame_attributes["hbonds"] == "CALCULATION"
-    assert mol.object.mn.calculations["hbonds"].object == obj
+    assert mol.props.calculations["hbonds"].object == obj
     assert obj.name == f".data_{mol.name}_hbonds"
     assert len(obj.data.vertices) == len(universe.atoms)
     # an independent universe so running the analysis doesn't move the other
@@ -327,11 +335,11 @@ def test_hbonds_init_operator(fetch):
     mol = fetch("2M6Q")
     hbonds = mol.calculations._hbonds
     assert not hbonds.is_setup
-    bpy.ops.mn.hbonds_init(uuid=mol.uuid, selection="protein")
+    mn_ops.hbonds_init(uuid=mol.uuid, selection="protein")
     assert hbonds.is_setup
     assert mol.props.hbonds.selection == "protein"
     n = len(hbonds.object.data.edges)
     # a second run updates the selection
-    bpy.ops.mn.hbonds_init(uuid=mol.uuid, selection="resid 1-20")
+    mn_ops.hbonds_init(uuid=mol.uuid, selection="resid 1-20")
     assert mol.props.hbonds.selection == "resid 1-20"
     assert len(hbonds.object.data.edges) < n

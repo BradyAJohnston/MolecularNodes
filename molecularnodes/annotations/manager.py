@@ -2,7 +2,7 @@ import copy
 import functools
 import inspect
 from abc import ABCMeta
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from typing import TYPE_CHECKING, cast
 from uuid import uuid1
 import bpy
@@ -87,6 +87,11 @@ class BaseAnnotationManager(metaclass=ABCMeta):
     # Entity instance specific annotation interfaces, set by derived classes
     _interfaces: dict[str, AnnotationInterface]
 
+    if TYPE_CHECKING:
+        # an `add_<type>` method is set on the manager for each registered
+        # annotation type, by `register_type`
+        def __getattr__(self, name: str) -> Callable[..., AnnotationInterface]: ...
+
     def __init__(self, entity):
         # Access to the entity to which this manager is attached
         self._entity = entity
@@ -113,7 +118,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         """Number of annotations"""
         return len(self._interfaces)
 
-    def __getitem__(self, name: str) -> AnnotationInterface:
+    def __getitem__(self, name: str | int) -> AnnotationInterface:
         """Return annotation interface based on name or index"""
         if isinstance(name, int):
             # numeric index based array access

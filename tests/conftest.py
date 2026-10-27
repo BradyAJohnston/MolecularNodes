@@ -58,6 +58,7 @@ if os.environ.get("PYTEST_XDIST_WORKER") is None:
 import numpy as np  # noqa: E402
 import pytest  # noqa: E402
 import molecularnodes as mn  # noqa: E402
+from molecularnodes.blender.registered import object_uuid  # noqa: E402
 from .utils import NumpySnapshotExtension  # noqa: E402
 
 # Pin numpy print format so snapshots are consistent across numpy 1.x and 2.x
@@ -112,7 +113,7 @@ def run_around_tests(request):
     print(f"{bpy.app.handlers.frame_change_pre=}")
     print(f"{mn.session.get_session().entities.keys()=}")
     print(f"{list(bpy.data.objects)=}")
-    print(f"{list(o.uuid for o in bpy.data.objects)=}")
+    print(f"{list(object_uuid(o) for o in bpy.data.objects)=}")
     # save the scene before it is reset, so a failing test can be opened and inspected
     save_blend_file(request)
     bpy.ops.wm.read_homefile(app_template="")

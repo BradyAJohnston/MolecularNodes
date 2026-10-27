@@ -6,6 +6,7 @@ import pytest
 import molecularnodes as mn
 from molecularnodes.nodes import compositor as mc
 from .constants import data_dir
+from .utils import node_input, socket_links
 
 GROUPS = [
     mc.ConeShadow,
@@ -189,19 +190,24 @@ def test_material_add_aov():
     node = mat.add_aov("chain_id")
     assert node.node.bl_idname == "ShaderNodeOutputAOV"
     assert node.node.aov_name == "chain_id"
-    (link,) = node.node.inputs["Value"].links
+    (link,) = socket_links(node_input(node.node, "Value"))
     _assert_instancer_mix(link.from_node, "chain_id", "Factor")
 
     # the offset is added after the mix, so instanced IDs are offset too
     node = mat.add_aov("res_id", attribute="res_id", offset=1.0)
-    (link,) = node.node.inputs["Value"].links
+    (link,) = socket_links(node_input(node.node, "Value"))
     add = link.from_node
+    assert isinstance(add, bpy.types.ShaderNodeMath)
     assert add.bl_idname == "ShaderNodeMath" and add.operation == "ADD"
-    assert add.inputs[1].default_value == pytest.approx(1.0)
-    _assert_instancer_mix(add.inputs[0].links[0].from_node, "res_id", "Factor")
+    value = node_input(add, 1)
+    assert isinstance(value, bpy.types.NodeSocketFloat)
+    assert value.default_value == pytest.approx(1.0)
+    _assert_instancer_mix(
+        socket_links(node_input(add, 0))[0].from_node, "res_id", "Factor"
+    )
 
     colour = mn.material.add_aov(mat.material, "tint", attribute="Color", type="COLOR")
-    (link,) = colour.node.inputs["Color"].links
+    (link,) = socket_links(node_input(colour.node, "Color"))
     _assert_instancer_mix(link.from_node, "Color", "Color")
 
 
@@ -290,7 +296,7 @@ def test_cone_shadow_sample_count(canvas):
     samples = [
         n
         for n in tree.nodes
-        if n.bl_idname == "CompositorNodeGroup"
+        if isinstance(n, bpy.types.CompositorNodeGroup)
         and n.node_tree
         and n.node_tree.name == "Cone Shadow Sample"
     ]

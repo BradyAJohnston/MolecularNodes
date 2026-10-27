@@ -4,9 +4,10 @@ from pathlib import Path
 import pytest
 from nodebpy.nodes.geometry import RealizeInstances
 import molecularnodes as mn
+from molecularnodes.entities.base import EntityType
 from molecularnodes.nodes.geometry import EnsembleInstance
 from .constants import data_dir
-from .utils import round_significant
+from .utils import interface_items, modifier_node_group, round_significant
 
 cellpack_dir = data_dir / "cellpack/petworld"
 
@@ -42,7 +43,7 @@ def test_load_cellpack(snapshot, format):
     file_path = data_dir / f"cellpack/square1.{format}"
 
     ens = mn.entities.ensemble.CellPack.load(file_path, node_setup=False)
-    assert ens._entity_type == mn.entities.base.EntityType.ENSEMBLE_CELLPACK
+    assert ens._entity_type == EntityType.ENSEMBLE_CELLPACK
     assert ens.props.entity_type == ens._entity_type.value
 
     assert ens.name == Path(file_path).name
@@ -76,12 +77,10 @@ def test_load_cellpack_twice_keeps_instances_separate():
     n_molecules = len(first.file.mol_ids)
     for ens in (first, second):
         assert len(ens.instance_collection.objects) == n_molecules
-        trees = {obj.modifiers[0].node_group for obj in ens.instance_collection.objects}
+        trees = {modifier_node_group(obj) for obj in ens.instance_collection.objects}
         assert len(trees) == 1
-        assert len(next(iter(trees)).interface.items_tree) == 2
+        assert len(interface_items(next(iter(trees)))) == 2
 
-    first_trees = {o.modifiers[0].node_group for o in first.instance_collection.objects}
-    second_trees = {
-        o.modifiers[0].node_group for o in second.instance_collection.objects
-    }
+    first_trees = {modifier_node_group(o) for o in first.instance_collection.objects}
+    second_trees = {modifier_node_group(o) for o in second.instance_collection.objects}
     assert first_trees.isdisjoint(second_trees)

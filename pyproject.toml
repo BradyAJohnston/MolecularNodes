@@ -145,7 +145,7 @@ order-by-type = true
 exclude = ["molecularnodes/assets/data.py"]
 
 [tool.ty.src]
-include = ["molecularnodes"]
+include = ["molecularnodes", "tests"]
 
 # Node groups under these directories are written by `nodebpy.assets dump`, so a
 # fix made by hand doesn't survive the round trip. These rules flag gaps in

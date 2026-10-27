@@ -1,13 +1,16 @@
 import itertools
+from typing import cast
 import bpy
 import databpy
 import numpy as np
 import pytest
 from databpy import ObjectTracker
 import molecularnodes as mn
+from molecularnodes.blender.registered import object_props
 from molecularnodes.nodes._utils import get_final_style_nodes
+from molecularnodes.session import get_session
 from .constants import data_dir
-from .utils import NumpySnapshotExtension
+from .utils import NumpySnapshotExtension, mn_ops, scene
 
 
 @pytest.fixture
@@ -15,7 +18,7 @@ def density_file(isolated_density_file):
     file = isolated_density_file(data_dir / "emd_24805.map.gz")
     # Make all densities are removed
     for o in bpy.data.objects:
-        if o.mn.entity_type == "density":
+        if object_props(o).entity_type == "density":
             bpy.data.objects.remove(o, do_unlink=True)
     return file
 
@@ -54,7 +57,7 @@ def test_density_invert(density_file):
 
     density = mn.entities.density.Grids.load(density_file, invert=True)
     style_node = get_final_style_nodes(density.modifier_node_tree)[0]
-    style_node.inputs["Threshold"].default_value = 0.01
+    cast(bpy.types.NodeSocketFloat, style_node.inputs["Threshold"]).default_value = 0.01
 
     pos = density.named_attribute("position")
     # At this threshold after inverting we should have a cube the size of the volume
@@ -75,7 +78,7 @@ def test_density_multiple_load(isolated_density_file):
 
 
 def test_density_naming_op(density_file):
-    bpy.ops.mn.import_density(filepath=str(density_file))
+    mn_ops.import_density(filepath=str(density_file))
     _object = bpy.data.objects[density_file.name]
 
 
@@ -85,14 +88,14 @@ def test_density_naming_op(density_file):
 def test_density_operator(
     snapshot_custom: NumpySnapshotExtension, density_file, invert, center
 ):
-    scene = bpy.context.scene
     with ObjectTracker() as o:
-        bpy.ops.mn.import_density(
+        mn_ops.import_density(
             filepath=str(density_file),
             invert=invert,
             center=center,
         )
-        density: mn.entities.Density = scene.MNSession.match(o.latest())
+        density = get_session().match(o.latest())
+    assert isinstance(density, mn.entities.Density)
 
     n_vertices = len(databpy.GeometrySet(density.object).named_attribute("position"))
     assert n_vertices == [198862, 287422][int(invert)]
@@ -103,7 +106,7 @@ def density_file_dx(isolated_density_file):
     file = isolated_density_file(data_dir / "water.dx.gz")
     # Make sure all densities are removed
     for o in bpy.data.objects:
-        if o.mn.entity_type == "density":
+        if object_props(o).entity_type == "density":
             bpy.data.objects.remove(o, do_unlink=True)
     return file
 
@@ -186,11 +189,15 @@ def _sample_grid_at(density, points_angstrom):
     from molecularnodes.nodes.geometry import ColorSampleGrid
 
     points = np.asarray(points_angstrom, dtype=float) * 0.1
-    obj = bpy.data.objects.new("sample_points", bpy.data.meshes.new("sample_points"))
-    bpy.context.scene.collection.objects.link(obj)
-    obj.data.from_pydata(points.tolist(), [], [])
+    mesh = bpy.data.meshes.new("sample_points")
+    obj = bpy.data.objects.new("sample_points", mesh)
+    scene().collection.objects.link(obj)
+    mesh.from_pydata(points.tolist(), [], [])
     tree = bpy.data.node_groups.new("sample_points", "GeometryNodeTree")
-    obj.modifiers.new("sample", "NODES").node_group = tree
+    assert isinstance(tree, bpy.types.GeometryNodeTree)
+    modifier = obj.modifiers.new("sample", "NODES")
+    assert isinstance(modifier, bpy.types.NodesModifier)
+    modifier.node_group = tree
     with TreeBuilder(tree) as t:
         geometry = t.inputs.geometry("Geometry")
         result = t.outputs.geometry("Geometry")
@@ -235,10 +242,13 @@ def test_iso_surface_signed_threshold(tmp_path, threshold):
     style = next(
         node
         for node in density.modifier_node_tree.nodes
-        if node.bl_idname == "GeometryNodeGroup"
-        and node.node_tree.name.startswith(DensityStyleISOSurface._name)
+        if isinstance(node, bpy.types.GeometryNodeGroup)
+        and cast(bpy.types.NodeTree, node.node_tree).name.startswith(
+            DensityStyleISOSurface._name
+        )
     )
-    assert style.inputs["Threshold"].default_value == pytest.approx(threshold)
+    threshold_socket = cast(bpy.types.NodeSocketFloat, style.inputs["Threshold"])
+    assert threshold_socket.default_value == pytest.approx(threshold)
 
     positions = density.named_attribute("position") / 0.1
     normals = density.named_attribute("normal")
@@ -268,8 +278,10 @@ def test_density_orthogonal_transform_unchanged(tmp_path):
     density = mn.entities.density.Grids.load(path, style=None)
     assert np.array_equal(density.axes, np.diag(delta))
 
-    density.object.data.grids.load()
-    grid = density.object.data.grids["density"]
+    volume = density.object.data
+    assert isinstance(volume, bpy.types.Volume)
+    volume.grids.load()
+    grid = volume.grids["density"]
     expected = np.eye(4)
     expected[:3, :3] = np.diag(delta * 0.1)
     expected[:3, 3] = origin * 0.1
@@ -297,8 +309,10 @@ def test_density_affine_transform_dx(tmp_path):
     density = mn.entities.density.Grids.load(path, style=None)
     assert np.allclose(density.axes, axes)
 
-    density.object.data.grids.load()
-    grid = density.object.data.grids["density"]
+    volume = density.object.data
+    assert isinstance(volume, bpy.types.Volume)
+    volume.grids.load()
+    grid = volume.grids["density"]
     expected = np.eye(4)
     expected[:3, :3] = axes.T * 0.1  # Blender's matrix holds the axes as columns
     expected[:3, 3] = origin * 0.1
@@ -514,6 +528,7 @@ def test_apbs_1brs_example_grid(isolated_density_file):
 
     path = isolated_density_file(data_dir / "1brs_AD_apbs.dx.gz")
     density = mn.entities.density.Grids.load(path, style="density_iso_surface")
+    assert density.grid is not None
     assert density.grid.grid.shape == (65, 65, 65)
 
     # side-chain charge centres from PDB 1BRS (Å): barnase (chain A) lysines and

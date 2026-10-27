@@ -1,14 +1,13 @@
 import random
 import molecularnodes as mn
+from molecularnodes.entities.molecule import pdbx
 from .constants import data_dir
 from .utils import NumpySnapshotExtension
 
 
 def test_ss_label_to_int():
     examples = ["TURN_TY1_P68", "BEND64", "HELX_LH_PP_P9", "STRN44"]
-    assert [3, 3, 1, 2] == [
-        mn.entities.molecule.pdbx._ss_label_to_int(x) for x in examples
-    ]
+    assert [3, 3, 1, 2] == [pdbx._ss_label_to_int(x) for x in examples]
 
 
 def test_entity_parsing(fetch):
