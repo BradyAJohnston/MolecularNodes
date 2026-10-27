@@ -1,54 +1,47 @@
 import os
 from abc import ABCMeta
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Union
+from typing import Iterator, Union
 import databpy
 import numpy as np
-from nodebpy import geometry as g
 from nodebpy.builder import GeometrySocket
 from ... import blender as bl
-from ...nodes.geometry import SetGeometryVolume
-from ..base import EntityType, MolecularEntity, MolecularTree
+from ..base import EntityType, MolecularEntity, MolecularTree, ResetSockets
 from .annotations import DensityAnnotationManager
-
-
-def _is_set_geometry_volume(node) -> bool:
-    tree = getattr(node, "node_tree", None)
-    return tree is not None and tree.name.startswith(SetGeometryVolume._name)
 
 
 class DensityTree(MolecularTree):
     """
-    Node tree of a density, which keeps the source volume with its styles.
+    Node tree of a density.
 
-    Branches end in the join as usual, but the join feeds the output through a
-    `Set Geometry Volume` node, which stores the tree's input volume in the
-    `MN/Volume` bundle of the output. Density styles turn the volume into a mesh;
-    the bundle keeps the grid available to `Color Sample Grid` without rendering it.
+    The density's object is an empty mesh, so the tree has no input geometry:
+    each branch starts with an `Import Volume` node that reads the density's
+    ``.vdb`` files, and ends in the join.
+
+    >>> with density.tree.reset() as (_, join):
+    ...     ImportVolume(path) >> DensityStyleSurface() >> join
     """
 
     @property
-    def join(self) -> GeometrySocket:
-        output = self.geometry
-        links = output.socket.links
-        if links and _is_set_geometry_volume(links[0].from_socket.node):
-            keep = links[0].from_socket.node
-            upstream = keep.inputs[0].links
-            if (
-                upstream
-                and upstream[0].from_socket.node.bl_idname == "GeometryNodeJoinGeometry"
-            ):
-                return self._wrap(upstream[0].from_socket.node.inputs[0])
-            join = g.JoinGeometry()
-            if upstream:
-                self._wrap(upstream[0].from_socket) >> join
-            join >> self._wrap(keep.inputs[0])
-            return join.i.geometry
+    def atoms(self) -> GeometrySocket:
+        raise AttributeError(
+            "Density trees have no input geometry; start each branch with an "
+            "`ImportVolume` node"
+        )
 
-        join_input = super().join
-        join_output = self._wrap(join_input.socket.node.outputs[0])
-        SetGeometryVolume(geometry=join_output, volume=self.atoms) >> output
-        return join_input
+    @contextmanager
+    def reset(self, output: str = "Geometry") -> Iterator[ResetSockets]:
+        """
+        Clear the tree and build within it.
+
+        Yields ``(None, join)``: there is no input geometry to build from, so
+        branches start with an `Import Volume` node and end in ``join``.
+        """
+        with self:
+            self.clear()
+            self.outputs.geometry(output)
+            yield ResetSockets(None, self.join)
 
 
 class Density(MolecularEntity, metaclass=ABCMeta):

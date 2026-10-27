@@ -307,16 +307,20 @@ Color Sample Grid:
     Blender's grid nodes return zero for 64-bit (`DOUBLE`) grids.
     Place it in a `Set Color` after a style to color the style's own points (each surface vertex), or before
     a style to color the atoms by the value at their centres. Pick the density itself in `Object::Object`,
-    styled or not: density styles turn the volume into a mesh, but a density loaded with Molecular Nodes keeps
-    its source volume in the `MN/Volume` bundle of its output (see `Set Geometry Volume::Node`), and the node
-    samples that volume when it is there, otherwise the object's own volume. The grid is sampled in world
-    space, so moving either object moves the molecule through the grid.
-Set Geometry Volume:
+    styled or not: density styles turn the volume into a mesh, but `Import Volume::Node` keeps the grid in the
+    bundle of its output as `MN Grid <Name>` and the styles pass it on, so the node samples the grid named
+    `Grid Name::String` there, otherwise the grid of that name in the object's own volume. The grid is sampled in
+    world space, so moving either object moves the molecule through the grid.
+Import Volume:
   description: >-
-    Store the source `Volume::Geometry` in the `MN/Volume` bundle of `Geometry::Geometry`, such as a density's
-    iso surface, so the volume can still be sampled (by `Color Sample Grid::Node`) after a style has turned it
-    into a mesh. The bundled volume is not rendered. A volume already in either input's `MN/Volume` bundle is
-    kept. Density trees built from Python end in this node, after the join of their styles.
+    Import a volume from a `.vdb` file at `Path::String`. Density trees have no input geometry: each branch starts
+    with this node, followed by a style. `{index}` in the path is replaced by an index, to pick one of `Count::Int`
+    numbered files, such as the frames of an animation. The index is
+    `Index::Int`, or with `Follow Frame::Bool` the scene frame counted from `Frame Start::Int`; it is clamped to the
+    files, so frames past the last file hold it. The `density` grid is also kept in the bundle of the output as
+    `MN Grid <Name>`, and density styles pass it on to the mesh they make, so `Color Sample Grid::Node` can sample
+    it by `Name::String` after the volume has been styled. Give each branch that imports a different grid its own
+    name.
 Color Attribute Random:
   description: >-
     Generate a random color, based on the given attribute. Control the lightness and saturation of the color with

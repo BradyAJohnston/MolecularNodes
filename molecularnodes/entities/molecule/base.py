@@ -1598,9 +1598,9 @@ class Molecule(MolecularEntity):
               its output (each surface vertex for ``"surface"``), so instanced
               geometry such as instanced spheres is not colored. The range is the
               node's default of -5 to 5 (red through light grey to blue); change
-              ``Min`` and ``Max`` on the node for other grids. A styled density
-              keeps its source volume in the ``MN/Volume`` bundle of its output,
-              which the node samples, so the density can keep its own style.
+              ``Min`` and ``Max`` on the node for other grids. A density keeps
+              its grid in the bundle of its styled output, which the node samples,
+              so the density can keep its own style.
             - None (default) to add no color node, leaving the baked ``Color``
               attribute in use.
 
