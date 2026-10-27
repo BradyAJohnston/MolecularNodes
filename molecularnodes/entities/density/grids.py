@@ -15,6 +15,7 @@ from ...nodes.geometry import (
     ImportVolume,
 )
 from .base import Density
+from .cube import count_datasets, is_cube, read_cube
 
 
 def cell_vectors(lengths, angles) -> np.ndarray:
@@ -85,6 +86,11 @@ class Grids(Density):
     Plain: `.dx`, `.plt`, `.ccp4`, `.mrc`, `.map`, `.pickle`
     Compressed: `.dx.gz`, `.ccp4.gz`, `.ccp4.bz2`, `.mrc.gz`, `.mrc.bz2`, `.map.gz`, `.map.bz2`
 
+    Gaussian cube files (`.cube`, `.cub`, optionally gzipped) are read by
+    :func:`~molecularnodes.entities.density.cube.read_cube`, with Bohr converted to Å.
+    Each dataset of a cube file with several orbitals becomes one numbered `.vdb`
+    file, which the `Index` of `Import Volume` picks between.
+
     It utilises `GridDataFormats` for file parsing, which is then converted into `openvdb` grids,
     that are written as `.vdb` files. The density's object is an empty mesh whose node tree
     imports them with `Import VDB`, so several files can load into one density and play
@@ -108,18 +114,24 @@ class Grids(Density):
         super().__init__(file_path=paths[0])
         self.file_paths: list[Path] = [bl.path_resolve(p) for p in paths]
         self.grid: Grid = None  # GridDataFormats Grid object, of the first file
-        if len(self.file_paths) == 1:
+        # one grid per file, or per dataset of a cube file with several orbitals
+        jobs: list[tuple[Path, int | None]] = []
+        for path in self.file_paths:
+            n = count_datasets(path) if is_cube(path) else 1
+            jobs += [(path, i if n > 1 else None) for i in range(n)]
+        if len(jobs) == 1:
             targets = [None]
         else:
-            # several files are written as numbered .vdb files next to the first,
-            # which `Import Volume` picks between by index
+            # several grids are written as numbered .vdb files next to the first
+            # file, which `Import Volume` picks between by index
             base = self.path_to_vdb(
                 str(self.file_paths[0]), center=center, invert=invert
             ).removesuffix(".vdb")
-            targets = [f"{base}_{i}.vdb" for i in range(len(self.file_paths))]
+            targets = [f"{base}_{i}.vdb" for i in range(len(jobs))]
+        self._cubes = {}  # parsed cube files, reused for each of their datasets
         self.files_vdb: list[str] = []
-        for path, target in reversed(list(zip(self.file_paths, targets))):
-            # converted last to first, so `grid` and `axes` describe the first file
+        for (path, dataset), target in reversed(list(zip(jobs, targets))):
+            # converted last to first, so `grid` and `axes` describe the first grid
             self.files_vdb.insert(
                 0,
                 self.grid_to_vdb(
@@ -128,8 +140,10 @@ class Grids(Density):
                     invert=invert,
                     overwrite=overwrite,
                     file_vdb=target,
+                    dataset=dataset,
                 ),
             )
+        del self._cubes
         self.file_vdb = self.files_vdb[0]
         #: path for `Import Volume`, with `{index}` in place of the number when
         #: there are several files
@@ -194,7 +208,8 @@ class Grids(Density):
         density.create_object(
             name=name or density.file_paths[0].name,
             style=style,
-            follow_frame=len(density.files_vdb) > 1
+            # several files play as an animation; the datasets of one file don't
+            follow_frame=len(density.file_paths) > 1
             if follow_frame is None
             else follow_frame,
             frame_start=frame_start,
@@ -208,6 +223,7 @@ class Grids(Density):
         file: str,
         file_format: str | None,
         metadata: dict,
+        dataset: int | None = None,
     ):
         """
         Try parsing the grid using GridDataFormats first; on failure, fall back to
@@ -216,6 +232,9 @@ class Grids(Density):
         Returns an object with attributes: grid (np.ndarray), delta (np.ndarray),
         origin (np.ndarray), metadata (dict).
         """
+        if is_cube(file):
+            return self._parse_cube(file, metadata, dataset=dataset or 0)
+
         # First attempt: GridDataFormats
         try:
             return Grid(file, file_format=file_format, metadata=metadata)
@@ -316,6 +335,26 @@ class Grids(Density):
             metadata=metadata,
         )
         grid.mn_axes = axes
+        return grid
+
+    def _parse_cube(self, file: str, metadata: dict, dataset: int = 0) -> Grid:
+        """
+        Build a grid from one dataset of a Gaussian cube file.
+
+        The voxel axes, which may be sheared, are stored on the returned grid as
+        ``mn_axes`` (rows are the step in Å along each array axis).
+        """
+        cubes = getattr(self, "_cubes", {})
+        if file not in cubes:
+            cubes[file] = read_cube(file)
+        cube = cubes[file]
+        grid = Grid(
+            grid=cube.values[dataset],
+            origin=cube.origin,
+            delta=np.linalg.norm(cube.axes, axis=1),
+            metadata=metadata,
+        )
+        grid.mn_axes = cube.axes
         return grid
 
     def _voxel_axes(self, file: str, gobj) -> np.ndarray:
@@ -444,6 +483,7 @@ class Grids(Density):
         center: bool = False,
         overwrite=False,
         file_vdb: str | None = None,
+        dataset: int | None = None,
     ) -> str:
         """
         Converts an grid file to a .vdb file using openvdb.
@@ -463,6 +503,8 @@ class Grids(Density):
             If True, the .vdb file will be overwritten if it already exists. Defaults to False.
         file_vdb : str | None, optional
             Path to write the .vdb file to. Defaults to one next to `file`, named after it.
+        dataset : int | None, optional
+            For a cube file with several datasets (orbitals), the one to convert.
 
         Returns
         -------
@@ -485,8 +527,9 @@ class Grids(Density):
             "center": center,
         }
         gobj = self._parse_grid_with_fallback(
-            file, file_format=file_format, metadata=metadata
+            file, file_format=file_format, metadata=metadata, dataset=dataset
         )
+        source = file if dataset is None else f"{file}#{dataset}"
         if invert:
             gobj.grid = np.max(gobj.grid) - gobj.grid
         self.grid = gobj
@@ -508,7 +551,7 @@ class Grids(Density):
                 and (orthogonal or ("MN_affine" in vdb_grid and vdb_grid["MN_affine"]))
                 and vdb_grid.valueTypeName != "double"
                 # numbered files of a sequence are reused only for the same source
-                and ("MN_source" not in vdb_grid or vdb_grid["MN_source"] == file)
+                and ("MN_source" not in vdb_grid or vdb_grid["MN_source"] == source)
             ):
                 return file_path
 
@@ -564,7 +607,7 @@ class Grids(Density):
         # been converted correctly
         vdb_grid["MN_invert"] = invert
         vdb_grid["MN_center"] = center
-        vdb_grid["MN_source"] = file
+        vdb_grid["MN_source"] = source
         if not orthogonal:
             vdb_grid["MN_affine"] = True
 
