@@ -1192,6 +1192,7 @@ class Molecule(MolecularEntity):
         # file is reopened
         self.calculations._dssp._restore()
         self.calculations._hbonds._restore()
+        self.calculations._restore_texts()
         self._store_frame_attributes(self.calculations._frame_values(), "CALCULATION")
         self._sync_frame_attributes(["position", *trajectory])
 

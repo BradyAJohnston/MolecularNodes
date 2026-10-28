@@ -49,6 +49,7 @@ class CalculationManager:
         self._funcs: dict[str, Calculation] = {}
         self._dssp = DSSPCalculation(entity)
         self._hbonds = HBondCalculation(entity)
+        self._failed_texts: set[str] = set()
 
     def dssp(
         self, selection: str | None = None, *, updating: bool | None = None
@@ -178,8 +179,41 @@ class CalculationManager:
             values[calculation.name] = result
         for calculation in calculations:
             self.add(calculation.name, calculation, updating=updating, refresh=False)
+            item = self._item(calculation.name)
+            if item is not None:
+                item.text = text
         self._entity._store_frame_attributes(values, "CALCULATION")
         return list(values)
+
+    def _restore_texts(self) -> None:
+        """Load calculations from their text blocks again after a file is reopened.
+
+        Calculations loaded from text can't be saved with the file, but their
+        items on the object record the text block, so they are loaded from it
+        again with the updating flags they had.
+        """
+        try:
+            items = self.ui_items
+        except (LinkedObjectError, AttributeError):
+            return
+        missing = [
+            item
+            for item in items
+            if item.text is not None and item.name not in self._funcs
+        ]
+        for text in {item.text for item in missing}:
+            if text.name in self._failed_texts:
+                continue
+            updating = {item.name: item.updating for item in missing}
+            try:
+                names = self.from_text(text)
+            except Exception as e:
+                # don't retry on every frame change
+                self._failed_texts.add(text.name)
+                logger.warning(f"Could not load calculations from '{text.name}': {e}")
+                continue
+            for name in names:
+                self.set_updating(name, updating.get(name, True))
 
     @property
     def ui_items(self):
