@@ -4,13 +4,23 @@ The list reads the scene's view layers directly, filtered to those tagged as
 Molecular Nodes layers and ordered by layer index (top layer first, like an
 image editor's layer stack). Operators are thin wrappers over
 ``molecularnodes.scene.layers``.
+
+Opacity and the outline colour, size and threshold are drawn straight from the
+compositor node inputs, so changing them doesn't rebuild anything and edits
+made in the compositor show here too. Settings that change which nodes exist
+(blend, outlines, normal lines) apply on "Rebuild Node Tree".
 """
 
 from typing import cast
 import bpy
 from bpy.props import EnumProperty, StringProperty
 from bpy.types import Operator, UILayout
-from ..scene.layers import RenderLayers, set_style_layer, style_layer_node
+from ..scene.layers import (
+    RenderLayer,
+    RenderLayers,
+    set_style_layer,
+    style_layer_node,
+)
 from .utils import operator_props
 
 
@@ -25,6 +35,17 @@ def _active_view_layer(scene: bpy.types.Scene) -> bpy.types.ViewLayer | None:
         if _settings(view_layer).is_layer:
             return view_layer
     return None
+
+
+def _prop_live(layout: UILayout, layer: RenderLayer, name: str, **kwargs) -> None:
+    """Draw a setting from the compositor node input that holds it, or from
+    the view layer settings until the compositor is built."""
+    socket = layer.socket(name)
+    if socket is not None:
+        kwargs.setdefault("text", layer.settings.bl_rna.properties[name].name)
+        layout.prop(socket, "default_value", **kwargs)
+    else:
+        layout.prop(layer.settings, name, **kwargs)
 
 
 class MN_UL_RenderLayers(bpy.types.UIList):
@@ -48,7 +69,8 @@ class MN_UL_RenderLayers(bpy.types.UIList):
         row.prop(item, "name", text="", emboss=False)
         sub = row.row(align=True)
         sub.scale_x = 0.8
-        sub.prop(settings, "opacity", text="", slider=True)
+        if settings.index > 0:
+            _prop_live(sub, RenderLayer(item), "opacity", text="", slider=True)
         row.prop(
             settings,
             "outline",
@@ -130,9 +152,8 @@ class MN_OT_RenderLayerMove(Operator):
         except KeyError:
             return {"CANCELLED"}
         # swap the indices; styles follow the index, so they swap layers too
-        with layers._paused():
-            _settings(other.view_layer).index = index
-            _settings(view_layer).index = target
+        _settings(other.view_layer).index = index
+        _settings(view_layer).index = target
         layers.swap_style_layers(index, target)
         layers.sync()
         return {"FINISHED"}
@@ -140,13 +161,17 @@ class MN_OT_RenderLayerMove(Operator):
 
 class MN_OT_RenderLayersComposite(Operator):
     bl_idname = "mn.render_layers_composite"
-    bl_label = "Sync Render Layers"
-    bl_description = "Update the view layers, the render object and the compositor from the layer list"
+    bl_label = "Rebuild Node Tree"
+    bl_description = (
+        "Rebuild the compositor and the render object from the layer list. "
+        "Values edited on the compositor's layer nodes are kept, other edits "
+        "to the compositor are replaced"
+    )
     bl_options = {"REGISTER", "UNDO"}
 
     def execute(self, context):
         assert context.scene is not None
-        RenderLayers(context.scene).sync()
+        RenderLayers(context.scene).sync(rebuild=True)
         return {"FINISHED"}
 
 
@@ -203,29 +228,41 @@ def panel_layers(layout: UILayout, context: bpy.types.Context) -> None:
         col.operator("mn.render_layer_move", icon="TRIA_DOWN", text="")
     ).direction = "DOWN"
 
+    layers = RenderLayers(scene)
+    stale = layers.is_stale
+    row = layout.row()
+    row.alert = stale
+    row.operator(
+        "mn.render_layers_composite", icon="FILE_REFRESH" if stale else "NODETREE"
+    )
+
     layout.use_property_split = True
     layout.use_property_decorate = False
     view_layer = _active_view_layer(scene)
     if view_layer is not None:
-        settings = _settings(view_layer)
+        layer = RenderLayer(view_layer)
+        settings = layer.settings
         col = layout.column()
-        col.prop(settings, "opacity")
-        col.prop(settings, "blend")
+        if view_layer != scene.view_layers[0]:
+            _prop_live(col, layer, "opacity", slider=True)
+            col.prop(settings, "blend")
         header, body = layout.panel("mn_render_layer_outline")
         header.use_property_split = False
         header.prop(settings, "outline")
         if body is not None:
             body.active = settings.outline
-            body.prop(settings, "outline_color", text="Color")
-            body.prop(settings, "outline_size", text="Size")
-            body.prop(settings, "outline_threshold", text="Threshold")
+            _prop_live(body, layer, "outline_color", text="Color")
+            _prop_live(body, layer, "outline_size", text="Size")
+            _prop_live(body, layer, "outline_threshold", text="Threshold")
             body.prop(settings, "outline_normals")
     header, body = layout.panel("mn_render_layers_options", default_closed=True)
     header.label(text="Options")
     if body is not None:
-        body.prop(scene, "mn_layers_background")
-        body.prop(scene, "mn_layers_auto_composite")
-        body.operator("mn.render_layers_composite")
+        socket = layers.background_socket()
+        if socket is not None:
+            body.prop(socket, "default_value", text="Background")
+        else:
+            body.prop(scene, "mn_layers_background")
 
 
 def draw_style_layer(layout: UILayout, context, style: bpy.types.Node) -> None:

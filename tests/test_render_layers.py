@@ -150,3 +150,57 @@ def test_move_swaps_style_layers(canvas, fetch):
         if ml._is_set_node(n)
     )
     assert values == [(0, "Style Surface"), (1, "Style Cartoon")]
+
+
+def test_layer_values_live_on_compositor_nodes(canvas, fetch):
+    "Opacity and outline values edit the compositor inputs, without a rebuild."
+    fetch("1cbs").add_style("cartoon", layer=0)
+    top = canvas.layers.add("Top", opacity=0.5, outline_size=3)
+    tree = canvas.compositor.tree
+    nodes = set(tree.nodes)
+    socket = top.socket("opacity")
+    assert socket is not None and socket.node in nodes
+    assert socket.default_value == pytest.approx(0.5)
+
+    top.opacity = 0.25
+    top.outline_size = 5
+    assert set(tree.nodes) == nodes
+    assert socket.default_value == pytest.approx(0.25)
+    assert top.socket("outline_size").default_value == 5
+    assert not canvas.layers.is_stale
+
+
+def test_rebuild_keeps_values_edited_on_nodes(canvas, fetch):
+    mol = fetch("1cbs")
+    mol.add_style("cartoon", layer=0)
+    top = canvas.layers.add("Top")
+    # as if edited in the compositor itself
+    top.socket("opacity").default_value = 0.3
+    top.socket("outline_color").default_value = (1.0, 0.0, 0.0, 1.0)
+
+    # a change that doesn't touch the layers leaves the compositor alone
+    nodes = set(canvas.compositor.tree.nodes)
+    mol.add_style("surface", layer=top)
+    assert set(canvas.compositor.tree.nodes) == nodes
+
+    # a structural change from the panel marks it stale; the rebuild keeps
+    # the edited values
+    top.settings.blend = "DEPTH"
+    assert canvas.layers.is_stale
+    canvas.layers.sync(rebuild=True)
+    assert not canvas.layers.is_stale
+    assert top.socket("opacity").node.bl_idname == "ShaderNodeMath"
+    assert top.opacity == pytest.approx(0.3)
+    assert tuple(top.outline_color) == pytest.approx((1.0, 0.0, 0.0, 1.0))
+
+
+def test_structural_change_from_python_rebuilds(canvas, fetch):
+    fetch("1cbs").add_style("cartoon", layer=0)
+    top = canvas.layers.add("Top", opacity=0.4)
+    top.blend = "DEPTH"
+    assert not canvas.layers.is_stale
+    assert top.socket("opacity").node.bl_idname == "ShaderNodeMath"
+    assert top.opacity == pytest.approx(0.4)
+    canvas.layers.background = (1.0, 1.0, 1.0, 1.0)
+    assert not canvas.layers.is_stale
+    assert canvas.layers.background_socket() is not None

@@ -18,9 +18,9 @@ so they evaluate once per render and only the small filter tree differs.
 """
 
 from __future__ import annotations
-from collections.abc import Generator, Iterator
-from contextlib import contextmanager
+from collections.abc import Iterator
 from typing import TYPE_CHECKING, cast
+from uuid import uuid4
 import bpy
 from bpy.props import (
     BoolProperty,
@@ -28,6 +28,7 @@ from bpy.props import (
     FloatProperty,
     FloatVectorProperty,
     IntProperty,
+    StringProperty,
 )
 
 if TYPE_CHECKING:
@@ -38,6 +39,8 @@ INDEX_PROP = "mn_layer_index"
 PROXY_NAME = "_ViewLayer"
 PROXY_TREE = ".MN_ViewLayer"
 SOURCE_PROP = "mn_render_layer_source"
+BUILT_PROP = "mn_layers_built"
+BACKGROUND_NODE = "MN Layers Background"
 NO_LAYER = -1
 
 
@@ -73,20 +76,23 @@ def _ensure_drivers() -> None:
         driver.expression = "idx"
 
 
-def _rebuild(self, context: bpy.types.Context) -> None:
-    scene = context.scene
-    if scene is not None and scene.mn_layers_auto_composite:  # ty: ignore[unresolved-attribute]
-        RenderLayers(scene).sync()
-
-
 class MN_RenderLayerSettings(bpy.types.PropertyGroup):
-    """Molecular Nodes render layer settings, stored on each view layer."""
+    """Molecular Nodes render layer settings, stored on each view layer.
 
+    ``blend``, ``outline`` and ``outline_normals`` decide which compositor
+    nodes are built. The other values are what a rebuild starts from: once
+    built, they live on the compositor nodes, which the panel edits directly.
+    """
+
+    uid: StringProperty(  # type: ignore
+        name="ID",
+        description="Names this layer's compositor nodes, so they are found "
+        "after the view layer is renamed or moved",
+    )
     is_layer: BoolProperty(  # type: ignore
         name="Render Layer",
         description="Composite this view layer as a Molecular Nodes render layer",
         default=False,
-        update=_rebuild,
     )
     index: IntProperty(  # type: ignore
         name="Index",
@@ -94,7 +100,6 @@ class MN_RenderLayerSettings(bpy.types.PropertyGroup):
         "are composited over lower ones",
         default=0,
         min=0,
-        update=_rebuild,
     )
     opacity: FloatProperty(  # type: ignore
         name="Opacity",
@@ -103,7 +108,6 @@ class MN_RenderLayerSettings(bpy.types.PropertyGroup):
         min=0.0,
         max=1.0,
         subtype="FACTOR",
-        update=_rebuild,
     )
     blend: EnumProperty(  # type: ignore
         name="Blend",
@@ -117,13 +121,11 @@ class MN_RenderLayerSettings(bpy.types.PropertyGroup):
             ),
         ),
         default="OVER",
-        update=_rebuild,
     )
     outline: BoolProperty(  # type: ignore
         name="Outline",
         description="Draw outlines from this layer's depth pass",
         default=True,
-        update=_rebuild,
     )
     outline_color: FloatVectorProperty(  # type: ignore
         name="Outline Color",
@@ -132,7 +134,6 @@ class MN_RenderLayerSettings(bpy.types.PropertyGroup):
         min=0.0,
         max=1.0,
         default=(0.0, 0.0, 0.0, 1.0),
-        update=_rebuild,
     )
     outline_size: IntProperty(  # type: ignore
         name="Outline Size",
@@ -140,20 +141,17 @@ class MN_RenderLayerSettings(bpy.types.PropertyGroup):
         default=2,
         min=1,
         max=20,
-        update=_rebuild,
     )
     outline_threshold: FloatProperty(  # type: ignore
         name="Depth Threshold",
         description="Depth gradient, in world units like the depth pass, above which a line is drawn",
         default=6.0,
         min=0.0,
-        update=_rebuild,
     )
     outline_normals: BoolProperty(  # type: ignore
         name="Normal Lines",
         description="Also draw lines where the surface normal changes sharply",
         default=False,
-        update=_rebuild,
     )
 
 
@@ -165,11 +163,34 @@ def _layer_index(view_layer: bpy.types.ViewLayer) -> int:
 # --- manager ----------------------------------------------------------------
 
 
+# settings that live on a compositor node once built: node role, input socket
+LIVE_SETTINGS = {
+    "opacity": ("Opacity", None),
+    "outline_color": ("Outline", "Color"),
+    "outline_size": ("Lines", "Size"),
+    "outline_threshold": ("Lines", "Threshold"),
+}
+
+
+def _node_name(uid: str, role: str) -> str:
+    return f"MN Layer {uid} {role}"
+
+
+def _opacity_socket(node: bpy.types.Node) -> bpy.types.NodeSocket:
+    # Alpha Over's factor for OVER, the alpha multiplier for DEPTH
+    if node.bl_idname == "CompositorNodeAlphaOver":
+        return node.inputs["Factor"]
+    return node.inputs[1]
+
+
 class RenderLayer:
     """One render layer: a view layer with Molecular Nodes layer settings.
 
-    Settings read and write the ``mn_layer`` properties of the view layer, so
-    the Python API and the panel edit the same data.
+    ``opacity`` and the outline colour, size and threshold read and write the
+    compositor node inputs once the compositor is built, so the panel, the
+    Python API and the compositor itself all edit the same value. Before that,
+    and for the settings that change the compositor's structure, they read and
+    write the ``mn_layer`` properties of the view layer.
     """
 
     def __init__(self, view_layer: bpy.types.ViewLayer) -> None:
@@ -187,14 +208,45 @@ class RenderLayer:
     def index(self) -> int:
         return self.settings.index
 
+    def socket(self, name: str) -> bpy.types.NodeSocket | None:
+        """The compositor input that holds the setting ``name``, if built."""
+        if name not in LIVE_SETTINGS or not self.settings.uid:
+            return None
+        role, input = LIVE_SETTINGS[name]
+        scene = cast(bpy.types.Scene, self.view_layer.id_data)
+        # read only: the panel calls this while drawing
+        tree = scene.compositing_node_group
+        node = tree.nodes.get(_node_name(self.settings.uid, role)) if tree else None
+        if node is None:
+            return None
+        return _opacity_socket(node) if input is None else node.inputs.get(input)
+
+    def pull(self) -> None:
+        """Copy the values from the compositor nodes back into the settings."""
+        for name in LIVE_SETTINGS:
+            socket = self.socket(name)
+            if socket is not None:
+                value = socket.default_value  # ty: ignore[unresolved-attribute]
+                setattr(self.settings, name, value)
+
     def __getattr__(self, name: str):
         if name in MN_RenderLayerSettings.__annotations__:
+            socket = self.socket(name)
+            if socket is not None:
+                return socket.default_value  # ty: ignore[unresolved-attribute]
             return getattr(self.settings, name)
         raise AttributeError(name)
 
     def __setattr__(self, name: str, value) -> None:
         if name in MN_RenderLayerSettings.__annotations__:
             setattr(self.settings, name, value)
+            socket = self.socket(name)
+            if socket is not None:
+                socket.default_value = value  # ty: ignore[unresolved-attribute]
+            elif name not in LIVE_SETTINGS:
+                # changes which nodes exist: rebuild from a script straight away
+                scene = cast(bpy.types.Scene, self.view_layer.id_data)
+                RenderLayers(scene).sync()
         else:
             super().__setattr__(name, value)
 
@@ -243,20 +295,10 @@ class RenderLayers:
         base = self.scene.view_layers[0]
         settings = base.mn_layer  # ty: ignore[unresolved-attribute]
         if not settings.is_layer:
-            with self._paused():
-                settings.is_layer = True
-                settings.index = 0
-
-    @contextmanager
-    def _paused(self) -> Generator[None]:
-        """Change several settings without rebuilding after each one."""
-        scene = self.scene
-        previous = scene.mn_layers_auto_composite  # ty: ignore[unresolved-attribute]
-        scene.mn_layers_auto_composite = False  # ty: ignore[unresolved-attribute]
-        try:
-            yield
-        finally:
-            scene.mn_layers_auto_composite = previous  # ty: ignore[unresolved-attribute]
+            settings.is_layer = True
+            settings.index = 0
+        if not settings.uid:
+            settings.uid = uuid4().hex[:8]
 
     def add(self, name: str | None = None, **settings) -> RenderLayer:
         """Add a render layer on top of the existing ones.
@@ -284,13 +326,13 @@ class RenderLayers:
         for attr in ("use_pass_z", "use_pass_normal"):
             setattr(view_layer, attr, getattr(base, attr))
         layer = RenderLayer(view_layer)
-        with self._paused():
-            layer.settings.is_layer = True
-            layer.settings.index = index
-            for key, value in settings.items():
-                if key not in MN_RenderLayerSettings.__annotations__:
-                    raise TypeError(f"Unknown render layer setting {key!r}")
-                setattr(layer.settings, key, value)
+        layer.settings.is_layer = True
+        layer.settings.index = index
+        layer.settings.uid = uuid4().hex[:8]
+        for key, value in settings.items():
+            if key not in MN_RenderLayerSettings.__annotations__:
+                raise TypeError(f"Unknown render layer setting {key!r}")
+            setattr(layer.settings, key, value)
         self.sync()
         return layer
 
@@ -324,22 +366,57 @@ class RenderLayers:
             return layer
         return self[layer].index
 
-    def sync(self) -> None:
+    def _signature(self) -> str:
+        """What the compositor's structure depends on. Values that only set a
+        node input (opacity, outline colour, ...) are left out."""
+        layers = list(self)
+        if len(layers) < 2:
+            return ""
+        parts = [
+            (
+                layer.settings.uid,
+                layer.name,
+                layer.index,
+                layer.settings.blend,
+                layer.settings.outline,
+                layer.settings.outline_normals,
+            )
+            for layer in layers
+        ]
+        has_background = self.scene.mn_layers_background[3] > 0  # ty: ignore[unresolved-attribute]
+        return repr((parts, has_background))
+
+    @property
+    def is_stale(self) -> bool:
+        """Whether the layers changed in a way the compositor doesn't show
+        until it is rebuilt."""
+        return self.scene.get(BUILT_PROP, "") != self._signature()
+
+    def sync(self, rebuild: bool = False) -> None:
         """Bring the hidden machinery in line with the layers: the index
         property on every view layer, the ``_ViewLayer`` object and its
-        sources, the driver, and the compositor stack."""
+        sources, and the driver. The compositor is rebuilt only when it is
+        stale or ``rebuild`` is set, so edits made to its nodes survive."""
         for view_layer in self.scene.view_layers:
             view_layer[INDEX_PROP] = _layer_index(view_layer)
         _sync_proxy(self.scene, enabled=len(self) > 1)
-        self.composite()
+        if rebuild or self.is_stale:
+            self.composite()
 
     def composite(self) -> None:
         """Rebuild the compositor to stack the layers, bottom to top, followed
-        by the annotation overlay."""
+        by the annotation overlay. Values edited on the previous compositor's
+        nodes carry over."""
         from .compositor import CompositorTree
 
         layers = list(self)
         tree = CompositorTree(self.scene)
+        for layer in layers:
+            layer.pull()
+        if tree.tree is not None and BACKGROUND_NODE in tree.tree.nodes:
+            node = tree.tree.nodes[BACKGROUND_NODE]
+            self.scene.mn_layers_background = node.inputs["Background"].default_value  # ty: ignore[unresolved-attribute]
+        self.scene[BUILT_PROP] = self._signature()
         if len(layers) < 2:
             with tree.reset():
                 pass
@@ -360,6 +437,7 @@ class RenderLayers:
                 from nodebpy import compositor as c
 
                 result = c.AlphaOver(background=background, foreground=result)
+                result.node.name = BACKGROUND_NODE
             result >> output
         # reset() adds its own Render Layers node; the stack makes one per layer
         for node in list(tree.tree.nodes):
@@ -369,15 +447,29 @@ class RenderLayers:
                 tree.tree.nodes.remove(node)
         tree.add_annotations()
 
+    def background_socket(self) -> bpy.types.NodeSocket | None:
+        """The compositor input that holds the background colour, if built."""
+        tree = self.scene.compositing_node_group
+        node = tree.nodes.get(BACKGROUND_NODE) if tree else None
+        return node.inputs["Background"] if node is not None else None
+
     @property
     def background(self) -> tuple[float, float, float, float]:
         """Colour the stacked layers are composited over. Alpha 0 keeps the
-        render transparent."""
+        render transparent; switching between transparent and not needs a
+        rebuild."""
+        socket = self.background_socket()
+        if socket is not None:
+            return tuple(socket.default_value)  # ty: ignore[unresolved-attribute]
         return tuple(self.scene.mn_layers_background)  # ty: ignore[unresolved-attribute]
 
     @background.setter
     def background(self, value) -> None:
         self.scene.mn_layers_background = value  # ty: ignore[unresolved-attribute]
+        socket = self.background_socket()
+        if socket is not None:
+            socket.default_value = value  # ty: ignore[unresolved-attribute]
+        self.sync()
 
 
 def _layer_image(layer: RenderLayer):
@@ -385,17 +477,19 @@ def _layer_image(layer: RenderLayer):
     from nodebpy import compositor as c
     from ..nodes.compositor import DepthOutline
 
+    settings = layer.settings
     render = c.RenderLayers(layer=layer.name)
     image = render.o.image
     mask = None
-    if layer.outline:
+    if settings.outline:
         mask = DepthOutline(
             depth=render.o.depth,
-            size=layer.outline_size,
-            threshold=layer.outline_threshold,
-            normals=layer.outline_normals,
-            normals_pass=render.o.normal if layer.outline_normals else None,
+            size=settings.outline_size,
+            threshold=settings.outline_threshold,
+            normals=settings.outline_normals,
+            normals_pass=render.o.normal if settings.outline_normals else None,
         )
+        mask.node.name = _node_name(settings.uid, "Lines")
     return render, image, mask
 
 
@@ -403,27 +497,37 @@ def _stack(tree: CompositorTree, layers: list[RenderLayer]):
     from nodebpy import compositor as c
     from ..nodes.compositor import Outline
 
-    color = lambda layer: tuple(layer.outline_color)  # noqa: E731
+    def outline(layer: RenderLayer, image, mask):
+        settings = layer.settings
+        node = Outline(image=image, mask=mask, color=tuple(settings.outline_color))
+        node.node.name = _node_name(settings.uid, "Outline")
+        return node
+
     base = layers[0]
     render, result, mask = _layer_image(base)
     if mask is not None:
-        result = Outline(image=result, mask=mask, color=color(base))
+        result = outline(base, result, mask)
     depth = render.o.depth
     for layer in layers[1:]:
+        settings = layer.settings
         render, image, mask = _layer_image(layer)
-        if layer.blend == "DEPTH":
-            faded = c.SetAlpha(image, alpha=render.o.alpha * layer.opacity)
+        if settings.blend == "DEPTH":
+            alpha = render.o.alpha * settings.opacity
+            opacity = alpha.node
+            faded = c.SetAlpha(image, alpha=alpha)
             combined = c.DepthCombine(
                 a=result, depth_a=depth, b=faded, depth_b=render.o.depth, use_alpha=True
             )
             result = combined.o.result
             depth = combined.o.depth
         else:
-            result = c.AlphaOver(
-                background=result, foreground=image, factor=layer.opacity
+            result = opacity = c.AlphaOver(
+                background=result, foreground=image, factor=settings.opacity
             )
+            opacity = opacity.node
+        opacity.name = _node_name(settings.uid, "Opacity")
         if mask is not None:
-            result = Outline(image=result, mask=mask, color=color(layer))
+            result = outline(layer, result, mask)
     return result
 
 
@@ -435,11 +539,6 @@ def register() -> None:
     bpy.types.ViewLayer.mn_layer = bpy.props.PointerProperty(  # ty: ignore[unresolved-attribute]
         type=MN_RenderLayerSettings
     )
-    bpy.types.Scene.mn_layers_auto_composite = BoolProperty(  # ty: ignore[unresolved-attribute]
-        name="Auto Composite",
-        description="Rebuild the compositor when layer settings change",
-        default=True,
-    )
     bpy.types.Scene.mn_layers_active = IntProperty(default=0)  # ty: ignore[unresolved-attribute]
     bpy.types.Scene.mn_layers_background = FloatVectorProperty(  # ty: ignore[unresolved-attribute]
         name="Background",
@@ -449,14 +548,12 @@ def register() -> None:
         min=0.0,
         max=1.0,
         default=(1.0, 1.0, 1.0, 0.0),
-        update=_rebuild,
     )
 
 
 def unregister() -> None:
     del bpy.types.Scene.mn_layers_active  # ty: ignore[unresolved-attribute]
     del bpy.types.Scene.mn_layers_background  # ty: ignore[unresolved-attribute]
-    del bpy.types.Scene.mn_layers_auto_composite  # ty: ignore[unresolved-attribute]
     del bpy.types.ViewLayer.mn_layer  # ty: ignore[unresolved-attribute]
     bpy.utils.unregister_class(MN_RenderLayerSettings)
 
