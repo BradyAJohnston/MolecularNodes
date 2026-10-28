@@ -18,6 +18,16 @@ def list_templates():
     return [name for name in names if not name.startswith("bl_app")]
 
 
+def find_startup(name: str) -> Path | None:
+    """The startup file of an installed app template, or None if there isn't one."""
+    paths = bpy.utils.app_template_paths()
+    for folder in list(paths) if paths is not None else []:
+        file = Path(folder) / name / "startup.blend"
+        if file.is_file():
+            return file
+    return None
+
+
 def is_installed():
     base_path = Path(
         bpy.utils.user_resource(
