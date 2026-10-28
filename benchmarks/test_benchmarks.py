@@ -85,6 +85,48 @@ def test_trajectory_frame_change(benchmark):
     benchmark(lambda: bpy.context.scene.frame_set(next(frames)))
 
 
+# selections ------------------------------------------------------------------
+
+SELECTIONS = {
+    "static": "protein and name CA",
+    "distance": "around 5.0 resid 1-20",
+}
+
+
+@pytest.mark.benchmark(group="selection")
+@pytest.mark.parametrize("string", SELECTIONS.values(), ids=SELECTIONS.keys())
+def test_selection_create(benchmark, string):
+    mol = mn.Molecule.load(DATA_DIR / f"{STRUCTURE}.bcif")
+
+    # remove the previous round's selection, as otherwise selections pile up and
+    # every new one also updates the previous ones
+    def setup():
+        while len(mol.selections):
+            mol.selections.remove(0)
+
+    benchmark.pedantic(
+        lambda: mol.selections.from_string(string, updating=False),
+        setup=setup,
+        rounds=5,
+    )
+    assert len(mol.selections) == 1
+
+
+@pytest.mark.benchmark(group="trajectory-frame")
+@pytest.mark.parametrize("updating", [False, True], ids=["static", "updating"])
+def test_trajectory_frame_change_with_selections(benchmark, updating):
+    mol = mn.Molecule.load(
+        DATA_DIR / "md_ppr/box.gro", DATA_DIR / "md_ppr/first_5_frames.xtc"
+    )
+    # static selections are only written when created, updating ones are
+    # re-evaluated and written on every frame change
+    mol.selections.from_string("protein", updating=updating)
+    mol.selections.from_string("nucleic and name P", updating=updating)
+    mol.selections.from_string("protein and around 5.0 nucleic", updating=updating)
+    frames = itertools.cycle(range(5))
+    benchmark(lambda: bpy.context.scene.frame_set(next(frames)))
+
+
 # node evaluation -------------------------------------------------------------
 
 
