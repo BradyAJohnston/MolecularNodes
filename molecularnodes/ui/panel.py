@@ -122,6 +122,11 @@ class MN_MT_AddFrameAttribute(bpy.types.Menu):
         if obj is not None:
             op.uuid = object_uuid(obj)
         op.selection = "all"
+        op = layout.operator(
+            "mn.calculations_from_text", text="From Text...", icon="TEXT"
+        )
+        if obj is not None:
+            op.uuid = obj.uuid
 
 
 class MN_MT_Import(bpy.types.Menu):
@@ -334,6 +339,14 @@ def layout_frame_attribute_details(layout: UILayout, traj: Molecule) -> None:
     calculation = traj.props.calculations.get(item.name)
     if calculation is not None:
         layout.prop(calculation, "updating", text="Update Every Frame")
+        if calculation.text is not None:
+            row = layout.row()
+            row.label(text=calculation.text.name, icon="TEXT")
+            op = row.operator(
+                "mn.calculations_from_text", text="Reload", icon="FILE_REFRESH"
+            )
+            op.uuid = obj.uuid
+            op.text = calculation.text.name
 
 
 def layout_hbonds_settings(layout: UILayout, traj: Molecule) -> None:
