@@ -129,6 +129,66 @@ def pytest_configure(config):
         "network: downloads from a remote server; CI runs these in a single job, "
         "deselect with -m 'not network'",
     )
+    config.addinivalue_line(
+        "markers",
+        "eevee: renders with EEVEE; skipped when this machine can't render with it "
+        "(no GPU), force with MN_TEST_EEVEE=1 or MN_TEST_EEVEE=0",
+    )
+    # pytest-xdist workers collect the tests themselves: check in the controller
+    # before they spawn, so the workers inherit the answer instead of all checking
+    if os.environ.get("PYTEST_XDIST_WORKER") is None and getattr(
+        config.option, "numprocesses", None
+    ):
+        eevee_available()
+
+
+# a minimal EEVEE render: without a GPU (most CI runners) EEVEE crashes the whole
+# process rather than raising, so it is only ever attempted in a subprocess
+_EEVEE_PROBE = """
+import bpy, tempfile
+scene = bpy.context.scene
+scene.render.engine = "BLENDER_EEVEE"
+scene.render.resolution_x = scene.render.resolution_y = 8
+scene.render.filepath = tempfile.mktemp(suffix=".png")
+bpy.ops.render.render(write_still=True)
+"""
+
+
+def eevee_available() -> bool:
+    """
+    Whether EEVEE can render on this machine.
+
+    `MN_TEST_EEVEE=1` or `=0` skips the check. Otherwise the answer is found by
+    rendering in a subprocess, only when tests marked `eevee` are collected (or
+    up front when running under pytest-xdist). The result is stored in
+    `MN_TEST_EEVEE` so it is only checked once.
+    """
+    value = os.environ.get("MN_TEST_EEVEE")
+    if value is None:
+        import subprocess
+
+        if bpy.app.binary_path:  # inside a full Blender
+            cmd = [bpy.app.binary_path, "-b", "--factory-startup", "--python-expr"]
+        else:
+            cmd = [sys.executable, "-c"]
+        try:
+            result = subprocess.run(
+                [*cmd, _EEVEE_PROBE], capture_output=True, timeout=120
+            )
+            value = "1" if result.returncode == 0 else "0"
+        except subprocess.TimeoutExpired:
+            value = "0"
+        os.environ["MN_TEST_EEVEE"] = value
+    return value not in ("0", "", "false", "False")
+
+
+def pytest_collection_modifyitems(config, items):
+    eevee = [item for item in items if item.get_closest_marker("eevee")]
+    if not eevee or eevee_available():
+        return
+    skip = pytest.mark.skip(reason="EEVEE can't render on this machine (no GPU)")
+    for item in eevee:
+        item.add_marker(skip)
 
 
 def _is_local(address) -> bool:

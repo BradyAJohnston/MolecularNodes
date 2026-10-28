@@ -15,20 +15,27 @@ class FresnelOutline(CustomShaderGroup):
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         mn_color = MNColor()
+        ambient_occlusion_internal = AmbientOcclusionInternal(color=mn_color.o.color)
         mix_shader = s.MixShader(
             factor=mn_color.o.alpha,
             shader=s.TransparentBSDF(),
-            shader_001=AmbientOcclusionInternal(
-                color=mn_color.o.color, ao_space="Local"
-            ),
+            shader_001=ambient_occlusion_internal.o.cycles,
         )
         with s.Frame("Add Outline"):
+            color = s.Color()
+            mn_fresnel = MNFresnel(ior=0.95, factor=1.0)
             mix_shader_1 = s.MixShader(
-                factor=MNFresnel(ior=0.95, factor=1.0),
-                shader=mix_shader,
-                shader_001=s.Color(),
+                factor=mn_fresnel,
+                shader=ambient_occlusion_internal.o.eevee,
+                shader_001=color,
             )
-        _material_output = s.MaterialOutput(mix_shader_1)
+            mix_shader_2 = s.MixShader(
+                factor=mn_fresnel, shader=mix_shader, shader_001=color
+            )
+        _material_output = s.MaterialOutput(surface=mix_shader_1, target="EEVEE")
+        _material_output_1 = s.MaterialOutput(
+            surface=mix_shader_2, is_active_output=True, target="CYCLES"
+        )
 
 
 MATERIAL = FresnelOutline

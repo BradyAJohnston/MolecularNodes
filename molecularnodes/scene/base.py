@@ -13,7 +13,7 @@ from mathutils.bvhtree import BVHTree
 from tqdm.auto import tqdm
 from .. import assets, framing
 from .. import viewpoint as _viewpoint
-from ..assets.template import list_templates
+from ..assets.template import find_startup
 from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
 from ..session import get_session
@@ -1089,13 +1089,15 @@ class Canvas:
             if file.is_file() and file.suffix == ".blend":
                 self.load(file)
             elif isinstance(template, str):
-                if template in list_templates():
-                    bpy.ops.wm.read_homefile(app_template=template)
-                    self._scene_changed()
-                else:
+                startup = find_startup(template)
+                if startup is None:
                     raise ValueError(
                         f"Template '{template}' is not a valid .blend file or app template name."
                     )
+                # given the file explicitly, Blender raises if it has gone missing
+                # since; by name alone it warns and loads the factory startup instead
+                bpy.ops.wm.read_homefile(filepath=str(startup), app_template=template)
+                self._scene_changed()
 
             else:
                 raise ValueError(
