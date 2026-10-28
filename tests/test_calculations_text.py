@@ -77,6 +77,15 @@ def test_reload_replaces_calculation(mol):
     assert np.allclose(mol.named_attribute("ZPosition"), mol.atoms.positions[:, 0])
 
 
+def test_reload_keeps_updating_setting(mol):
+    text = new_text("calcs.py", CODE)
+    mol.calculations.from_text(text)
+    mol.calculations.set_updating("ZPosition", False)
+    mn_ops.calculations_from_text(uuid=mol.uuid, text=text.name)
+    assert mol.calculations.updating("ZPosition") is False
+    assert mol.calculations.updating("IsHeavy") is True
+
+
 def test_operator_reports_missing_text(mol):
     with pytest.raises(RuntimeError, match="Choose a text block"):
         mn_ops.calculations_from_text(uuid=mol.uuid, text="missing.py")

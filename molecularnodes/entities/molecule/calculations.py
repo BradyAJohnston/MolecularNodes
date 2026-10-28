@@ -137,7 +137,7 @@ class CalculationManager:
         return self._hbonds
 
     def from_text(
-        self, text: bpy.types.Text | str, *, updating: bool = True
+        self, text: bpy.types.Text | str, *, updating: bool | None = None
     ) -> list[str]:
         """Add the `BaseCalculation` subclasses defined in a text block.
 
@@ -149,8 +149,10 @@ class CalculationManager:
         ----------
         text : bpy.types.Text or str
             The text block, or its name in `bpy.data.texts`.
-        updating : bool, default=True
-            Whether the calculations recalculate on every frame change.
+        updating : bool, optional
+            Whether the calculations recalculate on every frame change. Left
+            out, a calculation that was already added keeps its setting, and a
+            new one updates.
 
         Returns
         -------
@@ -160,7 +162,8 @@ class CalculationManager:
         Raises
         ------
         ValueError
-            When the text defines no `BaseCalculation` subclasses.
+            When the text defines no `BaseCalculation` subclasses, or one of
+            them returns a number of values other than the number of atoms.
         """
         if isinstance(text, str):
             text = bpy.data.texts[text]
@@ -178,7 +181,12 @@ class CalculationManager:
                 )
             values[calculation.name] = result
         for calculation in calculations:
-            self.add(calculation.name, calculation, updating=updating, refresh=False)
+            if updating is None:
+                item = self._item(calculation.name)
+                keep = item.updating if item is not None else True
+            else:
+                keep = updating
+            self.add(calculation.name, calculation, updating=keep, refresh=False)
             item = self._item(calculation.name)
             if item is not None:
                 item.text = text
@@ -204,16 +212,12 @@ class CalculationManager:
         for text in {item.text for item in missing}:
             if text.name in self._failed_texts:
                 continue
-            updating = {item.name: item.updating for item in missing}
             try:
-                names = self.from_text(text)
+                self.from_text(text)
             except Exception as e:
                 # don't retry on every frame change
                 self._failed_texts.add(text.name)
                 logger.warning(f"Could not load calculations from '{text.name}': {e}")
-                continue
-            for name in names:
-                self.set_updating(name, updating.get(name, True))
 
     @property
     def ui_items(self):
