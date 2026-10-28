@@ -1548,10 +1548,14 @@ class MN_OT_Calculations_From_Text(Operator):
         StringProperty(
             name="Text",
             description="Text block that defines the calculations",
+            options={"SKIP_SAVE"},
         ),
     ]
 
     def invoke(self, context, event):
+        if self.text:
+            # Reload passes the text, so there is nothing to choose
+            return self.execute(context)
         return context.window_manager.invoke_props_dialog(self)
 
     def draw(self, context):
