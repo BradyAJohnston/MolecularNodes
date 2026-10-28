@@ -44,9 +44,10 @@ if TYPE_CHECKING:
     from .base import Molecule
 import bpy
 import databpy as db
+import numpy as np
 from bpy.types import Object
 from MDAnalysis import AtomGroup, Universe
-from ..utilities import IntObjectMNProperty, _unique_aname
+from ..utilities import _unique_aname
 from .helpers import _ag_to_bool
 
 
@@ -112,16 +113,23 @@ class SelectionManager:
     ----------
     atomgroups : dict[str, AtomGroup]
         Cached ``AtomGroup`` objects keyed by selection name.
-    ui_index : IntObjectMNProperty
-        Property descriptor for current UI selection index.
+    ui_index : int
+        Index of the current UI selection.
     """
-
-    ui_index = IntObjectMNProperty("trajectory_selection_index")
 
     def __init__(self, trajectory: Molecule):
         self.trajectory = trajectory
         self.atomgroups: dict[str, AtomGroup] = {}
         self._is_frozen: bool = False
+
+    @property
+    def ui_index(self) -> int:
+        """Index of the current UI selection."""
+        return self.trajectory.props.trajectory_selection_index
+
+    @ui_index.setter
+    def ui_index(self, value: int) -> None:
+        self.trajectory.props.trajectory_selection_index = value
 
     @property
     def ui_items(self) -> bpy.types.bpy_prop_collection_idprop:
@@ -311,6 +319,7 @@ class SelectionManager:
             item.previous_string = ag_as_string
 
         self.ag_to_attribute(atomgroup, item.name)
+        self.trajectory._sync_frame_attributes()
         return item
 
     def ui_item_to_ag(self, item: TrajectorySelectionItem) -> AtomGroup:
@@ -354,6 +363,8 @@ class SelectionManager:
         Notes
         -----
         Skipped when manager is frozen via :class:`FrozenUpdates` context when creating new UI items.
+        On frame changes the molecule stores these values along with those of its other
+        attribute sources, see ``Molecule._update_attributes``.
 
         See Also
         --------
@@ -363,6 +374,24 @@ class SelectionManager:
         """
         if self._is_frozen:
             return
+        self.trajectory._store_frame_attributes(self._frame_values(), "SELECTION")
+        self.trajectory._sync_frame_attributes()
+
+    def _frame_values(self) -> dict[str, np.ndarray]:
+        """Synchronize UI items and AtomGroups, and return the values to store.
+
+        Carries out the steps of :meth:`update_attributes` without storing the
+        attributes.
+
+        Returns
+        -------
+        dict[str, np.ndarray]
+            Boolean values by attribute name, for selections that are new, have
+            changed or update with the frame
+        """
+        values: dict[str, np.ndarray] = {}
+        if self._is_frozen:
+            return values
 
         # first we iterate through UI items to ensure they have a corresponding atomgroup
         # stored for creating attributes from
@@ -391,7 +420,7 @@ class SelectionManager:
 
             if item.updating and item.from_atomgroup:
                 if self.ag_is_updating(ag):
-                    self.ag_to_attribute(ag, item.name)
+                    values[item.name] = _ag_to_bool(ag)
                 continue
 
             # if the ui selection item can't be successfully created as an AtomGroup the
@@ -421,7 +450,9 @@ class SelectionManager:
                     continue
 
             if selection_has_changed or (item.updating and self.ag_is_updating(ag)):
-                self.ag_to_attribute(ag, item.name)
+                values[item.name] = _ag_to_bool(ag)
+
+        return values
 
     def remove(self, value: int | str):
         """Remove a selection by name or index.
@@ -465,6 +496,7 @@ class SelectionManager:
         except KeyError:
             pass
         self.ui_items.remove(idx)
+        self.trajectory._sync_frame_attributes()
 
     def get(self, name: str) -> TrajectorySelectionItem | None:
         """Try and get a selection UI Item by name.

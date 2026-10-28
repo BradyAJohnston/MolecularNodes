@@ -63,7 +63,7 @@ class OKLabMatrices(CustomGeometryGroup):
                 column_3_row_3=0.6299787,
             )
             _string = g.String(
-                string="M1 maps linear sRGB (Rec.709 primaries, Blender's colour sockets) to LMS cone response and M2 maps cube-rooted LMS to OKLab. Constants from Ottosson, A perceptual color space for image processing (2020), https://bottosson.github.io/posts/oklab/. Column c, row r holds M[r][c]."
+                "M1 maps linear sRGB (Rec.709 primaries, Blender's colour sockets) to LMS cone response and M2 maps cube-rooted LMS to OKLab. Constants from Ottosson, A perceptual color space for image processing (2020), https://bottosson.github.io/posts/oklab/. Column c, row r holds M[r][c]."
             )
         combine_matrix_1 = g.CombineMatrix(
             column_1_row_1=0.21045426,

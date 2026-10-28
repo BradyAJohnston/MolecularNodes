@@ -17,6 +17,7 @@ def data() -> Collection:
     except KeyError:
         collection = create_collection(name=name, parent=mn())
 
+        assert bpy.context.view_layer is not None
         bpy.context.view_layer.layer_collection.children["Molecular Nodes"].children[
             collection.name
         ].exclude = True
@@ -29,6 +30,9 @@ def frames(name: str = "") -> Collection:
 
 
 def cellpack(name: str = "") -> Collection:
-    "Return a collection for storing the instances for a CellPack Ensemble"
-    full_name = f"cellpack_{name}"
-    return create_collection(full_name, parent=data())
+    "Return a new collection for storing the instances for a CellPack Ensemble"
+    # always a new collection: reusing one by name would mix the instances of
+    # separate imports
+    collection = bpy.data.collections.new(f"cellpack_{name}")
+    data().children.link(collection)
+    return collection

@@ -158,6 +158,7 @@ def check_transformations(transformations, atoms, ref_assembly):
         else:
             test_assembly += sub_assembly
 
+    assert test_assembly is not None
     assert test_assembly.array_length() == ref_assembly.array_length()
     # The atom name is used as indicator of correct atom ordering here
     assert np.all(test_assembly.atom_name == ref_assembly.atom_name)

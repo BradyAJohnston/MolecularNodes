@@ -12,7 +12,7 @@ import logging
 import re
 import warnings
 from pathlib import Path
-from typing import Callable, Dict, Sequence
+from typing import TYPE_CHECKING, Any, Callable, Dict, Literal, Sequence, cast
 import bpy
 import databpy as db
 import MDAnalysis as mda
@@ -30,18 +30,26 @@ from ...nodes import handlers as node_handlers
 from ...nodes._assets import link_asset_groups
 from ...nodes._utils import STYLE_LITERALS, STYLE_NODE_MAPPING
 from ...nodes.geometry import AssemblyInstance
-from ...utils import _UNSET, count_value_changes, temp_override_property
-from ..base import EntityType, MolecularEntity, MolecularTree
-from ..utilities import (
-    BoolObjectMNProperty,
-    IntObjectMNProperty,
-    StringObjectMNProperty,
-    _validate_non_negative,
+from ...utils import (
+    _UNSET,
+    Unset,
+    count_value_changes,
+    is_periodic_box,
+    temp_override_property,
 )
+from ..base import EntityType, MolecularEntity, MolecularTree
+from ..utilities import _validate_non_negative
 from .annotations import MoleculeAnnotationManager
-from .dssp import DSSPManager
-from .helpers import FrameManager, _ag_to_bool, _isin
+from .calculations import CalculationManager
+from .helpers import (
+    FrameManager,
+    _ag_to_bool,
+    _isin,
+)
 from .selections import SelectionManager
+
+if TYPE_CHECKING:
+    from ..density import Density
 
 logger = logging.getLogger(__name__)
 
@@ -116,11 +124,11 @@ def add_style_to_tree(
             f"{sorted(STYLE_NODE_MAPPING)}"
         )
 
-    kwargs = {}
+    kwargs: dict[str, Any] = {}
     # spheres default to point clouds, which only Cycles can draw
-    geometry = _sphere_for_engine(
-        STYLE_NODE_MAPPING[style], bpy.context.scene.render.engine
-    )
+    scene = bpy.context.scene
+    assert scene is not None
+    geometry = _sphere_for_engine(STYLE_NODE_MAPPING[style], scene.render.engine)
     if geometry is not None:
         kwargs["sphere"] = geometry
 
@@ -139,7 +147,11 @@ def add_style_to_tree(
             style_node.node.label = name
         (
             tree.atoms
-            >> (g.SetColor(color=tuple(color)) if color is not None else None)
+            >> (
+                g.SetColor(color=cast(tuple[float, float, float, float], tuple(color)))
+                if color is not None
+                else None
+            )
             >> style_node
             >> tree.join
         )
@@ -163,8 +175,9 @@ class Molecule(MolecularEntity):
         Position caching and frame updates
     selections : SelectionManager
         Dynamic atom selections
-    calculations : dict
-        Custom per-frame calculations
+    calculations : CalculationManager
+        Calculations that write attributes from the universe, such as DSSP's
+        `sec_struct`
     annotations : MoleculeAnnotationManager
         Molecule annotations
     world_scale : float
@@ -181,8 +194,6 @@ class Molecule(MolecularEntity):
         Apply periodic boundary corrections
     interpolate : bool
         Enable position interpolation
-    dssp : DSSPManager
-        A DSSP Manager to compute and show secondary structures
 
     Examples
     --------
@@ -200,23 +211,74 @@ class Molecule(MolecularEntity):
     ```
     """
 
-    # Blender property descriptors with validation
-    frame = IntObjectMNProperty("frame")
-    subframes = IntObjectMNProperty("subframes", validate_fn=_validate_non_negative)
-    offset = IntObjectMNProperty("offset")
-    average = IntObjectMNProperty("average", validate_fn=_validate_non_negative)
-    correct_periodic = BoolObjectMNProperty("correct_periodic")
-    interpolate = BoolObjectMNProperty("interpolate")
-
-    _mn_frame = BoolObjectMNProperty("frame_hidden")
-    _mn_entity_type = StringObjectMNProperty("entity_type")
-    _mn_filepath_topology = StringObjectMNProperty("filepath_topology")
-    _mn_filepath_trajectory = StringObjectMNProperty("filepath_trajectory")
-    _mn_n_frames = IntObjectMNProperty("n_frames", _validate_non_negative)
     _entity_type: EntityType = EntityType.MOLECULE
     # extra `mda.Universe()` arguments for subclasses whose files can't be
     # recognised from their extension, used when restoring from a saved session
     _universe_kwargs: dict = {}
+
+    @property
+    def frame(self) -> int:
+        """Manual frame of the trajectory, used when not updating with the scene."""
+        return self.props.frame
+
+    @frame.setter
+    def frame(self, value: int) -> None:
+        self.props.frame = value
+
+    @property
+    def subframes(self) -> int:
+        """Number of subframes to insert between frames of the trajectory."""
+        return self.props.subframes
+
+    @subframes.setter
+    def subframes(self, value: int) -> None:
+        _validate_non_negative(value)
+        self.props.subframes = value
+
+    @property
+    def offset(self) -> int:
+        """Offset of the trajectory playback on the scene timeline."""
+        return self.props.offset
+
+    @offset.setter
+    def offset(self, value: int) -> None:
+        self.props.offset = value
+
+    @property
+    def average(self) -> int:
+        """Number of frames either side of the current frame to average positions over."""
+        return self.props.average
+
+    @average.setter
+    def average(self, value: int) -> None:
+        _validate_non_negative(value)
+        self.props.average = value
+
+    @property
+    def correct_periodic(self) -> bool:
+        """Correct for periodic boundary crossing when interpolating or averaging."""
+        return self.props.correct_periodic
+
+    @correct_periodic.setter
+    def correct_periodic(self, value: bool) -> None:
+        self.props.correct_periodic = value
+
+    @property
+    def interpolate(self) -> bool:
+        """Interpolate positions when using subframes."""
+        return self.props.interpolate
+
+    @interpolate.setter
+    def interpolate(self, value: bool) -> None:
+        self.props.interpolate = value
+
+    @property
+    def _mn_entity_type(self) -> str:
+        return self.props.entity_type
+
+    @_mn_entity_type.setter
+    def _mn_entity_type(self, value: str) -> None:
+        self.props.entity_type = value
 
     def __init__(
         self,
@@ -245,30 +307,27 @@ class Molecule(MolecularEntity):
         super().__init__()
         self.universe: mda.Universe = universe
         self.selections: SelectionManager = SelectionManager(self)
-        self.calculations: Dict[str, Callable] = {}
+        self.calculations = CalculationManager(self)
         self.world_scale = world_scale
         self._updating_in_progress = False
         self.annotations = MoleculeAnnotationManager(self)
         self.frame_manager = FrameManager(self)
-        self.dssp = DSSPManager(self)
         if create_object:
             self.create_object(name=name)
 
     @property
-    def _is_orthorhombic(self) -> bool:
-        """Check if simulation box is orthorhombic.
+    def _has_periodic_box(self) -> bool:
+        """Check if the current frame has a usable periodic box.
 
-        Orthorhombic boxes (all angles = 90°) enable optimized periodic boundary handling.
+        Periodic boundary correction works for orthorhombic and triclinic
+        boxes, and is skipped for frames without one.
 
         Returns
         -------
         bool
-            True if box angles are all 90 degrees
+            True if the unit cell is a valid periodic box
         """
-        dim = self.universe.dimensions
-        if dim is None:
-            return False
-        return np.allclose(dim[3:], 90.0)
+        return is_periodic_box(self.universe.dimensions)
 
     @property
     def atoms(self) -> mda.AtomGroup:
@@ -506,19 +565,13 @@ class Molecule(MolecularEntity):
         "BB",
     )
 
-    def _sel_bool(self, selection: str) -> np.ndarray:
-        """Evaluate an MDAnalysis selection string to a per-atom boolean mask."""
-        return _ag_to_bool(self.universe.select_atoms(selection))
-
     def _compute_is_peptide(self) -> np.ndarray:
         # MDAnalysis' selection covers force field residue names (HIE, HSD, ...) and
         # the CCD names cover modified residues (HIC, MSE, ...)
         from biotite.structure.info import amino_acid_names
 
         is_ccd_amino_acid = _isin(self.atoms.resnames, list(amino_acid_names()))
-        return np.logical_or(
-            is_ccd_amino_acid, self._sel_bool("protein or (name BB SC*)")
-        )
+        return np.logical_or(is_ccd_amino_acid, self.select("protein or (name BB SC*)"))
 
     def _compute_is_polymer(self) -> np.ndarray:
         # amino acid and nucleotide residues, so that ligands and ions such as calcium
@@ -530,7 +583,7 @@ class Molecule(MolecularEntity):
             [
                 self._compute_is_peptide(),
                 is_ccd_nucleotide,
-                self._sel_bool("nucleic"),
+                self.select("nucleic"),
             ]
         )
 
@@ -584,18 +637,35 @@ class Molecule(MolecularEntity):
             return self.atoms.sec_structs
         except (mda.NoDataError, AttributeError):
             pass
-        # otherwise compute it once from the current frame so the cartoon has
-        # something to show, per-frame updates require enabling the DSSP module
+        # otherwise compute it from the current frame so the cartoon has
+        # something to show
         if len(self.universe.select_atoms("protein")) == 0:
             raise mda.NoDataError("No protein atoms to compute secondary structure")
-        return self.dssp.compute_frame()
+        if self.frame_manager.n_frames != 1:
+            # a trajectory gets DSSP as a calculation that isn't updating, which
+            # runs on this frame and can be set to update on every frame. It is
+            # set up first so this frame reuses its analysis. Setting it up
+            # writes properties whose update callbacks would otherwise update
+            # this molecule to the scene frame mid-import
+            self._updating_in_progress = True
+            try:
+                self.calculations._dssp._setup("protein", updating=False, refresh=False)
+            finally:
+                self._updating_in_progress = False
+        # raises where DSSP can't run, such as for coarse-grained beads
+        try:
+            return self.calculations._dssp.compute_frame()
+        except Exception:
+            if "sec_struct" in self.calculations:
+                del self.calculations["sec_struct"]
+            raise
 
     def _save_filepaths_on_object(self) -> None:
         """Save file paths to the Blender object for reference"""
         if isinstance(self.universe.filename, (str, Path)):
-            self._mn_filepath_topology = str(path_resolve(self.universe.filename))
+            self.props.filepath_topology = str(path_resolve(self.universe.filename))
         if isinstance(self.universe.trajectory.filename, (str, Path)):
-            self._mn_filepath_trajectory = str(
+            self.props.filepath_trajectory = str(
                 path_resolve(self.universe.trajectory.filename)
             )
 
@@ -654,7 +724,7 @@ class Molecule(MolecularEntity):
         for name, item in self._blender_attributes.items():
             try:
                 if isinstance(item, str):
-                    data = _ag_to_bool(self.universe.select_atoms(item))
+                    data = self.select(item)
                 elif callable(item):
                     data = item()
                 else:
@@ -674,7 +744,89 @@ class Molecule(MolecularEntity):
 
     def _store_extra_attributes(self) -> None:
         # TODO: enable adding of arbitrary mda.Universe attirbutes not currently applied
-        pass
+        values = self.frame_manager.read_and_cache(self.uframe)
+        self._sync_frame_attributes(values)
+        values.pop("position")
+        self._store_frame_attributes(values, "TRAJECTORY")
+
+    @property
+    def frame_attributes(self) -> dict[str, str]:
+        """The attributes written on frame changes, and where each comes from.
+
+        Attributes come from the trajectory (positions, and velocities, forces
+        and other per-atom values a frame has), from selections and from
+        `calculations`. The record is kept on the object as
+        `obj.mn.frame_attributes`, and listed in the Attributes panel.
+
+        Returns
+        -------
+        dict[str, str]
+            Source of each attribute by name: `"TRAJECTORY"`, `"SELECTION"` or
+            `"CALCULATION"`
+        """
+        return {item.name: item.source for item in self.props.frame_attributes}
+
+    def _sync_frame_attributes(self, trajectory_names=()) -> None:
+        """Bring the object's record of attributes written on frame changes up to date.
+
+        Trajectory attributes are only added: an attribute that a frame lacks
+        keeps its last values, and a TRR file can gain velocities on later
+        frames. Selections and calculations are listed as they currently are.
+
+        Parameters
+        ----------
+        trajectory_names : Iterable[str]
+            Names of attributes read from the trajectory on this frame
+        """
+        items = self.props.frame_attributes
+        current = [(item.name, item.source) for item in items]
+        trajectory = [name for name, source in current if source == "TRAJECTORY"]
+        # a single-frame structure has no trajectory to read attributes from, but
+        # can still have selections and calculations
+        if self.frame_manager.n_frames != 1:
+            trajectory += [n for n in trajectory_names if n not in trajectory]
+        wanted = [(name, "TRAJECTORY") for name in trajectory]
+        wanted += [
+            (item.name, "SELECTION") for item in self.selections.ui_items if item.name
+        ]
+        wanted += [(name, "CALCULATION") for name in self.calculations]
+        # only write when something changed, as writing redraws the panel
+        if wanted == current:
+            return
+        items.clear()
+        for name, source in wanted:
+            item = items.add()
+            item.name = name
+            item.source = source
+
+    def _store_frame_attributes(
+        self, values: dict[str, np.ndarray], source: str
+    ) -> None:
+        """Store attributes written on frame changes, other than positions.
+
+        Only the attributes given are stored. One that a frame lacks is not
+        given, so an existing attribute keeps the values it was last given.
+
+        Parameters
+        ----------
+        values : dict[str, np.ndarray]
+            Values by attribute name
+        source : str
+            Where the values come from: `"TRAJECTORY"`, `"SELECTION"` or
+            `"CALCULATION"`
+        """
+        # selections are always boolean, other existing attributes keep their
+        # type and new ones get the type of their values
+        atype = db.AttributeTypes.BOOLEAN if source == "SELECTION" else None
+        for name, value in values.items():
+            try:
+                self.store_named_attribute(data=value, name=name, atype=atype)
+            except Exception as e:
+                # values a trajectory reader has but Blender can't store are
+                # expected, a calculation or selection that can't be stored is not
+                expected = source == "TRAJECTORY" and isinstance(e, ValueError)
+                level = logging.DEBUG if expected else logging.ERROR
+                logger.log(level, f"Skipping attribute '{name}': {e}")
 
     def _create_object(self, name: str = "NewUniverseObject") -> None:
         """Create Blender mesh object (internal).
@@ -706,7 +858,9 @@ class Molecule(MolecularEntity):
 
         self._mn_entity_type = self._entity_type.value
         try:
-            self._mn_n_frames = self.universe.trajectory.n_frames
+            n_frames = self.universe.trajectory.n_frames
+            _validate_non_negative(n_frames)
+            self.props.n_frames = n_frames
         except RuntimeError:
             pass
 
@@ -737,11 +891,12 @@ class Molecule(MolecularEntity):
     def load(
         cls,
         topology: Path | str,
-        coordinates: Path | str | None = None,
+        coordinates: Path | str | Sequence[Path | str] | None = None,
         style: STYLE_LITERALS | None = None,
         selection: str | None = None,
         create_object: bool = True,
         name: str | None = None,
+        data_block: str | None = None,
         **kwargs,
     ) -> "Molecule":
         """Load a single structure file, or an MD topology + trajectory.
@@ -756,9 +911,9 @@ class Molecule(MolecularEntity):
         ----------
         topology : Path | str
             Structure file, or MD topology file when ``coordinates`` is given.
-        coordinates : Path | str | None, optional
-            MD trajectory/coordinates file. If omitted, ``topology`` is loaded as a
-            single structure file.
+        coordinates : Path | str | Sequence[Path | str] | None, optional
+            MD trajectory/coordinates file, or several files to chain. If omitted,
+            ``topology`` is loaded as a single structure file.
         name : str | None, optional
             Name for the Blender object. Defaults to the topology file name
             (extension included).
@@ -769,6 +924,9 @@ class Molecule(MolecularEntity):
             Atom selection to restrict the style to, passed to :meth:`add_style`.
         create_object : bool, optional
             Whether to create the Blender object immediately (MD route only).
+        data_block : str | None, optional
+            For a ``.cif``/``.bcif`` with several structures in separate data blocks,
+            the name of the block to load (see :meth:`from_file`).
         kwargs : dict, optional
             Additional keyword arguments to pass to the `MDAnalysis.Universe()` constructor.
 
@@ -778,7 +936,7 @@ class Molecule(MolecularEntity):
             The loaded entity.
         """
         if coordinates is None:
-            entity = cls.from_file(topology, name=name)
+            entity = cls.from_file(topology, name=name, data_block=data_block)
         else:
             entity = cls(
                 universe=mda.Universe(topology, coordinates, **kwargs),
@@ -794,8 +952,10 @@ class Molecule(MolecularEntity):
     @classmethod
     def from_file(
         cls,
-        file_path: str | Path | io.BytesIO,
+        file_path: str | Path | io.BytesIO | io.StringIO,
         name: str | None = None,
+        data_block: str | None = None,
+        format: str | None = None,
     ) -> "Molecule":
         """Load a single structure file into a Universe-backed entity.
 
@@ -813,10 +973,20 @@ class Molecule(MolecularEntity):
 
         Parameters
         ----------
-        file_path : str | Path | io.BytesIO
-            Path to the structure file (or an in-memory ``bcif`` buffer).
+        file_path : str | Path | io.BytesIO | io.StringIO
+            Path to the structure file, or an in-memory buffer of its contents.
         name : str | None, optional
             Name for the Blender object. Defaults to the file name (extension included).
+        data_block : str | None, optional
+            For a ``.cif``/``.bcif`` with several structures in separate data blocks,
+            the name of the block to load. Blocks without atoms (such as restraint
+            definitions) are skipped, so this is only needed when more than one
+            block holds a structure; otherwise a
+            :class:`~molecularnodes.entities.molecule.pdbx.MultipleStructuresError`
+            listing the blocks is raised.
+        format : str | None, optional
+            The file format (e.g. ``"cif"``). Needed for a ``StringIO`` buffer,
+            otherwise taken from the file suffix.
 
         Returns
         -------
@@ -830,7 +1000,7 @@ class Molecule(MolecularEntity):
         # dialect that biotite cannot parse; route them through the dedicated
         # MDAnalysis parser, which expands the asymmetric unit to a unit cell
         if (
-            not isinstance(file_path, io.BytesIO)
+            isinstance(file_path, (str, Path))
             and Path(file_path).suffix == ".cif"
             and corecif.is_core_cif(file_path)
         ):
@@ -843,8 +1013,9 @@ class Molecule(MolecularEntity):
 
         # .xyz files are read natively by MDAnalysis; the atom names are the
         # element symbols, which the element-derived attributes need
-        if not isinstance(file_path, io.BytesIO) and Path(file_path).suffix == ".xyz":
+        if isinstance(file_path, (str, Path)) and Path(file_path).suffix == ".xyz":
             universe = mda.Universe(str(file_path))
+            assert universe.atoms is not None
             if not hasattr(universe.atoms, "elements"):
                 universe.add_TopologyAttr(
                     "elements",
@@ -855,10 +1026,10 @@ class Molecule(MolecularEntity):
                 )
             return cls(universe, name=name or Path(file_path).name)
 
-        reader = read_structure(file_path)
-        universe = universe_from_atoms(reader.array)
+        reader = read_structure(file_path, data_block=data_block, format=format)
+        universe = universe_from_atoms(reader.array, frame_data=reader.model_data())
         if name is None:
-            name = Path(file_path).name if not isinstance(file_path, io.BytesIO) else ""
+            name = Path(file_path).name if isinstance(file_path, (str, Path)) else ""
         entity = cls(universe, name=name)
         entity._store_structure_metadata(reader, file_path)
         return entity
@@ -876,13 +1047,16 @@ class Molecule(MolecularEntity):
         Parameters
         ----------
         code : str
-            The database accession code (e.g. a PDB id).
+            The database accession code (e.g. a PDB id), or for ``"pubchem"`` a
+            compound CID (e.g. ``"2244"``) or name (e.g. ``"aspirin"``).
         format : str, optional
-            File format to download, by default ``".bcif"``.
+            File format to download, by default ``".bcif"``. Ignored for
+            ``"pubchem"``, which always downloads the 3D conformer as SDF.
         cache : Path | str | None, optional
             Directory to cache downloads in.
         database : str, optional
-            The database to fetch from, by default ``"rcsb"``.
+            The database to fetch from: ``"rcsb"`` (default), ``"alphafold"`` or
+            ``"pubchem"``.
 
         Returns
         -------
@@ -892,23 +1066,32 @@ class Molecule(MolecularEntity):
         file_path = download.StructureDownloader(cache=cache).download(
             code=code, format=format, database=database
         )
-        entity = cls.from_file(file_path, name=code)
+        # without a cache the download is an in-memory buffer, so pass the format
+        # (PubChem always serves SDF)
+        entity = cls.from_file(
+            file_path, name=code, format="sdf" if database == "pubchem" else format
+        )
         # record the source so the entity can be re-fetched into a fresh session
         entity.props.code = code
         entity.props.database = database
         return entity
 
     def _store_structure_metadata(
-        self, reader, file_path: str | Path | io.BytesIO
+        self, reader, file_path: str | Path | io.BytesIO | io.StringIO
     ) -> None:
         """Store file-parsed assembly/entity/chain metadata on the Blender object."""
         self.props.entity_type = EntityType.MOLECULE
         self.props.entity_ids = reader.entity_ids()
         self.props.chain_ids = reader.chain_ids()
-        self.props.biological_assemblies = reader.assemblies(as_json_string=True)
+        assemblies = reader.assemblies()
+        # "" when the assemblies couldn't be parsed
+        self.props.biological_assemblies = (
+            assemblies if isinstance(assemblies, dict) else None
+        )
         # record the source so the entity can be reloaded into a fresh session
-        if not isinstance(file_path, io.BytesIO):
+        if isinstance(file_path, (str, Path)):
             self.props.filepath = str(file_path)
+        self.props.data_block = getattr(reader, "_data_block", None) or ""
 
     def assemblies(self, as_array: bool = False):
         """Get the biological assemblies parsed from the source file.
@@ -938,6 +1121,47 @@ class Molecule(MolecularEntity):
                 return None
         return assemblies_info
 
+    def align_to(
+        self,
+        fixed: "Molecule",
+        method: str = "sequence",
+        selection: str | None = None,
+        fixed_selection: str | None = None,
+    ):
+        """Superimpose this molecule onto ``fixed`` by setting its object transform.
+
+        Residues are paired by sequence (``method="sequence"``, the default) or by
+        structure (``method="structure"``, proteins only), so the two molecules do
+        not need identical sequences. The coordinates are not changed. See
+        :func:`~molecularnodes.entities.molecule.align.align` for details.
+
+        Parameters
+        ----------
+        fixed : Molecule
+            The reference molecule, which stays where it is.
+        method : {"sequence", "structure"}, optional
+            How corresponding residues are found.
+        selection : str | None, optional
+            MDAnalysis selection of this molecule's atoms to fit on.
+        fixed_selection : str | None, optional
+            MDAnalysis selection of the fixed molecule's atoms to fit on.
+
+        Returns
+        -------
+        AlignResult
+            The fitted transform, RMSD and number of anchor atoms.
+        """
+        from .align import align
+
+        return align(
+            self,
+            fixed,
+            # validated by `align`, which raises for an unknown method
+            method=cast(Literal["sequence", "structure"], method),
+            selection=selection,
+            fixed_selection=fixed_selection,
+        )
+
     def create_data_object(self) -> bpy.types.Object:
         """Create the data object holding the biological assembly transforms."""
         from ...blender import mesh
@@ -950,19 +1174,26 @@ class Molecule(MolecularEntity):
 
         return data_obj
 
-    def _update_calculations(self) -> None:
-        """Update all registered calculations for the current frame"""
-        for name, func in self.calculations.items():
-            try:
-                self.store_named_attribute(data=func(self.universe), name=name)
-            except Exception as e:
-                logger.error(
-                    f"Failed to update calculation '{name}': {e}", exc_info=True
-                )
+    def _update_attributes(self, frame: int) -> None:
+        """Write the attributes of every source for the scene frame.
 
-    def _update_selections(self) -> None:
-        """Update all selections for the current frame."""
-        self.selections.update_attributes()
+        The trajectory goes first: it moves the universe to the frame and sets
+        positions, which selections and calculations are then computed from.
+
+        Parameters
+        ----------
+        frame : int
+            Scene frame number
+        """
+        trajectory = self._update_trajectory_positions(frame)
+        self._store_frame_attributes(trajectory, "TRAJECTORY")
+        self._store_frame_attributes(self.selections._frame_values(), "SELECTION")
+        # DSSP and hydrogen bonds are rebuilt from their saved settings after a
+        # file is reopened
+        self.calculations._dssp._restore()
+        self.calculations._hbonds._restore()
+        self._store_frame_attributes(self.calculations._frame_values(), "CALCULATION")
+        self._sync_frame_attributes(["position", *trajectory])
 
     def set_frame(self, frame: int) -> None:
         """Update trajectory state for scene frame.
@@ -991,9 +1222,7 @@ class Molecule(MolecularEntity):
 
         try:
             self._updating_in_progress = True
-            self._update_positions(frame)
-            self._update_selections()
-            self._update_calculations()
+            self._update_attributes(frame)
             # update annotation object
             self.annotations._update_annotation_object()
             # update periodic box nodes
@@ -1011,10 +1240,16 @@ class Molecule(MolecularEntity):
         """Bake a range of trajectory frames into a collection of frame objects.
 
         Each object in the returned collection holds the atom positions (in Blender world
-        units) for a single frame, in the same vertex order as this molecule's mesh. The
-        collection can then be read inside geometry nodes (e.g. with the *Animate Frames*
-        node) to drive positions from baked data, rather than updating the ``Universe``
+        units) for a single frame, in the same vertex order as this molecule's mesh,
+        along with the attributes written on frame changes (see `frame_attributes`):
+        those read from the trajectory, selections and calculations. The collection
+        can then be read inside geometry nodes (e.g. with the *Animate Frames* node)
+        to drive positions from baked data, rather than updating the ``Universe``
         every scene frame.
+
+        As in playback, a trajectory attribute that a frame lacks keeps the values
+        of the last frame that had it, and selections and calculations that don't
+        update on frame changes keep the values they have now.
 
         Re-baking replaces any objects previously baked into the same collection.
 
@@ -1054,34 +1289,84 @@ class Molecule(MolecularEntity):
         for obj in list(frames.objects):
             bpy.data.objects.remove(obj, do_unlink=True)
 
+        attributes = cast(bpy.types.Mesh, self.object.data).attributes
+        static = {
+            name: db.named_attribute(self.object, name)
+            for name in self.calculations
+            if not self.calculations.updating(name) and name in attributes
+        }
+        values: dict[str, np.ndarray] = {}
+        sources: dict[str, str] = {}
+
         # bake each requested frame, restoring the current frame afterwards
         original_uframe = self.uframe
         try:
             for i, frame in enumerate(range(start, stop, step)):
                 self.uframe = frame
-                db.create_object(
+                obj = db.create_object(
                     vertices=self._scaled_position,
                     name=f"{self.name}_frame_{i:04d}",
                     collection=frames,
                 )
+                # trajectory values a frame lacks carry over from earlier frames
+                trajectory = self.frame_manager._read_frame(frame)
+                trajectory.pop("position")
+                selections = {
+                    name: _ag_to_bool(ag)
+                    for name, ag in self.selections.atomgroups.items()
+                }
+                calculations = {**self.calculations._frame_values(), **static}
+                for source, frame_values in (
+                    ("TRAJECTORY", trajectory),
+                    ("SELECTION", selections),
+                    ("CALCULATION", calculations),
+                ):
+                    values.update(frame_values)
+                    sources.update(dict.fromkeys(frame_values, source))
+                self._store_baked_attributes(obj, values, sources)
         finally:
             self.uframe = original_uframe
 
         return frames
 
-    def _update_positions(self, frame: int) -> None:
+    def _store_baked_attributes(
+        self,
+        obj: bpy.types.Object,
+        values: dict[str, np.ndarray],
+        sources: dict[str, str],
+    ) -> None:
+        """Store the per-frame attributes of a baked frame on its object.
+
+        Each attribute gets the type it has on this molecule's mesh.
+
+        Parameters
+        ----------
+        obj : bpy.types.Object
+            The baked frame's object
+        values : dict[str, np.ndarray]
+            Values by attribute name
+        sources : dict[str, str]
+            Source of each attribute, by name: `"TRAJECTORY"`, `"SELECTION"` or
+            `"CALCULATION"`
         """
-        Internal method to update atom positions.
+        attributes = cast(bpy.types.Mesh, self.object.data).attributes
+        for name, value in values.items():
+            attribute = attributes.get(name)
+            if attribute is not None:
+                atype = attribute.data_type
+            elif sources[name] == "SELECTION":
+                atype = db.AttributeTypes.BOOLEAN
+            else:
+                atype = None
+            try:
+                db.store_named_attribute(obj, data=value, name=name, atype=atype)
+            except Exception as e:
+                # as in playback, trajectory values Blender can't store are expected
+                expected = sources[name] == "TRAJECTORY" and isinstance(e, ValueError)
+                level = logging.DEBUG if expected else logging.ERROR
+                logger.log(level, f"Skipping baked attribute '{name}': {e}")
 
-        Delegates to FrameManager which handles caching, interpolation,
-        averaging, and periodic corrections.
-
-        Args:
-            frame: Scene frame number
-        """
-        self._update_trajectory_positions(frame)
-
-    def _update_trajectory_positions(self, frame: int) -> None:
+    def _update_trajectory_positions(self, frame: int) -> dict[str, np.ndarray]:
         """Update trajectory positions for the given frame.
 
         This method can be overridden by subclasses to implement custom
@@ -1091,8 +1376,15 @@ class Molecule(MolecularEntity):
         ----------
         frame : int
             Scene frame number
+
+        Returns
+        -------
+        dict[str, np.ndarray]
+            Values of the frame's other trajectory attributes, to be stored
         """
-        self.position = self.frame_manager.get_positions_at_frame(frame)
+        values = self.frame_manager.get_values_at_frame(frame)
+        self.position = values.pop("position")
+        return values
 
     def _update_box(self) -> None:
         """Update any Periodic Box nodes in the geometry node tree."""
@@ -1106,17 +1398,103 @@ class Molecule(MolecularEntity):
                 not isinstance(node, bpy.types.GeometryNodeGroup)
                 or node.node_tree is None
                 or node.node_tree.name not in nodes_to_update
-                or not node.inputs["Update"].default_value
+                or not cast(
+                    bpy.types.NodeSocketBool, node.inputs["Update"]
+                ).default_value
             ):
                 continue
 
             for name, value in zip(names, dimensions):
-                node.inputs[name].default_value = value
+                cast(bpy.types.NodeSocketFloat, node.inputs[name]).default_value = value
 
     def __repr__(self) -> str:
         return f"<Molecule, `universe`: {self.universe}, `object`: {self.object}"
 
-    def _resolve_style_selection(self, selection: str | AtomGroup | None) -> str | None:
+    def select(
+        self, selection: str | AtomGroup | np.ndarray | None = None
+    ) -> np.typing.NDArray[np.bool_]:
+        """A per-atom boolean mask from a selection.
+
+        Use it to index any attribute, combining masks with ``&``, ``|`` and ``~``.
+        Indexing an attribute writes the changed values back to Blender::
+
+            mol["b_factor"][mol.select("resid 19:26")] = 1.0
+            mask = mol.select("protein") & ~mol.select("name H*")
+
+        A new attribute has to be stored for every atom, such as with `np.where`::
+
+            mol["highlight"] = np.where(mol.select("resid 19:26"), 1.0, 0.0)
+            mol["is_site"] = mol.select("resid 19:26")
+
+        For the ``Color`` attribute, `set_color` also takes colour names.
+
+        Parameters
+        ----------
+        selection : str | AtomGroup | np.ndarray | None
+            A string names an existing boolean attribute, or is otherwise an
+            MDAnalysis selection phrase. An array is a boolean mask or atom indices.
+            None selects every atom.
+
+        Returns
+        -------
+        np.ndarray
+            Boolean mask, True for the selected atoms
+
+        Raises
+        ------
+        TypeError
+            If the string names an attribute that isn't boolean
+        """
+        if isinstance(selection, AtomGroup):
+            return _ag_to_bool(selection)
+        if isinstance(selection, str):
+            # an existing attribute is used directly, as in `add_style`
+            if selection in self.list_attributes(drop_hidden=False):
+                values = self.named_attribute(selection)
+                if values.dtype != bool:
+                    raise TypeError(
+                        f"Attribute '{selection}' is {values.dtype}, not a boolean "
+                        "attribute, so it can't be used as a selection"
+                    )
+                return values
+            return _ag_to_bool(self.universe.select_atoms(selection))
+        mask = np.zeros(self.atoms.n_atoms, dtype=bool)
+        mask[slice(None) if selection is None else selection] = True
+        return mask
+
+    def set_color(
+        self,
+        color: str | Sequence[float],
+        selection: str | AtomGroup | np.ndarray | None = None,
+    ) -> None:
+        """Set the ``Color`` attribute of the selected atoms.
+
+        Styles added without a ``color`` show this attribute::
+
+            mol.set_color((0.1, 0.7, 0.7), selection="chainID A and resid 19:26")
+            mol.set_color("#00FFCC", "protein")
+            mol.set_color("pymol:slate", "chainID B")
+
+        Parameters
+        ----------
+        color : str | Sequence[float]
+            A hex string such as ``"#00FFCC"`` or a colour name such as
+            ``"salmon"`` or ``"pymol:slate"``, which are sRGB and converted to
+            linear (see `color.parse_color`), or linear RGB or RGBA from 0 to 1.
+            Colours without an alpha keep the atoms' current alpha.
+        selection : str | AtomGroup | np.ndarray | None
+            Atoms to color, as for `select`. None colors every atom.
+        """
+        from ... import color as mn_color
+
+        rgba = mn_color.parse_color(color) if isinstance(color, str) else color
+        if len(rgba) not in (3, 4):
+            raise ValueError(f"Color must be RGB or RGBA, not {rgba}")
+        self["Color"][self.select(selection), : len(rgba)] = rgba
+
+    def _resolve_style_selection(
+        self, selection: str | AtomGroup | Callable | None
+    ) -> str | None:
         """Resolve an ``add_style`` selection to a boolean-attribute name (or None).
 
         A string is treated as an existing attribute name first; if no such attribute
@@ -1168,8 +1546,9 @@ class Molecule(MolecularEntity):
         """Resolve `add_style`'s color argument into the `Set Color` node input.
 
         Returns ``None`` if no ``Set Color`` node should be added, which happens when
-        the argument names neither a known keyword nor an existing attribute.
+        the argument names neither a known keyword, an existing attribute nor a colour.
         """
+        from ... import color as mn_color
         from ...nodes import geometry as g
 
         # a callable is evaluated here, inside the tree context, so that it can build
@@ -1188,15 +1567,24 @@ class Molecule(MolecularEntity):
         # check the data type too and not just that the name exists
         color_attributes = [
             attribute.name
-            for attribute in self.object.data.attributes
+            for attribute in cast(bpy.types.Mesh, self.object.data).attributes
             if attribute.data_type in ("FLOAT_COLOR", "BYTE_COLOR")
         ]
         if color in color_attributes:
             return NamedAttribute.color(color)
+        # otherwise a hex colour or colour name, such as "#00FFCC" or "pymol:slate"
+        try:
+            rgba = mn_color.parse_color(color)
+        except ValueError:
+            pass
+        else:
+            alpha = rgba[3] if len(rgba) == 4 else 1.0
+            return (*rgba[:3], alpha)
         warnings.warn(
-            f"Color '{color}' is neither a known color keyword {COLOR_KEYWORDS} nor a "
-            f"color attribute on this molecule (available: {color_attributes}). No "
-            "color will be applied. For coloring beyond the keywords, pass a callable "
+            f"Color '{color}' is neither a known color keyword {COLOR_KEYWORDS}, a "
+            f"color attribute on this molecule (available: {color_attributes}) nor a "
+            "hex color or color name (see `mn.color.parse_color`). No color will be "
+            "applied. For coloring beyond the keywords, pass a callable "
             "that builds the color nodes:\n"
             "    from molecularnodes.nodes import geometry as mg\n"
             "    mol.add_style('cartoon', color=lambda: mg.ColorRainbow())",
@@ -1212,8 +1600,9 @@ class Molecule(MolecularEntity):
         | PresetMaterial
         | MaterialBuilder
         | str
-        | None = _UNSET,
-        color: str | Sequence[float] | Callable | None = None,
+        | None
+        | Unset = _UNSET,
+        color: "str | Sequence[float] | Callable | Density | None" = None,
         assembly: bool = False,
         name: str | None = None,
         **kwargs,
@@ -1265,11 +1654,24 @@ class Molecule(MolecularEntity):
               colored randomly per chain
             - ``"plddt"`` to color by pLDDT (B-factor) confidence
             - the name of an existing *color* attribute on the geometry
+            - a hex color or color name for a single uniform color, such as
+              ``"#00FFCC"``, ``"salmon"`` (CSS) or ``"pymol:slate"`` (see
+              `color.parse_color`)
             - an RGBA sequence of floats for a single uniform color
             - a zero-argument callable returning a color socket, evaluated inside the
               node tree context, e.g. ``lambda: mg.ColorRainbow()``. This is the way
               to reach the full set of ``Color*`` nodes without writing out a whole
               node tree.
+            - a density entity (e.g. an APBS potential loaded with
+              ``mn.entities.density.Grids.load``) to color the styled geometry by
+              sampling its grid, through a ``Color Sample Grid`` node. Unlike the
+              other options this is applied *after* the style, at every point of
+              its output (each surface vertex for ``"surface"``), so instanced
+              geometry such as instanced spheres is not colored. The range is the
+              node's default of -5 to 5 (red through light grey to blue); change
+              ``Min`` and ``Max`` on the node for other grids. A styled density
+              keeps its source volume in the ``MN/Volume`` bundle of its output,
+              which the node samples, so the density can keep its own style.
             - None (default) to add no color node, leaving the baked ``Color``
               attribute in use.
 
@@ -1311,8 +1713,10 @@ class Molecule(MolecularEntity):
         """
 
         from ...nodes import geometry as g
+        from ..density import Density
         from . import OXDNA
 
+        color_by_density = isinstance(color, Density)
         style_is_callable = callable(style)
         if not style_is_callable and style not in STYLE_NODE_MAPPING:
             raise ValueError(
@@ -1339,9 +1743,7 @@ class Molecule(MolecularEntity):
                     "    mol.add_style(lambda: mg.StyleCartoon(quality=5))"
                 )
 
-        material = "Default" if material is _UNSET else material
-        # a callable selection is evaluated inside the tree context, below
-        selection_is_callable = callable(selection)
+        material = "Default" if isinstance(material, Unset) else material
         attribute_name = self._resolve_style_selection(selection)
 
         # oxDNA nucleotides get their own ribbon; override locally so the
@@ -1352,9 +1754,9 @@ class Molecule(MolecularEntity):
 
         if not style_is_callable and "sphere" not in kwargs:
             # spheres default to point clouds, which only Cycles can draw
-            geometry = _sphere_for_engine(
-                style_mapping[style], bpy.context.scene.render.engine
-            )
+            scene = bpy.context.scene
+            assert scene is not None
+            geometry = _sphere_for_engine(style_mapping[style], scene.render.engine)
             if geometry is not None:
                 kwargs["sphere"] = geometry
 
@@ -1364,21 +1766,22 @@ class Molecule(MolecularEntity):
         material = append_material(material) if isinstance(material, str) else material
 
         # link the asset groups this style is about to use with one library read
-        link_asset_groups(
-            [
-                None if style_is_callable else style_mapping[style],
-                g.SetColor if color is not None else None,
-                *self._style_color_groups(color),
-                g.AssemblyInstance if assembly else None,
-            ]
-        )
+        groups = [
+            None if style_is_callable else style_mapping[style],
+            g.SetColor if color is not None else None,
+            *self._style_color_groups(color),
+            g.ColorSampleGrid if color_by_density else None,
+            g.AssemblyInstance if assembly else None,
+        ]
+        link_asset_groups([group for group in groups if group is not None])
 
         with self.tree as tree:
             if style_is_callable:
                 style_node = style()
             else:
-                if selection_is_callable:
-                    selection_input = selection()
+                if callable(selection):
+                    # a callable selection is evaluated inside the tree context
+                    selection_input = cast(Callable[[], Any], selection)()
                 elif attribute_name:
                     selection_input = NamedAttribute.boolean(attribute_name)
                 else:
@@ -1390,11 +1793,20 @@ class Molecule(MolecularEntity):
                 )
             if name:
                 style_node.node.label = name
-            color_input = self._style_color_input(color) if color is not None else None
+            color_input = (
+                self._style_color_input(color)
+                if color is not None and not color_by_density
+                else None
+            )
             (
                 tree.atoms
                 >> (g.SetColor(color=color_input) if color_input is not None else None)
                 >> style_node
+                >> (
+                    g.SetColor(color=g.ColorSampleGrid(object=color.object).o.color)
+                    if color_by_density
+                    else None
+                )
                 >> (
                     g.AssemblyInstance(data_object=self.create_data_object())
                     if assembly
@@ -1437,6 +1849,7 @@ class Molecule(MolecularEntity):
                     # so it can be rebuilt via the biotite reader + converter on restore.
                     if self.props.filepath:
                         state["_structure_filepath"] = self.props.filepath
+                        state["_structure_data_block"] = self.props.data_block
                     if self.props.code:
                         state["_structure_code"] = self.props.code
                         state["_structure_database"] = self.props.database
@@ -1457,13 +1870,12 @@ class Molecule(MolecularEntity):
             del state["selections"]
         if "annotations" in state:
             del state["annotations"]
-        if "dssp" in state:
-            del state["dssp"]
         if "calculations" in state:
             # Preserve picklable calculations
             preserved_calculations = {}
             for name, calc_func in state["calculations"].items():
-                if name == "sec_struct":
+                # built-in calculations are rebuilt from their saved settings
+                if name in ("sec_struct", "hbonds"):
                     continue
                 try:
                     import pickle
@@ -1511,6 +1923,7 @@ class Molecule(MolecularEntity):
             filepath = state.pop("_structure_filepath", None)
             code = state.pop("_structure_code", None)
             database = state.pop("_structure_database", "rcsb")
+            data_block = state.pop("_structure_data_block", None) or None
             try:
                 if filepath:
                     source = path_resolve(filepath)
@@ -1518,7 +1931,12 @@ class Molecule(MolecularEntity):
                     source = StructureDownloader().download(
                         code=code, format="bcif", database=database or "rcsb"
                     )
-                self.universe = universe_from_atoms(read_structure(source).array)
+                    # binary CIF is never downloaded as text
+                    assert isinstance(source, (Path, io.BytesIO))
+                reader = read_structure(source, data_block=data_block)
+                self.universe = universe_from_atoms(
+                    reader.array, frame_data=reader.model_data()
+                )
                 if frame is not None:
                     self.universe.trajectory[frame]
             except Exception as e:
@@ -1537,10 +1955,10 @@ class Molecule(MolecularEntity):
             self.selections = SelectionManager(self)
         if not hasattr(self, "annotations"):
             self.annotations = MoleculeAnnotationManager(self)
-        if not hasattr(self, "dssp"):
-            self.dssp = DSSPManager(self)
         if not hasattr(self, "calculations"):
-            self.calculations = state.pop("_preserved_calculations", {})
+            self.calculations = CalculationManager(self)
+            preserved = self.__dict__.pop("_preserved_calculations", {})
+            self.calculations._funcs.update(preserved)
 
     def _world_positions(self, selection: mda.AtomGroup) -> np.ndarray:
         """

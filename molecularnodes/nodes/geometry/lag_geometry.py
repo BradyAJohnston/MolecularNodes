@@ -120,7 +120,7 @@ class LagGeometry(AssetGeometryGroup):
         simulation_zone = g.SimulationZone()
         geometry_1 = simulation_zone.items.geometry(name="Geometry")
         join_geometry = g.JoinGeometry(
-            geometry=(
+            (
                 g.GeometryToInstance(
                     g.SeparateGeometry.point(input, selection).o.selection
                 ),

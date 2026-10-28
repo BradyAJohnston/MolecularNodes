@@ -4,8 +4,12 @@ import numpy as np
 import pytest
 from databpy.object import LinkedObjectError
 import molecularnodes as mn
+from molecularnodes.blender.registered import object_uuid
+from molecularnodes.entities.base import EntityType
 from molecularnodes.entities.molecule import oxdna
+from molecularnodes.session import get_session
 from .constants import data_dir
+from .utils import mn_ops, scene
 
 pytestmark = pytest.mark.filterwarnings(
     "ignore:.*no reference attributes.*:UserWarning"
@@ -52,6 +56,7 @@ class TestOXDNAReading:
             format=oxdna.OXDNAReader,
             topology_format=oxdna.OXDNAParser,
         )
+        assert u.atoms is not None
         assert snapshot == u.atoms.n_atoms
 
     def test_univ_as_traj(self, universe):
@@ -122,6 +127,7 @@ class TestOXDNAReading:
                 topology_format=oxdna.OXDNAParser,
                 format=oxdna.OXDNAReader,
             )
+            assert u.atoms is not None
             return {tuple(sorted(bond)) for bond in u.atoms.bonds.indices.tolist()}
 
         assert bond_set(new_top, new_traj) == bond_set(old_top, old_traj)
@@ -171,7 +177,7 @@ class TestOXDNAReading:
         traj = oxdna.OXDNA(u)
 
         assert isinstance(session.get(traj.uuid), oxdna.OXDNA)
-        assert traj._mn_entity_type == mn.entities.base.EntityType.MD_OXDNA.value
+        assert traj._mn_entity_type == EntityType.MD_OXDNA.value
 
     def test_reload_lost_connection(self, file):
         session = mn.session.get_session()
@@ -183,22 +189,22 @@ class TestOXDNAReading:
         )
         traj = oxdna.OXDNA(u)
         obj_name = traj.name
-        bpy.context.scene.frame_set(1)
+        scene().frame_set(1)
         pos1 = traj.position
-        bpy.context.scene.frame_set(2)
+        scene().frame_set(2)
         pos2 = traj.position
         assert not np.allclose(pos1, pos2)
 
         traj_old = session.entities.pop(traj.uuid)
 
         # the position shouldn't change as we have removed the traj from the session
-        bpy.context.scene.frame_set(3)
+        scene().frame_set(3)
         pos3 = traj.position
         assert np.allclose(pos2, pos3)
         del traj
 
         bpy.data.objects[obj_name].select_set(True)
-        bpy.ops.mn.session_reload_item()
+        mn_ops.session_reload_item()
 
         # when reloading the object, a brand new traj had to be created, which updates
         # the uuid on the object, so the old traj will not longer be able to find any
@@ -207,7 +213,9 @@ class TestOXDNAReading:
         with pytest.raises(LinkedObjectError):
             traj_old.object.name
 
-        traj = bpy.context.scene.MNSession.get(bpy.context.active_object.uuid)
+        active = bpy.context.active_object
+        assert active is not None
+        traj = get_session().get(object_uuid(active))
         assert traj is not None
 
         pos3 = traj.position
@@ -226,7 +234,7 @@ class TestOXDNAReading:
 
         restored = session.get(traj.uuid)
         assert isinstance(restored, oxdna.OXDNA)
-        bpy.context.scene.frame_set(1)
+        scene().frame_set(1)
         pos1 = restored.position
-        bpy.context.scene.frame_set(2)
+        scene().frame_set(2)
         assert not np.allclose(pos1, restored.position)

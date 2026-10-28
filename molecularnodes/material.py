@@ -1,5 +1,5 @@
 from types import ModuleType
-from typing import Generic, TypeVar, overload
+from typing import Generic, Literal, TypeVar, overload
 import bpy
 from nodebpy import TreeBuilder
 from nodebpy import geometry as g
@@ -9,7 +9,7 @@ from .nodes.materials import (
     ambient_occlusion,
     default,
     flat,
-    flat_outline,
+    fresnel_outline,
     squishy,
     transparent,
 )
@@ -26,7 +26,7 @@ RECIPES: dict[str, ModuleType] = {
     for module in (
         default,
         flat,
-        flat_outline,
+        fresnel_outline,
         squishy,
         transparent,
         ambient_occlusion,
@@ -83,6 +83,83 @@ def add_all_materials() -> dict[str, bpy.types.Material]:
     for mat in materials.values():
         mat.use_fake_user = True
     return materials
+
+
+def add_aov(
+    material: bpy.types.Material,
+    name: str,
+    attribute: str | None = None,
+    type: Literal["VALUE", "COLOR"] = "VALUE",
+    offset: float = 0.0,
+) -> sh.AOVOutput:
+    """
+    Write a named attribute of the geometry to an AOV render pass.
+
+    Appends ``Attribute`` nodes reading ``attribute`` and an ``AOV Output``
+    node named ``name`` to the material's shader tree, leaving the rest of the
+    tree untouched. Like the ``MN Color`` node, the attribute is read from the
+    instancer instead of the geometry where the instancer's ``is_instanced``
+    attribute is set, so styles drawn through instances write their IDs too. The pass itself is declared on the view layer with
+    :meth:`molecularnodes.Canvas.add_aov`; it then appears as an output of the
+    compositor's Render Layers node, where the ``Value to Mask`` node turns a
+    float AOV such as ``chain_id`` into a mask.
+
+    ```python
+    canvas.add_aov("chain_id")
+    mn.material.add_aov(mol.styles[0].material, "chain_id")
+    ```
+
+    Parameters
+    ----------
+    material : bpy.types.Material
+        The material whose shader tree gets the nodes.
+    name : str
+        Name of the AOV pass, matching the one added to the view layer.
+    attribute : str, optional
+        Name of the geometry attribute to read. Defaults to ``name``.
+    type : {"VALUE", "COLOR"}, default "VALUE"
+        Write the attribute as a float (the Attribute node's ``Fac``) or as a
+        colour, matching the type of the view-layer pass.
+    offset : float, default 0.0
+        Added to a ``"VALUE"`` attribute before it is written. Pixels nothing
+        was rendered into read ``0`` in the pass, so an integer ID such as
+        ``chain_id`` (which starts at 0) needs ``offset=1.0`` for the first
+        region to differ from the background.
+
+    Returns
+    -------
+    nodebpy.shader.AOVOutput
+        The added ``AOV Output`` node.
+    """
+    tree = material.node_tree
+    assert tree is not None
+    attribute = attribute or name
+    with TreeBuilder(tree):
+        # like the MN Color node: read the attribute from the instancer instead
+        # of the geometry when the geometry is drawn through instances
+        geometry = sh.Attribute(attribute_name=attribute)
+        instancer = sh.Attribute(attribute_type="INSTANCER", attribute_name=attribute)
+        is_instanced = sh.Attribute(
+            attribute_type="INSTANCER", attribute_name="is_instanced"
+        ).o.factor
+        if type == "COLOR":
+            color = is_instanced.mix.color(geometry.o.color, instancer.o.color)
+            return sh.AOVOutput(color=color, aov_name=name)
+        value = is_instanced.mix.float(geometry.o.factor, instancer.o.factor)
+        if offset:
+            value = value + offset
+        return sh.AOVOutput(value=value, aov_name=name)
+
+
+def has_aov(material: bpy.types.Material, name: str) -> bool:
+    "Whether the material's shader tree already writes the AOV pass ``name``."
+    tree = material.node_tree
+    if tree is None:
+        return False
+    return any(
+        isinstance(node, bpy.types.ShaderNodeOutputAOV) and node.aov_name == name
+        for node in tree.nodes
+    )
 
 
 T = TypeVar("T")
@@ -144,10 +221,12 @@ class PresetMaterial:
     def _handle(self, node_cls):
         """A typed nodebpy handle for the recipe-built node of ``node_cls``,
         so SocketValue properties can address its inputs by name."""
-        for node in self._material.node_tree.nodes:
+        tree = self._material.node_tree
+        assert tree is not None
+        for node in tree.nodes:
             if node.bl_idname != node_cls._bl_idname:
                 continue
-            if node.bl_idname == "ShaderNodeGroup":
+            if isinstance(node, bpy.types.ShaderNodeGroup):
                 group = node.node_tree
                 wanted = node_cls._name
                 if group is None or not (
@@ -167,11 +246,24 @@ class PresetMaterial:
     @property
     def tree(self) -> TreeBuilder:
         "The nodebpy tree builder for the material's node tree."
+        assert self._material.node_tree is not None
         return TreeBuilder(self._material.node_tree)
 
     def node(self) -> g.Material:
         "Add a `Material` node to the active GeometryNodeTree and set it to this material."
         return g.Material(material=self.material)
+
+    def add_aov(
+        self,
+        name: str,
+        attribute: str | None = None,
+        type: Literal["VALUE", "COLOR"] = "VALUE",
+        offset: float = 0.0,
+    ) -> sh.AOVOutput:
+        "Write a named attribute to an AOV render pass; see :func:`add_aov`."
+        return add_aov(
+            self.material, name, attribute=attribute, type=type, offset=offset
+        )
 
     def __repr__(self) -> str:
         return f"{type(self).__name__}(material={self.material.name!r})"
@@ -233,7 +325,10 @@ class AmbientOcclusion(PresetMaterial):
     Colors shaded only by ambient occlusion.
 
     An emission shader that ignores scene lighting entirely, so it is cheap to
-    render and looks similar in Cycles and EEVEE.
+    render and looks similar in Cycles and EEVEE. It is always opaque and
+    ignores the alpha of the `Color` attribute, so it does not fade with
+    `Fade Geometry`: ambient occlusion does not work alongside a Transparent
+    BSDF, so the material can have one or the other, not both.
 
     Parameters
     ----------
@@ -275,13 +370,13 @@ class AmbientOcclusion(PresetMaterial):
 
 class Flat(PresetMaterial):
     """
-    Flat cartoon-like shading with an optional dark outline.
+    Flat cartoon-like shading, with an optional dark outline.
 
     Parameters
     ----------
     outline : bool, optional
-        Whether to render the dark outline around the object. Defaults to the
-        recipe's value.
+        Whether to render the dark outline around the object. Off unless set:
+        ``Flat(outline=True)`` adds it.
     threshold : float, optional
         Threshold for the edge detection that forms the outline. Defaults to
         the recipe's value.
@@ -296,14 +391,14 @@ class Flat(PresetMaterial):
 
     def __init__(
         self,
-        outline: bool | None = None,
+        outline: bool = False,
         threshold: float | None = None,
         thickness: float | None = None,
         *,
         name: str | None = None,
     ):
         self._build(name)
-        self.node = self._handle(FlatShader)
+        self.internal_node: FlatShader = self._handle(FlatShader)
         if outline is not None:
             self.outline = outline
         if threshold is not None:
@@ -312,18 +407,20 @@ class Flat(PresetMaterial):
             self.thickness = thickness
 
     threshold = SocketValue[float](
-        "node", "threshold", "Threshold for the outline edge detection."
+        "internal_node", "threshold", "Threshold for the outline edge detection."
     )
-    thickness = SocketValue[float]("node", "thickness", "Thickness of the outline.")
+    thickness = SocketValue[float](
+        "internal_node", "thickness", "Thickness of the outline."
+    )
 
     @property
     def outline(self) -> bool:
         "Whether the dark outline is rendered."
-        return self.node.i.outline.default_value == "Outline"
+        return self.internal_node.i.outline.default_value == "Outline"
 
     @outline.setter
     def outline(self, value: bool) -> None:
-        self.node.i.outline.default_value = "Outline" if value else "None"
+        self.internal_node.i.outline.default_value = "Outline" if value else "None"
 
 
 class Squishy(PresetMaterial):
@@ -400,7 +497,9 @@ class Transparent(PresetMaterial):
         name: str | None = None,
     ):
         self._build(name)
-        self.node = self._handle(TransparentOutlineShader)
+        self.internal_node: TransparentOutlineShader = self._handle(
+            TransparentOutlineShader
+        )
         if transparency is not None:
             self.transparency = transparency
         if fresnel is not None:
@@ -409,17 +508,21 @@ class Transparent(PresetMaterial):
             self.outline_color = outline_color
 
     transparency = SocketValue[float](
-        "node", "transparency", "How see-through the surface is (0 opaque, 1 clear)."
+        "internal_node",
+        "transparency",
+        "How see-through the surface is (0 opaque, 1 clear).",
     )
     outline_color = SocketValue[tuple[float, float, float, float]](
-        "node", "outline_color", "Color blended in at grazing angles in Fresnel mode."
+        "internal_node",
+        "outline_color",
+        "Color blended in at grazing angles in Fresnel mode.",
     )
 
     @property
     def fresnel(self) -> bool:
         "Whether the rim color is blended in at grazing angles."
-        return self.node.i.menu.default_value == "Fresnel"
+        return self.internal_node.i.menu.default_value == "Fresnel"
 
     @fresnel.setter
     def fresnel(self, value: bool) -> None:
-        self.node.i.menu.default_value = "Fresnel" if value else "Transparent"
+        self.internal_node.i.menu.default_value = "Fresnel" if value else "Transparent"

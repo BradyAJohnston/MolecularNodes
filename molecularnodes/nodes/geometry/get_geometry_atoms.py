@@ -77,9 +77,9 @@ class GetGeometryAtoms(AssetGeometryGroup):
         bundle = tree.outputs.bundle("Bundle")
         atoms = tree.outputs.geometry("Atoms")
 
-        get_geometry_bundle = g.GetGeometryBundle(geometry=geometry)
+        get_geometry_bundle = g.GetGeometryBundle(geometry)
         get_bundle_item = g.GetBundleItem.geometry(
-            get_geometry_bundle.o.bundle, g.String(string="MN/Atoms"), True
+            get_geometry_bundle.o.bundle, g.String("MN/Atoms"), True
         )
         (
             get_bundle_item.o.exists.switch.geometry(

@@ -87,7 +87,7 @@ class MN_utils_aa_atom_pos(CustomGeometryGroup):
             group_index=accumulate_field.o.leading,
             float=g.NamedAttribute.float("b_factor").o.attribute,
             vector=g.Position(),
-            integer=g.EdgesOfVertex(vertex_index=g.Index()).o.total,
+            integer=g.EdgesOfVertex(g.Index()).o.total,
         )
         with g.Frame("If atom_name is 0, return midpoint of backbone N and C"):
             position_1 = g.Position()
@@ -105,7 +105,6 @@ class MN_utils_aa_atom_pos(CustomGeometryGroup):
                 0.5,
                 utils_group_field_at_selection_1.o.vector,
                 utils_group_field_at_selection_2.o.vector,
-                clamp_factor=True,
             )
             (
                 g.Compare.integer.not_equal(atom_name, 0).o.result.switch.vector(

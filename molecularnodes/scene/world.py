@@ -1,5 +1,6 @@
+from collections.abc import Generator
 from contextlib import contextmanager
-from typing import Iterator, Tuple
+from typing import Tuple, cast
 import bpy
 from bpy.types import ShaderNodeTree
 from nodebpy import shader as s
@@ -33,6 +34,7 @@ class WorldTree(TreeBuilder[ShaderNodeTree]):
             scene.world = world
         if world.node_tree is None:
             world.use_nodes = True
+        assert world.node_tree is not None
         super().__init__(world.node_tree)
 
     @property
@@ -48,25 +50,34 @@ class WorldTree(TreeBuilder[ShaderNodeTree]):
         return node
 
     @property
+    def _background_socket(self) -> bpy.types.NodeSocketColor:
+        return cast(bpy.types.NodeSocketColor, self._shader.inputs[3])
+
+    @property
+    def _strength_socket(self) -> bpy.types.NodeSocketFloat:
+        return cast(bpy.types.NodeSocketFloat, self._shader.inputs[1])
+
+    @property
     def background(self) -> Tuple[float, float, float, float]:
         """World background color as RGBA in the range [0, 1]."""
-        return tuple(self._shader.inputs[3].default_value)
+        r, g, b, a = self._background_socket.default_value
+        return (r, g, b, a)
 
     @background.setter
     def background(self, value: Tuple[float, float, float, float]) -> None:
-        self._shader.inputs[3].default_value = value
+        self._background_socket.default_value = value
 
     @property
     def hdri_strength(self) -> float:
         """Strength multiplier for the world lighting."""
-        return self._shader.inputs[1].default_value
+        return self._strength_socket.default_value
 
     @hdri_strength.setter
     def hdri_strength(self, value: float) -> None:
-        self._shader.inputs[1].default_value = value
+        self._strength_socket.default_value = value
 
     @contextmanager
-    def reset(self) -> Iterator[ShaderSocket]:
+    def reset(self) -> Generator[ShaderSocket]:
         """Clear the world shader and build within it.
 
         Discards the existing shader — including ``MN_world_shader``, so the

@@ -58,7 +58,7 @@ class XPBDSolveCurve(CustomGeometryGroup):
         geometry_1 = tree.outputs.geometry("Geometry")
 
         inverse_mass = InverseMass()
-        separate_components = g.SeparateComponents(geometry=geometry)
+        separate_components = g.SeparateComponents(geometry)
         repeat_zone = g.RepeatZone(points)
         geometry_2 = repeat_zone.items.geometry(separate_components.o.curve, "Geometry")
         integer_math = repeat_zone.iteration + 1
@@ -75,9 +75,7 @@ class XPBDSolveCurve(CustomGeometryGroup):
             repeat_zone_1.iteration, (integer_math, -integer_math)
         )
         switch = (repeat_zone.iteration > 0).switch.float(
-            integer_math,
-            integer_math
-            * g.Mix.float(straightness, 0.5, 1.0, clamp_factor=True).o.result_float,
+            integer_math, integer_math * straightness.mix.float(0.5, 1.0)
         )
         constraint_distance = ConstraintDistance(
             target=OffsetVector(offset=index_switch_1),
@@ -95,7 +93,7 @@ class XPBDSolveCurve(CustomGeometryGroup):
         set_position >> geometry_3.next
         geometry_3.result >> geometry_2.next
         join_geometry = g.JoinGeometry(
-            geometry=(
+            (
                 separate_components.o.mesh,
                 geometry_2.result,
                 separate_components.o.grease_pencil,
@@ -135,7 +133,7 @@ class XPBDSolvePointsForCurve(CustomGeometryGroup):
         vector = capture.items.vector(vector_math, "Vector")
         capture_1 = g.CaptureAttribute.point(geometry=capture.o.geometry)
         index = capture_1.items.integer(
-            g.IndexOfNearest(position=vector.output).o.index, "Index"
+            g.IndexOfNearest(vector.output).o.index, "Index"
         )
         math_1 = radius.point.at(index.output) + radius
         constraint_distance = ConstraintDistance(
@@ -413,7 +411,7 @@ class SimulateCurve(AssetGeometryGroup):
 
         boolean_math = g.BooleanMath.subtract(selection, pin_selection)
         store_named_attribute = g.StoreNamedAttribute.point.float(
-            g.SeparateComponents(geometry=geometry).o.curve,
+            g.SeparateComponents(geometry).o.curve,
             ~g.NamedAttribute.float("mass").o.exists,
             "mass",
             1.0,

@@ -1,3 +1,4 @@
+import warnings
 from io import StringIO
 import biotite.structure as struc
 import numpy as np
@@ -13,7 +14,7 @@ from .assembly import AssemblyParser
 from .reader import ReaderBase
 
 
-class PDBReader(ReaderBase):
+class PDBReader(ReaderBase[pdb.PDBFile]):
     extra_fields = ["b_factor", "occupancy", "charge", "atom_id"]
     _extra_annotations = {}
 
@@ -21,7 +22,7 @@ class PDBReader(ReaderBase):
     def set_extra_annotations(annotations, array, file):
         return array
 
-    def read(self, file_path):
+    def read(self, file_path) -> pdb.PDBFile:
         return pdb.PDBFile.read(file_path)
 
     def get_structure(self, model: int | None = None):
@@ -76,6 +77,20 @@ class PDBReader(ReaderBase):
                 print("Not able to find bonds via residue: {e}")
 
         return array
+
+    def _model_values(self):
+        # biotite indexes the models of a PDB file, so reading each one on its
+        # own only parses that model's lines
+        with warnings.catch_warnings():
+            # the elements guessed from atom names, already warned about
+            warnings.simplefilter("ignore", UserWarning)
+            models = [
+                pdb.get_structure(
+                    self.file, model=i, extra_fields=["b_factor", "occupancy"]
+                )
+                for i in range(1, self.n_models + 1)
+            ]
+        return self._stack_model_values(models)
 
     def _fill_blank_res_ids(self) -> None:
         """Fill blank res_id columns (23-26) of ATOM / HETATM records with 1"""

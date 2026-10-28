@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from typing import cast
 import bpy
 import databpy
 import mrcfile
@@ -10,6 +11,7 @@ from pandas import CategoricalDtype, DataFrame
 from PIL import Image
 from scipy.spatial.transform import Rotation
 from ... import blender as bl
+from ...blender.registered import object_props
 from ...nodes import geometry
 from ...nodes._utils import get_star_node
 from .base import Ensemble, EntityType
@@ -94,7 +96,7 @@ class EnsembleDataFrame:
             else:
                 bob.store_named_attribute(self.data[col].to_numpy(), name=col)
 
-        bob.object.mn.categories = categories
+        object_props(bob.object).categories = categories
 
 
 class RelionDataFrame(EnsembleDataFrame):
@@ -187,10 +189,8 @@ class NDJSONDataFrame(EnsembleDataFrame):
             name="image_id",
             atype=AttributeTypes.INT,
         )
-        # Blender stores float4x4 attributes column-major, so the row-major
-        # numpy matrices must be transposed or GN sees the inverse rotation
         bob.store_named_attribute(
-            self.transforms().transpose(0, 2, 1),
+            self.transforms(),
             name="transform",
             atype=AttributeTypes.FLOAT4X4,
         )
@@ -205,18 +205,18 @@ class NDJSONDataFrame(EnsembleDataFrame):
 class StarFile(Ensemble):
     data_reader: DataFrame | None
     data_frame: RelionDataFrame | CistemDataFrame | NDJSONDataFrame | None
+    _entity_type = EntityType.ENSEMBLE_STAR
 
     def __init__(self, file_path: str | Path) -> None:
         super().__init__(file_path)
         self.type: str = "starfile"
         self.current_image: int = -1
-        self._entity_type = EntityType.ENSEMBLE_STAR
         self.data_reader = self._read()
         self.data_frame = self._assign_df()
 
     @classmethod
     def from_blender_object(cls, blender_object: bpy.types.Object) -> "StarFile":
-        self = cls(blender_object.mn.filepath)
+        self = cls(object_props(blender_object).filepath)
         self.object = blender_object
         return self
 
@@ -312,7 +312,8 @@ class StarFile(Ensemble):
             raise ValueError("Object not set. Call from_blender_object() first.")
 
         categories = self.props.categories
-        image_index = self.star_node.inputs["Image"].default_value - 1
+        image_socket = cast(bpy.types.NodeSocketInt, self.star_node.inputs["Image"])
+        image_index = image_socket.default_value - 1
         if self._is_relion():
             micrograph_path = categories["rlnMicrographName"][image_index]
         elif self._is_cistem():

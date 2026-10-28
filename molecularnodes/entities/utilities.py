@@ -11,7 +11,6 @@ other molecular attributes are preserved as named attributes that can be used wi
 Geometry Nodes and other Blender features.
 """
 
-from typing import Any, Callable
 import bpy
 import databpy as db
 import numpy as np
@@ -46,73 +45,6 @@ def _validate_non_negative(value: int) -> None:
     """
     if value < 0:
         raise ValueError(f"Value must be non-negative, got {value}")
-
-
-class ObjectMNProperty:
-    """Descriptor for Blender object properties with optional validation.
-
-    Provides clean interface for Blender custom properties with validation support.
-
-    Examples
-    --------
-    >>> class MyClass:
-    ...     frame = ObjectMNProperty("frame", validate_fn=lambda x: x >= 0)
-    """
-
-    def __init__(
-        self,
-        attr_name: str,
-        validate_fn: Callable[[Any], None] | None = None,
-    ):
-        """Initialize the descriptor.
-
-        Parameters
-        ----------
-        attr_name : str
-            Name of the property on the Blender object
-        validate_fn : callable, optional
-            Validation function that raises on invalid values
-        """
-        self.attr_name = attr_name
-        self.validate_fn = validate_fn
-
-    def __set_name__(self, owner, name):
-        """Store the Python attribute name."""
-        self.name = name
-
-    def __get__(self, obj, objtype=None):
-        """Get property value from Blender object."""
-        return getattr(obj.object.mn, self.attr_name)
-
-    def __set__(self, obj, value):
-        """Set property value on Blender object with validation."""
-        if self.validate_fn is not None:
-            self.validate_fn(value)
-        setattr(obj.object.mn, self.attr_name, value)
-
-
-class IntObjectMNProperty(ObjectMNProperty):
-    def __get__(self, obj, objtype=None) -> int:
-        return super().__get__(obj, objtype)
-
-    def __set__(self, obj, value: int):
-        return super().__set__(obj, value)
-
-
-class BoolObjectMNProperty(ObjectMNProperty):
-    def __get__(self, obj, objtype=None) -> bool:
-        return super().__get__(obj, objtype)
-
-    def __set__(self, obj, value: bool):
-        return super().__set__(obj, value)
-
-
-class StringObjectMNProperty(ObjectMNProperty):
-    def __get__(self, obj, objtype=None) -> str:
-        return super().__get__(obj, objtype)
-
-    def __set__(self, obj, value: str):
-        return super().__set__(obj, value)
 
 
 def create_object(

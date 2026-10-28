@@ -5,15 +5,15 @@ description = "Toolbox for molecular animations with Blender and Geometry Nodes.
 readme = "README.md"
 license = "GPL-3.0-or-later"
 dependencies = [
-    "databpy>=0.10.1",
-    "mdanalysis>=2.10",
-    "biotite>=1.7.1",
+    "databpy>=0.12.0",
+    "mdanalysis>=2.11",
+    "biotite>=1.7.1,<2",
     "mrcfile",
     "starfile",
     "imdclient>=0.2.3",
     "pandas<3.0.0",
     "griddataformats>=1.2.0",
-    "nodebpy>=520.34.1",
+    "nodebpy>=520.39.0",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.13.0"
@@ -55,6 +55,7 @@ dev = [
     "rdkit",
     "ruff",
     "syrupy",
+    "ty==0.0.92",
 ]
 
 [tool.extbpy]
@@ -142,6 +143,26 @@ order-by-type = true
 
 [tool.ruff.format]
 exclude = ["molecularnodes/assets/data.py"]
+
+[tool.ty.src]
+include = ["molecularnodes", "tests"]
+
+# Node groups under these directories are written by `nodebpy.assets dump`, so a
+# fix made by hand doesn't survive the round trip. These rules flag gaps in
+# nodebpy's socket and node typing there, to be fixed in nodebpy itself.
+[[tool.ty.overrides]]
+include = [
+    "molecularnodes/nodes/geometry",
+    "molecularnodes/nodes/shader",
+    "molecularnodes/nodes/materials",
+    "molecularnodes/nodes/compositor",
+]
+
+[tool.ty.overrides.rules]
+invalid-argument-type = "ignore"
+invalid-assignment = "ignore"
+not-subscriptable = "ignore"
+unresolved-attribute = "ignore"
 
 # The node-asset pipeline (python -m nodebpy.assets build|dump|ensure|check):
 # molecularnodes/nodes/ is the source of truth, nodes.blend the built,

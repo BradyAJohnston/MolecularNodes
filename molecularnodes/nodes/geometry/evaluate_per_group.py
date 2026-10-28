@@ -114,11 +114,11 @@ class EvaluatePerGroup(AssetGeometryGroup):
             )
             boolean_math = g.BooleanMath.l_not(
                 g.AccumulateField.point.integer(
-                    group_index=menu_switch.o.output
+                    group_id=menu_switch.o.output
                 ).o.trailing
             )
             separate_geometry = g.SeparateGeometry.point(geometry, boolean_math)
-            domain_size = g.DomainSize(geometry=separate_geometry.o.selection)
+            domain_size = g.DomainSize(separate_geometry.o.selection)
         repeat_zone = g.RepeatZone(domain_size.o.point_count)
         geometry_2 = repeat_zone.items.geometry(name="Geometry")
         instances_1 = repeat_zone.items.geometry(name="Instances")
@@ -138,14 +138,13 @@ class EvaluatePerGroup(AssetGeometryGroup):
                 name="group_id", value=repeat_zone.iteration
             )
         )
-        join_geometry = g.JoinGeometry(
-            geometry=(instances_1.current, g.GeometryToInstance(store_named_attribute))
-        )
+        g.JoinGeometry((geometry_2.current, store_named_attribute)) >> geometry_2.next
         (
-            g.JoinGeometry(geometry=(geometry_2.current, store_named_attribute))
-            >> geometry_2.next
+            g.JoinGeometry(
+                (instances_1.current, g.GeometryToInstance(store_named_attribute))
+            )
+            >> instances_1.next
         )
-        join_geometry >> instances_1.next
 
         geometry_2.result >> geometry_1
         instances_1.result >> instances

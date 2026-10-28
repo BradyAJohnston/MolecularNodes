@@ -1,4 +1,5 @@
 import itertools
+from pathlib import Path
 import numpy as np
 import pytest
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
@@ -81,6 +82,7 @@ def test_charge_topology():
     mol = mn.Molecule.load(PSF, DCD)
     charge = mol.named_attribute("charge")
     assert np.any(charge != 0)
+    assert mol.universe.atoms is not None
     assert np.allclose(charge, mol.universe.atoms.charges)
 
 
@@ -117,13 +119,15 @@ def test_ligands_are_not_alpha_carbon_or_backbone_reader():
     from molecularnodes.entities.molecule.reader import read_structure
 
     path = StructureDownloader(cache=data_dir).download("1ATN", format="pdb")
+    # with a cache the download is a file path
+    assert isinstance(path, Path)
     array = read_structure(path).array
     is_ace = array.res_name == "ACE"
     is_ligand = ~(filter_amino_acids(array) | filter_nucleotides(array) | is_ace)
     assert np.any(array.res_name[is_ligand] == "CA")
     for name in ["is_alpha_carbon", "is_backbone"]:
         assert not np.any(array.get_annotation(name)[is_ligand])
-    assert np.any(array.is_alpha_carbon & (array.res_name == "HIC"))
+    assert np.any(array.get_annotation("is_alpha_carbon") & (array.res_name == "HIC"))
     is_ace_c_o = is_ace & np.isin(array.atom_name, ["C", "O"])
     assert is_ace_c_o.sum() == 2
-    assert np.all(array.is_backbone[is_ace_c_o])
+    assert np.all(array.get_annotation("is_backbone")[is_ace_c_o])

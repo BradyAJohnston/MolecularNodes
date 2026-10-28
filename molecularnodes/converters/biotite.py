@@ -46,6 +46,27 @@ class BiotiteWrapper(object):
         self.structure = structure
 
 
+class ModelMemoryReader(MemoryReader):
+    """MemoryReader whose frames also carry per-atom ``ts.data`` arrays.
+
+    Each frame is a model of a multi-model structure file. ``frame_data`` holds
+    ``(n_frames, n_atoms)`` arrays by ``ts.data`` key, such as each model's
+    ``tempfactor`` and ``occupancy``, the keys the MDAnalysis PDBReader uses.
+    It stays in the reader's keyword arguments, so :meth:`copy` keeps it.
+    """
+
+    def __init__(self, coordinate_array, **kwargs):
+        # set before the parent reads the first frame
+        self._frame_data = kwargs.get("frame_data") or {}
+        super().__init__(coordinate_array, **kwargs)
+
+    def _read_next_timestep(self, ts=None):
+        ts = super()._read_next_timestep(ts)
+        for key, values in self._frame_data.items():
+            ts.data[key] = values[ts.frame]
+        return ts
+
+
 class BiotiteReader(SingleFrameReaderBase):
     """Biotite Reader
 
@@ -246,6 +267,7 @@ def _match_bond_types(bonds: np.ndarray, pairs: np.ndarray) -> np.ndarray:
 
 def universe_from_atoms(
     structure: AtomArray | AtomArrayStack,
+    frame_data: dict[str, np.ndarray] | None = None,
 ) -> mda.Universe:
     """Convert a biotite ``AtomArray``/``AtomArrayStack`` into an MDAnalysis ``Universe``.
 
@@ -259,6 +281,11 @@ def universe_from_atoms(
     ----------
     structure : AtomArray | AtomArrayStack
         The biotite structure to convert.
+    frame_data : dict[str, np.ndarray] | None, optional
+        Per-atom values of each model, as ``(n_models, n_atoms)`` arrays by
+        ``ts.data`` key, that each frame carries in ``ts.data`` (see
+        :class:`ModelMemoryReader` and ``ReaderBase.model_data``). Only used for a
+        stack with more than one model.
 
     Returns
     -------
@@ -272,7 +299,9 @@ def universe_from_atoms(
     # Load every model of a stack as a trajectory frame. `structure.coord` has shape
     # (n_models, n_atoms, 3), exactly what MemoryReader expects.
     if isinstance(structure, AtomArrayStack) and structure.stack_depth() > 1:
-        universe.load_new(structure.coord, format=MemoryReader)
+        universe.load_new(
+            structure.coord, format=ModelMemoryReader, frame_data=frame_data
+        )
 
     # Carry file-parsed, non-recomputable annotations across as custom attributes.
     reference = structure[0] if isinstance(structure, AtomArrayStack) else structure
@@ -287,8 +316,10 @@ def universe_from_atoms(
     # domain when it builds the object. Attached as a plain attribute since it is only
     # needed once, at object-creation time.
     if reference.bonds is not None and hasattr(universe.atoms, "bonds"):
-        universe._mn_bond_types = _match_bond_types(
-            reference.bonds.as_array(), universe.atoms.bonds.indices
+        setattr(
+            universe,
+            "_mn_bond_types",
+            _match_bond_types(reference.bonds.as_array(), universe.atoms.bonds.indices),
         )
 
     return universe

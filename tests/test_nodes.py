@@ -12,12 +12,17 @@ from nodebpy.nodes.geometry import (
     GetGeometryBundle,
     Group,
     Index,
+    JoinGeometry,
     MeshLine,
     NamedAttribute,
     Points,
+    Position,
     RealizeInstances,
     SetPosition,
     StoreNamedAttribute,
+    TransformDirection,
+    TransformGeometry,
+    TransformPoint,
 )
 import molecularnodes as mn
 from molecularnodes.nodes._utils import (
@@ -27,16 +32,22 @@ from molecularnodes.nodes._utils import (
 )
 from molecularnodes.nodes.geometry import (
     AnimateAction,
+    BestView,
     BreakBonds,
     BuildElasticNetwork,
     Charge,
+    ColorCSS,
+    ColorPyMOL,
     ColorToOKLab,
+    ColorVMD,
     EaseValue,
     FadeGeometry,
     FindBonds,
+    GetGeometryAtoms,
     NucleicChi,
     NucleicDihedral,
     OKLabToColor,
+    OrientToBestView,
     PeptideChi,
     PeptideDihedral,
     PeriodicArray,
@@ -44,7 +55,12 @@ from molecularnodes.nodes.geometry import (
     SetColor,
     SimulateElasticNetwork,
     StaggerValue,
+    StyleBallAndStick,
     StyleCartoon,
+    StyleRibbon,
+    StyleSpheres,
+    StyleSticks,
+    StyleSurface,
     SymmetryCubic,
     SymmetryCyclic,
     SymmetryDihedral,
@@ -52,7 +68,14 @@ from molecularnodes.nodes.geometry import (
     UResID,
 )
 from .constants import codes, data_dir
-from .utils import GeometrySet, NumpySnapshotExtension
+from .utils import (
+    GeometrySet,
+    NumpySnapshotExtension,
+    interface_items,
+    interface_socket,
+    scene,
+    view_layer,
+)
 
 random.seed(6)
 
@@ -60,23 +83,30 @@ random.seed(6)
 def _input_sockets(tree: bpy.types.NodeTree) -> dict:
     return {
         item.name: item
-        for item in tree.interface.items_tree
-        if item.item_type == "SOCKET" and item.in_out == "INPUT"
+        for item in interface_items(tree)
+        if isinstance(item, bpy.types.NodeTreeInterfaceSocket)
+        and item.in_out == "INPUT"
     }
 
 
 def test_get_nodes(fetch):
     mol = fetch("4ozs").add_style("spheres")
 
-    last = get_output(mol.node_group).inputs[0].links[0].from_node
+    links = get_output(mol.node_group).inputs[0].links
+    assert links is not None
+    last = links[0].from_node
+    assert last is not None
     assert last.name == "Join Geometry"
     style = get_final_style_nodes(mol.node_group)[0]
     assert style.name == "Style Spheres"
+    assert style.node_tree is not None
     assert style.node_tree.name == "Style Spheres"
 
     mol2 = fetch("1cd3").add_style("cartoon")
 
-    assert get_final_style_nodes(mol2.node_group)[0].node_tree.name == "Style Cartoon"
+    style2 = get_final_style_nodes(mol2.node_group)[0]
+    assert style2.node_tree is not None
+    assert style2.node_tree.name == "Style Cartoon"
 
 
 def test_selection():
@@ -109,7 +139,7 @@ def test_selection_working(
         pos = mol.named_attribute("position", evaluate=True)
         assert snapshot_custom == pos.shape
         assert snapshot_custom == pos
-        inp.default_value = False
+        inp.default_value = False  # ty: ignore[unresolved-attribute]  # nodebpy sockets don't declare default_value
 
 
 @pytest.mark.parametrize("code", codes)
@@ -138,18 +168,18 @@ def test_iswitch_creation():
     items = [str(x) for x in range(10)]
     tree_boolean = custom_boolean_iswitch("newboolean", items).tree
     # ensure there isn't an item called 'Color' in the created interface
-    assert not tree_boolean.interface.items_tree.get("Color")
-    assert tree_boolean.interface.items_tree["Selection"].in_out == "OUTPUT"
-    assert tree_boolean.interface.items_tree["Inverted"].in_out == "OUTPUT"
+    assert not interface_items(tree_boolean).get("Color")
+    assert interface_socket(tree_boolean, "Selection").in_out == "OUTPUT"
+    assert interface_socket(tree_boolean, "Inverted").in_out == "OUTPUT"
     for i in items:
-        assert tree_boolean.interface.items_tree[str(i)].in_out == "INPUT"
+        assert interface_socket(tree_boolean, str(i)).in_out == "INPUT"
 
     tree_rgba = custom_color_iswitch("newcolor", items).tree
     # ensure there isn't an item called 'selection'
-    assert not tree_rgba.interface.items_tree.get("Selection")
-    assert tree_rgba.interface.items_tree["Color"].in_out == "OUTPUT"
+    assert not interface_items(tree_rgba).get("Selection")
+    assert interface_socket(tree_rgba, "Color").in_out == "OUTPUT"
     for i in items:
-        assert tree_rgba.interface.items_tree[str(i)].in_out == "INPUT"
+        assert interface_socket(tree_rgba, str(i)).in_out == "INPUT"
 
 
 def test_op_custom_color():
@@ -160,9 +190,9 @@ def test_op_custom_color():
     ).tree
 
     assert group
-    assert group.interface.items_tree["G"].name == "G"
-    assert group.interface.items_tree[-1].name == "G"
-    assert group.interface.items_tree[0].name == "Color"
+    assert interface_socket(group, "G").name == "G"
+    assert interface_socket(group, -1).name == "G"
+    assert interface_socket(group, 0).name == "Color"
 
 
 def test_color_lookup_supplied():
@@ -215,6 +245,7 @@ def test_topo_bonds(fetch):
         atoms >> BreakBonds(cutoff=0.0) >> FindBonds() >> join
 
     gs_new = GeometrySet(mol.object)
+    assert gs_new.mesh is not None
     assert len(mol.object.data.edges) == len(gs_new.mesh.edges)
 
 
@@ -222,6 +253,7 @@ def test_is_modifier(fetch):
     bpy.ops.wm.open_mainfile(filepath=str(mn.assets.MN_DATA_FILE))
     for tree in bpy.data.node_groups:
         if tree.name.startswith("Style") and "Preset" not in tree.name:
+            assert isinstance(tree, bpy.types.GeometryNodeTree)
             assert tree.is_modifier
     mol = fetch("4ozs").add_style("spheres")
     assert mol.modifier_node_tree.is_modifier
@@ -230,7 +262,7 @@ def test_is_modifier(fetch):
 def test_node_setup(fetch):
     fetch("4ozs").add_style("spheres")
     tree = bpy.data.node_groups["MN_4ozs"]
-    assert tree.interface.items_tree["Atoms"].name == "Atoms"
+    assert interface_socket(tree, "Atoms").name == "Atoms"
     assert list(get_input(tree).outputs.keys()) == ["Atoms", ""]
     assert list(get_output(tree).inputs.keys()) == ["Geometry", ""]
 
@@ -354,7 +386,7 @@ SYMMETRY_EXAMPLES = {
     "code", ["1STP", "6ZPA", "8QUK", "4PNO", "2C2U", "1H05", "6B8F", "2BUK"]
 )
 def test_symmetry_matches_deposited_assembly(fetch, code):
-    from scipy.spatial import cKDTree
+    from scipy.spatial import KDTree
 
     mol = fetch(code)
     positions = mol.named_attribute("position")
@@ -371,7 +403,7 @@ def test_symmetry_matches_deposited_assembly(fetch, code):
     generated = mol.named_attribute("position", evaluate=True)
 
     assert len(generated) == len(deposited)
-    distance, _ = cKDTree(deposited).query(generated)
+    distance, _ = KDTree(deposited).query(generated)
     assert distance.max() < 1e-3
 
 
@@ -601,7 +633,7 @@ def test_symmetry_helical_axial_symmetry(fetch):
 
 
 def test_symmetry_helical_matches_deposited_filament(fetch):
-    from scipy.spatial import cKDTree
+    from scipy.spatial import KDTree
 
     # 8AZT deposits layers k = -1..1 and the node builds k = 0..2. Both sets are
     # closed under the helix, so the node's copies are the deposit stepped up
@@ -628,7 +660,7 @@ def test_symmetry_helical_matches_deposited_filament(fetch):
     generated = mol.named_attribute("position", evaluate=True)
 
     assert len(generated) == len(expected)
-    distance, _ = cKDTree(expected).query(generated)
+    distance, _ = KDTree(expected).query(generated)
     assert distance.max() < 1e-3
 
 
@@ -716,6 +748,68 @@ def test_evaluate_on_atoms_bundle(fetch):
 
     gs = GeometrySet(mol.object)
     assert gs.pointcloud is None or len(gs.pointcloud.points) == 0
+
+
+@pytest.mark.parametrize(
+    "style",
+    [
+        StyleSpheres,
+        StyleCartoon,
+        StyleRibbon,
+        StyleSticks,
+        StyleBallAndStick,
+        StyleSurface,
+    ],
+)
+def test_style_keeps_atoms_in_bundle(fetch, style):
+    """
+    A style replaces the atoms with display geometry, but keeps the atoms in the
+    'MN/Atoms' bundle so later nodes (and other add-ons reading the evaluated
+    molecule) can still get them with `Get Geometry Atoms`. Previously the first
+    style applied to plain atoms dropped them, as `Evaluate on Atoms` only stored
+    the bundle in 'Bundle' mode.
+    """
+    mol = fetch("4ozs")
+    positions = mol.named_attribute("position")
+    res_id = mol.named_attribute("res_id")
+
+    with mol.tree.reset() as (atoms, join):
+        (atoms >> style() >> GetGeometryAtoms()).o.atoms >> join
+
+    np.testing.assert_allclose(
+        mol.named_attribute("position", evaluate=True), positions
+    )
+    np.testing.assert_array_equal(mol.named_attribute("res_id", evaluate=True), res_id)
+
+
+def _evaluated_counts(mol):
+    mesh = mol.object.evaluated_get(bpy.context.evaluated_depsgraph_get()).data
+    return len(mesh.vertices), len(mesh.edges)
+
+
+def test_styles_stack(fetch):
+    """
+    A style joins its result to the representation of earlier styles, so styles
+    can be stacked (e.g. as separate modifiers) and each still reads the atoms
+    from the 'MN/Atoms' bundle.
+    """
+    mol = fetch("4ozs")
+
+    counts = {}
+    for name, styles in [
+        ("sticks", [StyleSticks]),
+        ("cartoon", [StyleCartoon]),
+        ("both", [StyleSticks, StyleCartoon]),
+    ]:
+        with mol.tree.reset() as (atoms, join):
+            geometry = atoms
+            for style in styles:
+                geometry = geometry >> style()
+            geometry >> join
+        counts[name] = _evaluated_counts(mol)[0]
+
+    assert counts["sticks"] > 0 and counts["cartoon"] > 0
+    assert counts["both"] == counts["sticks"] + counts["cartoon"]
 
 
 # Robert Penner's easing functions as listed on https://easings.net, ported
@@ -1020,6 +1114,8 @@ def test_animate_action(fetch):
     assert np.allclose(mol.named_attribute("end", evaluate=True), 20.0)
 
     scene = bpy.context.scene
+
+    assert scene is not None
     frame = scene.frame_current
     try:
         scene.frame_set(15)
@@ -1077,6 +1173,7 @@ def _simulate_two_point_network(mol, frames: int):
             >> join
         )
     scene = bpy.context.scene
+    assert scene is not None
     start = scene.frame_current
     try:
         for f in range(start, start + frames + 1):
@@ -1186,6 +1283,49 @@ def test_color_matplotlib_matches_matplotlib(fetch, param, name):
     assert np.abs(srgb - cmap(x)[:, :3]).max() * 255 <= tolerance
 
 
+@pytest.mark.parametrize(
+    "node_class, prefix", [(ColorPyMOL, "pymol:"), (ColorVMD, "vmd:"), (ColorCSS, "")]
+)
+def test_named_color_nodes_match_parse_color(fetch, node_class, prefix):
+    """Every colour on the named colour nodes is the one `parse_color` gives."""
+    import inspect
+    from typing import Literal, get_args, get_origin
+
+    params = inspect.signature(node_class.__init__).parameters
+    menus = {
+        param.replace("_", " ").title(): [
+            name
+            for arg in get_args(p.annotation)
+            if get_origin(arg) is Literal
+            for name in get_args(arg)
+        ]
+        for param, p in params.items()
+        if param != "self"
+    }
+    mol = fetch("1BNA")
+    with mol.tree.reset() as (atoms, join):
+        node = node_class()
+        (
+            atoms
+            >> StoreNamedAttribute.point.color(name="named", value=node.o.color)
+            >> join
+        )
+    inputs = node.node.inputs
+    n_checked = 0
+    for menu, names in menus.items():
+        if menu == "Category":
+            continue
+        if "Category" in menus:
+            inputs["Category"].default_value = menu
+        for name in names:
+            inputs[menu].default_value = name
+            color = mol.named_attribute("named", evaluate=True)[0, :3]
+            expected = mn.color.parse_color(prefix + name)
+            assert np.allclose(color, expected, atol=1e-5), f"{menu}: {name}"
+            n_checked += 1
+    assert n_checked >= {ColorPyMOL: 190, ColorVMD: 33, ColorCSS: 148}[node_class]
+
+
 @pytest.mark.parametrize("mode", ["LINEAR", "B_SPLINE"])
 def test_colormap_generator_ramp_model(mode):
     """The generator fits ramps against a numpy model of Blender's Color Ramp;
@@ -1195,11 +1335,16 @@ def test_colormap_generator_ramp_model(mode):
 
     path = Path(__file__).parents[1] / "docs/dev/colormap_node.py"
     spec = importlib.util.spec_from_file_location("colormap_node", path)
+    assert spec is not None and spec.loader is not None
     generator = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(generator)
 
     tree = bpy.data.node_groups.new("ramp_model", "GeometryNodeTree")
-    ramp = tree.nodes.new("ShaderNodeValToRGB").color_ramp
+    assert tree is not None
+    ramp_node = tree.nodes.new("ShaderNodeValToRGB")
+    assert isinstance(ramp_node, bpy.types.ShaderNodeValToRGB)
+    ramp = ramp_node.color_ramp
+    assert ramp is not None
     ramp.interpolation = mode
     rng = np.random.default_rng(0)
     x = np.concatenate([np.linspace(0, 1, 101), rng.random(100)])
@@ -1210,7 +1355,7 @@ def test_colormap_generator_ramp_model(mode):
             ramp.elements.remove(ramp.elements[-1])
         ramp.elements[0].position = 0.0
         ramp.elements[0].color = (*colors[0], 1.0)
-        for p, c in zip(pos[1:], colors[1:]):
+        for p, c in zip(pos[1:], colors[1:].tolist()):
             ramp.elements.new(p).color = (*c, 1.0)
         blender = np.array([ramp.evaluate(v)[:3] for v in x])
         model = np.clip(generator.ramp_basis(pos, x, mode) @ colors, 0, 1)
@@ -1246,3 +1391,291 @@ def test_fade_geometry_zero_removes_geometry(fetch):
 
     evaluated = mol.object.evaluated_get(bpy.context.evaluated_depsgraph_get())
     assert len(evaluated.data.vertices) == 0
+
+
+def _flag_ligand(mol, resname="REA"):
+    ligand = np.zeros(len(mol), dtype=bool)
+    ligand[mol.universe.select_atoms(f"resname {resname}").indices] = True
+    mol.store_named_attribute(ligand, "is_ligand")
+    return ligand
+
+
+def _clear_atoms(obj, points, forward):
+    """Points with a clear ray towards a camera looking along `forward`, by BVH."""
+    from molecularnodes import viewpoint
+    from molecularnodes.scene.base import _WorldBVH
+
+    tree = _WorldBVH(obj, bpy.context.evaluated_depsgraph_get())
+    return int(viewpoint.ray_scorer([tree], points)(np.asarray(forward)[None])[0])
+
+
+def test_best_view_agrees_with_python_raycast(fetch):
+    mol = fetch("1cbs")
+    ligand = _flag_ligand(mol)
+    with mol.tree.reset() as (atoms, join):
+        cartoon = StyleCartoon(atoms)
+        view = BestView(
+            target=atoms,
+            selection=NamedAttribute.boolean("is_ligand"),
+            occluders=cartoon,
+        )
+        (
+            cartoon
+            >> StoreNamedAttribute.point.vector(
+                name="direction", value=view.o.direction
+            )
+            >> StoreNamedAttribute.point.integer(name="visible", value=view.o.visible)
+            >> StoreNamedAttribute.point.integer(name="count", value=view.o.count)
+            >> join
+        )
+
+    forward = mol.named_attribute("direction", evaluate=True)[0]
+    visible = mol.named_attribute("visible", evaluate=True)[0]
+    assert mol.named_attribute("count", evaluate=True)[0] == ligand.sum()
+    # the retinoic acid in 1cbs can be seen whole, though only 10 of its 22 atoms
+    # are clear from the front
+    assert visible == ligand.sum()
+    positions = mol.named_attribute("position")[ligand]
+    assert _clear_atoms(mol.object, positions, forward) == visible
+
+
+@pytest.mark.parametrize("factor", [0.0, 1.0])
+def test_orient_to_best_view_faces_the_camera(fetch, factor):
+    mol = fetch("1cbs")
+    ligand = _flag_ligand(mol)
+    positions = mol.named_attribute("position")
+    camera = bpy.data.objects.new("best_view", bpy.data.cameras.new("best_view"))
+    scene().collection.objects.link(camera)
+    camera.rotation_euler = (1.2, 0.3, 2.5)
+    view_layer().update()
+    forward = -np.array(camera.matrix_world)[:3, 2]
+
+    with mol.tree.reset() as (atoms, join):
+        orient = OrientToBestView(
+            geometry=StyleCartoon(atoms),
+            atoms=atoms,
+            selection=NamedAttribute.boolean("is_ligand"),
+            camera=camera,
+            factor=factor,
+        )
+        moved = (
+            atoms
+            >> TransformGeometry(transform=orient.o.transform, mode="Matrix")
+            >> StoreNamedAttribute.point.vector(
+                name="moved", value=Position().o.position
+            )
+        )
+        JoinGeometry([moved, orient.o.geometry]) >> join
+
+    moved = mol.named_attribute("moved", evaluate=True)[: len(mol)]
+    clear = _clear_atoms(mol.object, moved[ligand], forward)
+    # removing the camera re-evaluates the tree, so only after measuring
+    bpy.data.objects.remove(camera)
+    if factor == 0.0:
+        assert np.allclose(moved, positions, atol=1e-5)
+        return
+    # rigid, and turning about the ligand rather than moving it
+    assert np.allclose(
+        np.linalg.norm(moved - moved[0], axis=1),
+        np.linalg.norm(positions - positions[0], axis=1),
+        atol=1e-4,
+    )
+    assert np.allclose(
+        moved[ligand].mean(axis=0), positions[ligand].mean(axis=0), atol=1e-4
+    )
+    assert clear == ligand.sum()
+
+
+def _rotation_angle(a, b):
+    cos = (np.trace(a.T @ b) - 1.0) / 2.0
+    return np.arccos(np.clip(cos, -1.0, 1.0))
+
+
+def test_orient_to_best_view_smooths_with_half_life(fetch):
+    mol = fetch("1cbs")
+    _flag_ligand(mol)
+    scene = bpy.context.scene
+    assert scene is not None
+    camera = bpy.data.objects.new("best_view", bpy.data.cameras.new("best_view"))
+    scene.collection.objects.link(camera)
+    camera.rotation_euler = (1.2, 0.3, 2.5)
+    frames_per_half_life = 4
+    dt = scene.render.fps_base / scene.render.fps
+
+    with mol.tree.reset() as (atoms, join):
+        cartoon = StyleCartoon(atoms)
+        transforms = {}
+        for name, smooth in (("target", False), ("smooth", True)):
+            transforms[name] = OrientToBestView(
+                geometry=cartoon,
+                atoms=atoms,
+                selection=NamedAttribute.boolean("is_ligand"),
+                camera=camera,
+                smoothing=smooth,
+                half_life=frames_per_half_life * dt,
+            ).o.transform
+        probed = cartoon
+        for name, transform in transforms.items():
+            for axis, vector in (("x", (1, 0, 0)), ("y", (0, 1, 0))):
+                probed = probed >> StoreNamedAttribute.point.vector(
+                    name=f"{name}_{axis}", value=TransformDirection(vector, transform)
+                )
+            # where the origin goes is the translation
+            probed = probed >> StoreNamedAttribute.point.vector(
+                name=f"{name}_t", value=TransformPoint((0, 0, 0), transform)
+            )
+        probed >> join
+
+    def read(name):
+        x = mol.named_attribute(f"{name}_x", evaluate=True)[0]
+        y = mol.named_attribute(f"{name}_y", evaluate=True)[0]
+        return np.column_stack([x, y, np.cross(x, y)])
+
+    def translation(name):
+        return mol.named_attribute(f"{name}_t", evaluate=True)[0]
+
+    scene.frame_set(1)
+    start, start_t = read("smooth"), translation("smooth")
+    assert np.allclose(start, read("target"), atol=1e-5)
+    assert np.allclose(start_t, translation("target"), atol=1e-5)
+    # the camera jumps after frame 1, and the smoothed view eases after it
+    camera.rotation_euler = (0.4, -0.6, 0.9)
+    gaps, gaps_t = [], []
+    for frame in range(2, 2 + 3 * frames_per_half_life):
+        scene.frame_set(frame)
+        target, target_t = read("target"), translation("target")
+        gaps.append(_rotation_angle(read("smooth"), target))
+        gaps_t.append(np.linalg.norm(translation("smooth") - target_t))
+    bpy.data.objects.remove(camera)
+
+    # the gap halves every half life: a = lerp(a, b, 1 - 2^(-dt / half_life))
+    halving = 2.0 ** (-np.arange(1, len(gaps) + 1) / frames_per_half_life)
+    first_gap = _rotation_angle(start, target)
+    assert first_gap > 0.5
+    assert np.allclose(gaps, first_gap * halving, rtol=1e-3, atol=1e-4)
+    first_gap_t = np.linalg.norm(start_t - target_t)
+    assert first_gap_t > 0.1
+    assert np.allclose(gaps_t, first_gap_t * halving, rtol=1e-3, atol=1e-4)
+
+
+def test_orient_to_best_view_moves_a_camera_instead(fetch):
+    mol = fetch("1cbs")
+    ligand = _flag_ligand(mol)
+    scene = bpy.context.scene
+    assert scene is not None
+
+    def camera(name):
+        obj = bpy.data.objects.new(name, bpy.data.cameras.new(name))
+        scene.collection.objects.link(obj)
+        return obj
+
+    # Orient reads `aim` and `shot` follows the result: one camera can't be both
+    aim, shot = camera("aim"), camera("shot")
+    aim.location = (0.5, -3.0, 1.0)
+    aim.rotation_euler = (1.2, 0.3, 2.5)
+    follow = shot.constraints.new("GEOMETRY_ATTRIBUTE")
+    follow.target = mol.object
+    follow.attribute_name = "camera_transform"
+    follow.data_type = "FLOAT4X4"
+    follow.apply_target_transform = True
+
+    with mol.tree.reset() as (atoms, join):
+        cartoon = StyleCartoon(atoms)
+        orient = OrientToBestView(
+            geometry=cartoon,
+            atoms=atoms,
+            selection=NamedAttribute.boolean("is_ligand"),
+            camera=aim,
+            move_geometry=False,
+        )
+        # the constraint samples index 0, so the marker vertex goes first
+        marker = (
+            MeshLine(count=1)
+            >> StoreNamedAttribute.point.matrix(
+                name="camera_transform", value=orient.o.camera_transform
+            )
+            >> StoreNamedAttribute.point.matrix(
+                name="transform", value=orient.o.transform
+            )
+        )
+        JoinGeometry([marker, orient.o.geometry]) >> join
+    view_layer().update()
+
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    mesh = mol.object.evaluated_get(depsgraph).data
+    oriented = np.array([v.co for v in mesh.vertices][1:])
+    # read row-major through the mesh, the way the constraint does
+    transform = np.array(mesh.attributes["transform"].data[0].value)
+    world, aim_world = np.array(mol.object.matrix_world), np.array(aim.matrix_world)
+    shot_world = np.array(shot.matrix_world)
+    forward = -shot_world[:3, 2] / np.linalg.norm(shot_world[:3, 2])
+    positions = mol.named_attribute("position")
+    clear = _clear_atoms(mol.object, positions[ligand], forward)
+    clear_from_aim = _clear_atoms(mol.object, positions[ligand], -aim_world[:3, 2])
+
+    # the same tree without Orient, to compare the geometry against
+    with mol.tree.reset() as (atoms, join):
+        JoinGeometry([MeshLine(count=1), StyleCartoon(atoms)]) >> join
+    view_layer().update()
+    depsgraph = bpy.context.evaluated_depsgraph_get()
+    vertices = mol.object.evaluated_get(depsgraph).data.vertices
+    unmoved = np.array([v.co for v in vertices][1:])
+    # removing the cameras re-evaluates the tree, so only after measuring
+    bpy.data.objects.remove(aim)
+    bpy.data.objects.remove(shot)
+
+    assert not np.allclose(transform, np.eye(4), atol=1e-3)
+    assert np.allclose(oriented, unmoved, atol=1e-5)
+    # moving the camera by the inverse of Transform gives the view that moving
+    # the geometry by Transform would
+    expected = world @ np.linalg.inv(transform) @ np.linalg.inv(world) @ aim_world
+    assert np.allclose(shot_world, expected, atol=1e-4)
+    assert clear_from_aim < ligand.sum()
+    assert clear == ligand.sum()
+
+
+def test_best_view_hysteresis_holds_the_previous_direction(fetch):
+    mol = fetch("1cbs")
+    ligand = _flag_ligand(mol)
+
+    def best_view(previous, hysteresis):
+        with mol.tree.reset() as (atoms, join):
+            cartoon = StyleCartoon(atoms)
+            view = BestView(
+                target=atoms,
+                selection=NamedAttribute.boolean("is_ligand"),
+                occluders=cartoon,
+                previous_direction=tuple(previous),
+                hysteresis=hysteresis,
+            )
+            (
+                cartoon
+                >> StoreNamedAttribute.point.vector(
+                    name="direction", value=view.o.direction
+                )
+                >> StoreNamedAttribute.point.integer(
+                    name="visible", value=view.o.visible
+                )
+                >> join
+            )
+        return (
+            mol.named_attribute("direction", evaluate=True)[0],
+            int(mol.named_attribute("visible", evaluate=True)[0]),
+        )
+
+    best, best_visible = best_view((0.0, 0.0, 0.0), 0.0)
+    # a previous direction 20° away from the best one, which sees fewer atoms
+    axis = np.cross(best, (0.0, 0.0, 1.0))
+    axis /= np.linalg.norm(axis)
+    angle = np.radians(20)
+    previous = best * np.cos(angle) + np.cross(axis, best) * np.sin(angle)
+    _, previous_visible = best_view(previous, 1.0)
+    assert previous_visible < best_visible
+    gap = (best_visible - previous_visible) / ligand.sum()
+
+    # leaves the previous direction only when the gain is more than the margin
+    moved, _ = best_view(previous, gap * 0.5)
+    held, held_visible = best_view(previous, gap * 1.5)
+    assert np.degrees(np.arccos(np.clip(moved @ best, -1, 1))) < 1.0
+    assert np.allclose(held, previous, atol=1e-5)
+    assert held_visible == previous_visible

@@ -91,7 +91,7 @@ class GeometryToPlanar(AssetGeometryGroup):
         with g.Frame("Transform to Planar"):
             invert_rotation = geometry_principal_components.o.rotation.invert()
             _string = g.String(
-                string="The matrix rotates first and then translates, so the translation is the group center rotated into the planar basis. Without that the planar geometry is not centred on the origin."
+                "The matrix rotates first and then translates, so the translation is the group center rotated into the planar basis. Without that the planar geometry is not centred on the origin."
             )
             combine_transform = g.CombineTransform(
                 translation=geometry_principal_components.o.group_center.rotate(

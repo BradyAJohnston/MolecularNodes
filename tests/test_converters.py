@@ -1,4 +1,5 @@
 import itertools
+from pathlib import Path
 import biotite.structure as struc
 import numpy as np
 import pytest
@@ -25,6 +26,7 @@ def test_biotite_converter(fetch, code, format):
     path = download.StructureDownloader(cache=data_dir).download(
         code=code, format=format, database="rcsb"
     )
+    assert isinstance(path, Path)
     array = read_structure(path).array
     if isinstance(array, struc.AtomArrayStack):
         array = array[0]
@@ -88,6 +90,7 @@ def test_universe_from_atoms_topology(code):
     stack = _read_array(code)
     array = stack[0]
     u = universe_from_atoms(stack)
+    assert u.atoms is not None
 
     # single-model structures become a single-frame universe
     assert u.trajectory.n_frames == 1
@@ -117,7 +120,9 @@ def test_universe_from_atoms_topology(code):
 def test_universe_from_atoms_types_from_elements():
     """Types and masses come from the parsed elements, not guessed from atom names."""
     array = read_structure(data_dir / "1f2n.bcif").array[0]
+    assert isinstance(array, struc.AtomArray)
     u = universe_from_atoms(array)
+    assert u.atoms is not None
 
     assert np.array_equal(u.atoms.types, np.char.upper(array.element.astype(str)))
     # 1f2n has calcium ions with the atom name CA, which name-guessing made carbon
@@ -136,6 +141,7 @@ def test_universe_from_atoms_multimodel(code):
     assert n_models > 1  # guard: these fixtures really are ensembles
 
     u = universe_from_atoms(stack)
+    assert u.atoms is not None
     assert u.trajectory.n_frames == n_models
 
     # every trajectory frame matches the corresponding model's coordinates
@@ -171,7 +177,7 @@ def test_from_file_loads_universe_backed_entity(suffix):
     traj = mn.Molecule.from_file(data_dir / f"1BNA.{suffix}")
 
     # it is genuinely Universe-backed
-    assert traj.universe.atoms.n_atoms > 0
+    assert traj.atoms.n_atoms > 0
     assert traj.universe.trajectory.n_frames == 1
 
     attributes = traj.list_attributes()
@@ -190,7 +196,7 @@ def test_from_file_selections_work():
     assert item.name in traj.list_attributes()
     # the boolean selection actually selects a subset of atoms
     mask = traj.named_attribute(item.name)
-    assert 0 < mask.sum() < traj.universe.atoms.n_atoms
+    assert 0 < mask.sum() < traj.atoms.n_atoms
 
 
 def test_from_file_sdf_has_bonds():

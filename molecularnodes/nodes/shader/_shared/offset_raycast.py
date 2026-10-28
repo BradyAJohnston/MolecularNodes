@@ -124,7 +124,7 @@ class OffsetRaycast(CustomShaderGroup):
             >> hit_distance
         )
 
-        raycast >> is_hit
+        raycast.o.is_hit >> is_hit
         raycast.o.self_hit >> self_hit
         raycast.o.hit_position >> hit_position
         raycast.o.hit_normal >> hit_normal

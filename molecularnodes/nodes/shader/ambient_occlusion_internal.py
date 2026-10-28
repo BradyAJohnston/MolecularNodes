@@ -7,15 +7,15 @@ from nodebpy import TreeBuilder
 from nodebpy import shader as s
 from nodebpy.builder import (
     AssetShaderGroup,
+    ColorSocket,
     FloatSocket,
     MenuSocket,
     PackageLibrary,
     ShaderSocket,
     SocketAccessor,
 )
-from nodebpy.types import InputFloat, InputMenu
+from nodebpy.types import InputColor, InputFloat, InputMenu
 from .color_ao import ColorAO
-from .mn_color import MNColor
 
 
 class AmbientOcclusionInternal(AssetShaderGroup):
@@ -24,6 +24,8 @@ class AmbientOcclusionInternal(AssetShaderGroup):
 
     Parameters
     ----------
+    color : InputColor
+        Color
     menu : InputMenu | Literal["AO", "None"]
         Shade with ambient occlusion (`AO`) or with the plain color (`None`)
     ao_space : InputMenu | Literal["Global", "Local"]
@@ -35,6 +37,8 @@ class AmbientOcclusionInternal(AssetShaderGroup):
 
     Inputs
     ------
+    i.color : ColorSocket
+        Color
     i.menu : MenuSocket
         Shade with ambient occlusion (`AO`) or with the plain color (`None`)
     i.ao_space : MenuSocket
@@ -47,7 +51,7 @@ class AmbientOcclusionInternal(AssetShaderGroup):
     Outputs
     -------
     o.shader : ShaderSocket
-        Emission of the occluded color, mixed towards transparent by the alpha of the `Color` attribute
+        Emission of the occluded color. Always opaque: ambient occlusion does not work alongside a Transparent BSDF, so the alpha of `Color` is ignored
     """
 
     _name = "Ambient Occlusion Internal"
@@ -56,6 +60,8 @@ class AmbientOcclusionInternal(AssetShaderGroup):
     _color_tag = "SHADER"
 
     class _Inputs(SocketAccessor):
+        color: ColorSocket
+        """Color"""
         menu: MenuSocket
         """Shade with ambient occlusion (`AO`) or with the plain color (`None`)"""
         ao_space: MenuSocket
@@ -67,7 +73,7 @@ class AmbientOcclusionInternal(AssetShaderGroup):
 
     class _Outputs(SocketAccessor):
         shader: ShaderSocket
-        """Emission of the occluded color, mixed towards transparent by the alpha of the `Color` attribute"""
+        """Emission of the occluded color. Always opaque: ambient occlusion does not work alongside a Transparent BSDF, so the alpha of `Color` is ignored"""
 
     if TYPE_CHECKING:
 
@@ -78,6 +84,7 @@ class AmbientOcclusionInternal(AssetShaderGroup):
 
     def __init__(
         self,
+        color: InputColor = None,
         menu: InputMenu | Literal["AO", "None"] = "AO",
         ao_space: InputMenu | Literal["Global", "Local"] = "Global",
         distance: InputFloat = 1.0,
@@ -85,6 +92,7 @@ class AmbientOcclusionInternal(AssetShaderGroup):
     ):
         super().__init__(
             **{
+                "Color": color,
                 "Menu": menu,
                 "AO Space": ao_space,
                 "Distance": distance,
@@ -93,6 +101,7 @@ class AmbientOcclusionInternal(AssetShaderGroup):
         )
 
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
+        color = tree.inputs.color("Color", (0.0, 0.0, 0.0, 0.0))
         menu = tree.inputs.menu(
             "Menu",
             "AO",
@@ -123,24 +132,20 @@ class AmbientOcclusionInternal(AssetShaderGroup):
         )
         shader = tree.outputs.shader(
             "Shader",
-            description="Emission of the occluded color, mixed towards transparent by the alpha of the `Color` attribute",
+            description="Emission of the occluded color. Always opaque: ambient occlusion does not work alongside a Transparent BSDF, so the alpha of `Color` is ignored",
         )
 
-        mn_color = MNColor()
-        color_ao = ColorAO(
-            color=mn_color.o.color,
-            menu=menu,
-            ao_space=ao_space,
-            distance=distance,
-            exponent=exponent,
-        )
-        mix_shader = s.MixShader(
-            fac=mn_color.o.alpha,
-            shader=s.TransparentBSDF(),
-            shader_001=s.Emission(color=color_ao),
+        emission = s.Emission(
+            ColorAO(
+                color=color,
+                menu=menu,
+                ao_space=ao_space,
+                distance=distance,
+                exponent=exponent,
+            )
         )
 
-        mix_shader >> shader
+        emission >> shader
 
 
 ASSET = AmbientOcclusionInternal

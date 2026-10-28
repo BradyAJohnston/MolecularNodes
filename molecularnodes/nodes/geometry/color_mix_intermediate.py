@@ -116,41 +116,28 @@ class ColorMixIntermediate(AssetGeometryGroup):
         output = tree.outputs.color("Output", (0.8, 0.8, 0.8, 1.0))
 
         color_to_oklab = ColorToOKLab(color=intermediate_1)
-        mix = g.Mix.vector(
-            factor,
-            g.Mix.vector(
-                factor, ColorToOKLab(color=a), color_to_oklab, clamp_factor=True
-            ).o.result_vector,
-            g.Mix.vector(
-                factor, color_to_oklab, ColorToOKLab(color=b), clamp_factor=True
-            ).o.result_vector,
-            clamp_factor=True,
+        mix = factor.mix.vector(
+            factor.mix.vector(ColorToOKLab(color=a), color_to_oklab),
+            factor.mix.vector(color_to_oklab, ColorToOKLab(color=b)),
         )
-        result = g.Mix.color(
-            factor, a, intermediate_1, clamp_factor=True
-        ).o.result_color
+        result = factor.mix.color(a, intermediate_1)
         combine_color = g.CombineColor(
             red=result.r, green=result.g, blue=result.b, alpha=a.a
         )
-        result_1 = g.Mix.color(
-            factor, intermediate_1, b, clamp_factor=True
-        ).o.result_color
+        result_1 = factor.mix.color(intermediate_1, b)
         combine_color_1 = g.CombineColor(
             red=result_1.r, green=result_1.g, blue=result_1.b, alpha=intermediate_1.a
         )
-        result_2 = g.Mix.color(
-            factor, combine_color, combine_color_1, clamp_factor=True
-        ).o.result_color
+        result_2 = factor.mix.color(combine_color, combine_color_1)
         combine_color_2 = g.CombineColor(
             red=result_2.r,
             green=result_2.g,
             blue=result_2.b,
             alpha=combine_color.o.color.a,
         )
-        result_3 = g.Mix.color(factor, a, b, clamp_factor=True).o.result_color
+        result_3 = factor.mix.color(a, b)
         switch = intermediate.switch.color(
-            ColorOKLabMix(factor=factor, a=a, b=b),
-            OKLabToColor(oklab=mix.o.result_vector),
+            ColorOKLabMix(factor=factor, a=a, b=b), OKLabToColor(oklab=mix)
         )
         switch_1 = intermediate.switch.color(
             g.CombineColor(

@@ -1,7 +1,7 @@
 from abc import ABCMeta
 from contextlib import contextmanager
 from enum import StrEnum
-from typing import TYPE_CHECKING, Iterator, List, NamedTuple, cast
+from typing import TYPE_CHECKING, Generator, List, NamedTuple, cast
 import bpy
 from bpy.types import GeometryNodeTree, NodesModifier
 from databpy import (
@@ -10,9 +10,9 @@ from databpy import (
 from nodebpy import geometry as g
 from nodebpy.builder import GeometrySocket, TreeBuilder
 from ..blender import utils as blender_utils
+from ..blender.registered import object_props
 from ..material import add_all_materials
 from ..nodes._utils import custom_boolean_iswitch, custom_color_iswitch
-from .utilities import BoolObjectMNProperty
 
 if TYPE_CHECKING:
     from ..ui.props import MolecularNodesObjectProperties
@@ -66,9 +66,10 @@ class MolecularTree(TreeBuilder[GeometryNodeTree]):
         self, in_out: str
     ) -> bpy.types.NodeTreeInterfaceSocket | None:
         """The tree's first geometry interface socket in the given direction, if any."""
+        assert self.tree.interface is not None
         for item in self.tree.interface.items_tree:
             if (
-                item.item_type == "SOCKET"
+                isinstance(item, bpy.types.NodeTreeInterfaceSocket)
                 and item.in_out == in_out
                 and item.socket_type == "NodeSocketGeometry"
             ):
@@ -89,7 +90,9 @@ class MolecularTree(TreeBuilder[GeometryNodeTree]):
         return self._wrap(self._input_node().outputs[item.identifier])
 
     @property
-    def geometry(self) -> GeometrySocket:
+    def geometry(  # ty: ignore[invalid-property-type-override]  # shadows the TreeBuilder.geometry() constructor on purpose
+        self,
+    ) -> GeometrySocket:
         """The geometry output of the tree, adding the output if it is missing."""
         item = self._interface_geometry("OUTPUT")
         if item is None:
@@ -105,24 +108,28 @@ class MolecularTree(TreeBuilder[GeometryNodeTree]):
         """
         output = self.geometry
         links = output.socket.links
-        if links:
-            node = links[0].from_socket.node
-            if node.bl_idname == "GeometryNodeJoinGeometry":
-                return self._wrap(node.inputs[0])
+        from_socket = links[0].from_socket if links else None
+        node = from_socket.node if from_socket is not None else None
+        if node is not None and node.bl_idname == "GeometryNodeJoinGeometry":
+            return self._wrap(node.inputs[0])
 
         join = g.JoinGeometry()
-        if links and links[0].from_socket.node.bl_idname != "NodeGroupInput":
+        if (
+            from_socket is not None
+            and node is not None
+            and node.bl_idname != "NodeGroupInput"
+        ):
             # real work already feeds the output, so join it rather than orphan it.
             # a bare input -> output passthrough is just the tree's default state and
             # is dropped, otherwise unstyled geometry is rendered alongside every branch
-            self._wrap(links[0].from_socket) >> join
+            self._wrap(from_socket) >> join
         join >> output
         return join.i.geometry
 
     @contextmanager
     def reset(
         self, input: str = "Atoms", output: str = "Geometry"
-    ) -> Iterator[ResetSockets]:
+    ) -> Generator[ResetSockets]:
         """
         Clear the tree back to a default state and build within it.
 
@@ -147,8 +154,19 @@ class MolecularEntity(
     BlenderObject,
     metaclass=ABCMeta,
 ):
-    update_with_scene = BoolObjectMNProperty("update_with_scene")
-    _entity_type: EntityType | None = None
+    #: set by each concrete entity class
+    _entity_type: EntityType
+    #: the builder for this entity's node tree
+    _tree_class: type[MolecularTree] = MolecularTree
+
+    @property
+    def update_with_scene(self) -> bool:
+        """Update the entity when the scene frame changes."""
+        return self.props.update_with_scene
+
+    @update_with_scene.setter
+    def update_with_scene(self, value: bool) -> None:
+        self.props.update_with_scene = value
 
     def __init__(self) -> None:
         super().__init__(obj=None)
@@ -202,7 +220,7 @@ class MolecularEntity(
     @property
     def props(self) -> "MolecularNodesObjectProperties":
         """The custom Blender properties for the molecule object."""
-        return self.object.mn  # ty: ignore[unresolved-attribute]
+        return object_props(self.object)
 
     @property
     def node_group(self) -> bpy.types.GeometryNodeTree:
@@ -222,7 +240,7 @@ class MolecularEntity(
     @property
     def tree(self) -> MolecularTree:
         if self._tree is None:
-            self._tree = MolecularTree(self, self.modifier_node_tree)
+            self._tree = self._tree_class(self, self.modifier_node_tree)
         return self._tree
 
     @tree.setter
@@ -282,8 +300,8 @@ class MolecularEntity(
         with TreeBuilder.geometry(name) as tree:
             (tree.inputs.geometry("Atoms") >> tree.outputs.geometry("Geometry"))
         tree.tree.is_modifier = True
-        self.object.modifiers.new("Molecular Nodes", "NODES")
-        self.object.modifiers[-1].node_group = tree.tree
+        mod = cast(NodesModifier, self.object.modifiers.new("Molecular Nodes", "NODES"))
+        mod.node_group = tree.tree
 
     def get_view(self) -> List[tuple]:
         """

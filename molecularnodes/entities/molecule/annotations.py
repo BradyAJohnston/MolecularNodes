@@ -92,7 +92,7 @@ class MoleculeInfo(MoleculeAnnotation):
     def defaults(self) -> None:
         self.interface.text_align = "left"
 
-    def validate(self, input_name: str = None) -> bool:
+    def validate(self, input_name: str | None = None) -> bool:
         params = self.interface
         if input_name == "location":
             x, y = params.location
@@ -107,6 +107,7 @@ class MoleculeInfo(MoleculeAnnotation):
         if params.show_models:
             text = f"Models: {universe.trajectory.n_frames}"
         if params.show_atoms:
+            assert universe.atoms is not None
             text = text + f"|Atoms: {universe.atoms.n_atoms}"
         if params.custom_text != "":
             text = text + "|" + params.custom_text
@@ -149,7 +150,7 @@ class AtomInfo(MoleculeAnnotation):
         params.text_size = 16
         params.text_color = (1, 1, 1, 1)
 
-    def validate(self, input_name: str = None) -> bool:
+    def validate(self, input_name: str | None = None) -> bool:
         params = self.interface
         if input_name in (None, "selection", "periodic", "updating"):
             if isinstance(params.selection, str):
@@ -208,7 +209,7 @@ class COM(MoleculeAnnotation):
         # show a default pointer
         params.line_pointer_length = 2
 
-    def validate(self, input_name: str = None) -> bool:
+    def validate(self, input_name: str | None = None) -> bool:
         params = self.interface
         if input_name in (None, "selection", "periodic", "updating"):
             if isinstance(params.selection, str):
@@ -265,7 +266,7 @@ class COMDistance(MoleculeAnnotation):
         params = self.interface
         params.line_arrow_size = 0.1
 
-    def validate(self, input_name: str = None) -> bool:
+    def validate(self, input_name: str | None = None) -> bool:
         params = self.interface
         universe = self.trajectory.universe
         if input_name in (None, "selection1", "periodic", "updating"):
@@ -349,15 +350,16 @@ class CanonicalDihedrals(MoleculeAnnotation):
         params.line_arrow_size = 10.0
         params.mesh_thickness = 0.1
 
-    def validate(self, input_name: str = None) -> bool:
+    def validate(self, input_name: str | None = None) -> bool:
         params = self.interface
         if input_name in (None, "resid"):
             universe = self.trajectory.universe
+            assert universe.residues is not None
             # verify residue in universe - raises exception if invalid
             self.residue = universe.residues[params.resid - 1]
         return True
 
-    def _get_start_dv(self, dihedral: list) -> Vector:
+    def _get_start_dv(self, dihedral: AtomGroup) -> Vector:
         """Get the direction vector along which to start the arc"""
         v0 = Vector(dihedral.atoms[0].position)
         v1 = Vector(dihedral.atoms[1].position)
@@ -369,7 +371,10 @@ class CanonicalDihedrals(MoleculeAnnotation):
         normal = v2 - v1
         # (v10 x normal) x v20 is a vector in the first plane that is
         # perpendicular to the normal - get the unit vector
-        dv = v10.cross(normal).cross(v20)
+        perpendicular = v10.cross(normal)
+        assert isinstance(perpendicular, Vector)  # cross of 3D vectors
+        dv = perpendicular.cross(v20)
+        assert isinstance(dv, Vector)
         dv.normalize()
         return dv
 
@@ -465,7 +470,7 @@ class UniverseInfo(MoleculeAnnotation):
         params = self.interface
         params.text_align = "left"
 
-    def validate(self, input_name: str = None) -> bool:
+    def validate(self, input_name: str | None = None) -> bool:
         params = self.interface
         if input_name in (None, "location"):
             x, y = params.location
@@ -492,6 +497,7 @@ class UniverseInfo(MoleculeAnnotation):
             if "step" in u.trajectory.ts.data:
                 text += f"|Step : {u.trajectory.ts.data['step']}"
         if params.show_topology:
+            assert topology_filename is not None
             text += "|Topology : " + Path(topology_filename).name
         if params.show_trajectory:
             if is_streaming:

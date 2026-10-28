@@ -63,7 +63,8 @@ def install():
 
 
 def uninstall():
-    for folder in bpy.utils.app_template_paths():
+    # fake-bpy-module types the generator returned here as None
+    for folder in bpy.utils.app_template_paths():  # ty: ignore[not-iterable]
         path = Path(folder).absolute() / SUBFOLDER
         if "Molecular Nodes" not in str(path):
             continue

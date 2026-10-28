@@ -6,11 +6,11 @@
 
 VERSION 1
 
-441e6ca5-e514-4e77-a3cd-25fc1a2e08ae:Compositor:Compositor
 1f117b60-46a6-4a87-8589-2c96445ca7bd:Molecular Nodes:Molecular Nodes
 85730213-4c2e-469f-b333-52ac53adf274:Molecular Nodes/Animate:Molecular Nodes-Animate
 dfef0d3c-e718-420a-8b22-e7c3a3a9e333:Molecular Nodes/Attributes:Molecular Nodes-Attributes
 d3f975df-8408-4972-a669-8187a57e01d0:Molecular Nodes/Color:Molecular Nodes-Color
+874a72a6-7cf2-456a-ab07-e79f5a1e4294:Molecular Nodes/Compositor:Molecular Nodes-Compositor
 9c167a5c-d0a6-457d-9e9c-90f3edd29e10:Molecular Nodes/Curves:Molecular Nodes-Curves
 0094c3e0-7885-427b-81b4-187a84dcff18:Molecular Nodes/DNA:Molecular Nodes-DNA
 35b7cc56-45fd-4113-8e88-3c7387edb2d8:Molecular Nodes/Density:Molecular Nodes-Density

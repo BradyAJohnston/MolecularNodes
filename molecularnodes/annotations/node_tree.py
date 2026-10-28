@@ -1,18 +1,29 @@
+from typing import cast
 import bpy
 
 
-def annotations_node_tree():
-    node_group = bpy.data.node_groups.new(type="GeometryNodeTree", name="Annotations")
+def annotations_node_tree() -> bpy.types.GeometryNodeTree:
+    node_group = cast(
+        bpy.types.GeometryNodeTree,
+        bpy.data.node_groups.new(type="GeometryNodeTree", name="Annotations"),
+    )
     node_group.is_modifier = True
+    interface = node_group.interface
+    assert interface is not None
 
+    # the stubs type socket_type as Literal["DEFAULT"], it takes a socket idname
     # Output Socket Geometry
-    node_group.interface.new_socket(
-        name="Geometry", in_out="OUTPUT", socket_type="NodeSocketGeometry"
+    interface.new_socket(
+        name="Geometry",
+        in_out="OUTPUT",
+        socket_type="NodeSocketGeometry",  # ty: ignore[invalid-argument-type]
     )
 
     # Input Socket Geometry
-    node_group.interface.new_socket(
-        name="Geometry", in_out="INPUT", socket_type="NodeSocketGeometry"
+    interface.new_socket(
+        name="Geometry",
+        in_out="INPUT",
+        socket_type="NodeSocketGeometry",  # ty: ignore[invalid-argument-type]
     )
 
     # initialize nodes
@@ -31,24 +42,32 @@ def annotations_node_tree():
     # node Is Line Attribute
     is_line_attribute = node_group.nodes.new("GeometryNodeInputNamedAttribute")
     is_line_attribute.name = "Is Line Attribute"
-    is_line_attribute.data_type = "BOOLEAN"
-    is_line_attribute.inputs["Name"].default_value = "is_line"
+    cast(
+        bpy.types.GeometryNodeInputNamedAttribute, is_line_attribute
+    ).data_type = "BOOLEAN"
+    cast(
+        bpy.types.NodeSocketString, is_line_attribute.inputs["Name"]
+    ).default_value = "is_line"
 
     # node Thickness Attribute
     thickness_attribute = node_group.nodes.new("GeometryNodeInputNamedAttribute")
     thickness_attribute.name = "Thickness Attribute"
-    thickness_attribute.inputs["Name"].default_value = "thickness"
+    cast(
+        bpy.types.NodeSocketString, thickness_attribute.inputs["Name"]
+    ).default_value = "thickness"
 
     # node Curve Circle
     curve_circle = node_group.nodes.new("GeometryNodeCurvePrimitiveCircle")
     curve_circle.name = "Curve Circle"
-    curve_circle.inputs["Resolution"].default_value = 32
-    curve_circle.inputs["Radius"].default_value = 0.001
+    cast(bpy.types.NodeSocketInt, curve_circle.inputs["Resolution"]).default_value = 32
+    cast(bpy.types.NodeSocketFloat, curve_circle.inputs["Radius"]).default_value = 0.001
 
     # node Curve to Mesh
     curve_to_mesh = node_group.nodes.new("GeometryNodeCurveToMesh")
     curve_to_mesh.name = "Curve to Mesh"
-    curve_to_mesh.inputs["Fill Caps"].default_value = True
+    cast(
+        bpy.types.NodeSocketBool, curve_to_mesh.inputs["Fill Caps"]
+    ).default_value = True
 
     # node Join Geometry
     join_geometry = node_group.nodes.new("GeometryNodeJoinGeometry")
@@ -61,16 +80,24 @@ def annotations_node_tree():
     # node Material Slot Attribute
     material_slot_attribute = node_group.nodes.new("GeometryNodeInputNamedAttribute")
     material_slot_attribute.name = "Material Slot Attribute"
-    material_slot_attribute.data_type = "INT"
+    cast(
+        bpy.types.GeometryNodeInputNamedAttribute, material_slot_attribute
+    ).data_type = "INT"
     # Name
-    material_slot_attribute.inputs["Name"].default_value = "material_slot_index"
+    cast(
+        bpy.types.NodeSocketString, material_slot_attribute.inputs["Name"]
+    ).default_value = "material_slot_index"
 
     # node Shade Smooth Attribute
     shade_smooth_attribute = node_group.nodes.new("GeometryNodeInputNamedAttribute")
     shade_smooth_attribute.name = "Shade Smooth Attribute"
-    shade_smooth_attribute.data_type = "BOOLEAN"
+    cast(
+        bpy.types.GeometryNodeInputNamedAttribute, shade_smooth_attribute
+    ).data_type = "BOOLEAN"
     # Name
-    shade_smooth_attribute.inputs["Name"].default_value = "shade_smooth"
+    cast(
+        bpy.types.NodeSocketString, shade_smooth_attribute.inputs["Name"]
+    ).default_value = "shade_smooth"
 
     # node Set Shade Smooth
     set_shade_smooth = node_group.nodes.new("GeometryNodeSetShadeSmooth")

@@ -588,8 +588,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                         curve=reverse_curve,
                         selection=OxDNADirection(Atoms=reverse_curve),
                     )
-                curve_circle = g.CurveCircle(resolution=quality * 4)
-                switch = g.EndpointSelection(start_size=0).o.selection.switch.float(
+                curve_circle = g.CurveCircle(quality * 4)
+                switch = g.EndpointSelection(0).o.selection.switch.float(
                     angstrom_to_world,
                     angstrom_to_world.o.world - backbone_taper * angstrom_to_world,
                 )
@@ -603,7 +603,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     >> g.SetSplineResolution(resolution=quality * 2)
                 )
                 curve_to_mesh = (
-                    g.SetHandleType(curve=set_spline_resolution)
+                    g.SetHandleType(set_spline_resolution)
                     >> g.SetCurveNormal()
                     >> g.CurveToMesh(
                         profile_curve=curve_circle,
@@ -621,7 +621,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     backbone_shape,
                     {
                         "Sticks": g.JoinGeometry(
-                            geometry=(curve_to_mesh_1, instance_on_points_1)
+                            (curve_to_mesh_1, instance_on_points_1)
                         ),
                         "Ribbon": curve_to_mesh,
                     },
@@ -649,16 +649,13 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         menu_switch_3 = g.MenuSwitch.geometry(
             base_shape,
             {
-                "Sphere": g.JoinGeometry(
-                    geometry=(instance_on_points, instance_on_points_2)
-                ),
+                "Sphere": g.JoinGeometry((instance_on_points, instance_on_points_2)),
                 "Cylinder": instance_on_points_2,
                 "None": None,
             },
         )
         set_shade_smooth = g.SetShadeSmooth.face(
-            g.JoinGeometry(geometry=(menu_switch_3, menu_switch_2)),
-            shade_smooth=shade_smooth,
+            g.JoinGeometry((menu_switch_3, menu_switch_2)), shade_smooth=shade_smooth
         )
         set_shade_smooth.node.warning_propagation = "ERRORS"
         smooth_by_angle = SmoothByAngle(mesh=set_shade_smooth, angle=math.pi / 3)

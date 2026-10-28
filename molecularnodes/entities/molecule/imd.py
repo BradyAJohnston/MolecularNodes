@@ -8,6 +8,7 @@ import logging
 from pathlib import Path
 from typing import Optional
 import MDAnalysis as mda
+from ...nodes._utils import STYLE_LITERALS
 from ..base import EntityType
 from .base import Molecule
 
@@ -78,7 +79,7 @@ class StreamingTrajectory(Molecule):
         """
         return None
 
-    def _update_trajectory_positions(self, frame: int) -> None:
+    def _update_trajectory_positions(self, frame: int) -> dict:
         """Override to handle streaming frame updates.
 
         For streaming trajectories, the requested frame number can't be seeked
@@ -100,11 +101,12 @@ class StreamingTrajectory(Molecule):
             If there's an error reading from the IMD stream
         """
         if frame == self._last_scene_frame:
-            return
+            return {}
         try:
             self.universe.trajectory.next()
             self.position = self._scaled_position
             self._last_scene_frame = frame
+            return {}
         except StopIteration:
             logger.warning("Stream ended or connection lost")
             raise
@@ -113,12 +115,12 @@ class StreamingTrajectory(Molecule):
             raise
 
     @classmethod
-    def load(
+    def load(  # ty: ignore[invalid-method-override]  # positional order differs from Molecule.load; changing it would break callers
         cls,
         topology: Path | str,
         coordinates: Path | str,
         name: str = "StreamingTrajectory",
-        style: str | None = "spheres",
+        style: STYLE_LITERALS | None = "spheres",
         selection: str | None = None,
         create_object: bool = True,
     ):

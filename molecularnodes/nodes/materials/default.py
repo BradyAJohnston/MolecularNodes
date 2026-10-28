@@ -21,13 +21,15 @@ class Default(CustomShaderGroup):
             subsurface_scale=0.0,
             subsurface_method="RANDOM_WALK_LEGACY",
         )
-        _material_output = s.MaterialOutput(
-            surface=principled_bsdf, is_active_output=True
-        )
+        _material_output = s.MaterialOutput(principled_bsdf)
 
 
 MATERIAL = Default
 MATERIAL_NAME = "Default"
+
+MATERIAL_PROPERTIES = {
+    "use_backface_culling": True,
+}
 
 MATERIAL_ASSET_METADATA = {
     "catalog_id": "fc8d3698-34f7-4b7e-8167-a2c0391b171b",

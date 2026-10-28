@@ -1,41 +1,41 @@
 name: Build and Create Draft Release
 
 on:
-  push:
-    tags:
-      - "v*"
+    push:
+        tags:
+            - "v*"
 
 # Cancel in-progress runs when a new workflow with the same group is triggered
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
 
 jobs:
-  build-and-draft-release:
-    runs-on: macos-latest
-    permissions:
-      contents: write
-      discussions: write
+    build-and-draft-release:
+        runs-on: macos-latest
+        permissions:
+            contents: write
+            discussions: write
 
-    steps:
-      - uses: actions/checkout@v5
-      - uses: BradyAJohnston/setup-blender@v5
-        with:
-          version: 5.2
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
+        steps:
+            - uses: actions/checkout@v5
+            - uses: BradyAJohnston/setup-blender@v5
+              with:
+                  version: 5.2
+            - name: Install uv
+              uses: astral-sh/setup-uv@v5
 
-      - name: Build node assets
-        run: |
-          uv sync --all-extras
-          uv run -m nodebpy.assets build
+            - name: Build node assets
+              run: |
+                  uv sync --all-extras
+                  uv run -m nodebpy.assets build
 
-      - name: Build Extension
-        run: |
-          uvx extbpy build
+            - name: Build Extension
+              run: |
+                  uvx extbpy build
 
-      - name: Create Draft Release
-        run: |
-          gh release create ${{ github.ref_name }} --draft --generate-notes *.zip
-        env:
-          GITHUB_TOKEN: ${{ github.token }}
+            - name: Create Draft Release
+              run: |
+                  gh release create ${{ github.ref_name }} --draft --generate-notes *.zip
+              env:
+                  GITHUB_TOKEN: ${{ github.token }}

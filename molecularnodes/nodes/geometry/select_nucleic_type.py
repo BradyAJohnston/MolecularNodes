@@ -88,7 +88,7 @@ class SelectNucleicType(AssetGeometryGroup):
         is_purine = tree.outputs.boolean("is_purine")
         is_pyrimidine = tree.outputs.boolean("is_pyrimidine")
 
-        boolean = g.Boolean(boolean=True)
+        boolean = g.Boolean(True)
         residue_name = ResidueName()
         index_switch = g.IndexSwitch.boolean(
             residue_name,

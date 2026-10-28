@@ -39,15 +39,18 @@ class MN_utils_curve_resample(CustomGeometryGroup):
         field_int_1 = tree.outputs.integer("Field Int")
         field_vec_1 = tree.outputs.vector("Field Vec")
 
-        capture = g.CaptureAttribute.curve(
-            geometry=g.ResampleCurve(
-                curve=geometry, length=length, mode="Length", count=18
-            )
+        resample_curve = g.ResampleCurve(
+            curve=geometry,
+            length=length,
+            mode="Length",
+            count=18,
+            keep_last_segment=False,
         )
+        capture = g.CaptureAttribute.curve(geometry=resample_curve)
         value = capture.items.integer(g.Index(), "Value")
         accumulate_field = length.point.trailing(value.output)
         switch = g.Compare.float.equal(offset, 0.0, 0.001).o.result.switch.float(
-            (accumulate_field + offset).wrap(0.0, g.SplineLength().o.length),
+            (accumulate_field + offset).wrap(max=g.SplineLength().o.length),
             accumulate_field,
         )
         sample_curve = g.SampleCurve.length.float(
@@ -61,7 +64,9 @@ class MN_utils_curve_resample(CustomGeometryGroup):
         )
         (
             g.ResampleCurve(
-                curve=capture.o.geometry, count=g.SplineLength().o.point_count - 1.0
+                curve=capture.o.geometry,
+                count=g.SplineLength().o.point_count - 1.0,
+                keep_last_segment=False,
             )
             >> g.SetPosition(position=sample_curve.o.position)
             >> geometry_1

@@ -132,9 +132,7 @@ class VisualizeChiAngle(AssetGeometryGroup):
             points=capture.o.geometry,
             selection=(g.EdgesOfVertex().o.total > 1)
             & (selection & MN_pivot_peptide()),
-            position=bc.output
-            * g.Mix.float(factor, b=1.0, clamp_factor=True).o.result_float
-            + g.Position(),
+            position=bc.output * factor.mix.float(0.0, 1.0) + g.Position(),
             angle=angle.output * -1.0,
             length=MNUnits(value=value).o.angstrom,
             up=output.output,

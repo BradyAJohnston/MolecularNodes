@@ -106,8 +106,7 @@ class TransformLocalAxis(AssetGeometryGroup):
             translation=origin, rotation=g.AxisAngleToRotation(axis=axis, angle=angle)
         )
         multiply_matrices = g.MultiplyMatrices(
-            matrix=combine_transform,
-            matrix_001=g.CombineTransform(translation=origin * -1.0),
+            matrix=combine_transform, matrix_001=g.CombineTransform(origin * -1.0)
         )
 
         multiply_matrices >> transform

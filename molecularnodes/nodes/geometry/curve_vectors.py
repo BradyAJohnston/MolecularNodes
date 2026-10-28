@@ -68,7 +68,7 @@ class CurveVectors(AssetGeometryGroup):
         )
 
         curve_tangent = g.CurveTangent()
-        normal_1 = g.Normal(legacy_corner_normals=True)
+        normal_1 = g.Normal(True)
         curve_tangent.o.tangent.cross(normal_1.o.normal) >> bitangent
 
         normal_1 >> normal

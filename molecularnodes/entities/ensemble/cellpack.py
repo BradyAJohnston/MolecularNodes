@@ -4,6 +4,7 @@ import bpy
 from nodebpy.builder import TreeBuilder
 from ... import blender as bl
 from ... import material
+from ...blender.registered import object_props
 from ...nodes import geometry
 from ..utilities import create_object
 from .base import Ensemble, EntityType
@@ -11,9 +12,10 @@ from .reader import CellPackReader
 
 
 class CellPack(Ensemble):
+    _entity_type = EntityType.ENSEMBLE_CELLPACK
+
     def __init__(self, file_path: str | Path) -> None:
         super().__init__(file_path)
-        self._entity_type = EntityType.ENSEMBLE_CELLPACK
         self.file = CellPackReader(file_path)
         self.transformations = self.file.get_assemblies()
 
@@ -27,7 +29,11 @@ class CellPack(Ensemble):
         node_setup: bool = True,
     ) -> bpy.types.Object:
         self._create_data_object(name=name)
-        collection = self._create_object_instances(name=name, node_setup=node_setup)
+        # Blender may have renamed the object to avoid a clash (`name.001`), so
+        # name the instances after the object rather than the requested name
+        collection = self._create_object_instances(
+            name=self.object.name, node_setup=node_setup
+        )
 
         with self.tree.reset() as (atoms, join):
             (atoms >> geometry.EnsembleInstance(instances=collection) >> join)
@@ -42,7 +48,15 @@ class CellPack(Ensemble):
         # a single node group is shared by every instanced molecule rather than
         # building an identical tree per-object
         if node_setup:
-            with TreeBuilder.geometry(f"MN_pack_instance_{name}") as instance_tree:
+            # a new group rather than `TreeBuilder.geometry(name)`, which would
+            # build into an existing group of the same name from an earlier import
+            tree = cast(
+                bpy.types.GeometryNodeTree,
+                bpy.data.node_groups.new(
+                    f"MN_pack_instance_{name}", "GeometryNodeTree"
+                ),
+            )
+            with TreeBuilder.geometry(tree) as instance_tree:
                 atoms = instance_tree.inputs.geometry("Atoms")
                 style = geometry.StyleSpheres(
                     material=material.AmbientOcclusion().material
@@ -57,7 +71,7 @@ class CellPack(Ensemble):
                 name=mol_id,
                 collection=collection,
             )
-            obj.mn.entity_type = self._entity_type.value
+            object_props(obj).entity_type = self._entity_type.value
 
             if node_setup:
                 mod = cast(

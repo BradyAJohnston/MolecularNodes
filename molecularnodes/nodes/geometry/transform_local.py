@@ -87,7 +87,7 @@ class TransformLocal(AssetGeometryGroup):
             "Transform", description="The final transform"
         )
 
-        combine_transform = g.CombineTransform(translation=origin)
+        combine_transform = g.CombineTransform(origin)
         multiply_matrices = g.MultiplyMatrices(
             matrix=g.MultiplyMatrices(matrix=combine_transform, matrix_001=transform),
             matrix_001=combine_transform.o.transform.invert(),
