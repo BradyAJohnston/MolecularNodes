@@ -12,6 +12,7 @@ from ..entities import Molecule, StreamingTrajectory, molecule
 from ..entities.base import EntityType
 from ..nodes._utils import get_star_node
 from ..session import get_session
+from .layers import draw_style_layer
 from .props import TrajectorySelectionItem
 from .utils import check_online_access_for_ui, menu_draw_func, operator_props
 
@@ -1118,6 +1119,8 @@ def panel_styles(
         op = operator_props(layout.operator(operator="mn.add_selection_to_style"))
         op.node_tree = node_group.name
         op.node_name = style_node.name
+
+    draw_style_layer(layout, context, style_node)
 
     # display the selected style node's name and its input properties
     header, body = layout.panel(idname="style_properties")

@@ -111,6 +111,7 @@ from .fallback_matrix import FallbackMatrix
 from .fallback_rotation import FallbackRotation
 from .fallback_vector import FallbackVector
 from .field_remap import FieldRemap
+from .filter_render_layer import FilterRenderLayer
 from .find_bonded_atom import FindBondedAtom
 from .find_bonds import FindBonds
 from .find_hbonds import FindHBonds
@@ -236,6 +237,7 @@ from .set_color import SetColor
 from .set_geometry_volume import SetGeometryVolume
 from .set_nucleic_dihedral import SetNucleicDihedral
 from .set_phi_psi_angle import SetPhiPsiAngle
+from .set_render_layer import SetRenderLayer
 from .set_ures_id import SetUResID
 from .simulate_curve import SimulateCurve
 from .simulate_elastic_network import SimulateElasticNetwork
@@ -394,6 +396,7 @@ __all__ = (
     "FallbackRotation",
     "FallbackVector",
     "FieldRemap",
+    "FilterRenderLayer",
     "FindBondedAtom",
     "FindBonds",
     "FindHBonds",
@@ -519,6 +522,7 @@ __all__ = (
     "SetGeometryVolume",
     "SetNucleicDihedral",
     "SetPhiPsiAngle",
+    "SetRenderLayer",
     "SetUResID",
     "SimulateCurve",
     "SimulateElasticNetwork",

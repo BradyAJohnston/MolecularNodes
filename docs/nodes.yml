@@ -647,6 +647,17 @@ Fade Geometry:
     from `0` to `1` to fade it in. The node multiplies the existing alpha, so geometry that is already
     partly transparent stays proportionally more transparent. Only materials that read the alpha show the
     fade: `Default`, `Squishy` and `Ambient Occlusion` do, while `Flat` and `Transparent` ignore it.
+Set Render Layer:
+  description: >-
+    Put the selected points and instances on a render layer, created with `canvas.layers.add()` or the Layers panel.
+    Each layer renders separately and is composited over the layers beneath it, so an outlined cartoon can sit under a
+    translucent, outlined surface. Geometry never put on a layer renders on every layer. The layer is stored as
+    `mn_render_layer` (layer + 1, so `0` is "every layer").
+Filter Render Layer:
+  description: >-
+    Keep only the geometry on the render layer of the view layer being evaluated. Molecular Nodes uses it in the hidden
+    `_ViewLayer` object that renders every entity when render layers are set up; outside of a render layer it keeps
+    everything.
 Plexus:
   description: Find points that are within a given distance of each other and create an edge between them
 Visualize Points: {}
