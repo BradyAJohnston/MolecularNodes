@@ -3,6 +3,7 @@ import numpy as np
 import pytest
 import molecularnodes as mn
 from .constants import data_dir
+from .utils import mn_ops, scene
 
 CODE = """
 class ZPosition(BaseCalculation):
@@ -40,8 +41,8 @@ def test_from_text_adds_each_subclass(mol):
     assert mol.object.mn.calculations["ZPosition"].text == text
 
     for frame in (1, 3):
-        bpy.context.scene.frame_set(frame)
-        atoms = mol.universe.atoms
+        scene().frame_set(frame)
+        atoms = mol.atoms
         assert np.allclose(mol.named_attribute("ZPosition"), atoms.positions[:, 2])
         assert np.array_equal(mol.named_attribute("IsHeavy"), atoms.masses > 2)
 
@@ -70,17 +71,15 @@ def test_from_text_without_subclasses(mol):
 
 def test_reload_replaces_calculation(mol):
     text = new_text("calcs.py", CODE)
-    bpy.ops.mn.calculations_from_text(uuid=mol.uuid, text=text.name)
+    mn_ops.calculations_from_text(uuid=mol.uuid, text=text.name)
     text.from_string(CODE.replace("positions[:, 2]", "positions[:, 0]"))
-    bpy.ops.mn.calculations_from_text(uuid=mol.uuid, text=text.name)
-    assert np.allclose(
-        mol.named_attribute("ZPosition"), mol.universe.atoms.positions[:, 0]
-    )
+    mn_ops.calculations_from_text(uuid=mol.uuid, text=text.name)
+    assert np.allclose(mol.named_attribute("ZPosition"), mol.atoms.positions[:, 0])
 
 
 def test_operator_reports_missing_text(mol):
     with pytest.raises(RuntimeError, match="Choose a text block"):
-        bpy.ops.mn.calculations_from_text(uuid=mol.uuid, text="missing.py")
+        mn_ops.calculations_from_text(uuid=mol.uuid, text="missing.py")
 
 
 @pytest.mark.parametrize("updating", [True, False])
@@ -95,11 +94,11 @@ def test_calculations_from_text_survive_reopening(mol, tmp_path, updating):
     bpy.ops.wm.open_mainfile(filepath=str(filepath))
 
     restored = session.get(uuid)
-    assert restored is not None
-    bpy.context.scene.frame_set(2)
+    assert isinstance(restored, mn.Molecule)
+    scene().frame_set(2)
     assert set(restored.calculations) >= {"ZPosition", "IsHeavy"}
     assert restored.calculations.updating("ZPosition") is updating
     assert np.allclose(
         restored.named_attribute("ZPosition"),
-        restored.universe.atoms.positions[:, 2],
+        restored.atoms.positions[:, 2],
     )

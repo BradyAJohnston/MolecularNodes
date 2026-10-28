@@ -167,7 +167,7 @@ class CalculationManager:
         calculations = calculations_from_code(text.as_string(), self._entity)
         if not calculations:
             raise ValueError(f"No BaseCalculation subclasses found in '{text.name}'")
-        n_atoms = len(self._entity.universe.atoms)
+        n_atoms = self._entity.atoms.n_atoms
         values = {}
         for calculation in calculations:
             result = calculation.calculate()
