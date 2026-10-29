@@ -232,6 +232,28 @@ def test_snapshot(render_canvas, tmp_path):
         assert isinstance(image, mn.scene.base.Image)
 
 
+def test_max_render_samples(render_canvas, tmp_path, monkeypatch):
+    # MN_MAX_RENDER_SAMPLES caps the samples of each render, restoring the
+    # engine's own settings afterwards
+    render_canvas.engine.samples = 64
+    render_canvas.scene.eevee.taa_render_samples = 64
+    seen = []
+
+    def _on_render(scene, *args):
+        seen.append((scene.cycles.samples, scene.eevee.taa_render_samples))
+
+    monkeypatch.setenv("MN_MAX_RENDER_SAMPLES", "2")
+    bpy.app.handlers.render_pre.append(_on_render)
+    try:
+        render_canvas.snapshot(tmp_path / "snapshot.png")
+        render_canvas.animation(tmp_path / "anim.gif", frame_start=1, frame_end=2)
+    finally:
+        bpy.app.handlers.render_pre.remove(_on_render)
+    assert seen and all(samples == (2, 2) for samples in seen)
+    assert render_canvas.engine.samples == 64
+    assert render_canvas.scene.eevee.taa_render_samples == 64
+
+
 def test_snapshot_non_displayable_format(render_canvas, tmp_path):
     out = tmp_path / "snapshot.tif"
     # TIFF renders and saves fine but can't be embedded in a notebook
