@@ -43,6 +43,7 @@ title: "Changelog"
 - `ty` type checking runs in CI alongside ruff. Properties registered on Blender types are read through typed accessors in `molecularnodes.blender.registered`.
 
 ## Fixed
+- Cycles no longer hangs on the virtual GPU of a macOS virtual machine (such as GitHub's macOS runners): the device is skipped with a warning and Cycles falls back to the CPU.
 - `Canvas.load_preset()` raises a `ValueError` when its app template is missing instead of silently loading Blender's factory startup scene.
 - `Molecule.fetch(..., cache=None)` failed for every format; the downloaded buffer is now read with the requested format. `Molecule.from_file()` takes a `format` for in-memory buffers. [#1306](https://github.com/BradyAJohnston/MolecularNodes/issues/1306)
 - `.cif` files from Phenix (such as `phenix.real_space_refine` output) now import. Biotite failed on their indented `loop_` tags and on the atom-free restraint blocks (`data_link_SS`) appended after the model. A `.cif` with several structures in separate data blocks imports as one Molecule per block; from a script, `Molecule.load(path, data_block=...)` chooses the block.

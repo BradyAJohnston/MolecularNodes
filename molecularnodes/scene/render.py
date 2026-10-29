@@ -1,3 +1,4 @@
+import warnings
 from typing import Any
 import bpy
 
@@ -13,6 +14,14 @@ def enable_gpus(device_type, use_cpus=False):
     for device in cycles_preferences.devices:
         if device.type == "CPU":
             device.use = use_cpus
+        # virtual machines (such as GitHub's macOS runners) expose a paravirtual
+        # Metal device that Cycles hangs on rather than rendering
+        elif "Paravirtual" in device.name:
+            device.use = False
+            if device.type == device_type:
+                warnings.warn(
+                    f"Skipping virtual GPU '{device.name}', Cycles can't render on it"
+                )
         else:
             device.use = device.type == device_type
             if device.use:
