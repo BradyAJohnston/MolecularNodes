@@ -18,7 +18,14 @@ concurrency:
 jobs:
     docs:
         name: Build Documentation
-        runs-on: self-hosted
+        # the self-hosted runner only builds the docs for the maintainer's own pull
+        # requests (and pushes and releases); other pull requests build on a
+        # GitHub-hosted runner, with a single render sample to keep the build
+        # within time: there the docs are checked to build, not to look good
+        runs-on: ${{ (github.event_name != 'pull_request' || github.event.pull_request.user.login == 'BradyAJohnston') && 'self-hosted' || 'macos-latest' }}
+        timeout-minutes: 120
+        env:
+            MN_MAX_RENDER_SAMPLES: ${{ (github.event_name == 'pull_request' && github.event.pull_request.user.login != 'BradyAJohnston') && '1' || '' }}
         permissions: write-all
         steps:
             - uses: actions/checkout@v5
