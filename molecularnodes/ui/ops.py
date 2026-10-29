@@ -1529,6 +1529,65 @@ class MN_OT_HBonds_init(Operator):
 
 
 @annotated_props
+class MN_OT_Calculations_From_Text(Operator):
+    """
+    Operator to add the `BaseCalculation` subclasses defined in a text block as
+    calculations, or load them again after the text has changed
+    """
+
+    bl_idname = "mn.calculations_from_text"
+    bl_label = "Add Calculations from Text"
+    bl_description = (
+        "Run a text block and add each BaseCalculation subclass it defines as a "
+        "calculation, replacing any with the same name"
+    )
+
+    uuid: Annotated[str, StringProperty()]
+    text: Annotated[
+        str,
+        StringProperty(
+            name="Text",
+            description="Text block that defines the calculations",
+            options={"SKIP_SAVE"},
+        ),
+    ]
+
+    def invoke(self, context, event):
+        if self.text:
+            # Reload passes the text, so there is nothing to choose
+            return self.execute(context)
+        return context.window_manager.invoke_props_dialog(self)
+
+    def draw(self, context):
+        layout = self.layout
+        assert layout
+        layout.prop_search(self, "text", bpy.data, "texts")
+        if not bpy.data.texts:
+            layout.label(
+                text="Open or create a text block in the Text Editor first",
+                icon="INFO",
+            )
+
+    def execute(self, context: Context):
+        entity = get_session().get(self.uuid)
+        if not isinstance(entity, Molecule):
+            return {"CANCELLED"}
+        if self.text not in bpy.data.texts:
+            self.report({"ERROR"}, "Choose a text block to load calculations from")
+            return {"CANCELLED"}
+        try:
+            names = entity.calculations.from_text(self.text)
+        except Exception as e:
+            self.report(
+                {"ERROR"}, f"Could not load calculations from '{self.text}': {e}"
+            )
+            return {"CANCELLED"}
+        self.report({"INFO"}, f"Added calculations: {', '.join(names)}")
+        update_entities(context.scene)
+        return {"FINISHED"}
+
+
+@annotated_props
 class MN_OT_FrameAttribute_Remove(Operator):
     """
     Operator to remove a selection or calculation from the per-frame attributes
@@ -1554,7 +1613,10 @@ class MN_OT_FrameAttribute_Remove(Operator):
             return {"CANCELLED"}
         if item.source == "SELECTION":
             entity.selections.remove(self.name)
-        elif item.source == "CALCULATION" and self.name in entity.calculations:
+        elif item.source == "CALCULATION" and (
+            self.name in entity.calculations
+            or self.name in entity.calculations._unloaded()
+        ):
             del entity.calculations[self.name]
         else:
             self.report({"ERROR"}, f"'{self.name}' can't be removed")
@@ -1778,6 +1840,7 @@ CLASSES = [
     MN_OT_Setup_Compositor,
     MN_OT_DSSP_init,
     MN_OT_HBonds_init,
+    MN_OT_Calculations_From_Text,
     MN_OT_FrameAttribute_Remove,
     MN_OT_DSSP_apply,
     MN_OT_DSSP_cancel,
