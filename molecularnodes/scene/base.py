@@ -111,6 +111,26 @@ def _restore_frame(scene: bpy.types.Scene):
         scene.frame_set(original)
 
 
+def _sample_cap_overrides(scene: bpy.types.Scene) -> list[tuple[Any, str, Any]]:
+    """
+    Temporary overrides capping the render samples at ``MN_MAX_RENDER_SAMPLES``.
+
+    For builds that only need renders to run, not to look good (such as building
+    the docs on CI), the environment variable caps the samples of every render
+    from the Canvas, whatever the engine settings say. Unset, nothing changes.
+    """
+    cap = os.environ.get("MN_MAX_RENDER_SAMPLES")
+    if not cap:
+        return []
+    cap = int(cap)
+    cycles: Any = scene.cycles
+    eevee: Any = scene.eevee
+    return [
+        (cycles, "samples", min(cycles.samples, cap)),
+        (eevee, "taa_render_samples", min(eevee.taa_render_samples, cap)),
+    ]
+
+
 @contextmanager
 def _render_progress(total: int, desc: str):
     """Show a tqdm progress bar driven by the ``render_write`` handler, which
@@ -1157,6 +1177,7 @@ class Canvas:
                     (image_settings, "media_type", "IMAGE"),
                     (image_settings, "file_format", file_format),
                     (render_settings, "resolution_percentage", render_scale),
+                    *_sample_cap_overrides(self.scene),
                 ],
             )
             render_file = path_stem.with_name(
@@ -1365,6 +1386,7 @@ class Canvas:
             (render_settings, "resolution_percentage", render_scale),
             (scene, "frame_start", start),
             (scene, "frame_end", end),
+            *_sample_cap_overrides(scene),
         ]
         if fps is not None:
             override_props.append((render_settings, "fps", fps))
