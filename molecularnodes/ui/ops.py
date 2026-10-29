@@ -1613,7 +1613,10 @@ class MN_OT_FrameAttribute_Remove(Operator):
             return {"CANCELLED"}
         if item.source == "SELECTION":
             entity.selections.remove(self.name)
-        elif item.source == "CALCULATION" and self.name in entity.calculations:
+        elif item.source == "CALCULATION" and (
+            self.name in entity.calculations
+            or self.name in entity.calculations._unloaded()
+        ):
             del entity.calculations[self.name]
         else:
             self.report({"ERROR"}, f"'{self.name}' can't be removed")

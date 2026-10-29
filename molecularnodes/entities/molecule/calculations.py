@@ -15,6 +15,8 @@ built-in ones such as DSSP are rebuilt from their saved settings.
 
 from __future__ import annotations
 import logging
+import os
+from fnmatch import fnmatch
 from typing import TYPE_CHECKING, Callable, Iterator
 import bpy
 import numpy as np
@@ -193,23 +195,32 @@ class CalculationManager:
         self._entity._store_frame_attributes(values, "CALCULATION")
         return list(values)
 
+    def _unloaded(self) -> list[str]:
+        """Names of calculations from text that are saved on the object but not
+        loaded, such as after a file is reopened."""
+        try:
+            items = self.ui_items
+        except (LinkedObjectError, AttributeError):
+            return []
+        return [
+            item.name
+            for item in items
+            if item.text is not None and item.name not in self._funcs
+        ]
+
     def _restore_texts(self) -> None:
         """Load calculations from their text blocks again after a file is reopened.
 
         Calculations loaded from text can't be saved with the file, but their
-        items on the object record the text block, so they are loaded from it
-        again with the updating flags they had.
+        items on the object record the text block. Running a file's code when
+        it is opened isn't safe, so like Blender's own scripts they are only
+        loaded again when Auto Run Python Scripts allows it. Otherwise they
+        stay listed as not loaded until Reload is pressed.
         """
-        try:
-            items = self.ui_items
-        except (LinkedObjectError, AttributeError):
+        if not scripts_auto_execute():
             return
-        missing = [
-            item
-            for item in items
-            if item.text is not None and item.name not in self._funcs
-        ]
-        for text in {item.text for item in missing}:
+        items = [self._item(name) for name in self._unloaded()]
+        for text in {item.text for item in items if item is not None}:
             if text.name in self._failed_texts:
                 continue
             try:
@@ -333,7 +344,9 @@ class CalculationManager:
         return self._funcs[name]
 
     def __delitem__(self, name: str) -> None:
-        del self._funcs[name]
+        if name not in self._funcs and name not in self._unloaded():
+            raise KeyError(name)
+        self._funcs.pop(name, None)
         if name == "sec_struct":
             # removing DSSP's calculation removes DSSP, it can be set up again
             self._dssp = DSSPCalculation(self._entity)
@@ -398,6 +411,27 @@ class BaseCalculation:
 
     def __call__(self, universe: Universe) -> np.ndarray:
         return self.calculate()
+
+
+def scripts_auto_execute() -> bool:
+    """Whether Blender's Auto Run Python Scripts allows scripts in the open file.
+
+    True when the preference is on and the file isn't in one of its excluded
+    paths.
+    """
+    preferences = bpy.context.preferences
+    if preferences is None or not preferences.filepaths.use_scripts_auto_execute:
+        return False
+    filepath = os.path.normcase(bpy.data.filepath)
+    for excluded in preferences.autoexec_paths:
+        path = os.path.normcase(bpy.path.abspath(excluded.path))
+        if not path:
+            continue
+        if excluded.use_glob and fnmatch(filepath, path):
+            return False
+        if not excluded.use_glob and filepath.startswith(path):
+            return False
+    return True
 
 
 def calculations_from_code(code: str, molecule: Molecule) -> list[BaseCalculation]:

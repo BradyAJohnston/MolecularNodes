@@ -91,8 +91,7 @@ def test_operator_reports_missing_text(mol):
         mn_ops.calculations_from_text(uuid=mol.uuid, text="missing.py")
 
 
-@pytest.mark.parametrize("updating", [True, False])
-def test_calculations_from_text_survive_reopening(mol, tmp_path, updating):
+def save_and_reopen(mol, tmp_path, updating=True) -> mn.Molecule:
     mol.calculations.from_text(new_text("calcs.py", CODE), updating=updating)
     uuid = mol.uuid
     filepath = tmp_path / "calcs.blend"
@@ -105,9 +104,57 @@ def test_calculations_from_text_survive_reopening(mol, tmp_path, updating):
     restored = session.get(uuid)
     assert isinstance(restored, mn.Molecule)
     scene().frame_set(2)
+    return restored
+
+
+@pytest.fixture
+def auto_run():
+    """Turn on Blender's Auto Run Python Scripts for one test."""
+    preferences = bpy.context.preferences
+    assert preferences is not None
+    before = preferences.filepaths.use_scripts_auto_execute
+    preferences.filepaths.use_scripts_auto_execute = True
+    yield preferences
+    preferences.filepaths.use_scripts_auto_execute = before
+
+
+@pytest.mark.parametrize("updating", [True, False])
+def test_reopening_waits_for_reload(mol, tmp_path, updating):
+    restored = save_and_reopen(mol, tmp_path, updating)
+    # without Auto Run Python Scripts the text isn't run when the file opens
+    assert "ZPosition" not in restored.calculations
+    assert restored.frame_attributes["ZPosition"] == "CALCULATION"
+
+    mn_ops.calculations_from_text(uuid=restored.uuid, text="calcs.py")
+    assert set(restored.calculations) >= {"ZPosition", "IsHeavy"}
+    assert restored.calculations.updating("ZPosition") is updating
+    # Reload stores the values for the current frame straight away
+    assert np.allclose(
+        restored.named_attribute("ZPosition"), restored.atoms.positions[:, 2]
+    )
+
+
+@pytest.mark.parametrize("updating", [True, False])
+def test_reopening_with_auto_run(mol, tmp_path, auto_run, updating):
+    restored = save_and_reopen(mol, tmp_path, updating)
     assert set(restored.calculations) >= {"ZPosition", "IsHeavy"}
     assert restored.calculations.updating("ZPosition") is updating
     assert np.allclose(
-        restored.named_attribute("ZPosition"),
-        restored.atoms.positions[:, 2],
+        restored.named_attribute("ZPosition"), restored.atoms.positions[:, 2]
     )
+
+
+def test_reopening_in_excluded_path(mol, tmp_path, auto_run):
+    excluded = auto_run.autoexec_paths.new()
+    excluded.path = str(tmp_path)
+    try:
+        restored = save_and_reopen(mol, tmp_path)
+    finally:
+        auto_run.autoexec_paths.remove(excluded)
+    assert "ZPosition" not in restored.calculations
+
+
+def test_remove_unloaded_calculation(mol, tmp_path):
+    restored = save_and_reopen(mol, tmp_path)
+    mn_ops.frame_attribute_remove(uuid=restored.uuid, name="ZPosition")
+    assert "ZPosition" not in restored.frame_attributes
