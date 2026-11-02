@@ -77,6 +77,7 @@ class OxDNARealizeVectors(AssetGeometryGroup):
         position = for_each.items.vector(g.Position(), "Position")
         base_vector = for_each.items.vector(oxdna_vectors.o.base_vector, "base_vector")
         base_normal = for_each.items.vector(oxdna_vectors.o.base_normal, "base_normal")
+        geometry_1 = for_each.generated_items.geometry(name="Geometry")
         with g.Frame("Create edges pointing along base and normal vectors"):
             mesh_line = g.MeshLine.end_points(
                 2, position.output, position.output + base_vector.output * value
@@ -123,11 +124,11 @@ class OxDNARealizeVectors(AssetGeometryGroup):
                 pattern_mode="Exact",
                 exclude_names=True,
             )
-        transfer_attributes >> for_each.generation.input
+        transfer_attributes >> geometry_1.input
         (
             g.JoinGeometry(
                 (
-                    for_each.generation.output,
+                    geometry_1.output,
                     for_each.output
                     >> g.StoreNamedAttribute.point.integer(
                         name=g.String("attribute_ID")

@@ -32,9 +32,9 @@ class FresnelOutline(CustomShaderGroup):
             mix_shader_2 = s.MixShader(
                 factor=mn_fresnel, shader=mix_shader, shader_001=color
             )
-        _material_output = s.MaterialOutput(surface=mix_shader_1, target="EEVEE")
-        _material_output_1 = s.MaterialOutput(
-            surface=mix_shader_2, is_active_output=True, target="CYCLES"
+        _material_output = s.MaterialOutput.eevee(mix_shader_1)
+        _material_output_1 = s.MaterialOutput.cycles(
+            mix_shader_2, is_active_output=True
         )
 
 
