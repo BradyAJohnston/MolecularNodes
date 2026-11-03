@@ -1,3 +1,4 @@
+import itertools
 from typing import cast
 import bpy
 import MDAnalysis as mda
@@ -6,9 +7,15 @@ import pytest
 from MDAnalysis.lib.distances import apply_PBC, minimize_vectors
 from MDAnalysis.lib.mdamath import triclinic_vectors
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
-from nodebpy.nodes.geometry import SetPosition, StoreNamedAttribute
+from nodebpy.nodes.geometry import CurveToMesh, SetPosition, StoreNamedAttribute
+from scipy.spatial import Voronoi
 import molecularnodes as mn
-from molecularnodes.nodes.geometry import FragmentID, PeriodicOffset, PeriodicUnwrap
+from molecularnodes.nodes.geometry import (
+    FragmentID,
+    PeriodicCell,
+    PeriodicOffset,
+    PeriodicUnwrap,
+)
 from .constants import data_dir
 
 BOXES = {
@@ -329,3 +336,78 @@ def test_periodic_unwrap_datasets(name, place_groups):
     atoms.positions = broken
     expected = atoms.unwrap(compound="fragments")
     _assert_same_up_to_lattice(result, expected, atoms.fragindices, box)
+
+
+def _cell(mol, box, wrap, output):
+    """Vertices (Å) and edge count of a Periodic Cell output, as a mesh"""
+    with mol.tree.reset() as (atoms, join):
+        node = PeriodicCell(wrap=wrap, **_box_inputs(box))
+        if output == "edges":
+            node.o.edges >> CurveToMesh() >> join
+        else:
+            node.o.mesh >> join
+    obj = mol.object.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    mesh = cast(bpy.types.Mesh, obj.data)
+    vertices = np.array([v.co for v in mesh.vertices]) / mol.world_scale
+    return vertices, len(mesh.edges)
+
+
+def _same_points(a, b, atol=ATOL):
+    assert len(a) == len(b)
+    distance = np.linalg.norm(a[:, None] - b[None], axis=-1)
+    assert distance.min(axis=1).max() < atol
+
+
+# corners and edges of each compact cell: a box, a hexagonal prism, a rhombic
+# dodecahedron or a truncated octahedron
+COMPACT_CELLS = {
+    "cubic": (8, 12),
+    "orthorhombic": (8, 12),
+    "hexagonal": (12, 18),
+    "dodecahedron": (14, 24),
+    "dodecahedron-hexagon": (14, 24),
+    "truncated-octahedron": (24, 36),
+}
+
+
+@pytest.mark.parametrize("box_name", BOXES)
+def test_periodic_cell_box(mol_triclinic, box_name):
+    box = np.array(BOXES[box_name])
+    vectors = triclinic_vectors(box)
+    corners = np.array(list(itertools.product((0, 1), repeat=3))) @ vectors
+    vertices, _ = _cell(mol_triclinic, box, "Box", "mesh")
+    _same_points(vertices, corners)
+    _, n_edges = _cell(mol_triclinic, box, "Box", "edges")
+    assert n_edges == 12
+
+
+@pytest.mark.parametrize("box_name", BOXES)
+def test_periodic_cell_compact(mol_triclinic, box_name):
+    # the Wigner-Seitz cell around the box centre, as the simulation box
+    # annotation draws it with scipy
+    box = np.array(BOXES[box_name])
+    vectors = triclinic_vectors(box).astype(np.float64)
+    shifts = np.array(list(itertools.product((0, -1, 1), repeat=3))) @ vectors
+    voronoi = Voronoi(shifts)
+    region = voronoi.regions[voronoi.point_region[0]]
+    expected = voronoi.vertices[region] + vectors.sum(axis=0) / 2
+    # where more than four cells meet, as at the corners of a rhombic
+    # dodecahedron, qhull gives several vertices at one corner
+    expected = expected[
+        [
+            i
+            for i in range(len(expected))
+            if np.all(np.linalg.norm(expected[:i] - expected[i], axis=1) > ATOL)
+        ]
+    ]
+    n_corners, n_edges = COMPACT_CELLS[box_name]
+    vertices, _ = _cell(mol_triclinic, box, "Compact", "mesh")
+    assert len(vertices) == n_corners
+    _same_points(vertices, expected)
+    _, edges = _cell(mol_triclinic, box, "Compact", "edges")
+    assert edges == n_edges
+
+
+def test_periodic_cell_no_box(mol_triclinic):
+    vertices, n_edges = _cell(mol_triclinic, np.zeros(6), "Compact", "mesh")
+    assert len(vertices) == 0 and n_edges == 0

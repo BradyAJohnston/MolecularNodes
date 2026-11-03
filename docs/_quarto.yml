@@ -460,6 +460,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.PeriodicBox
         children: embedded
+      - name: nodes.geometry.PeriodicCell
+        children: embedded
       - name: nodes.geometry.PeriodicImage
         children: embedded
       - name: nodes.geometry.PeriodicOffset

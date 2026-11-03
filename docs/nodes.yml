@@ -798,6 +798,13 @@ Periodic Box:
     Get the box vectors for a trajectory's periodic simulation box. These vectors can be used to create periodic
     images of the trajectory. `Matrix::Matrix` holds the same vectors as its columns, so transforming by it converts
     fractional coordinates of the box to world coordinates, and by its inverse the reverse.
+Periodic Cell:
+  description: >-
+    Mesh of the periodic unit cell, read from the trajectory on every frame while `Update::Bool` is on. With
+    `Wrap::Menu` set to `Box::String` it is the box spanned by the box vectors; with `Compact::String` it is the
+    compact (Wigner-Seitz) cell around the box centre, such as a hexagonal prism for a hexagonal box or a rhombic
+    dodecahedron, matching the `Wrap::Menu` of `Periodic Offset::Node`. `Mesh::Geometry` is the closed cell and
+    `Edges::Geometry` its edges as curves, for a wireframe with `Curve to Mesh`. Both are empty without a box.
 Periodic Image:
   description: >-
     Get the location of a single lattice point of the trajectory, based on the box vectors and the chosen lattice

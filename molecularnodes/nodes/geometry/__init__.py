@@ -190,6 +190,7 @@ from .peptide_chi import PeptideChi
 from .peptide_dihedral import PeptideDihedral
 from .periodic_array import PeriodicArray
 from .periodic_box import PeriodicBox
+from .periodic_cell import PeriodicCell
 from .periodic_image import PeriodicImage
 from .periodic_offset import PeriodicOffset
 from .periodic_unwrap import PeriodicUnwrap
@@ -476,6 +477,7 @@ __all__ = (
     "PeptideDihedral",
     "PeriodicArray",
     "PeriodicBox",
+    "PeriodicCell",
     "PeriodicImage",
     "PeriodicOffset",
     "PeriodicUnwrap",
