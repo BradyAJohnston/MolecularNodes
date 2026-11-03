@@ -2,7 +2,7 @@
 # Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
 from nodebpy import TreeBuilder
 from nodebpy import geometry as g
@@ -11,11 +11,20 @@ from nodebpy.builder import (
     BooleanSocket,
     FloatSocket,
     IntegerSocket,
+    MenuSocket,
     PackageLibrary,
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import Default, InputBoolean, InputFloat, InputInteger, InputVector
+from nodebpy.types import (
+    Default,
+    InputBoolean,
+    InputFloat,
+    InputInteger,
+    InputMenu,
+    InputVector,
+)
+from ._shared.periodic_nearest_image import PeriodicNearestImage
 from .periodic_box import PeriodicBox
 from .periodic_offset import PeriodicOffset
 
@@ -32,6 +41,8 @@ class PeriodicUnwrap(AssetGeometryGroup):
         Atoms with the same ID are kept whole, such as `fragment_id` for bonded molecules or `chain_id`. Each group must be shorter than half the box. When unconnected: The "id" attribute if available, otherwise the index.
     place_groups : InputBoolean
         Wrap the centre of each group into the box. Otherwise each group stays nearest its average position
+    wrap : InputMenu | Literal["Box", "Compact"]
+        With Place Groups, wrap the centre of each group into the box spanned by the box vectors, or into the compact cell around the box centre, as Periodic Offset does
     update : InputBoolean
         Update the box lengths and angles with the simulation. As a modifier input, reads the "True" attribute by default.
     a : InputFloat
@@ -55,6 +66,8 @@ class PeriodicUnwrap(AssetGeometryGroup):
         Atoms with the same ID are kept whole, such as `fragment_id` for bonded molecules or `chain_id`. Each group must be shorter than half the box
     i.place_groups : BooleanSocket
         Wrap the centre of each group into the box. Otherwise each group stays nearest its average position
+    i.wrap : MenuSocket
+        With Place Groups, wrap the centre of each group into the box spanned by the box vectors, or into the compact cell around the box centre, as Periodic Offset does
     i.update : BooleanSocket
         Update the box lengths and angles with the simulation
     i.a : FloatSocket
@@ -91,6 +104,8 @@ class PeriodicUnwrap(AssetGeometryGroup):
         """Atoms with the same ID are kept whole, such as `fragment_id` for bonded molecules or `chain_id`. Each group must be shorter than half the box"""
         place_groups: BooleanSocket
         """Wrap the centre of each group into the box. Otherwise each group stays nearest its average position"""
+        wrap: MenuSocket
+        """With Place Groups, wrap the centre of each group into the box spanned by the box vectors, or into the compact cell around the box centre, as Periodic Offset does"""
         update: BooleanSocket
         """Update the box lengths and angles with the simulation"""
         a: FloatSocket
@@ -116,6 +131,7 @@ class PeriodicUnwrap(AssetGeometryGroup):
         position: InputVector = Default.POSITION,
         group_id: InputInteger = Default.ID_OR_INDEX,
         place_groups: InputBoolean = False,
+        wrap: InputMenu | Literal["Box", "Compact"] = "Box",
         update: InputBoolean = True,
         a: InputFloat = 0.0,
         b: InputFloat = 0.0,
@@ -129,6 +145,7 @@ class PeriodicUnwrap(AssetGeometryGroup):
                 "Position": position,
                 "Group ID": group_id,
                 "Place Groups": place_groups,
+                "Wrap": wrap,
                 "Update": update,
                 "a": a,
                 "b": b,
@@ -158,6 +175,12 @@ class PeriodicUnwrap(AssetGeometryGroup):
             "Place Groups",
             False,
             description="Wrap the centre of each group into the box. Otherwise each group stays nearest its average position",
+        )
+        wrap = tree.inputs.menu(
+            "Wrap",
+            "Box",
+            description="With Place Groups, wrap the centre of each group into the box spanned by the box vectors, or into the compact cell around the box centre, as Periodic Offset does",
+            expanded=True,
         )
         with tree.inputs.panel("Periodic Box", default_closed=True):
             _update = tree.inputs.boolean(
@@ -197,21 +220,40 @@ class PeriodicUnwrap(AssetGeometryGroup):
             vector_math_1 = (combine_xyz.o.vector * 0.15915494).fraction()
         with g.Frame("Keep In Place"):
             _string_1 = g.String(
-                "Without Place Groups, move the centre to the image nearest the group's plain average, so groups that are already whole stay where they are."
+                "Without Place Groups, move the centre to its image nearest the group's plain average, so groups that are already whole stay where they are."
             )
-            vector_math_2 = (
-                vector_math_1
-                + (transform_point.point.mean(group_id) - vector_math_1).round()
+            transform_point_1 = transform_point.point.mean(group_id).transform(
+                periodic_box.o.matrix
             )
-        transform_point_1 = place_groups.switch.vector(
-            vector_math_2, vector_math_1
-        ).transform(periodic_box.o.matrix)
-        with g.Frame("Minimum Image"):
+            transform_point_2 = vector_math_1.transform(periodic_box.o.matrix)
+            periodic_nearest_image = PeriodicNearestImage(
+                vector=transform_point_2 - transform_point_1,
+                a=periodic_box.o.a,
+                b=periodic_box.o.b,
+                c=periodic_box.o.c,
+            )
+            vector_math_2 = transform_point_1 + periodic_nearest_image
+        with g.Frame("Place Groups"):
             _string_2 = g.String(
-                "Compact wrapping the offset from the centre, moved to the middle of the box by half a box, then removing that half box, gives each atom's image nearest the centre, exactly for triclinic boxes too."
+                "With Place Groups, wrap the centre of each group into the box, or into the compact cell around the box centre."
             )
             periodic_offset = PeriodicOffset(
-                position=position - transform_point_1,
+                position=transform_point_2,
+                wrap=wrap,
+                a=a,
+                b=b,
+                c=c_,
+                alpha=alpha,
+                beta=beta,
+                gamma=gamma,
+            )
+        switch = place_groups.switch.vector(vector_math_2, periodic_offset)
+        with g.Frame("Minimum Image"):
+            _string_3 = g.String(
+                "Compact wrapping the offset from the centre, moved to the middle of the box by half a box, then removing that half box, gives each atom's image nearest the centre, exactly for triclinic boxes too."
+            )
+            periodic_offset_1 = PeriodicOffset(
+                position=position - switch,
                 offset_factor=(0.5, 0.5, 0.5),
                 wrap="Compact",
                 a=a,
@@ -221,13 +263,11 @@ class PeriodicUnwrap(AssetGeometryGroup):
                 beta=beta,
                 gamma=gamma,
             )
-            vector_math_3 = periodic_offset.o.position - g.TransformDirection(
+            vector_math_3 = periodic_offset_1.o.position - g.TransformDirection(
                 transform=periodic_box.o.matrix, direction=(0.5, 0.5, 0.5)
             )
         (
-            invert_matrix.o.invertible.switch.vector(
-                position, transform_point_1 + vector_math_3
-            )
+            invert_matrix.o.invertible.switch.vector(position, switch + vector_math_3)
             >> position_1
         )
 
