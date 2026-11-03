@@ -928,6 +928,26 @@ class TestTrajectory:
         assert np.all(t["sec_struct"][excluded] == 3)
         assert np.any(t["sec_struct"][is_protein & ~excluded] < 3)
 
+    def test_dssp_failed_setup_is_added(self, universe, caplog):
+        t = mn.Molecule(universe).add_style("cartoon")
+        del t.calculations["sec_struct"]
+        # a selection DSSP can't run on, as it lacks backbone atoms, still adds
+        # the calculation from the menu and reports the error
+        with pytest.raises(RuntimeError, match="DSSP failed"):
+            mn_ops.dssp_init(uuid=t.uuid, selection="protein and name CA")
+        assert t.calculations._dssp.is_setup
+        assert t.frame_attributes["sec_struct"] == "CALCULATION"
+        assert t.props.dssp.selection == "protein and name CA"
+        # it fails like any calculation on frame change
+        with caplog.at_level("ERROR"):
+            t.set_frame(1)
+        assert "Failed to update calculation 'sec_struct'" in caplog.text
+        # changing to a selection that works sets it up
+        mn_ops.dssp_init(uuid=t.uuid, selection="protein")
+        assert t.props.dssp.selection == "protein"
+        t.set_frame(2)
+        assert np.any(t["sec_struct"] == 1)
+
     def test_reload_operator(self, universe):
         traj = mn.entities.Molecule(universe)
         traj.add_style("cartoon")

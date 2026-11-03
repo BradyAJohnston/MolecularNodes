@@ -41,6 +41,8 @@ class DSSPCalculation:
         self._sw_threshold: float | None = None
         self._no_sec_struct: np.ndarray | None = None
         self._restore_failed = False
+        self._is_setup = False
+        self._setup_error: Exception | None = None
 
     @property
     def _props(self) -> "DSSPProperties":
@@ -78,7 +80,12 @@ class DSSPCalculation:
 
     def _calculate_sec_struct(self, universe: mda.Universe) -> np.ndarray | None:
         """Internal: Calculate secondary structures on frame change event"""
-        if self._display_option == "none" or self._DSSP is None:
+        if self._display_option == "none":
+            return self._no_sec_struct
+        # raised here so it is reported like any failing calculation
+        if self._setup_error is not None:
+            raise self._setup_error
+        if self._DSSP is None:
             return self._no_sec_struct
         # run dssp if required
         dssp_results = self._dssp_results
@@ -139,7 +146,7 @@ class DSSPCalculation:
 
     def _ensure_init(self) -> None:
         """Internal: Ensure DSSP is set up"""
-        if self._DSSP is None:
+        if not self._is_setup:
             raise ValueError("DSSP is not set up, see `mol.calculations.dssp()`")
 
     def _ensure_no_streaming(self) -> None:
@@ -160,6 +167,7 @@ class DSSPCalculation:
         # create before assigning so a failing selection leaves the old state intact
         dssp = DSSP(atoms)
         self._DSSP = dssp
+        self._setup_error = None
         self._dssp_atoms = atoms
         self._dssp_trajectory = atoms.universe.trajectory
         self._dssp_residues = atoms.residues
@@ -171,6 +179,8 @@ class DSSPCalculation:
         """Internal: The DSSP analysis, rebuilt if the universe's trajectory
         reader was replaced (e.g. by `load_new` when the session is saved), as
         it reads frames through the reader it was created with"""
+        if self._setup_error is not None:
+            raise self._setup_error
         if self._dssp_trajectory is not self._entity.universe.trajectory:
             assert self._dssp_atoms is not None
             self._DSSP = DSSP(self._dssp_atoms)
@@ -181,14 +191,14 @@ class DSSPCalculation:
     @property
     def is_setup(self) -> bool:
         """Whether DSSP is set up as the `sec_struct` calculation"""
-        return self._DSSP is not None
+        return self._is_setup
 
     def _init(self, selection: str | None = None, updating: bool | None = None) -> None:
         """Internal: Set up DSSP if needed, and change the settings given
 
         See `CalculationManager.dssp`, which calls this.
         """
-        if self._DSSP is None:
+        if not self._is_setup:
             self._setup(
                 "protein" if selection is None else selection,
                 True if updating is None else updating,
@@ -200,9 +210,19 @@ class DSSPCalculation:
             self._entity.calculations.set_updating("sec_struct", updating)
 
     def _setup(self, selection: str, updating: bool, refresh: bool = True) -> None:
-        """Internal: Set up DSSP and add the `sec_struct` calculation"""
+        """Internal: Set up DSSP and add the `sec_struct` calculation
+
+        The calculation is added even when DSSP can't be set up for the
+        selection, so the selection can then be changed to one that works.
+        Until it is, the calculation raises the error whenever it runs.
+        """
         universe = self._entity.universe
-        self._setup_dssp(selection)
+        try:
+            self._setup_dssp(selection)
+        except Exception as e:
+            self._setup_error = e
+            logger.warning(f"DSSP failed for selection '{selection}': {e}")
+        self._is_setup = True
         self._set_prop("selection", selection)
         # calculate no secondary structs attribute
         # protein - 3 (loop), rest - 0 (none)
@@ -226,7 +246,7 @@ class DSSPCalculation:
         DSSP is set up again with the same selection, display option and
         updating flag.
         """
-        if self._DSSP is not None or self._restore_failed:
+        if self._is_setup or self._restore_failed:
             return
         calculations = self._entity.calculations
         if "sec_struct" in calculations:
@@ -280,7 +300,7 @@ class DSSPCalculation:
         """
         universe = self._entity.universe
         # reuse the set up analysis for its selection, as creating one is slow
-        if self.is_setup and self._props.selection == selection:
+        if self._DSSP is not None and self._props.selection == selection:
             assert self._dssp_atoms is not None
             atoms = self._dssp_atoms
             dssp = self._analysis()
