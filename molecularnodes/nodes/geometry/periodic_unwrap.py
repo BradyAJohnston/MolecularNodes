@@ -208,11 +208,12 @@ class PeriodicUnwrap(AssetGeometryGroup):
         ).transform(periodic_box.o.matrix)
         with g.Frame("Minimum Image"):
             _string_2 = g.String(
-                "Wrapping the offset from the centre with half a box offset, then removing that half box, gives each atom's nearest image to the centre."
+                "Compact wrapping the offset from the centre, moved to the middle of the box by half a box, then removing that half box, gives each atom's image nearest the centre, exactly for triclinic boxes too."
             )
             periodic_offset = PeriodicOffset(
                 position=position - transform_point_1,
                 offset_factor=(0.5, 0.5, 0.5),
+                wrap="Compact",
                 a=a,
                 b=b,
                 c=c_,
