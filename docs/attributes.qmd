@@ -107,6 +107,8 @@ How the integer is assigned depends on the attribute. For the dynamic ones the s
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `segid`                  | `Int::Int`             | The index of the segment the atom belongs to, when the topology defines segments. The segment names are stored as metadata on the object.                                            |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| `fragment_id`            | `Int::Int`             | The index of the bonded molecule (fragment) the atom belongs to, for structures with bonds. Link it into `Group ID::Int` of `Periodic Unwrap::Node` to keep molecules whole.         |
++--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `entity_id`              | `Int::Int`             | Multiple chains can be the same `entity`, if they are copies of the same protein in the structure. Only `.cif` and `.bcif` files define entities. Numbered in the file's order.      |
 +--------------------------+------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | `res_name`               | `Int::Int`             | Residues are mapped to integer values based on the [lookup table](data_table.qmd#residue-names).                                                                                     |
@@ -198,6 +200,7 @@ The others vary:
 | `is_hetero`  | ✓              | ✓                | ✓               |                             |
 | `is_carb`    | ✓              | ✓                | ✓               |                             |
 | `bond_type`  | ✓              | ✓                | ✓               |                             |
+| `fragment_id`| ✓              | ✓                | ✓               | if the topology has bonds   |
 | `charge`     | if in the file | if in the file   | if in the file  | if the topology has charges |
 
 Simulation topologies differ in what they contain, so the MD column is for typical topologies such as `.psf` and `.gro`.
