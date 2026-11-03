@@ -15,6 +15,7 @@ from nodebpy.builder import (
     VectorSocket,
 )
 from nodebpy.types import Default, InputBoolean, InputFloat, InputMenu, InputVector
+from ._shared.periodic_nearest_image import PeriodicNearestImage
 from .periodic_box import PeriodicBox
 
 
@@ -32,6 +33,8 @@ class PeriodicOffset(AssetGeometryGroup):
         Offset as a factor of the box vectors a, b and c, so 0.5 moves by half the box
     offset_distance : InputVector
         Offset as a distance in world units, where 1 m is 1 nm
+    wrap : InputMenu | Literal["Box", "Compact"]
+        Wrap into the box spanned by the box vectors, or into the compact cell around the box centre, where each atom is at its image nearest the centre (GROMACS `-ur compact`), such as a hexagonal prism for a hexagonal box
     update : InputBoolean
         Update the box lengths and angles with the simulation. As a modifier input, reads the "True" attribute by default.
     a : InputFloat
@@ -57,6 +60,8 @@ class PeriodicOffset(AssetGeometryGroup):
         Offset as a factor of the box vectors a, b and c, so 0.5 moves by half the box
     i.offset_distance : VectorSocket
         Offset as a distance in world units, where 1 m is 1 nm
+    i.wrap : MenuSocket
+        Wrap into the box spanned by the box vectors, or into the compact cell around the box centre, where each atom is at its image nearest the centre (GROMACS `-ur compact`), such as a hexagonal prism for a hexagonal box
     i.update : BooleanSocket
         Update the box lengths and angles with the simulation
     i.a : FloatSocket
@@ -95,6 +100,8 @@ class PeriodicOffset(AssetGeometryGroup):
         """Offset as a factor of the box vectors a, b and c, so 0.5 moves by half the box"""
         offset_distance: VectorSocket
         """Offset as a distance in world units, where 1 m is 1 nm"""
+        wrap: MenuSocket
+        """Wrap into the box spanned by the box vectors, or into the compact cell around the box centre, where each atom is at its image nearest the centre (GROMACS `-ur compact`), such as a hexagonal prism for a hexagonal box"""
         update: BooleanSocket
         """Update the box lengths and angles with the simulation"""
         a: FloatSocket
@@ -121,6 +128,7 @@ class PeriodicOffset(AssetGeometryGroup):
         offset_type: InputMenu | Literal["Factor", "Distance"] = "Factor",
         offset_factor: InputVector = None,
         offset_distance: InputVector = None,
+        wrap: InputMenu | Literal["Box", "Compact"] = "Box",
         update: InputBoolean = True,
         a: InputFloat = 0.0,
         b: InputFloat = 0.0,
@@ -135,6 +143,7 @@ class PeriodicOffset(AssetGeometryGroup):
                 "Offset Type": offset_type,
                 "Offset Factor": offset_factor,
                 "Offset Distance": offset_distance,
+                "Wrap": wrap,
                 "Update": update,
                 "a": a,
                 "b": b,
@@ -174,6 +183,12 @@ class PeriodicOffset(AssetGeometryGroup):
             description="Offset as a distance in world units, where 1 m is 1 nm",
             subtype="TRANSLATION",
         )
+        wrap = tree.inputs.menu(
+            "Wrap",
+            "Box",
+            description="Wrap into the box spanned by the box vectors, or into the compact cell around the box centre, where each atom is at its image nearest the centre (GROMACS `-ur compact`), such as a hexagonal prism for a hexagonal box",
+            expanded=True,
+        )
         with tree.inputs.panel("Periodic Box", default_closed=True):
             _update = tree.inputs.boolean(
                 "Update",
@@ -205,10 +220,29 @@ class PeriodicOffset(AssetGeometryGroup):
                 ),
             },
         )
+        transform_point = menu_switch.o.output.fraction().transform(
+            periodic_box.o.matrix
+        )
+        with g.Frame("Compact"):
+            _string = g.String(
+                "Move each position to its image nearest the centre of the box."
+            )
+            transform_point_1 = g.TransformPoint(
+                transform=periodic_box.o.matrix, vector=(0.5, 0.5, 0.5)
+            )
+            periodic_nearest_image = PeriodicNearestImage(
+                vector=transform_point - transform_point_1,
+                a=periodic_box.o.a,
+                b=periodic_box.o.b,
+                c=periodic_box.o.c,
+            )
+            vector_math = transform_point_1.o.vector + periodic_nearest_image
         (
             invert_matrix.o.invertible.switch.vector(
                 position,
-                menu_switch.o.output.fraction().transform(periodic_box.o.matrix),
+                g.MenuSwitch.vector(
+                    wrap, {"Box": transform_point, "Compact": vector_math}
+                ).o.output,
             )
             >> position_1
         )

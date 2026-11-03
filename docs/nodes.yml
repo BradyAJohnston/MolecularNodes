@@ -808,7 +808,10 @@ Periodic Offset:
     `Offset Type::Menu` set to `Factor::String` the `Offset Factor::Vector` is in fractions of the box vectors,
     so 0.5 moves by half the box whatever its shape or size. With `Distance::String` the `Offset Distance::Vector` is
     in world units, where 1 m is 1 nm. Works for orthorhombic and triclinic boxes, which are read from the trajectory
-    on every frame while `Update::Bool` is on. Without a box the positions are unchanged.
+    on every frame while `Update::Bool` is on. Without a box the positions are unchanged. `Wrap::Menu` set to
+    `Box::String` wraps into the box spanned by the box vectors, a slanted prism for a triclinic box; `Compact::String`
+    moves each position to its image nearest the box centre (GROMACS `-ur compact`), so a hexagonal box keeps its
+    hexagonal prism shape, using a KD-tree over the 27 neighbouring images.
 Periodic Unwrap:
   description: >-
     Make groups of atoms whole where the periodic box has split them across its boundaries. Atoms with the same

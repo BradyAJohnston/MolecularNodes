@@ -3,7 +3,7 @@ import bpy
 import MDAnalysis as mda
 import numpy as np
 import pytest
-from MDAnalysis.lib.distances import apply_PBC
+from MDAnalysis.lib.distances import apply_PBC, minimize_vectors
 from MDAnalysis.lib.mdamath import triclinic_vectors
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
 from nodebpy.nodes.geometry import SetPosition, StoreNamedAttribute
@@ -16,6 +16,8 @@ BOXES = {
     "orthorhombic": [53.8, 44.0, 57.2, 90.0, 90.0, 90.0],
     "hexagonal": [98.0, 98.0, 130.7, 90.0, 90.0, 120.0],
     "dodecahedron": [82.68, 82.68, 82.68, 60.0, 60.0, 90.0],
+    "dodecahedron-hexagon": [80.0, 80.0, 80.0, 60.0, 60.0, 60.0],
+    "truncated-octahedron": [80.0, 80.0, 80.0, 70.53, 109.47, 70.53],
 }
 BOX_NAMES = ["a", "b", "c", "alpha", "beta", "gamma"]
 # Å, and the tolerance for comparing positions read back from the mesh
@@ -100,6 +102,29 @@ def test_periodic_offset(mol_triclinic, box_name, offset_type, offset):
     result = _evaluated_positions(mol)
     _assert_inside_box(result, box)
     _assert_same_image(result, expected, box)
+
+
+@pytest.mark.parametrize("box_name", BOXES)
+def test_periodic_offset_compact(mol_triclinic, box_name):
+    # each position at its image nearest the box centre, as GROMACS -ur compact
+    mol = mol_triclinic
+    box = np.array(BOXES[box_name])
+    offset = np.array([0.37, -0.21, 1.5])
+    positions = mol.named_attribute("position") / mol.world_scale
+    with mol.tree.reset() as (atoms, join):
+        node = PeriodicOffset(
+            offset_factor=tuple(offset), wrap="Compact", **_box_inputs(box)
+        )
+        atoms >> SetPosition(position=node) >> join
+    vectors = triclinic_vectors(box)
+    centre = vectors.sum(axis=0) / 2
+    shifted = positions + offset @ vectors
+    expected = centre + minimize_vectors((shifted - centre).astype(np.float32), box)
+    result = _evaluated_positions(mol)
+    _assert_same_image(result, expected, box)
+    # no farther from the centre than the nearest image, allowing for ties
+    distance = np.linalg.norm(result - centre, axis=1)
+    assert np.all(distance <= np.linalg.norm(expected - centre, axis=1) + ATOL)
 
 
 @pytest.mark.parametrize("node", [PeriodicOffset, PeriodicUnwrap])
