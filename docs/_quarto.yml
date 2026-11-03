@@ -295,6 +295,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.EntityID
         children: embedded
+      - name: nodes.geometry.FragmentID
+        children: embedded
       - name: nodes.geometry.FrameID
         children: embedded
       - name: nodes.geometry.ImageID
@@ -459,6 +461,10 @@ quartodoc:
       - name: nodes.geometry.PeriodicBox
         children: embedded
       - name: nodes.geometry.PeriodicImage
+        children: embedded
+      - name: nodes.geometry.PeriodicOffset
+        children: embedded
+      - name: nodes.geometry.PeriodicUnwrap
         children: embedded
       - name: nodes.geometry.RotationCisTEM
         children: embedded

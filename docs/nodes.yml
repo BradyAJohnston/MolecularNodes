@@ -397,6 +397,11 @@ Segment ID:
   description: >-
     The `segid` attribute, an integer representation of the segment IDs present in the structure (the MDAnalysis
     `segid`). Segments are assigned an ID starting at `0` in the order they were read from the topology.
+Fragment ID:
+  description: >-
+    The `fragment_id` attribute: which bonded molecule (MDAnalysis fragment) each atom belongs to, numbered from `0`.
+    Created for structures with bonds. Link it into the `Group ID::Int` of `Periodic Unwrap::Node` to keep molecules
+    whole across the periodic box.
 Atom ID:
   description: >-
     The `atom_id` attribute which is read from the file. Will be increasing linearly for each subsequent atom
@@ -791,11 +796,27 @@ Periodic Array:
 Periodic Box:
   description: >-
     Get the box vectors for a trajectory's periodic simulation box. These vectors can be used to create periodic
-    images of the trajectory
+    images of the trajectory. `Matrix::Matrix` holds the same vectors as its columns, so transforming by it converts
+    fractional coordinates of the box to world coordinates, and by its inverse the reverse.
 Periodic Image:
   description: >-
     Get the location of a single lattice point of the trajectory, based on the box vectors and the chosen lattice
     indices.
+Periodic Offset:
+  description: >-
+    Move positions through the periodic box and wrap them back inside it, as when re-centring a simulation box. With
+    `Offset Type::Menu` set to `Factor::String` the `Offset Factor::Vector` is in fractions of the box vectors,
+    so 0.5 moves by half the box whatever its shape or size. With `Distance::String` the `Offset Distance::Vector` is
+    in world units, where 1 m is 1 nm. Works for orthorhombic and triclinic boxes, which are read from the trajectory
+    on every frame while `Update::Bool` is on. Without a box the positions are unchanged.
+Periodic Unwrap:
+  description: >-
+    Make groups of atoms whole where the periodic box has split them across its boundaries. Atoms with the same
+    `Group ID::Int` are kept together: link `fragment_id` for bonded molecules, or `chain_id` or `ures_id` for a
+    topology without bonds. Unlinked, each atom is its own group. Each atom moves to the periodic image nearest the
+    circular mean of its group, so every group must be shorter than half the box. `Place Groups::Bool` wraps the
+    centre of each group into the box; otherwise groups stay where they are, nearest their average position. Uses
+    `Periodic Offset::Node`.
 Lattice Grid:
   description: Create a grid of lattice points based on the periodic box vectors.
 Starfile Instances:

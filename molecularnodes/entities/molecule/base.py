@@ -481,6 +481,10 @@ class Molecule(MolecularEntity):
     def _compute_atom_id(self) -> np.ndarray:
         return self.atoms.ids
 
+    def _compute_fragment_id(self) -> np.ndarray:
+        # bonded molecules, raising NoDataError without bonds
+        return self.atoms.fragindices
+
     def _compute_segindices(self) -> np.ndarray:
         segs = []
         for seg in self.atoms.segments:
@@ -698,6 +702,7 @@ class Molecule(MolecularEntity):
             "segid": self._compute_segindices,
             "res_name": self._compute_res_name_int,
             "atom_id": self._compute_atom_id,
+            "fragment_id": self._compute_fragment_id,
             "b_factor": self._compute_b_factor,
             "occupancy": self._compute_occupancy,
             "charge": self._compute_charge,
@@ -1392,7 +1397,12 @@ class Molecule(MolecularEntity):
         if dimensions is None:
             return
         names = ["a", "b", "c", "alpha", "beta", "gamma"]
-        nodes_to_update = ["Periodic Box", "Periodic Array"]
+        nodes_to_update = [
+            "Periodic Box",
+            "Periodic Array",
+            "Periodic Offset",
+            "Periodic Unwrap",
+        ]
         for node in self.modifier_node_tree.nodes:
             if (
                 not isinstance(node, bpy.types.GeometryNodeGroup)

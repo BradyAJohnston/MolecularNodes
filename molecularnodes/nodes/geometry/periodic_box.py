@@ -9,6 +9,7 @@ from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
     FloatSocket,
+    MatrixSocket,
     PackageLibrary,
     SocketAccessor,
     VectorSocket,
@@ -63,6 +64,8 @@ class PeriodicBox(AssetGeometryGroup):
         B
     o.c : VectorSocket
         C
+    o.matrix : MatrixSocket
+        The box vectors A, B and C as columns, mapping fractional coordinates of the box to world coordinates
     """
 
     _name = "Periodic Box"
@@ -87,6 +90,8 @@ class PeriodicBox(AssetGeometryGroup):
         """B"""
         c: VectorSocket
         """C"""
+        matrix: MatrixSocket
+        """The box vectors A, B and C as columns, mapping fractional coordinates of the box to world coordinates"""
 
     if TYPE_CHECKING:
 
@@ -135,9 +140,14 @@ class PeriodicBox(AssetGeometryGroup):
         a_1 = tree.outputs.vector("A")
         b_1 = tree.outputs.vector("B")
         c__1 = tree.outputs.vector("C")
+        matrix = tree.outputs.matrix(
+            "Matrix",
+            description="The box vectors A, B and C as columns, mapping fractional coordinates of the box to world coordinates",
+        )
 
         with g.Frame("A Vector"):
-            combine_xyz = g.CombineXYZ(AngstromToWorld(angstrom=a))
+            angstrom_to_world = AngstromToWorld(angstrom=a)
+            combine_xyz = g.CombineXYZ(angstrom_to_world)
         with g.Frame("Angles To Radians"):
             math_1 = alpha.to_radians()
             math_2 = beta.to_radians()
@@ -148,29 +158,38 @@ class PeriodicBox(AssetGeometryGroup):
             math_6 = math_3.cos()
             math_7 = math_3.sin()
         with g.Frame("B Vector"):
-            angstrom_to_world = AngstromToWorld(angstrom=b)
+            angstrom_to_world_1 = AngstromToWorld(angstrom=b)
             with g.Frame("B Y Component"):
-                math_8 = angstrom_to_world.o.world * math_7
+                math_8 = angstrom_to_world_1.o.world * math_7
             with g.Frame("B X Component"):
-                math_9 = angstrom_to_world.o.world * math_6
+                math_9 = angstrom_to_world_1.o.world * math_6
             combine_xyz_1 = g.CombineXYZ(x=math_9, y=math_8)
         with g.Frame("C Vector"):
-            angstrom_to_world_1 = AngstromToWorld(angstrom=c_)
+            angstrom_to_world_2 = AngstromToWorld(angstrom=c_)
             with g.Frame("C X Component"):
-                math_10 = angstrom_to_world_1.o.world * math_5
+                math_10 = angstrom_to_world_2.o.world * math_5
             with g.Frame("C Y Component"):
-                math_11 = angstrom_to_world_1.o.world * (
+                math_11 = angstrom_to_world_2.o.world * (
                     (math_4 - math_5 * math_6) / math_7
                 )
             with g.Frame("C Z Component"):
                 math_12 = (
-                    angstrom_to_world_1.o.world**2.0 - math_10**2.0 - math_11**2.0
+                    angstrom_to_world_2.o.world**2.0 - math_10**2.0 - math_11**2.0
                 ).sqrt()
             combine_xyz_2 = g.CombineXYZ(x=math_10, y=math_11, z=math_12)
+        combine_matrix = g.CombineMatrix(
+            column_1_row_1=angstrom_to_world,
+            column_2_row_1=math_9,
+            column_2_row_2=math_8,
+            column_3_row_1=math_10,
+            column_3_row_2=math_11,
+            column_3_row_3=math_12,
+        )
 
         combine_xyz >> a_1
         combine_xyz_1 >> b_1
         combine_xyz_2 >> c__1
+        combine_matrix >> matrix
 
 
 ASSET = PeriodicBox
