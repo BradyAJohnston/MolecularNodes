@@ -194,6 +194,62 @@ def test_periodic_unwrap(mol_triclinic, place_groups):
         assert fractional.min() > -0.1 and fractional.max() < 1.1
 
 
+def _unwrap(mol, box, **kwargs):
+    """Unwrap by fragment, returning positions in Å"""
+    with mol.tree.reset() as (atoms, join):
+        node = PeriodicUnwrap(group_id=FragmentID(), **kwargs, **_box_inputs(box))
+        atoms >> SetPosition(position=node) >> join
+    return _evaluated_positions(mol)
+
+
+@pytest.mark.parametrize("box_name", BOXES)
+def test_periodic_unwrap_whole_stays_in_place(mol_triclinic, box_name):
+    # molecules that are already whole are left where they are without Place
+    # Groups, in any box, as each centre moves to its image nearest the average
+    mol = mol_triclinic
+    box = np.array(BOXES[box_name])
+    positions = mol.named_attribute("position") / mol.world_scale
+    result = _unwrap(mol, box, place_groups=False)
+    # only groups shorter than half the box can be unwrapped, which excludes
+    # the protein in the orthorhombic box, smaller than the protein itself
+    half = np.diag(triclinic_vectors(box)).min() / 2
+    fits = np.concatenate(
+        [
+            np.full(len(f), np.ptp(f.positions, axis=0).max() < half)
+            for f in mol.universe.atoms.fragments
+        ]
+    )[np.argsort(np.concatenate([f.indices for f in mol.universe.atoms.fragments]))]
+    assert fits.mean() > 0.8
+    assert np.abs(result - positions)[fits].max() < ATOL
+
+
+@pytest.mark.parametrize("box_name", BOXES)
+def test_periodic_unwrap_place_groups_compact(mol_triclinic, box_name):
+    # each group centre is at its image nearest the box centre
+    mol = mol_triclinic
+    box = np.array(BOXES[box_name])
+    result = _unwrap(mol, box, place_groups=True, wrap="Compact")
+    vectors = triclinic_vectors(box)
+    groups = mol.universe.atoms.fragindices
+    count = np.bincount(groups)[:, None]
+    # the circular mean centre the node places, recovered from the result: the
+    # image of it nearest each group's plain average
+    angle = 2 * np.pi * (result @ np.linalg.inv(vectors))
+    mean_cos = np.stack([np.bincount(groups, np.cos(angle[:, i])) for i in range(3)], 1)
+    mean_sin = np.stack([np.bincount(groups, np.sin(angle[:, i])) for i in range(3)], 1)
+    circular = (np.arctan2(mean_sin, mean_cos) / (2 * np.pi)) @ vectors
+    average = np.stack([np.bincount(groups, result[:, i]) for i in range(3)], 1) / count
+    placed = average + minimize_vectors((circular - average).astype(np.float32), box)
+    box_centre = vectors.sum(axis=0) / 2
+    nearest = box_centre + minimize_vectors(
+        (placed - box_centre).astype(np.float32), box
+    )
+    # equal, or an equally near image on a cell face
+    distance = np.linalg.norm(placed - box_centre, axis=1)
+    assert np.all(distance <= np.linalg.norm(nearest - box_centre, axis=1) + ATOL)
+    _assert_same_image(placed, nearest, box)
+
+
 @pytest.mark.parametrize("place_groups", [False, True])
 def test_periodic_unwrap_default_group_per_atom(mol_triclinic, place_groups):
     # unlinked, Group ID is the ID or index, so each atom is its own group

@@ -818,8 +818,9 @@ Periodic Unwrap:
     `Group ID::Int` are kept together: link `fragment_id` for bonded molecules, or `chain_id` or `ures_id` for a
     topology without bonds. Unlinked, each atom is its own group. Each atom moves to the periodic image nearest the
     circular mean of its group, so every group must be shorter than half the box. `Place Groups::Bool` wraps the
-    centre of each group into the box; otherwise groups stay where they are, nearest their average position. Uses
-    `Periodic Offset::Node`.
+    centre of each group into the box, or with `Wrap::Menu` set to `Compact::String` into the compact cell around the
+    box centre, as `Periodic Offset::Node` does; otherwise groups stay where they are, nearest their average position.
+    Uses `Periodic Offset::Node`.
 Lattice Grid:
   description: Create a grid of lattice points based on the periodic box vectors.
 Starfile Instances:
