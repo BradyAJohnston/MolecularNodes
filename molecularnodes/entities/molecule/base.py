@@ -20,6 +20,8 @@ import numpy as np
 from MDAnalysis.core.groups import AtomGroup
 from nodebpy.builder import MaterialBuilder
 from nodebpy.nodes.geometry import NamedAttribute
+from scipy.sparse import coo_matrix
+from scipy.sparse.csgraph import connected_components
 from ... import download
 from ...assets import data
 from ...blender import coll, path_resolve, set_obj_active
@@ -482,8 +484,22 @@ class Molecule(MolecularEntity):
         return self.atoms.ids
 
     def _compute_fragment_id(self) -> np.ndarray:
-        # bonded molecules, raising NoDataError without bonds
-        return self.atoms.fragindices
+        # bonded molecules, numbered as MDAnalysis `fragindices`, but found from
+        # the bonds already on the mesh, as building fragments in MDAnalysis is
+        # slow for large topologies, as is checking `hasattr(self.atoms, "bonds")`.
+        # Raises NoDataError without bonds
+        mesh = cast(bpy.types.Mesh, self.object.data)
+        if len(mesh.edges) == 0:
+            raise mda.NoDataError("structure has no bonds")
+        n_atoms = len(mesh.vertices)
+        edges = np.zeros(len(mesh.edges) * 2, dtype=np.int32)
+        mesh.edges.foreach_get("vertices", edges)
+        edges = edges.reshape(-1, 2)
+        graph = coo_matrix(
+            (np.ones(len(edges), dtype=np.int8), (edges[:, 0], edges[:, 1])),
+            shape=(n_atoms, n_atoms),
+        )
+        return connected_components(graph, directed=False)[1]
 
     def _compute_segindices(self) -> np.ndarray:
         segs = []
