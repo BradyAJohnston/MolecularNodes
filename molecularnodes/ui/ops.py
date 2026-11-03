@@ -1488,10 +1488,16 @@ class MN_OT_DSSP_init(Operator):
         if not isinstance(entity, Molecule):
             return {"CANCELLED"}
         try:
-            entity.calculations.dssp(selection=self.selection)
+            dssp = entity.calculations.dssp(selection=self.selection)
         except Exception as e:
             self.report({"ERROR"}, f"DSSP failed for selection '{self.selection}': {e}")
             return {"CANCELLED"}
+        # DSSP is added even when it fails, so its selection can be changed
+        if dssp._setup_error is not None:
+            self.report(
+                {"ERROR"},
+                f"DSSP failed for selection '{self.selection}': {dssp._setup_error}",
+            )
         update_entities(context.scene)
         return {"FINISHED"}
 

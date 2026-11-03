@@ -370,6 +370,12 @@ def layout_dssp_settings(layout: UILayout, traj: Molecule) -> None:
     op = operator_props(row.operator("mn.dssp_init", text="", icon="FILE_REFRESH"))
     op.uuid = uuid
     op.selection = props.selection
+    # DSSP is added even when it can't run on its selection
+    error = traj.calculations._dssp._setup_error
+    if error is not None:
+        row = layout.row()
+        row.alert = True
+        row.label(text=f"DSSP failed: {error}", icon="ERROR")
     # display options
     if traj._entity_type == EntityType.MD_STREAMING:
         layout.prop(props, "display_option_streaming")
