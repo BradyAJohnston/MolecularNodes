@@ -28,6 +28,7 @@ from ...blender import coll, path_resolve, set_obj_active
 from ...blender import utils as blender_utils
 from ...converters import universe_from_atoms
 from ...material import PresetMaterial, append_material
+from ...nodes import frame_updates
 from ...nodes import handlers as node_handlers
 from ...nodes._assets import link_asset_groups
 from ...nodes._utils import STYLE_LITERALS, STYLE_NODE_MAPPING
@@ -1246,8 +1247,8 @@ class Molecule(MolecularEntity):
             self._update_attributes(frame)
             # update annotation object
             self.annotations._update_annotation_object()
-            # update periodic box nodes
-            self._update_box()
+            # update node inputs from the universe, such as the periodic box
+            self._update_nodes()
         finally:
             self._updating_in_progress = False
 
@@ -1407,35 +1408,9 @@ class Molecule(MolecularEntity):
         self.position = values.pop("position")
         return values
 
-    def _update_box(self) -> None:
-        """Update any Periodic Box nodes in the geometry node tree."""
-        dimensions: tuple[float] | None = self.universe.trajectory.ts.dimensions
-        if dimensions is None:
-            return
-        names = ["a", "b", "c", "alpha", "beta", "gamma"]
-        nodes_to_update = [
-            "Periodic Box",
-            "Periodic Array",
-            "Periodic Offset",
-            "Periodic Unwrap",
-            "Periodic Cell",
-        ]
-        for node in self.modifier_node_tree.nodes:
-            if (
-                not isinstance(node, bpy.types.GeometryNodeGroup)
-                or node.node_tree is None
-                or node.node_tree.name not in nodes_to_update
-                or not cast(
-                    bpy.types.NodeSocketBool, node.inputs["Update"]
-                ).default_value
-            ):
-                continue
-
-            # lengths from Å to world units, angles stay in degrees
-            box = np.asarray(dimensions, dtype=float)
-            values = np.concatenate([box[:3] * self.world_scale, box[3:]])
-            for name, value in zip(names, values):
-                cast(bpy.types.NodeSocketFloat, node.inputs[name]).default_value = value
+    def _update_nodes(self) -> None:
+        """Update node inputs that come from the universe, such as the periodic box."""
+        frame_updates.update_nodes(self.modifier_node_tree, self)
 
     def __repr__(self) -> str:
         return f"<Molecule, `universe`: {self.universe}, `object`: {self.object}"
