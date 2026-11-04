@@ -276,10 +276,12 @@ def test_periodic_box_updates():
         offset = PeriodicOffset()
         unwrap = PeriodicUnwrap()
         atoms >> SetPosition(position=offset) >> SetPosition(position=unwrap) >> join
+        cell = PeriodicCell()
+        cell.o.mesh >> join
     for frame in [1, 5]:
         mol.set_frame(frame)
         dimensions = mol.universe.trajectory.ts.dimensions
-        for node in [offset, unwrap]:
+        for node in [offset, unwrap, cell]:
             np.testing.assert_allclose(_box_values(node), dimensions, rtol=1e-6)
 
 
