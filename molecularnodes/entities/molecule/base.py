@@ -1301,10 +1301,8 @@ class Molecule(MolecularEntity):
             raise ValueError("step must be a positive integer")
 
         n_frames = self.universe.trajectory.n_frames
-        if stop is None:
-            stop = n_frames
         start = max(0, min(start, n_frames))
-        stop = max(0, min(stop, n_frames))
+        stop = max(0, min(n_frames if stop is None else stop, n_frames))
 
         frames = coll.frames(name or self.name)
         # clear any previously-baked frames so re-baking replaces rather than appends
@@ -1803,7 +1801,7 @@ class Molecule(MolecularEntity):
                 if color is not None and not color_by_density
                 else None
             )
-            (
+            _ = (
                 tree.atoms
                 >> (g.SetColor(color=color_input) if color_input is not None else None)
                 >> style_node
