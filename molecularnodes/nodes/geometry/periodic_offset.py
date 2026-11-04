@@ -36,7 +36,7 @@ class PeriodicOffset(AssetGeometryGroup):
     wrap : InputMenu | Literal["Box", "Compact"]
         Wrap into the box spanned by the box vectors, or into the compact cell around the box centre, where each atom is at its image nearest the centre (GROMACS `-ur compact`), such as a hexagonal prism for a hexagonal box
     update : InputBoolean
-        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node. As a modifier input, reads the "True" attribute by default. As a modifier input, reads the "True" attribute by default.
+        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node. As a modifier input, reads the "True" attribute by default.
     a : InputFloat
         a
     b : InputFloat
@@ -63,7 +63,7 @@ class PeriodicOffset(AssetGeometryGroup):
     i.wrap : MenuSocket
         Wrap into the box spanned by the box vectors, or into the compact cell around the box centre, where each atom is at its image nearest the centre (GROMACS `-ur compact`), such as a hexagonal prism for a hexagonal box
     i.update : BooleanSocket
-        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node. As a modifier input, reads the "True" attribute by default.
+        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node.
     i.a : FloatSocket
         a
     i.b : FloatSocket
@@ -103,7 +103,7 @@ class PeriodicOffset(AssetGeometryGroup):
         wrap: MenuSocket
         """Wrap into the box spanned by the box vectors, or into the compact cell around the box centre, where each atom is at its image nearest the centre (GROMACS `-ur compact`), such as a hexagonal prism for a hexagonal box"""
         update: BooleanSocket
-        """Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node. As a modifier input, reads the "True" attribute by default."""
+        """Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node."""
         a: FloatSocket
         b: FloatSocket
         c: FloatSocket
@@ -194,7 +194,7 @@ class PeriodicOffset(AssetGeometryGroup):
             _update = tree.inputs.boolean(
                 "Update",
                 True,
-                description='Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node. As a modifier input, reads the "True" attribute by default.',
+                description="Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node.",
                 default_attribute="True",
             )
             with tree.inputs.panel("Lengths"):
