@@ -4,8 +4,9 @@ Update the inputs of MolecularNodes node groups from an entity on frame changes.
 Some node groups take values that change along a trajectory as plain inputs,
 such as the box lengths and angles of the periodic nodes. Node groups can't
 read these from the universe themselves, so the entity sets them on every
-frame change: each node group registers an update for its name, and
-``update_nodes`` calls it for every instance of that group in a tree.
+frame change: an update function is registered for node groups with the
+``updater`` decorator, and ``update_nodes`` calls it for every instance of
+those groups in a tree.
 
 Only nodes directly in the tree are updated, not ones inside other groups,
 which get their values through the group's own inputs.
@@ -16,8 +17,9 @@ turned off, ...).
 """
 
 import re
-from typing import TYPE_CHECKING, Any, Callable, cast
+from typing import TYPE_CHECKING, Any, Callable, Sequence, cast
 import bpy
+from nodebpy.builder import AssetGeometryGroup
 from .geometry import (
     PeriodicArray,
     PeriodicBox,
@@ -37,19 +39,36 @@ _DUPLICATE_SUFFIX = re.compile(r"\.\d{3}$")
 _registry: dict[str, list[NodeUpdate]] = {}
 
 
-def register_on_frame(name: str, update: NodeUpdate) -> None:
+def updater(
+    nodes: Sequence[type[AssetGeometryGroup]],
+) -> Callable[[NodeUpdate], NodeUpdate]:
     """
-    Register an update for a node group, run on every frame change.
+    Register the decorated function as an update for node groups, run on every
+    frame change.
+
+    The function is called with each instance of the node groups in an
+    entity's tree, and the entity.
 
     Parameters
     ----------
-    name : str
-        The name of the node group, such as ``PeriodicBox._name``.
-    update : Callable
-        Called with each instance of the node group in an entity's tree, and
-        the entity.
+    nodes : Sequence[type[AssetGeometryGroup]]
+        The node group classes to update, such as ``[PeriodicBox]``.
+
+    Examples
+    --------
+    ```python
+    @updater([PeriodicBox, PeriodicArray])
+    def _periodic_box(node, entity):
+        ...
+    ```
     """
-    _registry.setdefault(name, []).append(update)
+
+    def register(update: NodeUpdate) -> NodeUpdate:
+        for node in nodes:
+            _registry.setdefault(node._name, []).append(update)
+        return update
+
+    return register
 
 
 def update_nodes(tree: bpy.types.NodeTree, entity: Any) -> None:
@@ -62,6 +81,7 @@ def update_nodes(tree: bpy.types.NodeTree, entity: Any) -> None:
             update(node, entity)
 
 
+@updater([PeriodicBox, PeriodicArray, PeriodicOffset, PeriodicUnwrap, PeriodicCell])
 def _periodic_box(node: bpy.types.GeometryNodeGroup, entity: "Molecule") -> None:
     """Set the box lengths and angles from the current frame while Update is on."""
     if not cast(bpy.types.NodeSocketBool, node.inputs["Update"]).default_value:
@@ -71,7 +91,3 @@ def _periodic_box(node: bpy.types.GeometryNodeGroup, entity: "Molecule") -> None
         return
     for name, value in zip(["a", "b", "c", "alpha", "beta", "gamma"], dimensions):
         cast(bpy.types.NodeSocketFloat, node.inputs[name]).default_value = value
-
-
-for _node in (PeriodicBox, PeriodicArray, PeriodicOffset, PeriodicUnwrap, PeriodicCell):
-    register_on_frame(_node._name, _periodic_box)
