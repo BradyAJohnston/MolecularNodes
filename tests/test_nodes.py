@@ -346,7 +346,7 @@ def test_periodic_box_update_off():
     assert cast(bpy.types.NodeSocketFloat, node.node.inputs["a"]).default_value == 1.0
 
 
-def test_register_on_frame():
+def test_updater():
     # any node group can be updated from the entity on frame changes
     traj = mn.Molecule.load(GRO, XTC)
     with traj.tree.reset() as (atoms, join):
@@ -357,7 +357,7 @@ def test_register_on_frame():
     def update(node, entity):
         seen.append((node.name, entity.universe.trajectory.frame))
 
-    mn.nodes.frame_updates.register_on_frame(PeriodicArray._name, update)
+    mn.nodes.frame_updates.updater([PeriodicArray])(update)
     try:
         traj.set_frame(3)
     finally:
