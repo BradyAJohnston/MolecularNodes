@@ -797,7 +797,8 @@ Periodic Box:
   description: >-
     Get the box vectors for a trajectory's periodic simulation box. These vectors can be used to create periodic
     images of the trajectory. `Matrix::Matrix` holds the same vectors as its columns, so transforming by it converts
-    fractional coordinates of the box to world coordinates, and by its inverse the reverse.
+    fractional coordinates of the box to world coordinates, and by its inverse the reverse. The box lengths are in world
+    units, where 1 m is 1 nm, and the angles in degrees, as the trajectory sets them while `Update::Bool` is on.
 Periodic Cell:
   description: >-
     Mesh of the periodic unit cell, read from the trajectory on every frame while `Update::Bool` is on. With

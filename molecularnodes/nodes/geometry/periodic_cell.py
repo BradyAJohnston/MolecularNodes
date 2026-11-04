@@ -28,45 +28,45 @@ class PeriodicCell(AssetGeometryGroup):
     wrap : InputMenu | Literal["Box", "Compact"]
         The box spanned by the box vectors, or the compact cell around the box centre (GROMACS `-ur compact`), matching the Wrap of Periodic Offset
     update : InputBoolean
-        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node. As a modifier input, reads the "True" attribute by default.
+        Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand. As a modifier input, reads the "True" attribute by default.
     a : InputFloat
-        a
+        Length of box vector A in world units, where 1 m is 1 nm
     b : InputFloat
-        b
+        Length of box vector B in world units, where 1 m is 1 nm
     c : InputFloat
-        c
+        Length of box vector C in world units, where 1 m is 1 nm
     alpha : InputFloat
-        alpha
+        Angle between box vectors B and C, in degrees
     beta : InputFloat
-        beta
+        Angle between box vectors A and C, in degrees
     gamma : InputFloat
-        gamma
+        Angle between box vectors A and B, in degrees
 
     Inputs
     ------
     i.wrap : MenuSocket
         The box spanned by the box vectors, or the compact cell around the box centre (GROMACS `-ur compact`), matching the Wrap of Periodic Offset
     i.update : BooleanSocket
-        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node.
+        Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand
     i.a : FloatSocket
-        a
+        Length of box vector A in world units, where 1 m is 1 nm
     i.b : FloatSocket
-        b
+        Length of box vector B in world units, where 1 m is 1 nm
     i.c : FloatSocket
-        c
+        Length of box vector C in world units, where 1 m is 1 nm
     i.alpha : FloatSocket
-        alpha
+        Angle between box vectors B and C, in degrees
     i.beta : FloatSocket
-        beta
+        Angle between box vectors A and C, in degrees
     i.gamma : FloatSocket
-        gamma
+        Angle between box vectors A and B, in degrees
 
     Outputs
     -------
     o.mesh : GeometrySocket
-        The closed cell, empty without a box
+        The closed cell in world units, empty without a box
     o.edges : GeometrySocket
-        The edges of the cell as curves, without the diagonals of its triangulated faces
+        The edges of the cell as curves, without the diagonals of its triangulated faces, empty without a box
     """
 
     _name = "Periodic Cell"
@@ -81,19 +81,25 @@ class PeriodicCell(AssetGeometryGroup):
         wrap: MenuSocket
         """The box spanned by the box vectors, or the compact cell around the box centre (GROMACS `-ur compact`), matching the Wrap of Periodic Offset"""
         update: BooleanSocket
-        """Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node."""
+        """Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand"""
         a: FloatSocket
+        """Length of box vector A in world units, where 1 m is 1 nm"""
         b: FloatSocket
+        """Length of box vector B in world units, where 1 m is 1 nm"""
         c: FloatSocket
+        """Length of box vector C in world units, where 1 m is 1 nm"""
         alpha: FloatSocket
+        """Angle between box vectors B and C, in degrees"""
         beta: FloatSocket
+        """Angle between box vectors A and C, in degrees"""
         gamma: FloatSocket
+        """Angle between box vectors A and B, in degrees"""
 
     class _Outputs(SocketAccessor):
         mesh: GeometrySocket
-        """The closed cell, empty without a box"""
+        """The closed cell in world units, empty without a box"""
         edges: GeometrySocket
-        """The edges of the cell as curves, without the diagonals of its triangulated faces"""
+        """The edges of the cell as curves, without the diagonals of its triangulated faces, empty without a box"""
 
     if TYPE_CHECKING:
 
@@ -138,23 +144,50 @@ class PeriodicCell(AssetGeometryGroup):
             _update = tree.inputs.boolean(
                 "Update",
                 True,
-                description="Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node.",
+                description="Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand",
                 default_attribute="True",
             )
             with tree.inputs.panel("Lengths"):
-                a = tree.inputs.float("a", 0.0)
-                b = tree.inputs.float("b", 0.0)
-                c_ = tree.inputs.float("c", 0.0)
+                a = tree.inputs.float(
+                    "a",
+                    0.0,
+                    description="Length of box vector A in world units, where 1 m is 1 nm",
+                    subtype="DISTANCE",
+                )
+                b = tree.inputs.float(
+                    "b",
+                    0.0,
+                    description="Length of box vector B in world units, where 1 m is 1 nm",
+                    subtype="DISTANCE",
+                )
+                c_ = tree.inputs.float(
+                    "c",
+                    0.0,
+                    description="Length of box vector C in world units, where 1 m is 1 nm",
+                    subtype="DISTANCE",
+                )
             with tree.inputs.panel("Angles"):
-                alpha = tree.inputs.float("alpha", 0.0)
-                beta = tree.inputs.float("beta", 0.0)
-                gamma = tree.inputs.float("gamma", 0.0)
+                alpha = tree.inputs.float(
+                    "alpha",
+                    0.0,
+                    description="Angle between box vectors B and C, in degrees",
+                )
+                beta = tree.inputs.float(
+                    "beta",
+                    0.0,
+                    description="Angle between box vectors A and C, in degrees",
+                )
+                gamma = tree.inputs.float(
+                    "gamma",
+                    0.0,
+                    description="Angle between box vectors A and B, in degrees",
+                )
         mesh = tree.outputs.geometry(
-            "Mesh", description="The closed cell, empty without a box"
+            "Mesh", description="The closed cell in world units, empty without a box"
         )
         edges = tree.outputs.geometry(
             "Edges",
-            description="The edges of the cell as curves, without the diagonals of its triangulated faces",
+            description="The edges of the cell as curves, without the diagonals of its triangulated faces, empty without a box",
         )
 
         periodic_box = PeriodicBox(a=a, b=b, c=c_, alpha=alpha, beta=beta, gamma=gamma)

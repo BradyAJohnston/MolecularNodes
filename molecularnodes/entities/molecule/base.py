@@ -1431,7 +1431,10 @@ class Molecule(MolecularEntity):
             ):
                 continue
 
-            for name, value in zip(names, dimensions):
+            # lengths from Å to world units, angles stay in degrees
+            box = np.asarray(dimensions, dtype=float)
+            values = np.concatenate([box[:3] * self.world_scale, box[3:]])
+            for name, value in zip(names, values):
                 cast(bpy.types.NodeSocketFloat, node.inputs[name]).default_value = value
 
     def __repr__(self) -> str:

@@ -23,37 +23,37 @@ class PeriodicImage(AssetGeometryGroup):
     Parameters
     ----------
     a : InputVector
-        A
+        Box vector A in world units, such as from Periodic Box
     b : InputVector
-        B
+        Box vector B in world units, such as from Periodic Box
     c : InputVector
-        C
+        Box vector C in world units, such as from Periodic Box
     image_a : InputInteger
-        Image A
+        Number of box vectors A from the origin to the image
     image_b : InputInteger
-        Image B
+        Number of box vectors B from the origin to the image
     image_c : InputInteger
-        Image C
+        Number of box vectors C from the origin to the image
 
     Inputs
     ------
     i.a : VectorSocket
-        A
+        Box vector A in world units, such as from Periodic Box
     i.b : VectorSocket
-        B
+        Box vector B in world units, such as from Periodic Box
     i.c : VectorSocket
-        C
+        Box vector C in world units, such as from Periodic Box
     i.image_a : IntegerSocket
-        Image A
+        Number of box vectors A from the origin to the image
     i.image_b : IntegerSocket
-        Image B
+        Number of box vectors B from the origin to the image
     i.image_c : IntegerSocket
-        Image C
+        Number of box vectors C from the origin to the image
 
     Outputs
     -------
     o.points : GeometrySocket
-        Points
+        A single point at the image, Image A × A + Image B × B + Image C × C
     """
 
     _name = "Periodic Image"
@@ -63,21 +63,21 @@ class PeriodicImage(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         a: VectorSocket
-        """A"""
+        """Box vector A in world units, such as from Periodic Box"""
         b: VectorSocket
-        """B"""
+        """Box vector B in world units, such as from Periodic Box"""
         c: VectorSocket
-        """C"""
+        """Box vector C in world units, such as from Periodic Box"""
         image_a: IntegerSocket
-        """Image A"""
+        """Number of box vectors A from the origin to the image"""
         image_b: IntegerSocket
-        """Image B"""
+        """Number of box vectors B from the origin to the image"""
         image_c: IntegerSocket
-        """Image C"""
+        """Number of box vectors C from the origin to the image"""
 
     class _Outputs(SocketAccessor):
         points: GeometrySocket
-        """Points"""
+        """A single point at the image, Image A × A + Image B × B + Image C × C"""
 
     if TYPE_CHECKING:
 
@@ -108,19 +108,49 @@ class PeriodicImage(AssetGeometryGroup):
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         a = tree.inputs.vector(
-            "A", (0.0, 0.0, 0.0), min_value=-10_000.0, max_value=10_000.0, subtype="XYZ"
+            "A",
+            (0.0, 0.0, 0.0),
+            description="Box vector A in world units, such as from Periodic Box",
+            min_value=-10_000.0,
+            max_value=10_000.0,
+            subtype="XYZ",
         )
         b = tree.inputs.vector(
-            "B", (0.0, 0.0, 0.0), min_value=-10_000.0, max_value=10_000.0, subtype="XYZ"
+            "B",
+            (0.0, 0.0, 0.0),
+            description="Box vector B in world units, such as from Periodic Box",
+            min_value=-10_000.0,
+            max_value=10_000.0,
+            subtype="XYZ",
         )
         c_ = tree.inputs.vector(
-            "C", (0.0, 0.0, 0.0), min_value=-10_000.0, max_value=10_000.0, subtype="XYZ"
+            "C",
+            (0.0, 0.0, 0.0),
+            description="Box vector C in world units, such as from Periodic Box",
+            min_value=-10_000.0,
+            max_value=10_000.0,
+            subtype="XYZ",
         )
         with tree.inputs.panel("Image"):
-            image_a = tree.inputs.integer("Image A", 0)
-            image_b = tree.inputs.integer("Image B", 0)
-            image_c = tree.inputs.integer("Image C", 0)
-        points = tree.outputs.geometry("Points")
+            image_a = tree.inputs.integer(
+                "Image A",
+                0,
+                description="Number of box vectors A from the origin to the image",
+            )
+            image_b = tree.inputs.integer(
+                "Image B",
+                0,
+                description="Number of box vectors B from the origin to the image",
+            )
+            image_c = tree.inputs.integer(
+                "Image C",
+                0,
+                description="Number of box vectors C from the origin to the image",
+            )
+        points = tree.outputs.geometry(
+            "Points",
+            description="A single point at the image, Image A × A + Image B × B + Image C × C",
+        )
 
         points_1 = g.Points(position=a * image_a + b * image_b + c_ * image_c)
 

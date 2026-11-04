@@ -181,7 +181,9 @@ def test_evaluate_periodic(benchmark, node):
     # single frame doesn't update the box, so it is given to the node
     mol = mn.Molecule.load(DATA_DIR / "md_ppr/md.tpr", DATA_DIR / "md_ppr/md.gro")
     names = ["a", "b", "c", "alpha", "beta", "gamma"]
-    box = {"update": False, **dict(zip(names, map(float, mol.universe.dimensions)))}
+    dimensions = mol.universe.dimensions.astype(float)
+    dimensions[:3] *= mol.world_scale
+    box = {"update": False, **dict(zip(names, map(float, dimensions)))}
     with mol.tree.reset() as (atoms, join):
         atoms >> SetPosition(position=node(box)) >> join
     _evaluate(mol.object)
