@@ -36,57 +36,57 @@ class PeriodicUnwrap(AssetGeometryGroup):
     Parameters
     ----------
     position : InputVector
-        Positions to unwrap. When unconnected: The position from the context.
+        Positions to make whole across the periodic box. When unconnected: The position from the context.
     group_id : InputInteger
         Atoms with the same ID are kept whole, such as `fragment_id` for bonded molecules or `chain_id`. Each group must be shorter than half the box. When unconnected: The "id" attribute if available, otherwise the index.
     place_groups : InputBoolean
-        Wrap the centre of each group into the box. Otherwise each group stays nearest its average position
+        Wrap the centre of each group into the periodic box. Otherwise each group stays nearest its average position
     wrap : InputMenu | Literal["Box", "Compact"]
-        With Place Groups, wrap the centre of each group into the box spanned by the box vectors, or into the compact cell around the box centre, as Periodic Offset does
+        With Place Groups, wrap each group centre into the box spanned by the box vectors, or into the compact cell around the box centre, as in Periodic Offset
     update : InputBoolean
-        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node. As a modifier input, reads the "True" attribute by default.
+        Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand. As a modifier input, reads the "True" attribute by default.
     a : InputFloat
-        a
+        Length of box vector A in world units, where 1 m is 1 nm
     b : InputFloat
-        b
+        Length of box vector B in world units, where 1 m is 1 nm
     c : InputFloat
-        c
+        Length of box vector C in world units, where 1 m is 1 nm
     alpha : InputFloat
-        alpha
+        Angle between box vectors B and C, in degrees
     beta : InputFloat
-        beta
+        Angle between box vectors A and C, in degrees
     gamma : InputFloat
-        gamma
+        Angle between box vectors A and B, in degrees
 
     Inputs
     ------
     i.position : VectorSocket
-        Positions to unwrap
+        Positions to make whole across the periodic box
     i.group_id : IntegerSocket
         Atoms with the same ID are kept whole, such as `fragment_id` for bonded molecules or `chain_id`. Each group must be shorter than half the box
     i.place_groups : BooleanSocket
-        Wrap the centre of each group into the box. Otherwise each group stays nearest its average position
+        Wrap the centre of each group into the periodic box. Otherwise each group stays nearest its average position
     i.wrap : MenuSocket
-        With Place Groups, wrap the centre of each group into the box spanned by the box vectors, or into the compact cell around the box centre, as Periodic Offset does
+        With Place Groups, wrap each group centre into the box spanned by the box vectors, or into the compact cell around the box centre, as in Periodic Offset
     i.update : BooleanSocket
-        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node.
+        Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand
     i.a : FloatSocket
-        a
+        Length of box vector A in world units, where 1 m is 1 nm
     i.b : FloatSocket
-        b
+        Length of box vector B in world units, where 1 m is 1 nm
     i.c : FloatSocket
-        c
+        Length of box vector C in world units, where 1 m is 1 nm
     i.alpha : FloatSocket
-        alpha
+        Angle between box vectors B and C, in degrees
     i.beta : FloatSocket
-        beta
+        Angle between box vectors A and C, in degrees
     i.gamma : FloatSocket
-        gamma
+        Angle between box vectors A and B, in degrees
 
     Outputs
     -------
     o.position : VectorSocket
-        Positions with each group whole, unchanged without a box
+        Positions with each group made whole, or unchanged without a box
     """
 
     _name = "Periodic Unwrap"
@@ -99,25 +99,31 @@ class PeriodicUnwrap(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         position: VectorSocket
-        """Positions to unwrap"""
+        """Positions to make whole across the periodic box"""
         group_id: IntegerSocket
         """Atoms with the same ID are kept whole, such as `fragment_id` for bonded molecules or `chain_id`. Each group must be shorter than half the box"""
         place_groups: BooleanSocket
-        """Wrap the centre of each group into the box. Otherwise each group stays nearest its average position"""
+        """Wrap the centre of each group into the periodic box. Otherwise each group stays nearest its average position"""
         wrap: MenuSocket
-        """With Place Groups, wrap the centre of each group into the box spanned by the box vectors, or into the compact cell around the box centre, as Periodic Offset does"""
+        """With Place Groups, wrap each group centre into the box spanned by the box vectors, or into the compact cell around the box centre, as in Periodic Offset"""
         update: BooleanSocket
-        """Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node."""
+        """Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand"""
         a: FloatSocket
+        """Length of box vector A in world units, where 1 m is 1 nm"""
         b: FloatSocket
+        """Length of box vector B in world units, where 1 m is 1 nm"""
         c: FloatSocket
+        """Length of box vector C in world units, where 1 m is 1 nm"""
         alpha: FloatSocket
+        """Angle between box vectors B and C, in degrees"""
         beta: FloatSocket
+        """Angle between box vectors A and C, in degrees"""
         gamma: FloatSocket
+        """Angle between box vectors A and B, in degrees"""
 
     class _Outputs(SocketAccessor):
         position: VectorSocket
-        """Positions with each group whole, unchanged without a box"""
+        """Positions with each group made whole, or unchanged without a box"""
 
     if TYPE_CHECKING:
 
@@ -160,7 +166,7 @@ class PeriodicUnwrap(AssetGeometryGroup):
         position = tree.inputs.vector(
             "Position",
             (0.0, 0.0, 0.0),
-            description="Positions to unwrap",
+            description="Positions to make whole across the periodic box",
             hide_value=True,
             default_input="POSITION",
         )
@@ -174,12 +180,12 @@ class PeriodicUnwrap(AssetGeometryGroup):
         place_groups = tree.inputs.boolean(
             "Place Groups",
             False,
-            description="Wrap the centre of each group into the box. Otherwise each group stays nearest its average position",
+            description="Wrap the centre of each group into the periodic box. Otherwise each group stays nearest its average position",
         )
         wrap = tree.inputs.menu(
             "Wrap",
             "Box",
-            description="With Place Groups, wrap the centre of each group into the box spanned by the box vectors, or into the compact cell around the box centre, as Periodic Offset does",
+            description="With Place Groups, wrap each group centre into the box spanned by the box vectors, or into the compact cell around the box centre, as in Periodic Offset",
             expanded=True,
             optional_label=True,
         )
@@ -187,20 +193,47 @@ class PeriodicUnwrap(AssetGeometryGroup):
             _update = tree.inputs.boolean(
                 "Update",
                 True,
-                description="Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node.",
+                description="Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand",
                 default_attribute="True",
             )
             with tree.inputs.panel("Lengths"):
-                a = tree.inputs.float("a", 0.0)
-                b = tree.inputs.float("b", 0.0)
-                c_ = tree.inputs.float("c", 0.0)
+                a = tree.inputs.float(
+                    "a",
+                    0.0,
+                    description="Length of box vector A in world units, where 1 m is 1 nm",
+                    subtype="DISTANCE",
+                )
+                b = tree.inputs.float(
+                    "b",
+                    0.0,
+                    description="Length of box vector B in world units, where 1 m is 1 nm",
+                    subtype="DISTANCE",
+                )
+                c_ = tree.inputs.float(
+                    "c",
+                    0.0,
+                    description="Length of box vector C in world units, where 1 m is 1 nm",
+                    subtype="DISTANCE",
+                )
             with tree.inputs.panel("Angles"):
-                alpha = tree.inputs.float("alpha", 0.0)
-                beta = tree.inputs.float("beta", 0.0)
-                gamma = tree.inputs.float("gamma", 0.0)
+                alpha = tree.inputs.float(
+                    "alpha",
+                    0.0,
+                    description="Angle between box vectors B and C, in degrees",
+                )
+                beta = tree.inputs.float(
+                    "beta",
+                    0.0,
+                    description="Angle between box vectors A and C, in degrees",
+                )
+                gamma = tree.inputs.float(
+                    "gamma",
+                    0.0,
+                    description="Angle between box vectors A and B, in degrees",
+                )
         position_1 = tree.outputs.vector(
             "Position",
-            description="Positions with each group whole, unchanged without a box",
+            description="Positions with each group made whole, or unchanged without a box",
         )
 
         periodic_box = PeriodicBox(a=a, b=b, c=c_, alpha=alpha, beta=beta, gamma=gamma)

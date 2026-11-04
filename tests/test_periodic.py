@@ -27,14 +27,22 @@ BOXES = {
     "truncated-octahedron": [80.0, 80.0, 80.0, 70.53, 109.47, 70.53],
 }
 BOX_NAMES = ["a", "b", "c", "alpha", "beta", "gamma"]
+# the default world scale of a Molecule, 1 Å is 0.1 world units
+WORLD_SCALE = 0.1
 # Å, and the tolerance for comparing positions read back from the mesh
 ATOL = 1e-2
 # fractional offset that splits molecules across the box before unwrapping
 SHIFT = np.array([0.37, 0.21, 0.5])
 
 
+def _world_box(box) -> np.ndarray:
+    """Box dimensions with the lengths in world units, as the nodes take them"""
+    box = np.asarray(box, dtype=float)
+    return np.concatenate([box[:3] * WORLD_SCALE, box[3:]])
+
+
 def _box_inputs(box) -> dict:
-    return {"update": False, **dict(zip(BOX_NAMES, (float(x) for x in box)))}
+    return {"update": False, **dict(zip(BOX_NAMES, map(float, _world_box(box))))}
 
 
 def _box_values(node) -> list[float]:
@@ -282,7 +290,9 @@ def test_periodic_box_updates():
         mol.set_frame(frame)
         dimensions = mol.universe.trajectory.ts.dimensions
         for node in [offset, unwrap, cell]:
-            np.testing.assert_allclose(_box_values(node), dimensions, rtol=1e-6)
+            np.testing.assert_allclose(
+                _box_values(node), _world_box(dimensions), rtol=1e-6
+            )
 
 
 def test_periodic_box_updates_without_dimensions():

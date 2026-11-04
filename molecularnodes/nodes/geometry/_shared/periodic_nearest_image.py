@@ -17,24 +17,24 @@ class PeriodicNearestImage(CustomGeometryGroup):
     Parameters
     ----------
     vector : InputVector
-        Vectors to find the shortest periodic image of
+        Vectors to find the shortest periodic image of, in world units
     a : InputVector
-        Box vector A
+        Box vector A in world units, such as from Periodic Box
     b : InputVector
-        Box vector B
+        Box vector B in world units, such as from Periodic Box
     c : InputVector
-        Box vector C
+        Box vector C in world units, such as from Periodic Box
 
     Inputs
     ------
     i.vector : VectorSocket
-        Vectors to find the shortest periodic image of
+        Vectors to find the shortest periodic image of, in world units
     i.a : VectorSocket
-        Box vector A
+        Box vector A in world units, such as from Periodic Box
     i.b : VectorSocket
-        Box vector B
+        Box vector B in world units, such as from Periodic Box
     i.c : VectorSocket
-        Box vector C
+        Box vector C in world units, such as from Periodic Box
 
     Outputs
     -------
@@ -47,13 +47,13 @@ class PeriodicNearestImage(CustomGeometryGroup):
 
     class _Inputs(SocketAccessor):
         vector: VectorSocket
-        """Vectors to find the shortest periodic image of"""
+        """Vectors to find the shortest periodic image of, in world units"""
         a: VectorSocket
-        """Box vector A"""
+        """Box vector A in world units, such as from Periodic Box"""
         b: VectorSocket
-        """Box vector B"""
+        """Box vector B in world units, such as from Periodic Box"""
         c: VectorSocket
-        """Box vector C"""
+        """Box vector C in world units, such as from Periodic Box"""
 
     class _Outputs(SocketAccessor):
         vector: VectorSocket
@@ -79,12 +79,24 @@ class PeriodicNearestImage(CustomGeometryGroup):
         vector = tree.inputs.vector(
             "Vector",
             (0.0, 0.0, 0.0),
-            description="Vectors to find the shortest periodic image of",
+            description="Vectors to find the shortest periodic image of, in world units",
             hide_value=True,
         )
-        a = tree.inputs.vector("A", (0.0, 0.0, 0.0), description="Box vector A")
-        b = tree.inputs.vector("B", (0.0, 0.0, 0.0), description="Box vector B")
-        c_ = tree.inputs.vector("C", (0.0, 0.0, 0.0), description="Box vector C")
+        a = tree.inputs.vector(
+            "A",
+            (0.0, 0.0, 0.0),
+            description="Box vector A in world units, such as from Periodic Box",
+        )
+        b = tree.inputs.vector(
+            "B",
+            (0.0, 0.0, 0.0),
+            description="Box vector B in world units, such as from Periodic Box",
+        )
+        c_ = tree.inputs.vector(
+            "C",
+            (0.0, 0.0, 0.0),
+            description="Box vector C in world units, such as from Periodic Box",
+        )
         vector_1 = tree.outputs.vector(
             "Vector", description="The shortest periodic image of each vector"
         )
