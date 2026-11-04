@@ -19,6 +19,7 @@ turned off, ...).
 import re
 from typing import TYPE_CHECKING, Any, Callable, Sequence, cast
 import bpy
+import numpy as np
 from nodebpy.builder import AssetGeometryGroup
 from .geometry import (
     PeriodicArray,
@@ -89,5 +90,8 @@ def _periodic_box(node: bpy.types.GeometryNodeGroup, entity: "Molecule") -> None
     dimensions = entity.universe.trajectory.ts.dimensions
     if dimensions is None:
         return
-    for name, value in zip(["a", "b", "c", "alpha", "beta", "gamma"], dimensions):
+    # lengths from Å to world units, angles stay in degrees
+    box = np.asarray(dimensions, dtype=float)
+    values = np.concatenate([box[:3] * entity.world_scale, box[3:]])
+    for name, value in zip(["a", "b", "c", "alpha", "beta", "gamma"], values):
         cast(bpy.types.NodeSocketFloat, node.inputs[name]).default_value = value

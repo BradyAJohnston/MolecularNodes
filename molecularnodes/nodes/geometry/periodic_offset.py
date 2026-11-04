@@ -26,61 +26,61 @@ class PeriodicOffset(AssetGeometryGroup):
     Parameters
     ----------
     position : InputVector
-        Positions to offset and wrap into the periodic box. When unconnected: The position from the context.
+        Positions to move and wrap into the periodic box. When unconnected: The position from the context.
     offset_type : InputMenu | Literal["Factor", "Distance"]
-        Offset by fractions of the box vectors, or by a distance
+        Give the offset as a factor of the box vectors, or as a distance
     offset_factor : InputVector
-        Offset as a factor of the box vectors a, b and c, so 0.5 moves by half the box
+        Offset as a factor of box vectors A, B and C, so 0.5 moves by half the box along each
     offset_distance : InputVector
         Offset as a distance in world units, where 1 m is 1 nm
     wrap : InputMenu | Literal["Box", "Compact"]
-        Wrap into the box spanned by the box vectors, or into the compact cell around the box centre, where each atom is at its image nearest the centre (GROMACS `-ur compact`), such as a hexagonal prism for a hexagonal box
+        Wrap into the box spanned by the box vectors, or into the compact cell around the box centre, putting each position at its image nearest the centre (GROMACS `-ur compact`). For a hexagonal box the compact cell is a hexagonal prism
     update : InputBoolean
-        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node. As a modifier input, reads the "True" attribute by default.
+        Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand. As a modifier input, reads the "True" attribute by default.
     a : InputFloat
-        a
+        Length of box vector A in world units, where 1 m is 1 nm
     b : InputFloat
-        b
+        Length of box vector B in world units, where 1 m is 1 nm
     c : InputFloat
-        c
+        Length of box vector C in world units, where 1 m is 1 nm
     alpha : InputFloat
-        alpha
+        Angle between box vectors B and C, in degrees
     beta : InputFloat
-        beta
+        Angle between box vectors A and C, in degrees
     gamma : InputFloat
-        gamma
+        Angle between box vectors A and B, in degrees
 
     Inputs
     ------
     i.position : VectorSocket
-        Positions to offset and wrap into the periodic box
+        Positions to move and wrap into the periodic box
     i.offset_type : MenuSocket
-        Offset by fractions of the box vectors, or by a distance
+        Give the offset as a factor of the box vectors, or as a distance
     i.offset_factor : VectorSocket
-        Offset as a factor of the box vectors a, b and c, so 0.5 moves by half the box
+        Offset as a factor of box vectors A, B and C, so 0.5 moves by half the box along each
     i.offset_distance : VectorSocket
         Offset as a distance in world units, where 1 m is 1 nm
     i.wrap : MenuSocket
-        Wrap into the box spanned by the box vectors, or into the compact cell around the box centre, where each atom is at its image nearest the centre (GROMACS `-ur compact`), such as a hexagonal prism for a hexagonal box
+        Wrap into the box spanned by the box vectors, or into the compact cell around the box centre, putting each position at its image nearest the centre (GROMACS `-ur compact`). For a hexagonal box the compact cell is a hexagonal prism
     i.update : BooleanSocket
-        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node.
+        Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand
     i.a : FloatSocket
-        a
+        Length of box vector A in world units, where 1 m is 1 nm
     i.b : FloatSocket
-        b
+        Length of box vector B in world units, where 1 m is 1 nm
     i.c : FloatSocket
-        c
+        Length of box vector C in world units, where 1 m is 1 nm
     i.alpha : FloatSocket
-        alpha
+        Angle between box vectors B and C, in degrees
     i.beta : FloatSocket
-        beta
+        Angle between box vectors A and C, in degrees
     i.gamma : FloatSocket
-        gamma
+        Angle between box vectors A and B, in degrees
 
     Outputs
     -------
     o.position : VectorSocket
-        Offset positions wrapped into the periodic box, unchanged without a box
+        Positions offset and wrapped into the periodic box, or unchanged without a box
     """
 
     _name = "Periodic Offset"
@@ -93,27 +93,33 @@ class PeriodicOffset(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         position: VectorSocket
-        """Positions to offset and wrap into the periodic box"""
+        """Positions to move and wrap into the periodic box"""
         offset_type: MenuSocket
-        """Offset by fractions of the box vectors, or by a distance"""
+        """Give the offset as a factor of the box vectors, or as a distance"""
         offset_factor: VectorSocket
-        """Offset as a factor of the box vectors a, b and c, so 0.5 moves by half the box"""
+        """Offset as a factor of box vectors A, B and C, so 0.5 moves by half the box along each"""
         offset_distance: VectorSocket
         """Offset as a distance in world units, where 1 m is 1 nm"""
         wrap: MenuSocket
-        """Wrap into the box spanned by the box vectors, or into the compact cell around the box centre, where each atom is at its image nearest the centre (GROMACS `-ur compact`), such as a hexagonal prism for a hexagonal box"""
+        """Wrap into the box spanned by the box vectors, or into the compact cell around the box centre, putting each position at its image nearest the centre (GROMACS `-ur compact`). For a hexagonal box the compact cell is a hexagonal prism"""
         update: BooleanSocket
-        """Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node."""
+        """Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand"""
         a: FloatSocket
+        """Length of box vector A in world units, where 1 m is 1 nm"""
         b: FloatSocket
+        """Length of box vector B in world units, where 1 m is 1 nm"""
         c: FloatSocket
+        """Length of box vector C in world units, where 1 m is 1 nm"""
         alpha: FloatSocket
+        """Angle between box vectors B and C, in degrees"""
         beta: FloatSocket
+        """Angle between box vectors A and C, in degrees"""
         gamma: FloatSocket
+        """Angle between box vectors A and B, in degrees"""
 
     class _Outputs(SocketAccessor):
         position: VectorSocket
-        """Offset positions wrapped into the periodic box, unchanged without a box"""
+        """Positions offset and wrapped into the periodic box, or unchanged without a box"""
 
     if TYPE_CHECKING:
 
@@ -158,21 +164,21 @@ class PeriodicOffset(AssetGeometryGroup):
         position = tree.inputs.vector(
             "Position",
             (0.0, 0.0, 0.0),
-            description="Positions to offset and wrap into the periodic box",
+            description="Positions to move and wrap into the periodic box",
             hide_value=True,
             default_input="POSITION",
         )
         offset_type = tree.inputs.menu(
             "Offset Type",
             "Factor",
-            description="Offset by fractions of the box vectors, or by a distance",
+            description="Give the offset as a factor of the box vectors, or as a distance",
             expanded=True,
             optional_label=True,
         )
         offset_factor = tree.inputs.vector(
             "Offset Factor",
             (0.0, 0.0, 0.0),
-            description="Offset as a factor of the box vectors a, b and c, so 0.5 moves by half the box",
+            description="Offset as a factor of box vectors A, B and C, so 0.5 moves by half the box along each",
             min_value=-1.0,
             max_value=1.0,
             subtype="FACTOR",
@@ -186,7 +192,7 @@ class PeriodicOffset(AssetGeometryGroup):
         wrap = tree.inputs.menu(
             "Wrap",
             "Box",
-            description="Wrap into the box spanned by the box vectors, or into the compact cell around the box centre, where each atom is at its image nearest the centre (GROMACS `-ur compact`), such as a hexagonal prism for a hexagonal box",
+            description="Wrap into the box spanned by the box vectors, or into the compact cell around the box centre, putting each position at its image nearest the centre (GROMACS `-ur compact`). For a hexagonal box the compact cell is a hexagonal prism",
             expanded=True,
             optional_label=True,
         )
@@ -194,20 +200,47 @@ class PeriodicOffset(AssetGeometryGroup):
             _update = tree.inputs.boolean(
                 "Update",
                 True,
-                description="Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node.",
+                description="Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand",
                 default_attribute="True",
             )
             with tree.inputs.panel("Lengths"):
-                a = tree.inputs.float("a", 0.0)
-                b = tree.inputs.float("b", 0.0)
-                c_ = tree.inputs.float("c", 0.0)
+                a = tree.inputs.float(
+                    "a",
+                    0.0,
+                    description="Length of box vector A in world units, where 1 m is 1 nm",
+                    subtype="DISTANCE",
+                )
+                b = tree.inputs.float(
+                    "b",
+                    0.0,
+                    description="Length of box vector B in world units, where 1 m is 1 nm",
+                    subtype="DISTANCE",
+                )
+                c_ = tree.inputs.float(
+                    "c",
+                    0.0,
+                    description="Length of box vector C in world units, where 1 m is 1 nm",
+                    subtype="DISTANCE",
+                )
             with tree.inputs.panel("Angles"):
-                alpha = tree.inputs.float("alpha", 0.0)
-                beta = tree.inputs.float("beta", 0.0)
-                gamma = tree.inputs.float("gamma", 0.0)
+                alpha = tree.inputs.float(
+                    "alpha",
+                    0.0,
+                    description="Angle between box vectors B and C, in degrees",
+                )
+                beta = tree.inputs.float(
+                    "beta",
+                    0.0,
+                    description="Angle between box vectors A and C, in degrees",
+                )
+                gamma = tree.inputs.float(
+                    "gamma",
+                    0.0,
+                    description="Angle between box vectors A and B, in degrees",
+                )
         position_1 = tree.outputs.vector(
             "Position",
-            description="Offset positions wrapped into the periodic box, unchanged without a box",
+            description="Positions offset and wrapped into the periodic box, or unchanged without a box",
         )
 
         periodic_box = PeriodicBox(a=a, b=b, c=c_, alpha=alpha, beta=beta, gamma=gamma)

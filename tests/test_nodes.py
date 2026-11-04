@@ -306,8 +306,11 @@ def test_periodic_array(snapshot, tmp_path):
     dim_idx = slice(1, 7)
     assert not all([x == y for x, y in zip(defaults_0[dim_idx], defaults_10[dim_idx])])
     # the unit cell dimensions ar currently inputs 1..7 for the node as it is setup so
-    # we just subset those and check it matches the universe
-    assert np.allclose(defaults_10[dim_idx], traj.universe.trajectory.ts.dimensions)
+    # we just subset those and check it matches the universe, with the lengths in
+    # world units. The defaults are rounded to 3 decimals
+    dimensions = traj.universe.trajectory.ts.dimensions
+    expected = np.concatenate([dimensions[:3] * traj.world_scale, dimensions[3:]])
+    assert np.allclose(defaults_10[dim_idx], expected, atol=1e-3)
 
     # for some reason we need to trigger a proper re-evaluation of the GN node tree
     # by saving to a temp file #TODO: look into and try to fix this
