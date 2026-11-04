@@ -44,7 +44,7 @@ class PeriodicUnwrap(AssetGeometryGroup):
     wrap : InputMenu | Literal["Box", "Compact"]
         With Place Groups, wrap the centre of each group into the box spanned by the box vectors, or into the compact cell around the box centre, as Periodic Offset does
     update : InputBoolean
-        Update the box lengths and angles with the simulation. As a modifier input, reads the "True" attribute by default.
+        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node. As a modifier input, reads the "True" attribute by default. As a modifier input, reads the "True" attribute by default.
     a : InputFloat
         a
     b : InputFloat
@@ -69,7 +69,7 @@ class PeriodicUnwrap(AssetGeometryGroup):
     i.wrap : MenuSocket
         With Place Groups, wrap the centre of each group into the box spanned by the box vectors, or into the compact cell around the box centre, as Periodic Offset does
     i.update : BooleanSocket
-        Update the box lengths and angles with the simulation
+        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node. As a modifier input, reads the "True" attribute by default.
     i.a : FloatSocket
         a
     i.b : FloatSocket
@@ -107,7 +107,7 @@ class PeriodicUnwrap(AssetGeometryGroup):
         wrap: MenuSocket
         """With Place Groups, wrap the centre of each group into the box spanned by the box vectors, or into the compact cell around the box centre, as Periodic Offset does"""
         update: BooleanSocket
-        """Update the box lengths and angles with the simulation"""
+        """Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node. As a modifier input, reads the "True" attribute by default."""
         a: FloatSocket
         b: FloatSocket
         c: FloatSocket
@@ -181,12 +181,13 @@ class PeriodicUnwrap(AssetGeometryGroup):
             "Box",
             description="With Place Groups, wrap the centre of each group into the box spanned by the box vectors, or into the compact cell around the box centre, as Periodic Offset does",
             expanded=True,
+            optional_label=True,
         )
         with tree.inputs.panel("Periodic Box", default_closed=True):
             _update = tree.inputs.boolean(
                 "Update",
                 True,
-                description="Update the box lengths and angles with the simulation",
+                description='Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node. As a modifier input, reads the "True" attribute by default.',
                 default_attribute="True",
             )
             with tree.inputs.panel("Lengths"):

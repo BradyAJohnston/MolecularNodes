@@ -1418,6 +1418,7 @@ class Molecule(MolecularEntity):
             "Periodic Array",
             "Periodic Offset",
             "Periodic Unwrap",
+            "Periodic Cell",
         ]
         for node in self.modifier_node_tree.nodes:
             if (
