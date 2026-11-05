@@ -56,6 +56,9 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+#: Styles that draw every atom, which look wrong on a CA or P trace model
+_ALL_ATOM_STYLES = ("spheres", "sticks", "ball_and_stick", "surface")
+
 #: Colour keywords understood by ``Molecule.add_style(color=...)``. Anything else must
 #: name an existing attribute, be an RGBA sequence, or be a callable building the nodes.
 COLOR_KEYWORDS = ("common", "default", "plddt")
@@ -1595,6 +1598,22 @@ class Molecule(MolecularEntity):
         )
         return None
 
+    def _warn_if_trace_only(self, style: str) -> None:
+        """Warn when the polymers are only a CA or P trace, such as a low resolution
+        model, because an all-atom style draws them as disconnected beads."""
+        polymer = self.named_attribute("is_peptide") | self.named_attribute(
+            "is_nucleic"
+        )
+        n_polymer = np.count_nonzero(polymer)
+        if n_polymer == 0:
+            return
+        n_trace = np.count_nonzero(np.isin(self.atoms.names[polymer], ("CA", "P")))
+        if n_trace / n_polymer > 0.5:
+            warnings.warn(
+                f"'{self.name}' is mostly CA or P atoms, so the {style!r} style will "
+                "look sparse. The 'cartoon' or 'ribbon' styles suit a trace model."
+            )
+
     def add_style(
         self,
         style: STYLE_LITERALS | Callable = "spheres",
@@ -1721,6 +1740,8 @@ class Molecule(MolecularEntity):
 
         color_by_density = isinstance(color, Density)
         style_is_callable = callable(style)
+        if isinstance(style, str) and style in _ALL_ATOM_STYLES:
+            self._warn_if_trace_only(style)
         if not style_is_callable and style not in STYLE_NODE_MAPPING:
             raise ValueError(
                 f"Invalid style '{style}'. Supported styles are "

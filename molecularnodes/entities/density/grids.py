@@ -5,13 +5,21 @@ import bpy
 import databpy
 import numpy as np
 from gridData import Grid
+from nodebpy.builder import MaterialBuilder
 from ...blender import coll
+from ...material import PresetMaterial, append_material
 from ...nodes.geometry import (
     DensityStyleISOSurface,
     DensityStyleSurface,
     DensityStyleWire,
 )
 from .base import Density
+
+_STYLE_NODES = {
+    "density_iso_surface": DensityStyleISOSurface,
+    "density_surface": DensityStyleSurface,
+    "density_wire": DensityStyleWire,
+}
 
 
 def cell_vectors(lengths, angles) -> np.ndarray:
@@ -107,6 +115,12 @@ class Grids(Density):
         invert: bool = False,
         center: bool = False,
         overwrite: bool = False,
+        material: bpy.types.Material
+        | PresetMaterial
+        | MaterialBuilder
+        | str
+        | None = None,
+        **inputs,
     ) -> "Grids":
         """Load a density grid file and create its volumetric object.
 
@@ -125,6 +139,10 @@ class Grids(Density):
             Whether to center the density at the origin, by default False.
         overwrite : bool, optional
             Whether to overwrite an existing converted ``.vdb`` file, by default False.
+        material : bpy.types.Material | PresetMaterial | MaterialBuilder | str, optional
+            Material for the style; see :meth:`add_style`.
+        **inputs
+            Inputs of the style node, such as ``threshold``; see :meth:`add_style`.
 
         Returns
         -------
@@ -140,7 +158,9 @@ class Grids(Density):
         density = cls(
             file_path=file_path, center=center, invert=invert, overwrite=overwrite
         )
-        density.create_object(name=name or Path(file_path).name, style=style)
+        density.create_object(
+            name=name or Path(file_path).name, style=style, material=material, **inputs
+        )
         # record the source so the entity can be reloaded into a fresh session
         density.props.filepath = str(file_path)
         return density
@@ -276,8 +296,74 @@ class Grids(Density):
                 return delta
         return np.diag(np.asarray(gobj.delta, dtype=float))
 
+    def _style_node(self, style: str, material=None, **inputs):
+        """The node for a density style. Call inside the tree context."""
+        if style not in _STYLE_NODES:
+            raise ValueError(
+                f"Invalid style {style!r}. Supported styles are {sorted(_STYLE_NODES)}"
+            )
+        if "threshold" not in inputs and self.grid is not None:
+            inputs["threshold"] = float(np.quantile(self.grid.grid, 0.995))
+        if isinstance(material, (PresetMaterial, MaterialBuilder)):
+            material = material.material
+        if isinstance(material, str):
+            material = append_material(material)
+        return _STYLE_NODES[style](material=material, **inputs)
+
+    def add_style(
+        self,
+        style: str = "density_surface",
+        material: bpy.types.Material
+        | PresetMaterial
+        | MaterialBuilder
+        | str
+        | None = None,
+        **inputs,
+    ) -> "Grids":
+        """Add a style to the density, alongside any it already has.
+
+        ```python
+        density = Grids.load("map.mrc", style=None)
+        density.add_style(
+            "density_wire",
+            threshold=0.4,
+            color=(0.1, 0.1, 0.2, 1.0),
+            material=mn.material.AmbientOcclusion(),
+        )
+        ```
+
+        Parameters
+        ----------
+        style : str, default "density_surface"
+            One of ``"density_surface"``, ``"density_iso_surface"`` or
+            ``"density_wire"``.
+        material : bpy.types.Material | PresetMaterial | MaterialBuilder | str, optional
+            Material for the style; a string is appended from the asset library.
+        **inputs
+            Inputs of the style node, such as ``threshold``, ``color`` or
+            ``wire_radius``. Without a ``threshold``, the 99.5th percentile of the
+            grid is used. ``"density_iso_surface"`` draws a surface at both
+            ``threshold`` and ``-threshold``, coloured by ``positive`` and
+            ``negative``, so mask a grid with zeros rather than a negative value.
+
+        Returns
+        -------
+        Grids
+            Returns self for method chaining.
+
+        Raises
+        ------
+        ValueError
+            If ``style`` is not a density style.
+        TypeError
+            If an input does not exist on the style node.
+        """
+        with self.tree as tree:
+            tree.atoms >> self._style_node(style, material, **inputs) >> tree.join
+        return self
+
     def create_object(
-        self, name="NewDensity", style="density_surface"
+        self, name="NewDensity", style="density_surface", material=None, **inputs
     ) -> bpy.types.Object:
         """
         Loads a grid into Blender as a volumetric object.
@@ -288,6 +374,10 @@ class Grids(Density):
             If not empty, renames the object with the new name. Default is "NewDensity".
         style : str, optional
             The style of the density object. Default is "density_surface".
+        material : bpy.types.Material | PresetMaterial | MaterialBuilder | str, optional
+            Material for the style; see :meth:`add_style`.
+        **inputs
+            Inputs of the style node; see :meth:`add_style`.
 
         Returns
         -------
@@ -300,23 +390,12 @@ class Grids(Density):
         self.object.location = (0, 0, 0)
         self.props.entity_type = self._entity_type.value
 
-        assert self.grid is not None
-        threshold = float(np.quantile(self.grid.grid, 0.995))
-
         if name and name != "":
             self.name = name
 
         if style is not None:
             with self.tree.reset(input="Volume") as (volume, join):
-                (
-                    volume
-                    >> {
-                        "density_iso_surface": DensityStyleISOSurface,
-                        "density_surface": DensityStyleSurface,
-                        "density_wire": DensityStyleWire,
-                    }[style](threshold=threshold)
-                    >> join
-                )
+                volume >> self._style_node(style, material, **inputs) >> join
 
         return self.object
 
