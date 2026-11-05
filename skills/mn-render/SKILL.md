@@ -359,9 +359,7 @@ canvas.snapshot("closeup.png")
 
 ```python
 density = mn.entities.density.Grids.load("map.mrc", style=None)
-density.add_style(
-    "density_iso_surface", threshold=0.2, material=mn.material.Default()
-)
+density.add_style("density_iso_surface", threshold=0.2, material=mn.material.Default())
 density.add_style(
     "density_wire",
     threshold=0.4,
