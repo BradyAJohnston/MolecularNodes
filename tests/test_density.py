@@ -1,5 +1,6 @@
+import inspect
 import itertools
-from typing import cast
+from typing import Any, cast
 import bpy
 import databpy
 import numpy as np
@@ -7,6 +8,7 @@ import pytest
 from databpy import ObjectTracker
 import molecularnodes as mn
 from molecularnodes.blender.registered import object_props
+from molecularnodes.nodes import geometry as mg
 from molecularnodes.nodes._utils import get_final_style_nodes
 from molecularnodes.session import get_session
 from .constants import data_dir
@@ -557,3 +559,73 @@ def test_apbs_1brs_example_grid(isolated_density_file):
     assert np.allclose(values, expected, atol=1.0)
     for name, value in zip(atoms, values):
         assert (value > 10) if "LYS" in name else (value < -10), (name, value)
+
+
+def _style_nodes(density):
+    return [
+        n.node_tree.name
+        for n in density.tree.tree.nodes
+        if isinstance(n, bpy.types.GeometryNodeGroup) and n.node_tree is not None
+    ]
+
+
+def _style_node(density, name) -> Any:
+    (node,) = [
+        n
+        for n in density.tree.tree.nodes
+        if isinstance(n, bpy.types.GeometryNodeGroup)
+        and n.node_tree is not None
+        and n.node_tree.name == name
+    ]
+    return node
+
+
+def test_load_style_inputs(density_file):
+    density = mn.entities.density.Grids.load(
+        density_file,
+        style="density_wire",
+        threshold=0.4,
+        color=(1.0, 0.0, 0.0, 1.0),
+        material=mn.material.Flat(),
+        overwrite=True,
+    )
+    node = _style_node(density, "Density Style Wire")
+    assert node.inputs["Threshold"].default_value == pytest.approx(0.4)
+    assert tuple(node.inputs["Color"].default_value) == pytest.approx((1, 0, 0, 1))
+    assert node.inputs["Material"].default_value is not None
+
+
+def test_load_default_threshold_is_percentile(density_file):
+    density = mn.entities.density.Grids.load(density_file, overwrite=True)
+    node = _style_node(density, "Density Style Surface")
+    assert density.grid is not None
+    assert node.inputs["Threshold"].default_value == pytest.approx(
+        np.quantile(density.grid.grid, 0.995)
+    )
+
+
+def test_add_style_keeps_existing_styles(density_file):
+    density = mn.entities.density.Grids.load(density_file, overwrite=True)
+    assert density.add_style("density_wire", threshold=0.5) is density
+    names = _style_nodes(density)
+    assert "Density Style Surface" in names
+    assert "Density Style Wire" in names
+
+
+def test_add_style_without_initial_style(density_file):
+    density = mn.entities.density.Grids.load(density_file, style=None, overwrite=True)
+    density.add_style("density_iso_surface", threshold=0.5)
+    assert "Density Style ISO Surface" in _style_nodes(density)
+
+
+def test_add_style_rejects_bad_arguments(density_file):
+    density = mn.entities.density.Grids.load(density_file, overwrite=True)
+    with pytest.raises(ValueError, match="Invalid style"):
+        density.add_style("cartoon")
+    with pytest.raises(TypeError):
+        density.add_style("density_wire", not_an_input=1)
+
+
+def test_wire_default_keeps_small_islands():
+    parameters = inspect.signature(mg.DensityStyleWire).parameters
+    assert parameters["hide_dust"].default == 0.0
