@@ -24,7 +24,7 @@ if _assets.is_stale(
     _args.blend, _args.source, _args.resources, _assets.stamp_options(_args)
 ):
     subprocess.run(
-        [sys.executable, "-m", "nodebpy.assets", "ensure"],
+        [sys.executable, "-m", "nodebpy", "ensure"],
         check=True,
         cwd=Path(__file__).parent.parent,
     )
