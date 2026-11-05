@@ -1,5 +1,5 @@
 import random
-from typing import Any
+from typing import Any, cast
 import bpy
 import MDAnalysis as mda
 import numpy as np
@@ -334,6 +334,35 @@ def test_periodic_array_no_dimensions():
 
     assert defaults_0 == defaults_10
     assert defaults_0[1:7] == [0] * 6
+
+
+def test_periodic_box_update_off():
+    # a node with Update turned off keeps the values it was given
+    traj = mn.Molecule.load(GRO, XTC)
+    with traj.tree.reset() as (atoms, join):
+        node = PeriodicArray(update=False, a=1.0)
+        atoms >> node >> join
+    traj.set_frame(5)
+    assert cast(bpy.types.NodeSocketFloat, node.node.inputs["a"]).default_value == 1.0
+
+
+def test_updater():
+    # any node group can be updated from the entity on frame changes
+    traj = mn.Molecule.load(GRO, XTC)
+    with traj.tree.reset() as (atoms, join):
+        node = PeriodicArray(update=False)
+        atoms >> node >> join
+    seen = []
+
+    def update(node, entity):
+        seen.append((node.name, entity.universe.trajectory.frame))
+
+    mn.nodes.frame_updates.updater([PeriodicArray])(update)
+    try:
+        traj.set_frame(3)
+    finally:
+        mn.nodes.frame_updates._registry[PeriodicArray._name].remove(update)
+    assert seen == [(node.node.name, traj.universe.trajectory.frame)]
 
 
 # Generated symmetry that reproduces each entry's deposited biological assembly:
