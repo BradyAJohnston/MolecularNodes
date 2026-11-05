@@ -31,6 +31,7 @@ from nodebpy.types import (
     InputMenu,
     InputVector,
 )
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.set_instancer import SetInstancer
 from ._shared.smooth_by_angle import SmoothByAngle
 from ._shared.vector_in_angstroms import VectorInAngstroms
@@ -138,6 +139,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     material : InputMaterial
         Material to apply to the resulting geometry
+    include_hidden : InputBoolean
+        Also apply this style to atoms with the hidden attribute
 
     Inputs
     ------
@@ -195,6 +198,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     i.material : MaterialSocket
         Material to apply to the resulting geometry
+    i.include_hidden : BooleanSocket
+        Also apply this style to atoms with the hidden attribute
 
     Outputs
     -------
@@ -266,6 +271,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         """Apply smooth shading to the created geometry"""
         material: MaterialSocket
         """Material to apply to the resulting geometry"""
+        include_hidden: BooleanSocket
+        """Also apply this style to atoms with the hidden attribute"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -307,6 +314,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         strand_4: InputColor = None,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
+        include_hidden: InputBoolean = False,
     ):
         super().__init__(
             **{
@@ -337,6 +345,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 "Strand 4": strand_4,
                 "Shade Smooth": shade_smooth,
                 "Material": material,
+                "Include Hidden": include_hidden,
             }
         )
 
@@ -489,11 +498,19 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 bpy.data.materials.get("Default"),
                 description="Material to apply to the resulting geometry",
             )
+        with tree.inputs.panel("Hidden", default_closed=True):
+            include_hidden = tree.inputs.boolean(
+                "Include Hidden",
+                False,
+                description="Also apply this style to atoms with the hidden attribute",
+            )
         geometry = tree.outputs.geometry(
             "Geometry", description="The generated geometry for the style node group"
         )
 
-        separate_geometry = g.SeparateGeometry.point(atoms, selection)
+        separate_geometry = g.SeparateGeometry.point(
+            atoms, DeselectHidden(selection=selection, include_hidden=include_hidden)
+        )
         with g.Frame("Color strands if Auto-color is False"):
             index_switch = g.IndexSwitch.color(
                 g.IntegerMath.modulo(ChainID(), 4),

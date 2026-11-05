@@ -28,6 +28,7 @@ from nodebpy.types import (
     InputVector,
 )
 from ._shared.cleanup import Cleanup
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_utils_style_ribbon_nucleic import MN_utils_style_ribbon_nucleic
 from .atoms_to_ca_curves import AtomsToCACurves
 from .check_geometry import CheckGeometry
@@ -154,6 +155,8 @@ class StyleRibbon(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     material : InputMaterial
         Material to apply to the resulting geometry
+    include_hidden : InputBoolean
+        Also apply this style to atoms with the hidden attribute
 
     Inputs
     ------
@@ -193,6 +196,8 @@ class StyleRibbon(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     i.material : MaterialSocket
         Material to apply to the resulting geometry
+    i.include_hidden : BooleanSocket
+        Also apply this style to atoms with the hidden attribute
 
     Outputs
     -------
@@ -247,6 +252,8 @@ class StyleRibbon(AssetGeometryGroup):
         """Apply smooth shading to the created geometry"""
         material: MaterialSocket
         """Material to apply to the resulting geometry"""
+        include_hidden: BooleanSocket
+        """Also apply this style to atoms with the hidden attribute"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -280,6 +287,7 @@ class StyleRibbon(AssetGeometryGroup):
         base_realize: InputBoolean = False,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
+        include_hidden: InputBoolean = False,
     ):
         super().__init__(
             **{
@@ -301,6 +309,7 @@ class StyleRibbon(AssetGeometryGroup):
                 "Base Realize": base_realize,
                 "Shade Smooth": shade_smooth,
                 "Material": material,
+                "Include Hidden": include_hidden,
             }
         )
 
@@ -397,10 +406,19 @@ class StyleRibbon(AssetGeometryGroup):
                 description="Material to apply to the resulting geometry",
                 optional_label=True,
             )
+        with tree.inputs.panel("Hidden", default_closed=True):
+            include_hidden = tree.inputs.boolean(
+                "Include Hidden",
+                False,
+                description="Also apply this style to atoms with the hidden attribute",
+            )
         geometry = tree.outputs.geometry(
             "Geometry", description="The generated geometry for the style node group"
         )
 
+        deselect_hidden = DeselectHidden(
+            selection=selection, include_hidden=include_hidden
+        )
         closure_zone = g.ClosureZone()
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
@@ -421,7 +439,7 @@ class StyleRibbon(AssetGeometryGroup):
         )
         mn_utils_style_ribbon_nucleic = MN_utils_style_ribbon_nucleic(
             atoms=separate_polymers.o.nucleic,
-            selection=selection,
+            selection=deselect_hidden,
             material=material,
             switch=g.IndexSwitch.boolean(menu_switch.o.output, (True, False)),
             backbone_subdivisions=quality * 2,
@@ -437,7 +455,7 @@ class StyleRibbon(AssetGeometryGroup):
         )
         mn_utils_style_ribbon_peptide = MN_utils_style_ribbon_peptide(
             Atoms=separate_polymers.o.peptide,
-            Selection=selection,
+            Selection=deselect_hidden,
             Quality=quality,
             **{"BS Smoothing": backbone_smoothing},
             Radius=peptide_radius,
