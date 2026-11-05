@@ -81,8 +81,8 @@ def test_standard_view_transform_clears_look():
 def test_pixel_size_uses_longer_edge():
     canvas = mn.Canvas(resolution=(100, 200))
     canvas.camera.orthographic = True
-    canvas.camera.span = 40
-    assert canvas.camera.span == pytest.approx(40)
+    canvas.camera.ortho_scale = 40
+    assert canvas.camera.ortho_scale == pytest.approx(40)
     assert canvas.pixel_size == pytest.approx(0.2)
 
     canvas.render_scale = 50

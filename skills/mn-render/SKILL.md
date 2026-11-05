@@ -89,7 +89,7 @@ return `None`. The canonical docs versions are in `docs/api/index.qmd` and
 | `passes` | render passes: combined, z, mist, normal, position, vector, diffuse_color, emit, environment, ambient_occlusion. Setting it disables every pass not listed, so include `combined` and `z`. |
 | `pixel_size` | size of one rendered pixel in nm, for scale bars. Exact for an orthographic camera; at the mid-depth of the entities for perspective. |
 | `frame`, `frame_start`, `frame_end`, `frame_range`, `fps` | timeline. Setting `frame` uses `frame_set`, so trajectories update. |
-| `camera` | `lens`, `clip_start`, `clip_end`, `rotation` (XYZ Euler in degrees), `basis`, `orthographic`, `span` (nm along the longer frame edge, for an orthographic camera), `set_viewpoint(...)`, `frame_points(points, margin)`. |
+| `camera` | `lens`, `clip_start`, `clip_end`, `rotation` (XYZ Euler in degrees), `basis`, `orthographic`, `ortho_scale` (nm along the longer frame edge, for an orthographic camera), `set_viewpoint(...)`, `frame_points(points, margin)`. |
 | `compositor` | `device`, `precision`, denoise settings, `reset()`, `clear()`, `add_annotations()`. |
 
 - `canvas.clear()` deletes every object except cameras and lights (including the
@@ -209,10 +209,10 @@ canvas.look_at(points_xyz)  # any (N, 3) array in world units
   occluders=pocket_points)` finds a clear view into a pocket.
 - **Tall subjects in a wide frame.** Roll with the Y angle of an Euler tuple:
   `viewpoint=(90, 90, 0)` is `"front"` turned on its side.
-- **Exact scale.** Set `canvas.camera.orthographic = True`, then `canvas.camera.span` or
-  `look_at`, and read `canvas.pixel_size`. Blender's `ortho_scale` spans the
-  longer frame edge, so a width in a portrait frame is not the frame width. Check a scale
-  bar against a known dimension of the subject.
+- **Exact scale.** Set `canvas.camera.orthographic = True`, then
+  `canvas.camera.ortho_scale` or `look_at`, and read `canvas.pixel_size`. `ortho_scale`
+  spans the longer frame edge, so a width in a portrait frame is not the frame width.
+  Check a scale bar against a known dimension of the subject.
 - `frame_points` extends `clip_end` when the subject would be clipped; if a hand-placed
   camera renders nothing, check `camera.clip_end` first.
 - Rotating the subject instead of the camera: leave the camera at `"default"` and

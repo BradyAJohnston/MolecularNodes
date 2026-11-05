@@ -98,7 +98,8 @@ class Camera:
     @property
     def orthographic(self) -> bool:
         """Whether the camera is orthographic, which gives figures one exact
-        scale. ``look_at`` fits an orthographic camera by changing its span."""
+        scale. ``look_at`` fits an orthographic camera by changing its
+        ``ortho_scale``."""
         return self.camera_data.type == "ORTHO"
 
     @orthographic.setter
@@ -106,13 +107,13 @@ class Camera:
         self.camera_data.type = "ORTHO" if value else "PERSP"
 
     @property
-    def span(self) -> float:
+    def ortho_scale(self) -> float:
         """Length in nanometres covered by the longer edge of the frame, for an
         orthographic camera."""
         return self.camera_data.ortho_scale
 
-    @span.setter
-    def span(self, value: float) -> None:
+    @ortho_scale.setter
+    def ortho_scale(self, value: float) -> None:
         self.camera_data.ortho_scale = value
 
     @property
