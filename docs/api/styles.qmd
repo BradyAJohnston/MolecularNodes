@@ -258,4 +258,4 @@ mol.add_style("spheres", include_hidden=True)  # this style keeps hidden atoms
 
 A selection is evaluated once. For a selection that updates on every frame, give it to a style with `add_style(selection=...)`, because `hide()` and `show()` reject updating `AtomGroup`s and `hidden` is a reserved selection name.
 
-The `Hide` field in the Attributes panel and the import dialog takes a selection string. Applying it replaces the hidden atoms, and editing them from Python clears the field.
+The `Hidden` field in the Attributes panel and the import dialog takes a selection string. Applying it replaces the hidden atoms, and editing them from Python clears the field. The import dialog starts with `water or element H`, or just `water` for topologies without elements. Imports from Python hide nothing unless you pass `hide=`.

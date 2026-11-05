@@ -257,6 +257,42 @@ def test_import_operator_hide():
     assert mol.props.hidden_selection == "name CA"
 
 
+def test_import_operator_hides_water_and_hydrogens_by_default():
+    with ObjectTracker() as tracker:
+        mn_ops.import_molecule(
+            code="4ozs", file_format="bcif", cache_dir=str(data_dir), style="spheres"
+        )
+    mol = get_session().match(tracker.latest())
+    assert isinstance(mol, mn.Molecule)
+    assert mol.hidden.sum() == len(mol.universe.select_atoms("water or element H")) > 0
+
+
+def test_import_operator_default_without_elements():
+    with ObjectTracker() as tracker:
+        mn_ops.import_molecule(
+            method="local",
+            filepath=str(data_dir / "md_ppr/box.gro"),
+            trajectory=str(data_dir / "md_ppr/first_5_frames.xtc"),
+        )
+    mol = get_session().match(tracker.latest())
+    assert isinstance(mol, mn.Molecule)
+    assert mol.props.hidden_selection == "water"
+
+
+def test_import_operator_can_hide_nothing():
+    with ObjectTracker() as tracker:
+        mn_ops.import_molecule(
+            code="4ozs",
+            file_format="bcif",
+            cache_dir=str(data_dir),
+            style="spheres",
+            hide="",
+        )
+    mol = get_session().match(tracker.latest())
+    assert isinstance(mol, mn.Molecule)
+    assert not mol.hidden.any()
+
+
 def test_hidden_survives_frame_changes():
     universe = mda.Universe(
         data_dir / "md_ppr/box.gro", data_dir / "md_ppr/first_5_frames.xtc"

@@ -7,7 +7,7 @@ title: "Changelog"
 
 
 ## Added
-- `mol.hide()`, `mol.show()` and `mol.hidden` leave atoms out of every style, while calculations still see them. `Molecule.load()` and `fetch()` take `hide=`, such as `hide="element H"`, and the same option is in the import operator and the Attributes panel. `hidden` is reserved as a selection name.
+- `mol.hide()`, `mol.show()` and `mol.hidden` leave atoms out of every style, while calculations still see them. `Molecule.load()` and `fetch()` take `hide=`, such as `hide="element H"`, and the same option is the `Hidden` field in the Attributes panel and the import dialog, where it starts as `water or element H`. `hidden` is reserved as a selection name.
 - Atoms with a boolean `hidden` attribute are left out of every style, and are not used in what the style computes. Each style has an `Include Hidden` input to keep them. Calculations and other nodes still see every atom.
 - `Grids.add_style()` adds a density style with its inputs and material, and `Grids.load()` takes the same `material` and style inputs, such as `threshold`.
 - `Molecule.add_style()` warns when an all-atom style is used on a CA or P trace model, which renders as sparse beads.

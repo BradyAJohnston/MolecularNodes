@@ -503,8 +503,8 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     hidden_selection: Annotated[
         str,
         StringProperty(
-            name="Hide",
-            description="MDAnalysis selection of atoms to leave out of every style, such as 'element H'. Evaluated once, and replaces the hidden atoms",
+            name="Hidden",
+            description="MDAnalysis selection of atoms to leave out of every style, such as 'water or element H'. Evaluated once, and replaces the hidden atoms",
             default="",
             update=_update_hidden_selection,
         ),
@@ -512,7 +512,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
     hidden_message: Annotated[
         str,
         StringProperty(
-            name="Hide Error",
+            name="Hidden Error",
             description="Why the selection of atoms to hide could not be used",
             default="",
             options={"HIDDEN"},
