@@ -270,6 +270,14 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
             default="",
         ),
     ]
+    hide: Annotated[
+        str,
+        StringProperty(
+            name="Hide",
+            description="MDAnalysis selection of atoms to leave out of every style, such as 'element H'",
+            default="",
+        ),
+    ]
     file_format: Annotated[
         str,
         EnumProperty(
@@ -292,6 +300,11 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
 
     def apply_import_options(self, mol: Molecule) -> None:
         """Set up the default node tree on a freshly imported molecule."""
+        if self.hide.strip():
+            try:
+                mol._hide_on_import(self.hide.strip())
+            except ValueError as e:
+                self.report({"WARNING"}, str(e))
         if not self.node_setup:
             return
         mol.create_asset_nodes()
@@ -368,6 +381,7 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         col.enabled = self.node_setup
         if show_assembly and not self.trajectory:
             layout.prop(self, "assembly")
+        layout.prop(self, "hide")
 
     def invoke(self, context, event):
         prefs = addon_preferences()
