@@ -241,3 +241,21 @@ mol = (
 canvas.look_at(mol)
 canvas.snapshot()
 ```
+
+## Hiding atoms
+
+`Selection` chooses what one style draws. Hidden atoms are left out of every style, whatever its selection, and are not used in what the style computes. Calculations, selections and other nodes still see them.
+
+```python
+mol = mn.Molecule.load("structure.cif", hide="element H")
+mol.hide("resname HOH")  # adds to the hidden atoms
+mol.show("resname ATP")  # removes from them
+mol.show()  # shows every atom
+
+mol.hidden[:100] = True  # a boolean mask, written back like mol.position
+mol.add_style("spheres", include_hidden=True)  # this style keeps hidden atoms
+```
+
+A selection is evaluated once. For a selection that updates on every frame, give it to a style with `add_style(selection=...)`, because `hide()` and `show()` reject updating `AtomGroup`s and `hidden` is a reserved selection name.
+
+The `Hidden` field in the Attributes panel and the import dialog takes a selection string. Applying it replaces the hidden atoms, and editing them from Python clears the field. The import dialog starts with `water`. Imports from Python hide nothing unless you pass `hide=`.
