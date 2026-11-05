@@ -122,11 +122,10 @@ def update_cone_shadows(scene: bpy.types.Scene) -> None:
             isinstance(node, bpy.types.CompositorNodeGroup)
             and node.node_tree is not None
             and node.node_tree.name == ConeShadow._asset_name
-            and not node.inputs["Pixel Size"].is_linked
         ):
-            node.inputs["Pixel Size"].default_value = (
-                _pixel_size_angstrom(scene) * WORLD_SCALE
-            )
+            pixel_size = cast(bpy.types.NodeSocketFloat, node.inputs["Pixel Size"])
+            if not pixel_size.is_linked:
+                pixel_size.default_value = _pixel_size_angstrom(scene) * WORLD_SCALE
 
 
 class ResetCompositorSockets(NamedTuple):
