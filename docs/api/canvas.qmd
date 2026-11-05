@@ -252,6 +252,18 @@ node = canvas.compositor.illustrate(shading="cone")
 canvas.snapshot()
 ```
 
+Depth outlines fire on every atom of an all-atom style. For lines between chains
+instead, write an ID to an AOV and pass its name as `id_pass`, which draws through
+the `ID Outline` panel of the node. Keep neighbouring IDs close, because the pixel
+filter blends IDs along edges and a large gap draws a heavier line.
+
+```python
+material = mn.material.Flat()
+material.add_aov("chain_id")
+mol.add_style("spheres", material=material)
+canvas.compositor.illustrate(outline=False, id_pass="chain_id")
+```
+
 Custom passes come from AOVs (arbitrary output variables): declare one on the
 canvas with [](`~mn.Canvas.add_aov`) and have a material write an attribute into
 it with [](`~molecularnodes.material.add_aov`). The pass is then an output of the
