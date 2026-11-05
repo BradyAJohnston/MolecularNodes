@@ -1,5 +1,6 @@
 """Atoms with the `hidden` attribute are left out of every style."""
 
+import inspect
 import bpy
 import numpy as np
 import pytest
@@ -28,6 +29,25 @@ def evaluated_vertex_count(obj):
 def _rendered(mol):
     points = blender_utils.evaluated_points(mol.object)
     return points[np.lexsort(points.T)]
+
+
+@pytest.mark.parametrize(
+    "style",
+    [
+        mg.StyleSpheres,
+        mg.StyleSticks,
+        mg.StyleBallAndStick,
+        mg.StyleCartoon,
+        mg.StyleRibbon,
+        mg.StyleSurface,
+        mg.StyleHBonds,
+        mg.OxDNAStyleClassic,
+    ],
+)
+def test_include_hidden_keeps_positional_arguments(style):
+    # style nodes are called positionally, so a new input has to go last
+    parameters = list(inspect.signature(style).parameters)
+    assert parameters[-1] == "include_hidden"
 
 
 @pytest.fixture(autouse=True)

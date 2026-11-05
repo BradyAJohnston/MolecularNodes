@@ -953,8 +953,6 @@ class StyleCartoon(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     selection : InputBoolean
         Selection of atoms to apply this style to, discarding unselected points
-    include_hidden : InputBoolean
-        Also apply this style to atoms with the hidden attribute
     quality : InputInteger
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
     peptide_shape : InputMenu | Literal["Sharp", "Round"]
@@ -995,6 +993,8 @@ class StyleCartoon(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     material : InputMaterial
         Material to apply to the resulting geometry
+    include_hidden : InputBoolean
+        Also apply this style to atoms with the hidden attribute
 
     Inputs
     ------
@@ -1002,8 +1002,6 @@ class StyleCartoon(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     i.selection : BooleanSocket
         Selection of atoms to apply this style to, discarding unselected points
-    i.include_hidden : BooleanSocket
-        Also apply this style to atoms with the hidden attribute
     i.quality : IntegerSocket
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
     i.peptide_shape : MenuSocket
@@ -1044,6 +1042,8 @@ class StyleCartoon(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     i.material : MaterialSocket
         Material to apply to the resulting geometry
+    i.include_hidden : BooleanSocket
+        Also apply this style to atoms with the hidden attribute
 
     Outputs
     -------
@@ -1066,8 +1066,6 @@ class StyleCartoon(AssetGeometryGroup):
         """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
         """Selection of atoms to apply this style to, discarding unselected points"""
-        include_hidden: BooleanSocket
-        """Also apply this style to atoms with the hidden attribute"""
         quality: IntegerSocket
         """A lower value results in less geometry, with a higher value meaning better looking but more dense geometry"""
         peptide_shape: MenuSocket
@@ -1108,6 +1106,8 @@ class StyleCartoon(AssetGeometryGroup):
         """Apply smooth shading to the created geometry"""
         material: MaterialSocket
         """Material to apply to the resulting geometry"""
+        include_hidden: BooleanSocket
+        """Also apply this style to atoms with the hidden attribute"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -1124,7 +1124,6 @@ class StyleCartoon(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
-        include_hidden: InputBoolean = False,
         quality: InputInteger = 2,
         peptide_shape: InputMenu | Literal["Sharp", "Round"] = "Sharp",
         helix_shape: InputMenu | Literal["Spiral", "Cylinder"] = "Spiral",
@@ -1145,12 +1144,12 @@ class StyleCartoon(AssetGeometryGroup):
         color_blur: InputBoolean = False,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
+        include_hidden: InputBoolean = False,
     ):
         super().__init__(
             **{
                 "Atoms": atoms,
                 "Selection": selection,
-                "Include Hidden": include_hidden,
                 "Quality": quality,
                 "Peptide Shape": peptide_shape,
                 "Helix Shape": helix_shape,
@@ -1171,6 +1170,7 @@ class StyleCartoon(AssetGeometryGroup):
                 "Color Blur": color_blur,
                 "Shade Smooth": shade_smooth,
                 "Material": material,
+                "Include Hidden": include_hidden,
             }
         )
 
@@ -1183,11 +1183,6 @@ class StyleCartoon(AssetGeometryGroup):
             True,
             description="Selection of atoms to apply this style to, discarding unselected points",
             hide_value=True,
-        )
-        include_hidden = tree.inputs.boolean(
-            "Include Hidden",
-            False,
-            description="Also apply this style to atoms with the hidden attribute",
         )
         quality = tree.inputs.integer(
             "Quality",
@@ -1294,6 +1289,12 @@ class StyleCartoon(AssetGeometryGroup):
                 "Material",
                 description="Material to apply to the resulting geometry",
                 optional_label=True,
+            )
+        with tree.inputs.panel("Hidden", default_closed=True):
+            include_hidden = tree.inputs.boolean(
+                "Include Hidden",
+                False,
+                description="Also apply this style to atoms with the hidden attribute",
             )
         geometry = tree.outputs.geometry(
             "Geometry", description="The generated geometry for the style node group"

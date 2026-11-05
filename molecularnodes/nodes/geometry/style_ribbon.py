@@ -123,8 +123,6 @@ class StyleRibbon(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     selection : InputBoolean
         Selection of atoms to apply this style to, discarding unselected points
-    include_hidden : InputBoolean
-        Also apply this style to atoms with the hidden attribute
     quality : InputInteger
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
     peptide_radius : InputFloat
@@ -157,6 +155,8 @@ class StyleRibbon(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     material : InputMaterial
         Material to apply to the resulting geometry
+    include_hidden : InputBoolean
+        Also apply this style to atoms with the hidden attribute
 
     Inputs
     ------
@@ -164,8 +164,6 @@ class StyleRibbon(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     i.selection : BooleanSocket
         Selection of atoms to apply this style to, discarding unselected points
-    i.include_hidden : BooleanSocket
-        Also apply this style to atoms with the hidden attribute
     i.quality : IntegerSocket
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
     i.peptide_radius : FloatSocket
@@ -198,6 +196,8 @@ class StyleRibbon(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     i.material : MaterialSocket
         Material to apply to the resulting geometry
+    i.include_hidden : BooleanSocket
+        Also apply this style to atoms with the hidden attribute
 
     Outputs
     -------
@@ -220,8 +220,6 @@ class StyleRibbon(AssetGeometryGroup):
         """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
         """Selection of atoms to apply this style to, discarding unselected points"""
-        include_hidden: BooleanSocket
-        """Also apply this style to atoms with the hidden attribute"""
         quality: IntegerSocket
         """A lower value results in less geometry, with a higher value meaning better looking but more dense geometry"""
         peptide_radius: FloatSocket
@@ -254,6 +252,8 @@ class StyleRibbon(AssetGeometryGroup):
         """Apply smooth shading to the created geometry"""
         material: MaterialSocket
         """Material to apply to the resulting geometry"""
+        include_hidden: BooleanSocket
+        """Also apply this style to atoms with the hidden attribute"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -270,7 +270,6 @@ class StyleRibbon(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
-        include_hidden: InputBoolean = False,
         quality: InputInteger = 3,
         peptide_radius: InputFloat = 1.6,
         backbone_smoothing: InputFloat = 0.5,
@@ -288,12 +287,12 @@ class StyleRibbon(AssetGeometryGroup):
         base_realize: InputBoolean = False,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
+        include_hidden: InputBoolean = False,
     ):
         super().__init__(
             **{
                 "Atoms": atoms,
                 "Selection": selection,
-                "Include Hidden": include_hidden,
                 "Quality": quality,
                 "Peptide Radius": peptide_radius,
                 "Backbone Smoothing": backbone_smoothing,
@@ -310,6 +309,7 @@ class StyleRibbon(AssetGeometryGroup):
                 "Base Realize": base_realize,
                 "Shade Smooth": shade_smooth,
                 "Material": material,
+                "Include Hidden": include_hidden,
             }
         )
 
@@ -322,11 +322,6 @@ class StyleRibbon(AssetGeometryGroup):
             True,
             description="Selection of atoms to apply this style to, discarding unselected points",
             hide_value=True,
-        )
-        include_hidden = tree.inputs.boolean(
-            "Include Hidden",
-            False,
-            description="Also apply this style to atoms with the hidden attribute",
         )
         quality = tree.inputs.integer(
             "Quality",
@@ -410,6 +405,12 @@ class StyleRibbon(AssetGeometryGroup):
                 "Material",
                 description="Material to apply to the resulting geometry",
                 optional_label=True,
+            )
+        with tree.inputs.panel("Hidden", default_closed=True):
+            include_hidden = tree.inputs.boolean(
+                "Include Hidden",
+                False,
+                description="Also apply this style to atoms with the hidden attribute",
             )
         geometry = tree.outputs.geometry(
             "Geometry", description="The generated geometry for the style node group"
