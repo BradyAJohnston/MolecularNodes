@@ -61,10 +61,6 @@ def _natural_key(path: Path) -> list:
     return [int(t) if t.isdigit() else t.lower() for t in re.split(r"(\d+)", path.name)]
 
 
-# atoms the import dialog leaves out of every style unless the user changes it
-DEFAULT_HIDDEN = "water or element H"
-
-
 class MN_FH_Import_Molecule(bpy.types.FileHandler):
     bl_idname = "MN_FH_import_molecule"
     bl_label = "File handler for import molecular data files."
@@ -279,7 +275,7 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
         StringProperty(
             name="Hidden",
             description="MDAnalysis selection of atoms to leave out of every style. Clear it to show every atom",
-            default=DEFAULT_HIDDEN,
+            default="water",
         ),
     ]
     file_format: Annotated[
@@ -304,16 +300,11 @@ class MN_OT_Import_Molecule(bpy.types.Operator):
 
     def apply_import_options(self, mol: Molecule) -> None:
         """Set up the default node tree on a freshly imported molecule."""
-        text = self.hide.strip()
-        if text:
+        if self.hide.strip():
             try:
-                mol._hide_on_import(text)
+                mol._hide_on_import(self.hide.strip())
             except ValueError as e:
-                if text == DEFAULT_HIDDEN:
-                    # topologies such as .gro have no elements to select on
-                    mol._hide_on_import("water")
-                else:
-                    self.report({"WARNING"}, str(e))
+                self.report({"WARNING"}, str(e))
         if not self.node_setup:
             return
         mol.create_asset_nodes()

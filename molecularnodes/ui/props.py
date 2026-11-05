@@ -504,7 +504,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         str,
         StringProperty(
             name="Hidden",
-            description="MDAnalysis selection of atoms to leave out of every style, such as 'water or element H'. Evaluated once, and replaces the hidden atoms",
+            description="MDAnalysis selection of atoms to leave out of every style, such as 'water'. Evaluated once, and replaces the hidden atoms",
             default="",
             update=_update_hidden_selection,
         ),

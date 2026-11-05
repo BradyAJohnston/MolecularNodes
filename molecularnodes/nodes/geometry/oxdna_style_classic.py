@@ -89,8 +89,6 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Vertices and edges representing nucleotides and phosphodiester bonds, respectively
     selection : InputBoolean
         Selection of atoms to apply this node to
-    include_hidden : InputBoolean
-        Also apply this style to atoms with the hidden attribute
     quality : InputInteger
         A lower value results in less geometry, while a higher value means better-looking but more dense geometry
     backbone_shape : InputMenu | Literal["Sticks", "Ribbon"]
@@ -141,6 +139,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     material : InputMaterial
         Material to apply to the resulting geometry
+    include_hidden : InputBoolean
+        Also apply this style to atoms with the hidden attribute
 
     Inputs
     ------
@@ -148,8 +148,6 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Vertices and edges representing nucleotides and phosphodiester bonds, respectively
     i.selection : BooleanSocket
         Selection of atoms to apply this node to
-    i.include_hidden : BooleanSocket
-        Also apply this style to atoms with the hidden attribute
     i.quality : IntegerSocket
         A lower value results in less geometry, while a higher value means better-looking but more dense geometry
     i.backbone_shape : MenuSocket
@@ -200,6 +198,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     i.material : MaterialSocket
         Material to apply to the resulting geometry
+    i.include_hidden : BooleanSocket
+        Also apply this style to atoms with the hidden attribute
 
     Outputs
     -------
@@ -221,8 +221,6 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         """Vertices and edges representing nucleotides and phosphodiester bonds, respectively"""
         selection: BooleanSocket
         """Selection of atoms to apply this node to"""
-        include_hidden: BooleanSocket
-        """Also apply this style to atoms with the hidden attribute"""
         quality: IntegerSocket
         """A lower value results in less geometry, while a higher value means better-looking but more dense geometry"""
         backbone_shape: MenuSocket
@@ -273,6 +271,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         """Apply smooth shading to the created geometry"""
         material: MaterialSocket
         """Material to apply to the resulting geometry"""
+        include_hidden: BooleanSocket
+        """Also apply this style to atoms with the hidden attribute"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -289,7 +289,6 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
-        include_hidden: InputBoolean = False,
         quality: InputInteger = 2,
         backbone_shape: InputMenu | Literal["Sticks", "Ribbon"] = "Sticks",
         backbone_radius: InputFloat = 1.1,
@@ -315,12 +314,12 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         strand_4: InputColor = None,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
+        include_hidden: InputBoolean = False,
     ):
         super().__init__(
             **{
                 "Atoms": atoms,
                 "Selection": selection,
-                "Include Hidden": include_hidden,
                 "Quality": quality,
                 "Backbone Shape": backbone_shape,
                 "Backbone Radius": backbone_radius,
@@ -346,6 +345,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 "Strand 4": strand_4,
                 "Shade Smooth": shade_smooth,
                 "Material": material,
+                "Include Hidden": include_hidden,
             }
         )
 
@@ -359,11 +359,6 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             True,
             description="Selection of atoms to apply this node to",
             hide_value=True,
-        )
-        include_hidden = tree.inputs.boolean(
-            "Include Hidden",
-            False,
-            description="Also apply this style to atoms with the hidden attribute",
         )
         quality = tree.inputs.integer(
             "Quality",
@@ -502,6 +497,12 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                 "Material",
                 bpy.data.materials.get("Default"),
                 description="Material to apply to the resulting geometry",
+            )
+        with tree.inputs.panel("Hidden", default_closed=True):
+            include_hidden = tree.inputs.boolean(
+                "Include Hidden",
+                False,
+                description="Also apply this style to atoms with the hidden attribute",
             )
         geometry = tree.outputs.geometry(
             "Geometry", description="The generated geometry for the style node group"

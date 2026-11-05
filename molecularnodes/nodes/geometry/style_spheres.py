@@ -40,8 +40,6 @@ class StyleSpheres(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     selection : InputBoolean
         Selection of atoms to apply this style to, discarding unselected points
-    include_hidden : InputBoolean
-        Also apply this style to atoms with the hidden attribute
     sphere : InputMenu | Literal["Point", "Instance", "Mesh"]
         Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
     quality : InputInteger
@@ -52,6 +50,8 @@ class StyleSpheres(AssetGeometryGroup):
         Apply smooth shading when using _Instances_ or _Mesh_
     material : InputMaterial
         Material to apply to the resulting geometry
+    include_hidden : InputBoolean
+        Also apply this style to atoms with the hidden attribute
 
     Inputs
     ------
@@ -59,8 +59,6 @@ class StyleSpheres(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     i.selection : BooleanSocket
         Selection of atoms to apply this style to, discarding unselected points
-    i.include_hidden : BooleanSocket
-        Also apply this style to atoms with the hidden attribute
     i.sphere : MenuSocket
         Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
     i.quality : IntegerSocket
@@ -71,6 +69,8 @@ class StyleSpheres(AssetGeometryGroup):
         Apply smooth shading when using _Instances_ or _Mesh_
     i.material : MaterialSocket
         Material to apply to the resulting geometry
+    i.include_hidden : BooleanSocket
+        Also apply this style to atoms with the hidden attribute
 
     Outputs
     -------
@@ -93,8 +93,6 @@ class StyleSpheres(AssetGeometryGroup):
         """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
         """Selection of atoms to apply this style to, discarding unselected points"""
-        include_hidden: BooleanSocket
-        """Also apply this style to atoms with the hidden attribute"""
         sphere: MenuSocket
         """Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles."""
         quality: IntegerSocket
@@ -105,6 +103,8 @@ class StyleSpheres(AssetGeometryGroup):
         """Apply smooth shading when using _Instances_ or _Mesh_"""
         material: MaterialSocket
         """Material to apply to the resulting geometry"""
+        include_hidden: BooleanSocket
+        """Also apply this style to atoms with the hidden attribute"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -121,23 +121,23 @@ class StyleSpheres(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
-        include_hidden: InputBoolean = False,
         sphere: InputMenu | Literal["Point", "Instance", "Mesh"] = "Point",
         quality: InputInteger = 2,
         scale: InputFloat = 0.8,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
+        include_hidden: InputBoolean = False,
     ):
         super().__init__(
             **{
                 "Atoms": atoms,
                 "Selection": selection,
-                "Include Hidden": include_hidden,
                 "Sphere": sphere,
                 "Quality": quality,
                 "Scale": scale,
                 "Shade Smooth": shade_smooth,
                 "Material": material,
+                "Include Hidden": include_hidden,
             }
         )
 
@@ -150,11 +150,6 @@ class StyleSpheres(AssetGeometryGroup):
             True,
             description="Selection of atoms to apply this style to, discarding unselected points",
             hide_value=True,
-        )
-        include_hidden = tree.inputs.boolean(
-            "Include Hidden",
-            False,
-            description="Also apply this style to atoms with the hidden attribute",
         )
         sphere = tree.inputs.menu(
             "Sphere",
@@ -187,6 +182,12 @@ class StyleSpheres(AssetGeometryGroup):
                 "Material",
                 description="Material to apply to the resulting geometry",
                 optional_label=True,
+            )
+        with tree.inputs.panel("Hidden", default_closed=True):
+            include_hidden = tree.inputs.boolean(
+                "Include Hidden",
+                False,
+                description="Also apply this style to atoms with the hidden attribute",
             )
         geometry = tree.outputs.geometry(
             "Geometry", description="The generated geometry for the style node group"

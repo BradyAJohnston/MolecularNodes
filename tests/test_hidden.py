@@ -1,5 +1,6 @@
 """Atoms with the `hidden` attribute are left out of every style."""
 
+import inspect
 import warnings
 import bpy
 import MDAnalysis as mda
@@ -33,6 +34,25 @@ def evaluated_vertex_count(obj):
 def _rendered(mol):
     points = blender_utils.evaluated_points(mol.object)
     return points[np.lexsort(points.T)]
+
+
+@pytest.mark.parametrize(
+    "style",
+    [
+        mg.StyleSpheres,
+        mg.StyleSticks,
+        mg.StyleBallAndStick,
+        mg.StyleCartoon,
+        mg.StyleRibbon,
+        mg.StyleSurface,
+        mg.StyleHBonds,
+        mg.OxDNAStyleClassic,
+    ],
+)
+def test_include_hidden_keeps_positional_arguments(style):
+    # style nodes are called positionally, so a new input has to go last
+    parameters = list(inspect.signature(style).parameters)
+    assert parameters[-1] == "include_hidden"
 
 
 @pytest.fixture(autouse=True)
@@ -257,17 +277,17 @@ def test_import_operator_hide():
     assert mol.props.hidden_selection == "name CA"
 
 
-def test_import_operator_hides_water_and_hydrogens_by_default():
+def test_import_operator_hides_water_by_default():
     with ObjectTracker() as tracker:
         mn_ops.import_molecule(
             code="4ozs", file_format="bcif", cache_dir=str(data_dir), style="spheres"
         )
     mol = get_session().match(tracker.latest())
     assert isinstance(mol, mn.Molecule)
-    assert mol.hidden.sum() == len(mol.universe.select_atoms("water or element H")) > 0
+    assert mol.hidden.sum() == len(mol.universe.select_atoms("water")) > 0
 
 
-def test_import_operator_default_without_elements():
+def test_import_operator_default_on_topology_without_elements():
     with ObjectTracker() as tracker:
         mn_ops.import_molecule(
             method="local",
@@ -277,6 +297,7 @@ def test_import_operator_default_without_elements():
     mol = get_session().match(tracker.latest())
     assert isinstance(mol, mn.Molecule)
     assert mol.props.hidden_selection == "water"
+    assert mol.props.hidden_message == ""
 
 
 def test_import_operator_can_hide_nothing():

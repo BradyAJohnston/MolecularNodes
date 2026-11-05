@@ -467,8 +467,6 @@ class StyleSurface(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     selection : InputBoolean
         Selection of atoms to apply this style to, discarding unselected points
-    include_hidden : InputBoolean
-        Also apply this style to atoms with the hidden attribute
     quality : InputInteger
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
     scale : InputFloat
@@ -495,6 +493,8 @@ class StyleSurface(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     material : InputMaterial
         Material to apply to the resulting geometry
+    include_hidden : InputBoolean
+        Also apply this style to atoms with the hidden attribute
 
     Inputs
     ------
@@ -502,8 +502,6 @@ class StyleSurface(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     i.selection : BooleanSocket
         Selection of atoms to apply this style to, discarding unselected points
-    i.include_hidden : BooleanSocket
-        Also apply this style to atoms with the hidden attribute
     i.quality : IntegerSocket
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
     i.scale : FloatSocket
@@ -530,6 +528,8 @@ class StyleSurface(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     i.material : MaterialSocket
         Material to apply to the resulting geometry
+    i.include_hidden : BooleanSocket
+        Also apply this style to atoms with the hidden attribute
 
     Outputs
     -------
@@ -552,8 +552,6 @@ class StyleSurface(AssetGeometryGroup):
         """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
         """Selection of atoms to apply this style to, discarding unselected points"""
-        include_hidden: BooleanSocket
-        """Also apply this style to atoms with the hidden attribute"""
         quality: IntegerSocket
         """A lower value results in less geometry, with a higher value meaning better looking but more dense geometry"""
         scale: FloatSocket
@@ -580,6 +578,8 @@ class StyleSurface(AssetGeometryGroup):
         """Apply smooth shading to the created geometry"""
         material: MaterialSocket
         """Material to apply to the resulting geometry"""
+        include_hidden: BooleanSocket
+        """Also apply this style to atoms with the hidden attribute"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -596,7 +596,6 @@ class StyleSurface(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
-        include_hidden: InputBoolean = False,
         quality: InputInteger = 3,
         scale: InputFloat = 1.25,
         relax: InputInteger = 5,
@@ -610,12 +609,12 @@ class StyleSurface(AssetGeometryGroup):
         color_blur: InputInteger = 2,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
+        include_hidden: InputBoolean = False,
     ):
         super().__init__(
             **{
                 "Atoms": atoms,
                 "Selection": selection,
-                "Include Hidden": include_hidden,
                 "Quality": quality,
                 "Scale": scale,
                 "Relax": relax,
@@ -629,6 +628,7 @@ class StyleSurface(AssetGeometryGroup):
                 "Color Blur": color_blur,
                 "Shade Smooth": shade_smooth,
                 "Material": material,
+                "Include Hidden": include_hidden,
             }
         )
 
@@ -643,11 +643,6 @@ class StyleSurface(AssetGeometryGroup):
             True,
             description="Selection of atoms to apply this style to, discarding unselected points",
             hide_value=True,
-        )
-        include_hidden = tree.inputs.boolean(
-            "Include Hidden",
-            False,
-            description="Also apply this style to atoms with the hidden attribute",
         )
         quality = tree.inputs.integer(
             "Quality",
@@ -717,6 +712,12 @@ class StyleSurface(AssetGeometryGroup):
                 "Material",
                 description="Material to apply to the resulting geometry",
                 optional_label=True,
+            )
+        with tree.inputs.panel("Hidden", default_closed=True):
+            include_hidden = tree.inputs.boolean(
+                "Include Hidden",
+                False,
+                description="Also apply this style to atoms with the hidden attribute",
             )
         geometry = tree.outputs.geometry(
             "Geometry", description="The generated geometry for the style node group"
