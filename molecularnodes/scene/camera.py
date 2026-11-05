@@ -6,6 +6,7 @@ import numpy as np
 import numpy.typing as npt
 from mathutils import Matrix, Vector
 from .. import framing
+from .compositor import WORLD_SCALE
 
 
 class Viewpoint(StrEnum):
@@ -94,6 +95,26 @@ class Camera:
     def clip_end(self, value) -> None:
         """Set Camera far clipping distance"""
         self.camera_data.clip_end = value
+
+    @property
+    def orthographic(self) -> bool:
+        """Whether the camera is orthographic, which gives figures one exact
+        scale. ``look_at`` fits an orthographic camera by changing its span."""
+        return self.camera_data.type == "ORTHO"
+
+    @orthographic.setter
+    def orthographic(self, value: bool) -> None:
+        self.camera_data.type = "ORTHO" if value else "PERSP"
+
+    @property
+    def span(self) -> float:
+        """Length in Angstrom covered by the longer edge of the frame, for an
+        orthographic camera."""
+        return self.camera_data.ortho_scale / WORLD_SCALE
+
+    @span.setter
+    def span(self, value: float) -> None:
+        self.camera_data.ortho_scale = value * WORLD_SCALE
 
     @property
     def rotation(self) -> tuple[float, float, float]:

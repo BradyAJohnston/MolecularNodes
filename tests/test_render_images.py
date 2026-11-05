@@ -193,8 +193,7 @@ def _illustrate_fog(canvas):
             depth=render.o.depth,
             shadow=mc.ConeShadow(
                 depth=render.o.depth,
-                pixel_size=mn.scene.compositor._pixel_size_angstrom(canvas.scene)
-                * mn.scene.compositor.WORLD_SCALE,
+                pixel_size=canvas.pixel_size_angstrom * mn.scene.compositor.WORLD_SCALE,
             ),
         )
         _fog(canvas, node, render.o.depth, output)

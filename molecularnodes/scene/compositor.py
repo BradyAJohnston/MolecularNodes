@@ -3,9 +3,11 @@ from collections.abc import Generator
 from contextlib import contextmanager
 from typing import Any, Literal, NamedTuple, cast
 import bpy
+import numpy as np
 from bpy.types import CompositorNodeTree
 from nodebpy import compositor as c
 from nodebpy.builder import ColorSocket, TreeBuilder
+from ..blender import utils as blender_utils
 from ..nodes.compositor import ConeShadow, Illustrate
 from ..session import get_session
 
@@ -56,9 +58,13 @@ def _entity_corner_depths(scene: bpy.types.Scene) -> list[float]:
         if obj is None:
             continue
         evaluated = obj.evaluated_get(depsgraph)
-        for corner in evaluated.bound_box:
-            point = evaluated.matrix_world @ Vector(corner)
-            depths.append((point - origin).dot(forward))
+        corners = [evaluated.matrix_world @ Vector(c) for c in evaluated.bound_box]
+        if len({corner.to_tuple() for corner in corners}) > 1:
+            depths.extend((corner - origin).dot(forward) for corner in corners)
+        else:
+            # the bounding box misses point clouds, such as Style Spheres
+            points = blender_utils.evaluated_points(obj)
+            depths.extend(((points - np.array(origin)) @ np.array(forward)).tolist())
     return depths
 
 
@@ -102,6 +108,25 @@ _SHADING_SOURCES = {
     "ao": ("use_pass_ambient_occlusion", "ambient_occlusion"),
     "shadow": ("use_pass_shadow", "shadow"),
 }
+
+
+def update_cone_shadows(scene: bpy.types.Scene) -> None:
+    """Set the ``Pixel Size`` of every ``Cone Shadow`` node from the current
+    camera and resolution, which can change after the node was added. Called
+    before each render, so an unlinked ``Pixel Size`` is overwritten."""
+    tree = scene.compositing_node_group
+    if tree is None:
+        return
+    for node in tree.nodes:
+        if (
+            isinstance(node, bpy.types.CompositorNodeGroup)
+            and node.node_tree is not None
+            and node.node_tree.name == ConeShadow._asset_name
+            and not node.inputs["Pixel Size"].is_linked
+        ):
+            node.inputs["Pixel Size"].default_value = (
+                _pixel_size_angstrom(scene) * WORLD_SCALE
+            )
 
 
 class ResetCompositorSockets(NamedTuple):
@@ -357,6 +382,7 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
         shading: Literal["cone", "ao", "shadow"] | None = "cone",
         outline: bool = True,
         outline_normals: bool = False,
+        id_pass: str | None = None,
         **inputs,
     ) -> Illustrate:
         """Insert an ``Illustrate`` node between Render Layers and whatever
@@ -382,6 +408,17 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
         node.i.outline_color.default_value = (0.1, 0.1, 0.2, 1.0)
         ```
 
+        Depth outlines fire on every atom of an all-atom style. For lines
+        between chains instead, have the material write an ID to an AOV and name
+        it with ``id_pass``:
+
+        ```python
+        material = mn.material.Flat()
+        material.add_aov("chain_id")
+        mol.add_style("spheres", material=material)
+        canvas.compositor.illustrate(outline=False, id_pass="chain_id")
+        ```
+
         Parameters
         ----------
         shading : {"cone", "ao", "shadow"} or None, default "cone"
@@ -394,6 +431,12 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
         outline_normals : bool, default False
             Also draw lines where the surface normal changes sharply; enables
             the normal pass.
+        id_pass : str, optional
+            Name of a float AOV to draw lines between its regions, through the
+            ``ID Outline`` panel of the node. Declares the AOV on the view layer;
+            a material must write to it (:func:`molecularnodes.material.add_aov`).
+            Keep neighbouring IDs close: the pixel filter blends IDs along
+            edges, so a large gap between them draws a heavier line.
         **inputs
             Any other input of the node by its Python name, for example
             ``outline_size=3`` or ``background=True``.
@@ -415,6 +458,8 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
         if shading is not None:
             pass_attr, accessor = _SHADING_SOURCES[shading]
             setattr(view_layer, pass_attr, True)
+        if id_pass is not None:
+            add_view_layer_aov(view_layer, id_pass, "VALUE")
 
         with self:
             self._remove_composites()
@@ -423,6 +468,9 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
             links: dict[str, Any] = {}
             if outline_normals:
                 links["normal"] = render.o.normal
+            if id_pass is not None:
+                links["id"] = rl_node.outputs[id_pass]
+                links["id_outline"] = True
             if shading == "cone":
                 links["shadow"] = ConeShadow(
                     depth=render.o.depth,

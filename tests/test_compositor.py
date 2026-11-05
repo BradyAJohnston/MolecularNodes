@@ -338,3 +338,43 @@ def test_render_illustrate(tmp_path):
     near_structure = _dilate(covered, 3)
     assert (~near_structure).any()
     assert illustrated[~near_structure, 3].max() <= 1.5 / 255
+
+
+def test_illustrate_id_pass(canvas):
+    node = canvas.compositor.illustrate()
+    assert node.i.id_outline.default_value is False
+    assert not node.node.inputs["ID"].is_linked
+
+    node = canvas.compositor.illustrate(id_pass="chain_id")
+    assert "chain_id" in canvas.aovs
+    assert node.i.id_outline.default_value is True
+    (link,) = node.node.inputs["ID"].links
+    assert link.from_socket.name == "chain_id"
+
+
+def test_cone_shadow_pixel_size_follows_camera(canvas):
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir, format="bcif")
+    mol.add_style("cartoon", material=mn.material.Flat())
+    canvas.look_at(mol, viewpoint="front", margin=0.5)
+    node = canvas.compositor.illustrate()
+    (link,) = node.node.inputs["Shadow"].links
+    pixel_size = link.from_node.inputs["Pixel Size"]
+    before = pixel_size.default_value
+
+    canvas.look_at(mol, viewpoint="front", margin=0.0)
+    assert pixel_size.default_value == pytest.approx(before)
+    mn.scene.compositor.update_cone_shadows(canvas.scene)
+    assert pixel_size.default_value < before
+    assert pixel_size.default_value == pytest.approx(
+        canvas.pixel_size_angstrom * mn.scene.compositor.WORLD_SCALE
+    )
+
+
+def test_pixel_size_with_point_cloud_spheres(canvas):
+    # spheres evaluate to a point cloud, which the object's bounding box misses
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir, format="bcif")
+    mol.add_style("spheres", material=mn.material.Flat())
+    canvas.look_at(mol, viewpoint="front", margin=0.5)
+    wide = canvas.pixel_size_angstrom
+    canvas.look_at(mol, viewpoint="front", margin=0.0)
+    assert canvas.pixel_size_angstrom < wide

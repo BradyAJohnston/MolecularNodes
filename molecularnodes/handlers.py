@@ -5,7 +5,7 @@ from PIL import Image
 from .annotations.utils import render_annotations
 from .blender.registered import scene_session
 from .entities import Molecule
-from .scene.compositor import annotations_image
+from .scene.compositor import annotations_image, update_cone_shadows
 
 
 # this update function requires a self and context input, as funcitons with these inputs
@@ -65,6 +65,7 @@ def render_pre_handler(scene: bpy.types.Scene) -> None:
     """
     if not hasattr(scene, "MNSession"):
         return
+    update_cone_shadows(scene)
     session = scene_session(scene)
     if len(session.entities) == 0:
         return
