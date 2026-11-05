@@ -281,11 +281,12 @@ class Default(PresetMaterial):
     roughness : float, optional
         Roughness of the surface. Defaults to the recipe's value.
     ao_distance : float, optional
-        Distance (in world units) that the ambient occlusion samples.
-        Defaults to the recipe's value.
+        Distance in world units (1 unit is 1 nm) that the ambient occlusion
+        samples. Defaults to the recipe's value.
     ao_exponent : float, optional
-        Exponent applied to the occlusion factor; higher values darken
-        crevices more aggressively. Defaults to the recipe's value.
+        Power the occlusion factor is raised to, so higher values darken more.
+        A long ``ao_distance`` occludes most surfaces a little, so it needs a
+        low exponent. Defaults to the recipe's value.
     name : str, optional
         Name for the created material datablock. Defaults to ``"Default"``.
     """
@@ -333,11 +334,14 @@ class AmbientOcclusion(PresetMaterial):
     Parameters
     ----------
     distance : float, optional
-        Distance in metres (nm) that the ambient occlusion samples.
-        Defaults to the recipe's value.
+        Distance in world units (1 unit is 1 nm) that the ambient occlusion
+        samples. Raise it for large assemblies, where form comes from features
+        much larger than the gaps between atoms. Defaults to the recipe's value.
     exponent : float, optional
-        Exponent applied to the occlusion factor; higher values darken
-        crevices more aggressively. Defaults to the recipe's value.
+        Power the occlusion factor is raised to, so higher values darken more.
+        A long ``distance`` occludes most surfaces a little, so it needs a low
+        exponent: around 1 at ``distance=10``, where 10 renders almost black.
+        Defaults to the recipe's value.
     name : str, optional
         Name for the created material datablock. Defaults to
         ``"Ambient Occlusion"``.

@@ -3,7 +3,7 @@ Generate the "Color PyMOL", "Color VMD" and "Color CSS" nodes from the named
 colours that `molecularnodes.color.parse_color` reads.
 
     uv run docs/dev/named_color_nodes.py
-    uv run -m nodebpy.assets build && uv run -m nodebpy.assets dump
+    uv run nodebpy build && uv run nodebpy dump
 
 PyMOL and VMD colours come from `molecularnodes/_color_names.py`, CSS colours
 (MolViewSpec, ChimeraX) from matplotlib, so the nodes and `parse_color` agree.

@@ -30,6 +30,7 @@ from nodebpy.types import (
 )
 from ._shared.cleanup import Cleanup
 from ._shared.curve_split_splines import CurveSplitSplines
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_units import MNUnits
 from ._shared.mn_utils_style_ribbon_nucleic import MN_utils_style_ribbon_nucleic
 from ._shared.vector_in_angstroms import VectorInAngstroms
@@ -992,6 +993,8 @@ class StyleCartoon(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     material : InputMaterial
         Material to apply to the resulting geometry
+    include_hidden : InputBoolean
+        Also apply this style to atoms with the hidden attribute
 
     Inputs
     ------
@@ -1039,6 +1042,8 @@ class StyleCartoon(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     i.material : MaterialSocket
         Material to apply to the resulting geometry
+    i.include_hidden : BooleanSocket
+        Also apply this style to atoms with the hidden attribute
 
     Outputs
     -------
@@ -1101,6 +1106,8 @@ class StyleCartoon(AssetGeometryGroup):
         """Apply smooth shading to the created geometry"""
         material: MaterialSocket
         """Material to apply to the resulting geometry"""
+        include_hidden: BooleanSocket
+        """Also apply this style to atoms with the hidden attribute"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -1137,6 +1144,7 @@ class StyleCartoon(AssetGeometryGroup):
         color_blur: InputBoolean = False,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
+        include_hidden: InputBoolean = False,
     ):
         super().__init__(
             **{
@@ -1162,6 +1170,7 @@ class StyleCartoon(AssetGeometryGroup):
                 "Color Blur": color_blur,
                 "Shade Smooth": shade_smooth,
                 "Material": material,
+                "Include Hidden": include_hidden,
             }
         )
 
@@ -1281,6 +1290,12 @@ class StyleCartoon(AssetGeometryGroup):
                 description="Material to apply to the resulting geometry",
                 optional_label=True,
             )
+        with tree.inputs.panel("Hidden", default_closed=True):
+            include_hidden = tree.inputs.boolean(
+                "Include Hidden",
+                False,
+                description="Also apply this style to atoms with the hidden attribute",
+            )
         geometry = tree.outputs.geometry(
             "Geometry", description="The generated geometry for the style node group"
         )
@@ -1290,7 +1305,10 @@ class StyleCartoon(AssetGeometryGroup):
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
         capture_1 = g.CaptureAttribute.point(
-            geometry=atoms_1.output, selection=selection
+            geometry=atoms_1.output,
+            selection=DeselectHidden(
+                selection=selection, include_hidden=include_hidden
+            ),
         )
         math_1 = quality * 3.0
         math_2 = quality * 5.0

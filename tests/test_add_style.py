@@ -1,4 +1,6 @@
+import warnings
 import bpy
+import MDAnalysis as mda
 import pytest
 import molecularnodes as mn
 from molecularnodes.blender.registered import object_uuid
@@ -338,3 +340,19 @@ def test_callable_style_keeps_its_own_geometry(fetch):
     mn.Canvas(engine="EEVEE")
     mol = fetch("4ozs").add_style(lambda: StyleSpheres())
     assert sphere_value(mol) == "Point"
+
+
+def test_add_style_warns_on_trace_model(tmp_path):
+    trace = tmp_path / "trace.pdb"
+    universe = mda.Universe(data_dir / "1ATN.pdb")
+    universe.select_atoms("protein and name CA").write(trace)
+    mol = mn.Molecule.load(trace)
+    with pytest.warns(UserWarning, match="mostly CA or P atoms"):
+        mol.add_style("spheres")
+
+
+def test_add_style_full_model_does_not_warn():
+    mol = mn.Molecule.load(data_dir / "1ATN.pdb")
+    with warnings.catch_warnings():
+        warnings.filterwarnings("error", message=".*mostly CA or P atoms.*")
+        mol.add_style("spheres")

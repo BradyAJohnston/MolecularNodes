@@ -27,10 +27,10 @@ description: How Molecular Nodes geometry-node assets are written as nodebpy Pyt
 Always via `uv run`, never bare `python`.
 
 ```bash
-uv run -m nodebpy.assets build    # nodes/*.py -> assets/nodes.blend (also validates your tree)
-uv run -m nodebpy.assets dump     # assets/nodes.blend -> nodes/*.py (normalises code, regenerates __init__.py)
-uv run -m nodebpy.assets ensure   # build only if missing or stale (the test suite runs this)
-uv run -m nodebpy.assets check    # CI: build -> dump must reproduce the sources exactly
+uv run nodebpy build              # nodes/*.py -> assets/nodes.blend (also validates your tree)
+uv run nodebpy dump               # assets/nodes.blend -> nodes/*.py (normalises code, regenerates __init__.py)
+uv run nodebpy ensure             # build only if missing or stale (the test suite runs this)
+uv run nodebpy check              # CI: build -> dump must reproduce the sources exactly
 uv run docs/generate.py           # regenerates the node pages block in docs/_quarto.yml from the blend
 ```
 
@@ -282,7 +282,7 @@ node-tree plot per node, in a table. Worked for PR #1210 (the symmetry nodes).
    goldens are too small for a PR.
 3. **Node-tree plots.** After `build`:
    ```bash
-   uv run -m nodebpy.assets plot molecularnodes/assets/nodes.blend <outdir> "Symmetry *" "Symmetry Instance"
+   uv run nodebpy plot molecularnodes/assets/nodes.blend <outdir> "Symmetry *" "Symmetry Instance"
    ```
    Names are exact or fnmatch; default draws the stored layout, `--arrange` re-lays it
    out. Needs matplotlib (present in the venv). Since nodebpy 520.25.0 each group
@@ -334,7 +334,7 @@ files.
    `bpy.ops.wm.read_homefile(use_empty=True)`, rename the remaining scene
    (`for s in bpy.data.scenes: s.name = "_dump_session"`), then
    `from nodebpy.assets._library import dump_library; dump_library(blend, outdir, materials=False)`.
-   One file per subprocess. The CLI `uv run -m nodebpy.assets dump <blend> <outdir>` is
+   One file per subprocess. The CLI `uv run nodebpy dump <blend> <outdir>` is
    fine for files without object references.
 4. **Legacy nodes abort the dump.** Codegen is strict: a node with no nodebpy class and no
    emitter (`FunctionNodeAlignEulerToVector` in 3.x-era files) raises `CodegenError` and
@@ -355,7 +355,7 @@ files.
 3. Numeric test in `tests/test_nodes.py`; render test if the output is visual.
 4. `docs/nodes.yml` entry; `docs/generate.py`, keep only your hunk in `_quarto.yml`.
    Add a line to `docs/changelog.qmd`.
-5. `uv run ruff format` and `ruff check` on touched files; `uv run -m nodebpy.assets check`.
+5. `uv run ruff format` and `ruff check` on touched files; `uv run nodebpy check`.
 6. Run the touched test modules; generate and eyeball goldens.
 
 ## 14. Pitfalls found while writing Select String (2026-09-14)

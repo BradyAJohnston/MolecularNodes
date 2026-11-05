@@ -25,6 +25,7 @@ from nodebpy.types import (
     InputMaterial,
     InputMenu,
 )
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_constants_atom_name_nucleic import MN_constants_atom_name_nucleic
 from ._shared.mn_world_scale import MN_world_scale
 from .angstrom_to_world import AngstromToWorld
@@ -492,6 +493,8 @@ class StyleSurface(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     material : InputMaterial
         Material to apply to the resulting geometry
+    include_hidden : InputBoolean
+        Also apply this style to atoms with the hidden attribute
 
     Inputs
     ------
@@ -525,6 +528,8 @@ class StyleSurface(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     i.material : MaterialSocket
         Material to apply to the resulting geometry
+    i.include_hidden : BooleanSocket
+        Also apply this style to atoms with the hidden attribute
 
     Outputs
     -------
@@ -573,6 +578,8 @@ class StyleSurface(AssetGeometryGroup):
         """Apply smooth shading to the created geometry"""
         material: MaterialSocket
         """Material to apply to the resulting geometry"""
+        include_hidden: BooleanSocket
+        """Also apply this style to atoms with the hidden attribute"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -602,6 +609,7 @@ class StyleSurface(AssetGeometryGroup):
         color_blur: InputInteger = 2,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
+        include_hidden: InputBoolean = False,
     ):
         super().__init__(
             **{
@@ -620,6 +628,7 @@ class StyleSurface(AssetGeometryGroup):
                 "Color Blur": color_blur,
                 "Shade Smooth": shade_smooth,
                 "Material": material,
+                "Include Hidden": include_hidden,
             }
         )
 
@@ -704,10 +713,19 @@ class StyleSurface(AssetGeometryGroup):
                 description="Material to apply to the resulting geometry",
                 optional_label=True,
             )
+        with tree.inputs.panel("Hidden", default_closed=True):
+            include_hidden = tree.inputs.boolean(
+                "Include Hidden",
+                False,
+                description="Also apply this style to atoms with the hidden attribute",
+            )
         geometry = tree.outputs.geometry(
             "Geometry", description="The generated geometry for the style node group"
         )
 
+        deselect_hidden = DeselectHidden(
+            selection=selection, include_hidden=include_hidden
+        )
         _mn_utils_style_surface_new = MN_utils_style_surface_new()
         with g.Frame("Create grid and turn into mesh"):
             with g.Frame("Old-style 'manual SDF creation"):
@@ -820,7 +838,7 @@ class StyleSurface(AssetGeometryGroup):
         geometry_7 = closure_zone_5.outputs.geometry("Geometry")
         mn_utils_style_surface_sdf = MN_utils_style_surface_sdf(
             Atoms=geometry_6.output,
-            Selection=selection,
+            Selection=deselect_hidden,
             Quality=quality,
             **{
                 "Scale Radii": scale,
@@ -896,7 +914,7 @@ class StyleSurface(AssetGeometryGroup):
         (
             EvaluateOnAtoms(
                 geometry=atoms,
-                selection=selection,
+                selection=deselect_hidden,
                 closure=closure_zone_4.closure,
                 result="Representation",
             )

@@ -52,4 +52,4 @@ jobs:
             - name: Check sources survive build -> dump
               timeout-minutes: 15
               run: |
-                  uv run -m nodebpy.assets check
+                  uv run nodebpy check
