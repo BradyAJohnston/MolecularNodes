@@ -71,7 +71,7 @@ copyright = ["2022 Brady Johnston"]
 exclude_packages = ["pyarrow"]
 # Added to the default excludes (__pycache__/, .*, /*.zip).
 paths_exclude_pattern = ["*.blend[1-9]", "*.stamp", "*.MNSession"]
-# The node asset library is built, not committed: `uv run -m nodebpy.assets build`.
+# The node asset library is built, not committed: `uv run nodebpy build`.
 required_files = ["molecularnodes/assets/nodes.blend"]
 
 [tool.extbpy.permissions]
@@ -147,7 +147,7 @@ exclude = ["molecularnodes/assets/data.py"]
 [tool.ty.src]
 include = ["molecularnodes", "tests"]
 
-# Node groups under these directories are written by `nodebpy.assets dump`, so a
+# Node groups under these directories are written by `nodebpy dump`, so a
 # fix made by hand doesn't survive the round trip. These rules flag gaps in
 # nodebpy's socket and node typing there, to be fixed in nodebpy itself.
 [[tool.ty.overrides]]
@@ -164,7 +164,7 @@ invalid-assignment = "ignore"
 not-subscriptable = "ignore"
 unresolved-attribute = "ignore"
 
-# The node-asset pipeline (python -m nodebpy.assets build|dump|ensure|check):
+# The node-asset pipeline (nodebpy build|dump|ensure|check):
 # molecularnodes/nodes/ is the source of truth, nodes.blend the built,
 # untracked asset library, resources.blend the data-only datablocks the
 # build pulls in. See CONTRIBUTING.md "Node assets".

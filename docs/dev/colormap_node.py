@@ -2,7 +2,7 @@
 Generate the "Color matplotlib" node from matplotlib's colormaps.
 
     uv run docs/dev/colormap_node.py
-    uv run -m nodebpy.assets build && uv run -m nodebpy.assets dump
+    uv run nodebpy build && uv run nodebpy dump
 
 Writes ``molecularnodes/nodes/geometry/color_matplotlib.py`` with the ramp data
 inline; build + dump turns it into the literal tree source that is committed.

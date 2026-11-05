@@ -39,7 +39,7 @@ if os.environ.get("PYTEST_XDIST_WORKER") is None:
     ):
         _env = os.environ.copy()
         if bpy.app.binary_path:  # inside a full Blender: spawn another
-            import nodebpy.assets.__main__ as _assets_main
+            import nodebpy.__main__ as _nodebpy_main
 
             # an isolated extensions dir so the spawn can't pick up stale wheels
             _env["BLENDER_USER_EXTENSIONS"] = tempfile.mkdtemp(prefix="mn-assets-ext-")
@@ -48,12 +48,12 @@ if os.environ.get("PYTEST_XDIST_WORKER") is None:
                 "-b",
                 "--factory-startup",
                 "-P",
-                _assets_main.__file__,
+                _nodebpy_main.__file__,
                 "--",
                 "ensure",
             ]
         else:
-            _cmd = [sys.executable, "-m", "nodebpy.assets", "ensure"]
+            _cmd = [sys.executable, "-m", "nodebpy", "ensure"]
         subprocess.run(_cmd, check=True, env=_env, cwd=Path(__file__).parent.parent)
 import numpy as np  # noqa: E402
 import pytest  # noqa: E402

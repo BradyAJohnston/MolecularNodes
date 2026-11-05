@@ -56,7 +56,7 @@ jobs:
             - name: Build node assets
               timeout-minutes: 10
               run: |
-                  uv run --no-sync -m nodebpy.assets build
+                  uv run --no-sync nodebpy build
             - name: Run Tests
               # windows runners need ~17 minutes for the full suite
               timeout-minutes: 30
