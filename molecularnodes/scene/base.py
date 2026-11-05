@@ -22,7 +22,7 @@ from ..utils import _UNSET, Unset, suppress_stdout, temp_override_properties
 from .camera import Camera, Viewpoint
 from .compositor import (
     CompositorTree,
-    _pixel_size_angstrom,
+    _pixel_size,
     add_view_layer_aov,
     setup_compositor,
 )
@@ -735,9 +735,9 @@ class Canvas:
         self._view_settings.gamma = value
 
     @property
-    def pixel_size_angstrom(self) -> float:
+    def pixel_size(self) -> float:
         """
-        Size of one rendered pixel in Angstrom, for scale bars.
+        Size of one rendered pixel in nanometres, for scale bars.
 
         Exact for an orthographic camera. A perspective camera has no single
         scale, so this is the size at the mid-depth of the entities.
@@ -745,9 +745,9 @@ class Canvas:
         Returns
         -------
         float
-            Angstrom per pixel, including ``render_scale``.
+            Nanometres per pixel, including ``render_scale``.
         """
-        return _pixel_size_angstrom(self.scene)
+        return _pixel_size(self.scene)
 
     @property
     def look(self) -> str:

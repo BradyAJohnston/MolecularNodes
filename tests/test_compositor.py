@@ -365,9 +365,7 @@ def test_cone_shadow_pixel_size_follows_camera(canvas):
     assert pixel_size.default_value == pytest.approx(before)
     mn.scene.compositor.update_cone_shadows(canvas.scene)
     assert pixel_size.default_value < before
-    assert pixel_size.default_value == pytest.approx(
-        canvas.pixel_size_angstrom * mn.scene.compositor.WORLD_SCALE
-    )
+    assert pixel_size.default_value == pytest.approx(canvas.pixel_size)
 
 
 def test_pixel_size_with_point_cloud_spheres(canvas):
@@ -375,6 +373,6 @@ def test_pixel_size_with_point_cloud_spheres(canvas):
     mol = mn.Molecule.fetch("4ozs", cache=data_dir, format="bcif")
     mol.add_style("spheres", material=mn.material.Flat())
     canvas.look_at(mol, viewpoint="front", margin=0.5)
-    wide = canvas.pixel_size_angstrom
+    wide = canvas.pixel_size
     canvas.look_at(mol, viewpoint="front", margin=0.0)
-    assert canvas.pixel_size_angstrom < wide
+    assert canvas.pixel_size < wide

@@ -13,9 +13,6 @@ from ..session import get_session
 
 annotations_image = "mn_annotations"
 
-# world units per Angstrom that Molecular Nodes imports structures at
-WORLD_SCALE = 0.1
-
 
 def add_view_layer_aov(
     view_layer: bpy.types.ViewLayer, name: str, type: Literal["VALUE", "COLOR"]
@@ -81,8 +78,8 @@ def _depth_range(scene: bpy.types.Scene) -> tuple[float, float]:
     return data.clip_start, data.clip_end
 
 
-def _pixel_size_angstrom(scene: bpy.types.Scene) -> float:
-    """Width of one rendered pixel in Angstrom at the entities in the scene:
+def _pixel_size(scene: bpy.types.Scene) -> float:
+    """Width of one rendered pixel in nanometres at the entities in the scene:
     from the orthographic scale, or the field of view at the mid-depth of the
     entities for a perspective camera."""
     camera = scene.camera
@@ -90,14 +87,14 @@ def _pixel_size_angstrom(scene: bpy.types.Scene) -> float:
     pixels = max(render.resolution_x, render.resolution_y)
     pixels *= render.resolution_percentage / 100.0
     if camera is None or pixels <= 0:
-        return 1.0
+        return 0.1
     data = cast(bpy.types.Camera, camera.data)
     if data.type == "ORTHO":
         width = data.ortho_scale
     else:
         near, far = _depth_range(scene)
         width = 2.0 * (near + far) / 2.0 * math.tan(data.angle / 2.0)
-    return width / pixels / WORLD_SCALE
+    return width / pixels
 
 
 # shading source for `CompositorTree.illustrate()` -> (view layer pass
@@ -125,7 +122,7 @@ def update_cone_shadows(scene: bpy.types.Scene) -> None:
         ):
             pixel_size = cast(bpy.types.NodeSocketFloat, node.inputs["Pixel Size"])
             if not pixel_size.is_linked:
-                pixel_size.default_value = _pixel_size_angstrom(scene) * WORLD_SCALE
+                pixel_size.default_value = _pixel_size(scene)
 
 
 class ResetCompositorSockets(NamedTuple):
@@ -474,7 +471,7 @@ class CompositorTree(TreeBuilder[CompositorNodeTree]):
                 links["shadow"] = ConeShadow(
                     depth=render.o.depth,
                     # the cone test compares against the depth pass, in world units
-                    pixel_size=_pixel_size_angstrom(self._scene) * WORLD_SCALE,
+                    pixel_size=_pixel_size(self._scene),
                 )
             elif shading is not None:
                 if accessor not in {

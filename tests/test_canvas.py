@@ -78,15 +78,15 @@ def test_standard_view_transform_clears_look():
     assert canvas.look == "Medium High Contrast"
 
 
-def test_pixel_size_angstrom_uses_longer_edge():
+def test_pixel_size_uses_longer_edge():
     canvas = mn.Canvas(resolution=(100, 200))
     canvas.camera.orthographic = True
-    canvas.camera.span = 400
-    assert canvas.camera.span == pytest.approx(400)
-    assert canvas.pixel_size_angstrom == pytest.approx(2.0)
+    canvas.camera.span = 40
+    assert canvas.camera.span == pytest.approx(40)
+    assert canvas.pixel_size == pytest.approx(0.2)
 
     canvas.render_scale = 50
-    assert canvas.pixel_size_angstrom == pytest.approx(4.0)
+    assert canvas.pixel_size == pytest.approx(0.4)
 
 
 def test_camera_orthographic():

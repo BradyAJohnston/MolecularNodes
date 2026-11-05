@@ -6,7 +6,6 @@ import numpy as np
 import numpy.typing as npt
 from mathutils import Matrix, Vector
 from .. import framing
-from .compositor import WORLD_SCALE
 
 
 class Viewpoint(StrEnum):
@@ -108,13 +107,13 @@ class Camera:
 
     @property
     def span(self) -> float:
-        """Length in Angstrom covered by the longer edge of the frame, for an
+        """Length in nanometres covered by the longer edge of the frame, for an
         orthographic camera."""
-        return self.camera_data.ortho_scale / WORLD_SCALE
+        return self.camera_data.ortho_scale
 
     @span.setter
     def span(self, value: float) -> None:
-        self.camera_data.ortho_scale = value * WORLD_SCALE
+        self.camera_data.ortho_scale = value
 
     @property
     def rotation(self) -> tuple[float, float, float]:

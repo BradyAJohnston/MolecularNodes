@@ -7,7 +7,7 @@ title: "Changelog"
 
 
 ## Added
-- `Canvas.pixel_size_angstrom` gives the size of one rendered pixel for scale bars, and `canvas.camera.orthographic` and `canvas.camera.span` set up an orthographic camera with an exact scale.
+- `Canvas.pixel_size` gives the size of one rendered pixel in nanometres for scale bars, and `canvas.camera.orthographic` and `canvas.camera.span` set up an orthographic camera with an exact scale.
 - `compositor.illustrate(id_pass=...)` and an `ID Outline` panel on the `Illustrate` node draw lines between the regions of an ID pass, such as chains, which depth outlines cannot do on all-atom styles.
 - `mol.hide()`, `mol.show()` and `mol.hidden` leave atoms out of every style, while calculations still see them. `Molecule.load()` and `fetch()` take `hide=`, such as `hide="element H"`, and the same option is the `Hidden` field in the Attributes panel and the import dialog, where it starts as `water`. `hidden` is reserved as a selection name.
 - Atoms with a boolean `hidden` attribute are left out of every style, and are not used in what the style computes. Each style has an `Include Hidden` input to keep them. Calculations and other nodes still see every atom.
