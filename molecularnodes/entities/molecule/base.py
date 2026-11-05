@@ -20,6 +20,8 @@ import numpy as np
 from MDAnalysis.core.groups import AtomGroup
 from nodebpy.builder import MaterialBuilder
 from nodebpy.nodes.geometry import NamedAttribute
+from scipy.sparse import coo_matrix
+from scipy.sparse.csgraph import connected_components
 from ... import download
 from ...assets import data
 from ...blender import coll, path_resolve, set_obj_active
@@ -481,6 +483,24 @@ class Molecule(MolecularEntity):
     def _compute_atom_id(self) -> np.ndarray:
         return self.atoms.ids
 
+    def _compute_fragment_id(self) -> np.ndarray:
+        # bonded molecules, numbered as MDAnalysis `fragindices`, but found from
+        # the bonds already on the mesh, as building fragments in MDAnalysis is
+        # slow for large topologies, as is checking `hasattr(self.atoms, "bonds")`.
+        # Raises NoDataError without bonds
+        mesh = cast(bpy.types.Mesh, self.object.data)
+        if len(mesh.edges) == 0:
+            raise mda.NoDataError("structure has no bonds")
+        n_atoms = len(mesh.vertices)
+        edges = np.zeros(len(mesh.edges) * 2, dtype=np.int32)
+        mesh.edges.foreach_get("vertices", edges)
+        edges = edges.reshape(-1, 2)
+        graph = coo_matrix(
+            (np.ones(len(edges), dtype=np.int8), (edges[:, 0], edges[:, 1])),
+            shape=(n_atoms, n_atoms),
+        )
+        return connected_components(graph, directed=False)[1]
+
     def _compute_segindices(self) -> np.ndarray:
         segs = []
         for seg in self.atoms.segments:
@@ -698,6 +718,7 @@ class Molecule(MolecularEntity):
             "segid": self._compute_segindices,
             "res_name": self._compute_res_name_int,
             "atom_id": self._compute_atom_id,
+            "fragment_id": self._compute_fragment_id,
             "b_factor": self._compute_b_factor,
             "occupancy": self._compute_occupancy,
             "charge": self._compute_charge,
@@ -1392,7 +1413,13 @@ class Molecule(MolecularEntity):
         if dimensions is None:
             return
         names = ["a", "b", "c", "alpha", "beta", "gamma"]
-        nodes_to_update = ["Periodic Box", "Periodic Array"]
+        nodes_to_update = [
+            "Periodic Box",
+            "Periodic Array",
+            "Periodic Offset",
+            "Periodic Unwrap",
+            "Periodic Cell",
+        ]
         for node in self.modifier_node_tree.nodes:
             if (
                 not isinstance(node, bpy.types.GeometryNodeGroup)
@@ -1404,7 +1431,10 @@ class Molecule(MolecularEntity):
             ):
                 continue
 
-            for name, value in zip(names, dimensions):
+            # lengths from Å to world units, angles stay in degrees
+            box = np.asarray(dimensions, dtype=float)
+            values = np.concatenate([box[:3] * self.world_scale, box[3:]])
+            for name, value in zip(names, values):
                 cast(bpy.types.NodeSocketFloat, node.inputs[name]).default_value = value
 
     def __repr__(self) -> str:

@@ -10,6 +10,7 @@ import itertools
 from pathlib import Path
 import bpy
 import pytest
+from nodebpy.nodes.geometry import SetPosition
 import molecularnodes as mn
 from molecularnodes.converters import universe_from_atoms
 from molecularnodes.entities.molecule.reader import read_structure
@@ -160,5 +161,30 @@ def test_evaluate_color(benchmark, color):
     mol = mn.Molecule.load(DATA_DIR / f"{STRUCTURE}.bcif").add_style(
         "spheres", color=color
     )
+    _evaluate(mol.object)
+    benchmark(_evaluate, mol.object)
+
+
+PERIODIC = {
+    "offset-box": lambda box: mg.PeriodicOffset(offset_factor=(0.5, 0.5, 0.5), **box),
+    "offset-compact": lambda box: mg.PeriodicOffset(
+        offset_factor=(0.5, 0.5, 0.5), wrap="Compact", **box
+    ),
+    "unwrap": lambda box: mg.PeriodicUnwrap(group_id=mg.FragmentID(), **box),
+}
+
+
+@pytest.mark.benchmark(group="evaluate-periodic")
+@pytest.mark.parametrize("node", PERIODIC.values(), ids=PERIODIC.keys())
+def test_evaluate_periodic(benchmark, node):
+    # ~40,000 atoms in a triclinic box (rhombic dodecahedron), with bonds. A
+    # single frame doesn't update the box, so it is given to the node
+    mol = mn.Molecule.load(DATA_DIR / "md_ppr/md.tpr", DATA_DIR / "md_ppr/md.gro")
+    names = ["a", "b", "c", "alpha", "beta", "gamma"]
+    dimensions = mol.universe.dimensions.astype(float)
+    dimensions[:3] *= mol.world_scale
+    box = {"update": False, **dict(zip(names, map(float, dimensions)))}
+    with mol.tree.reset() as (atoms, join):
+        atoms >> SetPosition(position=node(box)) >> join
     _evaluate(mol.object)
     benchmark(_evaluate, mol.object)

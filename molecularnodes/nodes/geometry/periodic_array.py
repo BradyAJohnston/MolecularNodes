@@ -26,57 +26,57 @@ class PeriodicArray(AssetGeometryGroup):
     Parameters
     ----------
     geometry : InputGeometry
-        Geometry
+        Geometry to copy into each periodic image
     update : InputBoolean
-        Update the box lengths and angles with the simulation. As a modifier input, reads the "True" attribute by default.
+        Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand. As a modifier input, reads the "True" attribute by default.
     a : InputFloat
-        a
+        Length of box vector A in world units, where 1 m is 1 nm
     b : InputFloat
-        b
+        Length of box vector B in world units, where 1 m is 1 nm
     c : InputFloat
-        c
+        Length of box vector C in world units, where 1 m is 1 nm
     alpha : InputFloat
-        alpha
+        Angle between box vectors B and C, in degrees
     beta : InputFloat
-        beta
+        Angle between box vectors A and C, in degrees
     gamma : InputFloat
-        gamma
+        Angle between box vectors A and B, in degrees
     x : InputInteger
-        Number of images along the a vector
+        Number of images along box vector A
     y : InputInteger
-        Number of images along the b vector
+        Number of images along box vector B
     z : InputInteger
-        Number of images along the c vector
+        Number of images along box vector C
 
     Inputs
     ------
     i.geometry : GeometrySocket
-        Geometry
+        Geometry to copy into each periodic image
     i.update : BooleanSocket
-        Update the box lengths and angles with the simulation
+        Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand
     i.a : FloatSocket
-        a
+        Length of box vector A in world units, where 1 m is 1 nm
     i.b : FloatSocket
-        b
+        Length of box vector B in world units, where 1 m is 1 nm
     i.c : FloatSocket
-        c
+        Length of box vector C in world units, where 1 m is 1 nm
     i.alpha : FloatSocket
-        alpha
+        Angle between box vectors B and C, in degrees
     i.beta : FloatSocket
-        beta
+        Angle between box vectors A and C, in degrees
     i.gamma : FloatSocket
-        gamma
+        Angle between box vectors A and B, in degrees
     i.x : IntegerSocket
-        Number of images along the a vector
+        Number of images along box vector A
     i.y : IntegerSocket
-        Number of images along the b vector
+        Number of images along box vector B
     i.z : IntegerSocket
-        Number of images along the c vector
+        Number of images along box vector C
 
     Outputs
     -------
     o.instances : GeometrySocket
-        Instances
+        A copy of the geometry in each periodic image, starting at the original and going along box vectors A, B and C
     """
 
     _name = "Periodic Array"
@@ -86,25 +86,31 @@ class PeriodicArray(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         geometry: GeometrySocket
-        """Geometry"""
+        """Geometry to copy into each periodic image"""
         update: BooleanSocket
-        """Update the box lengths and angles with the simulation"""
+        """Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand"""
         a: FloatSocket
+        """Length of box vector A in world units, where 1 m is 1 nm"""
         b: FloatSocket
+        """Length of box vector B in world units, where 1 m is 1 nm"""
         c: FloatSocket
+        """Length of box vector C in world units, where 1 m is 1 nm"""
         alpha: FloatSocket
+        """Angle between box vectors B and C, in degrees"""
         beta: FloatSocket
+        """Angle between box vectors A and C, in degrees"""
         gamma: FloatSocket
+        """Angle between box vectors A and B, in degrees"""
         x: IntegerSocket
-        """Number of images along the a vector"""
+        """Number of images along box vector A"""
         y: IntegerSocket
-        """Number of images along the b vector"""
+        """Number of images along box vector B"""
         z: IntegerSocket
-        """Number of images along the c vector"""
+        """Number of images along box vector C"""
 
     class _Outputs(SocketAccessor):
         instances: GeometrySocket
-        """Instances"""
+        """A copy of the geometry in each periodic image, starting at the original and going along box vectors A, B and C"""
 
     if TYPE_CHECKING:
 
@@ -144,45 +150,77 @@ class PeriodicArray(AssetGeometryGroup):
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        geometry = tree.inputs.geometry("Geometry")
+        geometry = tree.inputs.geometry(
+            "Geometry", description="Geometry to copy into each periodic image"
+        )
         with tree.inputs.panel("Periodic Box", default_closed=True):
             update = tree.inputs.boolean(
                 "Update",
                 True,
-                description="Update the box lengths and angles with the simulation",
+                description="Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand",
                 default_attribute="True",
             )
             with tree.inputs.panel("Lengths"):
-                a = tree.inputs.float("a", 0.0)
-                b = tree.inputs.float("b", 0.0)
-                c_ = tree.inputs.float("c", 0.0)
+                a = tree.inputs.float(
+                    "a",
+                    0.0,
+                    description="Length of box vector A in world units, where 1 m is 1 nm",
+                    subtype="DISTANCE",
+                )
+                b = tree.inputs.float(
+                    "b",
+                    0.0,
+                    description="Length of box vector B in world units, where 1 m is 1 nm",
+                    subtype="DISTANCE",
+                )
+                c_ = tree.inputs.float(
+                    "c",
+                    0.0,
+                    description="Length of box vector C in world units, where 1 m is 1 nm",
+                    subtype="DISTANCE",
+                )
             with tree.inputs.panel("Angles"):
-                alpha = tree.inputs.float("alpha", 0.0)
-                beta = tree.inputs.float("beta", 0.0)
-                gamma = tree.inputs.float("gamma", 0.0)
+                alpha = tree.inputs.float(
+                    "alpha",
+                    0.0,
+                    description="Angle between box vectors B and C, in degrees",
+                )
+                beta = tree.inputs.float(
+                    "beta",
+                    0.0,
+                    description="Angle between box vectors A and C, in degrees",
+                )
+                gamma = tree.inputs.float(
+                    "gamma",
+                    0.0,
+                    description="Angle between box vectors A and B, in degrees",
+                )
         with tree.inputs.panel("Count"):
             x = tree.inputs.integer(
                 "X",
                 3,
-                description="Number of images along the a vector",
+                description="Number of images along box vector A",
                 min_value=1,
                 max_value=10000,
             )
             y = tree.inputs.integer(
                 "Y",
                 3,
-                description="Number of images along the b vector",
+                description="Number of images along box vector B",
                 min_value=1,
                 max_value=10000,
             )
             z = tree.inputs.integer(
                 "Z",
                 3,
-                description="Number of images along the c vector",
+                description="Number of images along box vector C",
                 min_value=1,
                 max_value=10000,
             )
-        instances = tree.outputs.geometry("Instances")
+        instances = tree.outputs.geometry(
+            "Instances",
+            description="A copy of the geometry in each periodic image, starting at the original and going along box vectors A, B and C",
+        )
 
         periodic_box = PeriodicBox(
             update=update, a=a, b=b, c=c_, alpha=alpha, beta=beta, gamma=gamma
