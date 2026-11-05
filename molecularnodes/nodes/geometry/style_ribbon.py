@@ -28,6 +28,7 @@ from nodebpy.types import (
     InputVector,
 )
 from ._shared.cleanup import Cleanup
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_utils_style_ribbon_nucleic import MN_utils_style_ribbon_nucleic
 from .atoms_to_ca_curves import AtomsToCACurves
 from .check_geometry import CheckGeometry
@@ -122,6 +123,8 @@ class StyleRibbon(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     selection : InputBoolean
         Selection of atoms to apply this style to, discarding unselected points
+    include_hidden : InputBoolean
+        Also apply this style to atoms with the hidden attribute
     quality : InputInteger
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
     peptide_radius : InputFloat
@@ -161,6 +164,8 @@ class StyleRibbon(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     i.selection : BooleanSocket
         Selection of atoms to apply this style to, discarding unselected points
+    i.include_hidden : BooleanSocket
+        Also apply this style to atoms with the hidden attribute
     i.quality : IntegerSocket
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
     i.peptide_radius : FloatSocket
@@ -215,6 +220,8 @@ class StyleRibbon(AssetGeometryGroup):
         """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
         """Selection of atoms to apply this style to, discarding unselected points"""
+        include_hidden: BooleanSocket
+        """Also apply this style to atoms with the hidden attribute"""
         quality: IntegerSocket
         """A lower value results in less geometry, with a higher value meaning better looking but more dense geometry"""
         peptide_radius: FloatSocket
@@ -263,6 +270,7 @@ class StyleRibbon(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
+        include_hidden: InputBoolean = False,
         quality: InputInteger = 3,
         peptide_radius: InputFloat = 1.6,
         backbone_smoothing: InputFloat = 0.5,
@@ -285,6 +293,7 @@ class StyleRibbon(AssetGeometryGroup):
             **{
                 "Atoms": atoms,
                 "Selection": selection,
+                "Include Hidden": include_hidden,
                 "Quality": quality,
                 "Peptide Radius": peptide_radius,
                 "Backbone Smoothing": backbone_smoothing,
@@ -313,6 +322,11 @@ class StyleRibbon(AssetGeometryGroup):
             True,
             description="Selection of atoms to apply this style to, discarding unselected points",
             hide_value=True,
+        )
+        include_hidden = tree.inputs.boolean(
+            "Include Hidden",
+            False,
+            description="Also apply this style to atoms with the hidden attribute",
         )
         quality = tree.inputs.integer(
             "Quality",
@@ -401,6 +415,9 @@ class StyleRibbon(AssetGeometryGroup):
             "Geometry", description="The generated geometry for the style node group"
         )
 
+        deselect_hidden = DeselectHidden(
+            selection=selection, include_hidden=include_hidden
+        )
         closure_zone = g.ClosureZone()
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
@@ -421,7 +438,7 @@ class StyleRibbon(AssetGeometryGroup):
         )
         mn_utils_style_ribbon_nucleic = MN_utils_style_ribbon_nucleic(
             atoms=separate_polymers.o.nucleic,
-            selection=selection,
+            selection=deselect_hidden,
             material=material,
             switch=g.IndexSwitch.boolean(menu_switch.o.output, (True, False)),
             backbone_subdivisions=quality * 2,
@@ -437,7 +454,7 @@ class StyleRibbon(AssetGeometryGroup):
         )
         mn_utils_style_ribbon_peptide = MN_utils_style_ribbon_peptide(
             Atoms=separate_polymers.o.peptide,
-            Selection=selection,
+            Selection=deselect_hidden,
             Quality=quality,
             **{"BS Smoothing": backbone_smoothing},
             Radius=peptide_radius,

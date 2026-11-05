@@ -24,6 +24,7 @@ from nodebpy.types import (
     InputMaterial,
     InputMenu,
 )
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_utils_style_sticks import MN_utils_style_sticks
 from .evaluate_on_atoms import EvaluateOnAtoms
 from .find_bonds import FindBonds
@@ -40,6 +41,8 @@ class StyleBallAndStick(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     selection : InputBoolean
         Selection of atoms to apply this style to, discarding unselected points
+    include_hidden : InputBoolean
+        Also apply this style to atoms with the hidden attribute
     quality : InputInteger
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
     sphere : InputMenu | Literal["Point", "Instance", "Mesh"]
@@ -65,6 +68,8 @@ class StyleBallAndStick(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     i.selection : BooleanSocket
         Selection of atoms to apply this style to, discarding unselected points
+    i.include_hidden : BooleanSocket
+        Also apply this style to atoms with the hidden attribute
     i.quality : IntegerSocket
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
     i.sphere : MenuSocket
@@ -105,6 +110,8 @@ class StyleBallAndStick(AssetGeometryGroup):
         """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
         """Selection of atoms to apply this style to, discarding unselected points"""
+        include_hidden: BooleanSocket
+        """Also apply this style to atoms with the hidden attribute"""
         quality: IntegerSocket
         """A lower value results in less geometry, with a higher value meaning better looking but more dense geometry"""
         sphere: MenuSocket
@@ -139,6 +146,7 @@ class StyleBallAndStick(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
+        include_hidden: InputBoolean = False,
         quality: InputInteger = 2,
         sphere: InputMenu | Literal["Point", "Instance", "Mesh"] = "Instance",
         scale: InputFloat = 0.3,
@@ -153,6 +161,7 @@ class StyleBallAndStick(AssetGeometryGroup):
             **{
                 "Atoms": atoms,
                 "Selection": selection,
+                "Include Hidden": include_hidden,
                 "Quality": quality,
                 "Sphere": sphere,
                 "Scale": scale,
@@ -174,6 +183,11 @@ class StyleBallAndStick(AssetGeometryGroup):
             True,
             description="Selection of atoms to apply this style to, discarding unselected points",
             hide_value=True,
+        )
+        include_hidden = tree.inputs.boolean(
+            "Include Hidden",
+            False,
+            description="Also apply this style to atoms with the hidden attribute",
         )
         quality = tree.inputs.integer(
             "Quality",
@@ -248,10 +262,11 @@ class StyleBallAndStick(AssetGeometryGroup):
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
         separate_geometry = atoms_1.output >> g.SeparateGeometry.point(
-            selection=selection
+            selection=DeselectHidden(selection=selection, include_hidden=include_hidden)
         )
         style_spheres = StyleSpheres(
             atoms=separate_geometry.o.selection,
+            include_hidden=include_hidden,
             sphere=sphere,
             quality=quality,
             scale=scale,

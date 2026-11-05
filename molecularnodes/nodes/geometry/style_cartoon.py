@@ -30,6 +30,7 @@ from nodebpy.types import (
 )
 from ._shared.cleanup import Cleanup
 from ._shared.curve_split_splines import CurveSplitSplines
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_units import MNUnits
 from ._shared.mn_utils_style_ribbon_nucleic import MN_utils_style_ribbon_nucleic
 from ._shared.vector_in_angstroms import VectorInAngstroms
@@ -952,6 +953,8 @@ class StyleCartoon(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     selection : InputBoolean
         Selection of atoms to apply this style to, discarding unselected points
+    include_hidden : InputBoolean
+        Also apply this style to atoms with the hidden attribute
     quality : InputInteger
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
     peptide_shape : InputMenu | Literal["Sharp", "Round"]
@@ -999,6 +1002,8 @@ class StyleCartoon(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     i.selection : BooleanSocket
         Selection of atoms to apply this style to, discarding unselected points
+    i.include_hidden : BooleanSocket
+        Also apply this style to atoms with the hidden attribute
     i.quality : IntegerSocket
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
     i.peptide_shape : MenuSocket
@@ -1061,6 +1066,8 @@ class StyleCartoon(AssetGeometryGroup):
         """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
         """Selection of atoms to apply this style to, discarding unselected points"""
+        include_hidden: BooleanSocket
+        """Also apply this style to atoms with the hidden attribute"""
         quality: IntegerSocket
         """A lower value results in less geometry, with a higher value meaning better looking but more dense geometry"""
         peptide_shape: MenuSocket
@@ -1117,6 +1124,7 @@ class StyleCartoon(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
+        include_hidden: InputBoolean = False,
         quality: InputInteger = 2,
         peptide_shape: InputMenu | Literal["Sharp", "Round"] = "Sharp",
         helix_shape: InputMenu | Literal["Spiral", "Cylinder"] = "Spiral",
@@ -1142,6 +1150,7 @@ class StyleCartoon(AssetGeometryGroup):
             **{
                 "Atoms": atoms,
                 "Selection": selection,
+                "Include Hidden": include_hidden,
                 "Quality": quality,
                 "Peptide Shape": peptide_shape,
                 "Helix Shape": helix_shape,
@@ -1174,6 +1183,11 @@ class StyleCartoon(AssetGeometryGroup):
             True,
             description="Selection of atoms to apply this style to, discarding unselected points",
             hide_value=True,
+        )
+        include_hidden = tree.inputs.boolean(
+            "Include Hidden",
+            False,
+            description="Also apply this style to atoms with the hidden attribute",
         )
         quality = tree.inputs.integer(
             "Quality",
@@ -1290,7 +1304,10 @@ class StyleCartoon(AssetGeometryGroup):
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
         capture_1 = g.CaptureAttribute.point(
-            geometry=atoms_1.output, selection=selection
+            geometry=atoms_1.output,
+            selection=DeselectHidden(
+                selection=selection, include_hidden=include_hidden
+            ),
         )
         math_1 = quality * 3.0
         math_2 = quality * 5.0

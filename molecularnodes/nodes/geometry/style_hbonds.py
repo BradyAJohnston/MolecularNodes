@@ -29,6 +29,7 @@ from nodebpy.types import (
     InputMenu,
     InputObject,
 )
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_units import MNUnits
 from .find_hbonds import FindHBonds
 
@@ -43,6 +44,8 @@ class StyleHBonds(AssetGeometryGroup):
         Atomic geometry that the hydrogen bond positions are sampled from
     selection : InputBoolean
         Selection of atoms, a hydrogen bond is shown only when both of its atoms are selected
+    include_hidden : InputBoolean
+        Also apply this style to atoms with the hidden attribute
     source : InputMenu | Literal["Data Object", "Find HBonds"]
         Where the hydrogen bonds come from: a data object calculated with MDAnalysis, or found by the Find HBonds node
     data_object : InputObject
@@ -70,6 +73,8 @@ class StyleHBonds(AssetGeometryGroup):
         Atomic geometry that the hydrogen bond positions are sampled from
     i.selection : BooleanSocket
         Selection of atoms, a hydrogen bond is shown only when both of its atoms are selected
+    i.include_hidden : BooleanSocket
+        Also apply this style to atoms with the hidden attribute
     i.source : MenuSocket
         Where the hydrogen bonds come from: a data object calculated with MDAnalysis, or found by the Find HBonds node
     i.data_object : ObjectSocket
@@ -113,6 +118,8 @@ class StyleHBonds(AssetGeometryGroup):
         """Atomic geometry that the hydrogen bond positions are sampled from"""
         selection: BooleanSocket
         """Selection of atoms, a hydrogen bond is shown only when both of its atoms are selected"""
+        include_hidden: BooleanSocket
+        """Also apply this style to atoms with the hidden attribute"""
         source: MenuSocket
         """Where the hydrogen bonds come from: a data object calculated with MDAnalysis, or found by the Find HBonds node"""
         data_object: ObjectSocket
@@ -149,6 +156,7 @@ class StyleHBonds(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
+        include_hidden: InputBoolean = False,
         source: InputMenu | Literal["Data Object", "Find HBonds"] = "Data Object",
         data_object: InputObject = None,
         quality: InputInteger = 2,
@@ -164,6 +172,7 @@ class StyleHBonds(AssetGeometryGroup):
             **{
                 "Atoms": atoms,
                 "Selection": selection,
+                "Include Hidden": include_hidden,
                 "Source": source,
                 "Data Object": data_object,
                 "Quality": quality,
@@ -187,6 +196,11 @@ class StyleHBonds(AssetGeometryGroup):
             True,
             description="Selection of atoms, a hydrogen bond is shown only when both of its atoms are selected",
             hide_value=True,
+        )
+        include_hidden = tree.inputs.boolean(
+            "Include Hidden",
+            False,
+            description="Also apply this style to atoms with the hidden attribute",
         )
         source = tree.inputs.menu(
             "Source",
@@ -254,6 +268,9 @@ class StyleHBonds(AssetGeometryGroup):
             "Geometry", description="The generated geometry for the style node group"
         )
 
+        deselect_hidden = DeselectHidden(
+            selection=selection, include_hidden=include_hidden
+        )
         with g.Frame("Unit length dashed cylinder along Z"):
             math_1 = 1.0 / dashes
             cylinder = g.Cylinder(
@@ -274,7 +291,11 @@ class StyleHBonds(AssetGeometryGroup):
         edge_vertices = g.EdgeVertices()
         with g.Frame("Find with nodes"):
             find_hbonds = FindHBonds(
-                atoms=atoms, selection=selection, distance=distance, angle=angle
+                atoms=atoms, selection=deselect_hidden, distance=distance, angle=angle
+            )
+            boolean_math = (
+                find_hbonds.o.is_hbonded
+                & deselect_hidden.o.selection.point.at(find_hbonds.o.acceptor_index)
             )
             _string = g.String(
                 "Points at the middle of each bond from a hydrogen to its acceptor, kept when both are selected, matching the edges from a data object."
@@ -287,10 +308,7 @@ class StyleHBonds(AssetGeometryGroup):
             )
             set_position = (
                 capture.o.geometry
-                >> g.SeparateGeometry.point(
-                    selection=find_hbonds.o.is_hbonded
-                    & selection.point.at(find_hbonds.o.acceptor_index)
-                )
+                >> g.SeparateGeometry.point(selection=boolean_math)
                 >> g.MeshToPoints()
                 >> g.SetPosition(offset=vector.output * 0.5)
             )
@@ -301,7 +319,8 @@ class StyleHBonds(AssetGeometryGroup):
             )
             capture_1 = g.CaptureAttribute.point(geometry=set_position_1)
             selection_1 = capture_1.items.boolean(
-                g.SampleIndex.point.boolean(atoms, selection, g.Index()), "Selection"
+                g.SampleIndex.point.boolean(atoms, deselect_hidden, g.Index()),
+                "Selection",
             )
             separate_geometry = capture_1.o.geometry >> g.SeparateGeometry.edge(
                 selection=selection_1.output

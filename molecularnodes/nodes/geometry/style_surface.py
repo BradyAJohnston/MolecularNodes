@@ -25,6 +25,7 @@ from nodebpy.types import (
     InputMaterial,
     InputMenu,
 )
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_constants_atom_name_nucleic import MN_constants_atom_name_nucleic
 from ._shared.mn_world_scale import MN_world_scale
 from .angstrom_to_world import AngstromToWorld
@@ -466,6 +467,8 @@ class StyleSurface(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     selection : InputBoolean
         Selection of atoms to apply this style to, discarding unselected points
+    include_hidden : InputBoolean
+        Also apply this style to atoms with the hidden attribute
     quality : InputInteger
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
     scale : InputFloat
@@ -499,6 +502,8 @@ class StyleSurface(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     i.selection : BooleanSocket
         Selection of atoms to apply this style to, discarding unselected points
+    i.include_hidden : BooleanSocket
+        Also apply this style to atoms with the hidden attribute
     i.quality : IntegerSocket
         A lower value results in less geometry, with a higher value meaning better looking but more dense geometry
     i.scale : FloatSocket
@@ -547,6 +552,8 @@ class StyleSurface(AssetGeometryGroup):
         """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
         """Selection of atoms to apply this style to, discarding unselected points"""
+        include_hidden: BooleanSocket
+        """Also apply this style to atoms with the hidden attribute"""
         quality: IntegerSocket
         """A lower value results in less geometry, with a higher value meaning better looking but more dense geometry"""
         scale: FloatSocket
@@ -589,6 +596,7 @@ class StyleSurface(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
+        include_hidden: InputBoolean = False,
         quality: InputInteger = 3,
         scale: InputFloat = 1.25,
         relax: InputInteger = 5,
@@ -607,6 +615,7 @@ class StyleSurface(AssetGeometryGroup):
             **{
                 "Atoms": atoms,
                 "Selection": selection,
+                "Include Hidden": include_hidden,
                 "Quality": quality,
                 "Scale": scale,
                 "Relax": relax,
@@ -634,6 +643,11 @@ class StyleSurface(AssetGeometryGroup):
             True,
             description="Selection of atoms to apply this style to, discarding unselected points",
             hide_value=True,
+        )
+        include_hidden = tree.inputs.boolean(
+            "Include Hidden",
+            False,
+            description="Also apply this style to atoms with the hidden attribute",
         )
         quality = tree.inputs.integer(
             "Quality",
@@ -708,6 +722,9 @@ class StyleSurface(AssetGeometryGroup):
             "Geometry", description="The generated geometry for the style node group"
         )
 
+        deselect_hidden = DeselectHidden(
+            selection=selection, include_hidden=include_hidden
+        )
         _mn_utils_style_surface_new = MN_utils_style_surface_new()
         with g.Frame("Create grid and turn into mesh"):
             with g.Frame("Old-style 'manual SDF creation"):
@@ -820,7 +837,7 @@ class StyleSurface(AssetGeometryGroup):
         geometry_7 = closure_zone_5.outputs.geometry("Geometry")
         mn_utils_style_surface_sdf = MN_utils_style_surface_sdf(
             Atoms=geometry_6.output,
-            Selection=selection,
+            Selection=deselect_hidden,
             Quality=quality,
             **{
                 "Scale Radii": scale,
@@ -896,7 +913,7 @@ class StyleSurface(AssetGeometryGroup):
         (
             EvaluateOnAtoms(
                 geometry=atoms,
-                selection=selection,
+                selection=deselect_hidden,
                 closure=closure_zone_4.closure,
                 result="Representation",
             )

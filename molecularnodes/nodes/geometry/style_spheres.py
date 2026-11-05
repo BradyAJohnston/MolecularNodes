@@ -24,6 +24,7 @@ from nodebpy.types import (
     InputMaterial,
     InputMenu,
 )
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_utils_style_spheres_icosphere import MN_utils_style_spheres_icosphere
 from ._shared.mn_utils_style_spheres_points import MN_utils_style_spheres_points
 from .evaluate_on_atoms import EvaluateOnAtoms
@@ -39,6 +40,8 @@ class StyleSpheres(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     selection : InputBoolean
         Selection of atoms to apply this style to, discarding unselected points
+    include_hidden : InputBoolean
+        Also apply this style to atoms with the hidden attribute
     sphere : InputMenu | Literal["Point", "Instance", "Mesh"]
         Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
     quality : InputInteger
@@ -56,6 +59,8 @@ class StyleSpheres(AssetGeometryGroup):
         Atomic geometry that contains vertices and edges
     i.selection : BooleanSocket
         Selection of atoms to apply this style to, discarding unselected points
+    i.include_hidden : BooleanSocket
+        Also apply this style to atoms with the hidden attribute
     i.sphere : MenuSocket
         Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.
     i.quality : IntegerSocket
@@ -88,6 +93,8 @@ class StyleSpheres(AssetGeometryGroup):
         """Atomic geometry that contains vertices and edges"""
         selection: BooleanSocket
         """Selection of atoms to apply this style to, discarding unselected points"""
+        include_hidden: BooleanSocket
+        """Also apply this style to atoms with the hidden attribute"""
         sphere: MenuSocket
         """Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles."""
         quality: IntegerSocket
@@ -114,6 +121,7 @@ class StyleSpheres(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
+        include_hidden: InputBoolean = False,
         sphere: InputMenu | Literal["Point", "Instance", "Mesh"] = "Point",
         quality: InputInteger = 2,
         scale: InputFloat = 0.8,
@@ -124,6 +132,7 @@ class StyleSpheres(AssetGeometryGroup):
             **{
                 "Atoms": atoms,
                 "Selection": selection,
+                "Include Hidden": include_hidden,
                 "Sphere": sphere,
                 "Quality": quality,
                 "Scale": scale,
@@ -141,6 +150,11 @@ class StyleSpheres(AssetGeometryGroup):
             True,
             description="Selection of atoms to apply this style to, discarding unselected points",
             hide_value=True,
+        )
+        include_hidden = tree.inputs.boolean(
+            "Include Hidden",
+            False,
+            description="Also apply this style to atoms with the hidden attribute",
         )
         sphere = tree.inputs.menu(
             "Sphere",
@@ -178,19 +192,25 @@ class StyleSpheres(AssetGeometryGroup):
             "Geometry", description="The generated geometry for the style node group"
         )
 
+        deselect_hidden = DeselectHidden(
+            selection=selection, include_hidden=include_hidden
+        )
         closure_zone = g.ClosureZone()
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
         mn_utils_style_spheres_icosphere = MN_utils_style_spheres_icosphere(
             atoms=atoms_1.output,
-            selection=selection,
+            selection=deselect_hidden,
             scale=scale,
             subdivisions=quality,
             shade_smooth=shade_smooth,
             material=material,
         )
         mn_utils_style_spheres_points = MN_utils_style_spheres_points(
-            atoms=atoms_1.output, selection=selection, scale=scale, material=material
+            atoms=atoms_1.output,
+            selection=deselect_hidden,
+            scale=scale,
+            material=material,
         )
         realize_instances = g.RealizeInstances(
             geometry=mn_utils_style_spheres_icosphere, realize_to_point_domain=True

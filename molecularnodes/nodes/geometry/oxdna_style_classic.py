@@ -31,6 +31,7 @@ from nodebpy.types import (
     InputMenu,
     InputVector,
 )
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.set_instancer import SetInstancer
 from ._shared.smooth_by_angle import SmoothByAngle
 from ._shared.vector_in_angstroms import VectorInAngstroms
@@ -88,6 +89,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Vertices and edges representing nucleotides and phosphodiester bonds, respectively
     selection : InputBoolean
         Selection of atoms to apply this node to
+    include_hidden : InputBoolean
+        Also apply this style to atoms with the hidden attribute
     quality : InputInteger
         A lower value results in less geometry, while a higher value means better-looking but more dense geometry
     backbone_shape : InputMenu | Literal["Sticks", "Ribbon"]
@@ -145,6 +148,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         Vertices and edges representing nucleotides and phosphodiester bonds, respectively
     i.selection : BooleanSocket
         Selection of atoms to apply this node to
+    i.include_hidden : BooleanSocket
+        Also apply this style to atoms with the hidden attribute
     i.quality : IntegerSocket
         A lower value results in less geometry, while a higher value means better-looking but more dense geometry
     i.backbone_shape : MenuSocket
@@ -216,6 +221,8 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         """Vertices and edges representing nucleotides and phosphodiester bonds, respectively"""
         selection: BooleanSocket
         """Selection of atoms to apply this node to"""
+        include_hidden: BooleanSocket
+        """Also apply this style to atoms with the hidden attribute"""
         quality: IntegerSocket
         """A lower value results in less geometry, while a higher value means better-looking but more dense geometry"""
         backbone_shape: MenuSocket
@@ -282,6 +289,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         self,
         atoms: InputGeometry = None,
         selection: InputBoolean = True,
+        include_hidden: InputBoolean = False,
         quality: InputInteger = 2,
         backbone_shape: InputMenu | Literal["Sticks", "Ribbon"] = "Sticks",
         backbone_radius: InputFloat = 1.1,
@@ -312,6 +320,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             **{
                 "Atoms": atoms,
                 "Selection": selection,
+                "Include Hidden": include_hidden,
                 "Quality": quality,
                 "Backbone Shape": backbone_shape,
                 "Backbone Radius": backbone_radius,
@@ -350,6 +359,11 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             True,
             description="Selection of atoms to apply this node to",
             hide_value=True,
+        )
+        include_hidden = tree.inputs.boolean(
+            "Include Hidden",
+            False,
+            description="Also apply this style to atoms with the hidden attribute",
         )
         quality = tree.inputs.integer(
             "Quality",
@@ -493,7 +507,9 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             "Geometry", description="The generated geometry for the style node group"
         )
 
-        separate_geometry = g.SeparateGeometry.point(atoms, selection)
+        separate_geometry = g.SeparateGeometry.point(
+            atoms, DeselectHidden(selection=selection, include_hidden=include_hidden)
+        )
         with g.Frame("Color strands if Auto-color is False"):
             index_switch = g.IndexSwitch.color(
                 g.IntegerMath.modulo(ChainID(), 4),
