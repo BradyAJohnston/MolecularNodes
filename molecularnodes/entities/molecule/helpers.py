@@ -508,6 +508,9 @@ class FrameManager:
                         value, value_next, uframe_current
                     )
                 values[name] = db.lerp(value, value_next, t=t)
+            # reading ahead moved the universe past this frame, and selections
+            # and calculations are computed from where it is left
+            self.trajectory.uframe = uframe_current
             return values
         elif self.trajectory.average > 0:
             # Return mean values for cached frames

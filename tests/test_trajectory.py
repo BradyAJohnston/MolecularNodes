@@ -515,13 +515,28 @@ class TestTrajectory:
             traj.frame_manager._position_at_frame(0),
         )
 
-    def test_frame_hidden_follows_universe_frame(self, universe):
+    @pytest.mark.parametrize("subframes, frame", [(0, 1.5), (0, 2.25), (1, 3), (2, 4)])
+    def test_interpolating_leaves_universe_on_frame(
+        self, universe, subframes: int, frame: float
+    ):
+        # reading ahead to interpolate must not leave the universe on a later
+        # frame, as everything else that updates on the frame reads from it
         traj = mn.entities.Molecule(universe)
         traj.update_with_scene = False
-        traj.frame = 2.5
-        assert traj.props.frame_hidden == 2
+        traj.subframes = subframes
+        traj.frame = frame
+        assert traj.uframe == int(frame / (subframes + 1))
+
+    def test_interpolated_selection_matches_frame(self, universe):
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        traj.selections.from_string("around 3.5 protein", name="near")
+        traj.frame = 1
+        near_1 = traj.named_attribute("near")
         traj.frame = 3
-        assert traj.props.frame_hidden == 3
+        assert not np.array_equal(traj.named_attribute("near"), near_1)
+        traj.frame = 1.5
+        assert np.array_equal(traj.named_attribute("near"), near_1)
 
     def _frame_fcurve(self, traj) -> bpy.types.FCurve:
         animation = traj.object.animation_data
