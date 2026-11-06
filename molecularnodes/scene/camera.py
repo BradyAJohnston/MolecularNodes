@@ -96,6 +96,27 @@ class Camera:
         self.camera_data.clip_end = value
 
     @property
+    def orthographic(self) -> bool:
+        """Whether the camera is orthographic, which gives figures one exact
+        scale. ``look_at`` fits an orthographic camera by changing its
+        ``ortho_scale``."""
+        return self.camera_data.type == "ORTHO"
+
+    @orthographic.setter
+    def orthographic(self, value: bool) -> None:
+        self.camera_data.type = "ORTHO" if value else "PERSP"
+
+    @property
+    def ortho_scale(self) -> float:
+        """Length in nanometres covered by the longer edge of the frame, for an
+        orthographic camera."""
+        return self.camera_data.ortho_scale
+
+    @ortho_scale.setter
+    def ortho_scale(self, value: float) -> None:
+        self.camera_data.ortho_scale = value
+
+    @property
     def rotation(self) -> tuple[float, float, float]:
         """Get Camera rotation in degrees (XYZ)"""
         x, y, z = (degrees(angle) for angle in self.camera.rotation_euler)

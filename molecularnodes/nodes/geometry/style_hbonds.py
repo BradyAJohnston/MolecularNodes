@@ -29,6 +29,7 @@ from nodebpy.types import (
     InputMenu,
     InputObject,
 )
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_units import MNUnits
 from .find_hbonds import FindHBonds
 
@@ -63,6 +64,8 @@ class StyleHBonds(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     material : InputMaterial
         Material to apply to the resulting geometry
+    include_hidden : InputBoolean
+        Also apply this style to atoms with the hidden attribute
 
     Inputs
     ------
@@ -90,6 +93,8 @@ class StyleHBonds(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     i.material : MaterialSocket
         Material to apply to the resulting geometry
+    i.include_hidden : BooleanSocket
+        Also apply this style to atoms with the hidden attribute
 
     Outputs
     -------
@@ -133,6 +138,8 @@ class StyleHBonds(AssetGeometryGroup):
         """Apply smooth shading to the created geometry"""
         material: MaterialSocket
         """Material to apply to the resulting geometry"""
+        include_hidden: BooleanSocket
+        """Also apply this style to atoms with the hidden attribute"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -159,6 +166,7 @@ class StyleHBonds(AssetGeometryGroup):
         angle: InputFloat = 5 * math.pi / 6,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
+        include_hidden: InputBoolean = False,
     ):
         super().__init__(
             **{
@@ -174,6 +182,7 @@ class StyleHBonds(AssetGeometryGroup):
                 "Angle": angle,
                 "Shade Smooth": shade_smooth,
                 "Material": material,
+                "Include Hidden": include_hidden,
             }
         )
 
@@ -250,10 +259,19 @@ class StyleHBonds(AssetGeometryGroup):
                 description="Material to apply to the resulting geometry",
                 optional_label=True,
             )
+        with tree.inputs.panel("Hidden", default_closed=True):
+            include_hidden = tree.inputs.boolean(
+                "Include Hidden",
+                False,
+                description="Also apply this style to atoms with the hidden attribute",
+            )
         geometry = tree.outputs.geometry(
             "Geometry", description="The generated geometry for the style node group"
         )
 
+        deselect_hidden = DeselectHidden(
+            selection=selection, include_hidden=include_hidden
+        )
         with g.Frame("Unit length dashed cylinder along Z"):
             math_1 = 1.0 / dashes
             cylinder = g.Cylinder(
@@ -274,7 +292,11 @@ class StyleHBonds(AssetGeometryGroup):
         edge_vertices = g.EdgeVertices()
         with g.Frame("Find with nodes"):
             find_hbonds = FindHBonds(
-                atoms=atoms, selection=selection, distance=distance, angle=angle
+                atoms=atoms, selection=deselect_hidden, distance=distance, angle=angle
+            )
+            boolean_math = (
+                find_hbonds.o.is_hbonded
+                & deselect_hidden.o.selection.point.at(find_hbonds.o.acceptor_index)
             )
             _string = g.String(
                 "Points at the middle of each bond from a hydrogen to its acceptor, kept when both are selected, matching the edges from a data object."
@@ -287,10 +309,7 @@ class StyleHBonds(AssetGeometryGroup):
             )
             set_position = (
                 capture.o.geometry
-                >> g.SeparateGeometry.point(
-                    selection=find_hbonds.o.is_hbonded
-                    & selection.point.at(find_hbonds.o.acceptor_index)
-                )
+                >> g.SeparateGeometry.point(selection=boolean_math)
                 >> g.MeshToPoints()
                 >> g.SetPosition(offset=vector.output * 0.5)
             )
@@ -301,7 +320,8 @@ class StyleHBonds(AssetGeometryGroup):
             )
             capture_1 = g.CaptureAttribute.point(geometry=set_position_1)
             selection_1 = capture_1.items.boolean(
-                g.SampleIndex.point.boolean(atoms, selection, g.Index()), "Selection"
+                g.SampleIndex.point.boolean(atoms, deselect_hidden, g.Index()),
+                "Selection",
             )
             separate_geometry = capture_1.o.geometry >> g.SeparateGeometry.edge(
                 selection=selection_1.output

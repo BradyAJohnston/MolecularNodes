@@ -5,7 +5,7 @@ from PIL import Image
 from .annotations.utils import render_annotations
 from .blender.registered import scene_session
 from .entities import Molecule
-from .scene.compositor import annotations_image
+from .scene.compositor import annotations_image, update_cone_shadows
 
 
 # this update function requires a self and context input, as funcitons with these inputs
@@ -30,6 +30,17 @@ def _update_selections(self, context: bpy.types.Context) -> None:
     entity = scene_session(context.scene).match(self.id_data)
     if isinstance(entity, Molecule):
         entity.selections.update_attributes()
+
+
+def _update_hidden_selection(self, context: bpy.types.Context) -> None:
+    """
+    Update callback for the hidden selection text of a molecule, which replaces
+    the atoms left out of every style
+    """
+    assert context.scene is not None
+    entity = scene_session(context.scene).match(self.id_data)
+    if isinstance(entity, Molecule):
+        entity._apply_hidden_selection()
 
 
 # this is the 'perisisent' function which can be appended onto the
@@ -65,6 +76,7 @@ def render_pre_handler(scene: bpy.types.Scene) -> None:
     """
     if not hasattr(scene, "MNSession"):
         return
+    update_cone_shadows(scene)
     session = scene_session(scene)
     if len(session.entities) == 0:
         return

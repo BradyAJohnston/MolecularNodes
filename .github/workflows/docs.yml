@@ -41,7 +41,7 @@ jobs:
             - name: Build node assets
               timeout-minutes: 10
               run: |
-                  uv run -m nodebpy.assets build
+                  uv run nodebpy build
 
             - name: Pre-render Scripts
               timeout-minutes: 3

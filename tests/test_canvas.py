@@ -2,6 +2,7 @@ import bpy
 import MDAnalysis as mda
 import numpy as np
 import pytest
+from PIL import Image as PILImage
 import molecularnodes as mn
 from .constants import data_dir
 from .utils import scene, view_layer
@@ -62,6 +63,39 @@ def test_init_view_transform_background():
     # left out, the preset's settings are kept
     canvas = mn.Canvas(template="Molecular Nodes")
     assert canvas.view_transform == "AgX"
+
+
+def test_standard_view_transform_clears_look():
+    canvas = mn.Canvas(template="Molecular Nodes")
+    assert canvas.look != "None"
+    canvas.view_transform = "Standard"
+    assert canvas.look == "None"
+
+    # a look chosen afterwards is kept, and other view transforms leave it alone
+    canvas.look = "Medium High Contrast"
+    assert canvas.look == "Medium High Contrast"
+    canvas.view_transform = "Filmic"
+    assert canvas.look == "Medium High Contrast"
+
+
+def test_pixel_size_uses_longer_edge():
+    canvas = mn.Canvas(resolution=(100, 200))
+    canvas.camera.orthographic = True
+    canvas.camera.ortho_scale = 40
+    assert canvas.camera.ortho_scale == pytest.approx(40)
+    assert canvas.pixel_size == pytest.approx(0.2)
+
+    canvas.render_scale = 50
+    assert canvas.pixel_size == pytest.approx(0.4)
+
+
+def test_camera_orthographic():
+    canvas = mn.Canvas()
+    assert canvas.camera.orthographic is False
+    canvas.camera.orthographic = True
+    assert canvas.camera.camera_data.type == "ORTHO"
+    canvas.camera.orthographic = False
+    assert canvas.camera.camera_data.type == "PERSP"
 
 
 def test_load_blend():
@@ -215,6 +249,16 @@ def render_canvas():
     canvas.engine = mn.scene.Cycles(samples=1, device="CPU")
     canvas.compositor.device = "CPU"
     return canvas
+
+
+def test_standard_renders_specified_colors(render_canvas, tmp_path):
+    render_canvas.view_transform = "Standard"
+    render_canvas.background = (0.5, 0.25, 0.1, 1.0)
+    out = tmp_path / "color.png"
+    render_canvas.snapshot(out)
+    pixel = np.asarray(PILImage.open(out).convert("RGB"))[16, 16]
+    # the sRGB encoding of the linear background
+    assert pixel == pytest.approx((188, 137, 89), abs=2)
 
 
 def test_snapshot(render_canvas, tmp_path):

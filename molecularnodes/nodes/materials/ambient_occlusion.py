@@ -15,17 +15,13 @@ class AmbientOcclusion(CustomShaderGroup):
     def _build_group(self, tree: TreeBuilder[ShaderNodeTree]) -> None:
         mn_color = MNColor()
         ambient_occlusion_internal = AmbientOcclusionInternal(color=mn_color.o.color)
-        _material_output = s.MaterialOutput(
-            surface=ambient_occlusion_internal.o.eevee, target="EEVEE"
-        )
+        _material_output = s.MaterialOutput.eevee(ambient_occlusion_internal.o.eevee)
         mix_shader = s.MixShader(
             factor=mn_color.o.alpha,
             shader=s.TransparentBSDF(),
             shader_001=ambient_occlusion_internal.o.cycles,
         )
-        _material_output_1 = s.MaterialOutput(
-            surface=mix_shader, is_active_output=True, target="CYCLES"
-        )
+        _material_output_1 = s.MaterialOutput.cycles(mix_shader, is_active_output=True)
 
 
 MATERIAL = AmbientOcclusion

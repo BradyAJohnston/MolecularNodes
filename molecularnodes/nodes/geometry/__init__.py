@@ -119,6 +119,7 @@ from .force_brownian import ForceBrownian
 from .force_gravity import ForceGravity
 from .force_mesh_collide import ForceMeshCollide
 from .fractionate_float import FractionateFloat
+from .fragment_id import FragmentID
 from .frame_id import FrameID
 from .geometry_field_remap import GeometryFieldRemap
 from .geometry_to_planar import GeometryToPlanar
@@ -189,7 +190,10 @@ from .peptide_chi import PeptideChi
 from .peptide_dihedral import PeptideDihedral
 from .periodic_array import PeriodicArray
 from .periodic_box import PeriodicBox
+from .periodic_cell import PeriodicCell
 from .periodic_image import PeriodicImage
+from .periodic_offset import PeriodicOffset
+from .periodic_unwrap import PeriodicUnwrap
 from .plexus import Plexus
 from .point_edge_angle import PointEdgeAngle
 from .points_of_edge import PointsOfEdge
@@ -402,6 +406,7 @@ __all__ = (
     "ForceGravity",
     "ForceMeshCollide",
     "FractionateFloat",
+    "FragmentID",
     "FrameID",
     "GeometryFieldRemap",
     "GeometryToPlanar",
@@ -472,7 +477,10 @@ __all__ = (
     "PeptideDihedral",
     "PeriodicArray",
     "PeriodicBox",
+    "PeriodicCell",
     "PeriodicImage",
+    "PeriodicOffset",
+    "PeriodicUnwrap",
     "Plexus",
     "PointEdgeAngle",
     "PointsOfEdge",

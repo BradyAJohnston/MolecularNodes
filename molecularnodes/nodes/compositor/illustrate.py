@@ -25,6 +25,7 @@ from nodebpy.types import (
     InputVector,
 )
 from .depth_outline import DepthOutline
+from .id_outline import IDOutline
 from .outline import Outline
 
 
@@ -76,6 +77,16 @@ class Illustrate(AssetCompositorGroup):
         Also draw lines where the surface normal changes sharply, catching creases between surfaces at the same depth
     outline_normal_threshold : InputFloat
         Change in normal between neighbouring pixels above which a line is drawn, when Outline Normals is enabled
+    id_outline : InputBoolean
+        Draw lines between the regions of an ID pass, such as chains, in the outline colour
+    id : InputFloat
+        A float pass identifying regions, such as a chain_id AOV from the Render Layers node. Use small IDs: the render's pixel filter blends IDs along edges, so a large gap between neighbours draws a heavier line
+    id_min_difference : InputFloat
+        Difference in ID above which two pixels belong to different regions
+    id_low : InputFloat
+        Number of differing neighbours, of 24, at which a line starts to appear
+    id_high : InputFloat
+        Number of differing neighbours, of 24, at which a line is fully opaque
     background : InputBoolean
         Composite the result over a flat background colour
     background_color : InputColor
@@ -125,6 +136,16 @@ class Illustrate(AssetCompositorGroup):
         Also draw lines where the surface normal changes sharply, catching creases between surfaces at the same depth
     i.outline_normal_threshold : FloatSocket
         Change in normal between neighbouring pixels above which a line is drawn, when Outline Normals is enabled
+    i.id_outline : BooleanSocket
+        Draw lines between the regions of an ID pass, such as chains, in the outline colour
+    i.id : FloatSocket
+        A float pass identifying regions, such as a chain_id AOV from the Render Layers node. Use small IDs: the render's pixel filter blends IDs along edges, so a large gap between neighbours draws a heavier line
+    i.id_min_difference : FloatSocket
+        Difference in ID above which two pixels belong to different regions
+    i.id_low : FloatSocket
+        Number of differing neighbours, of 24, at which a line starts to appear
+    i.id_high : FloatSocket
+        Number of differing neighbours, of 24, at which a line is fully opaque
     i.background : BooleanSocket
         Composite the result over a flat background colour
     i.background_color : ColorSocket
@@ -187,6 +208,16 @@ class Illustrate(AssetCompositorGroup):
         """Also draw lines where the surface normal changes sharply, catching creases between surfaces at the same depth"""
         outline_normal_threshold: FloatSocket
         """Change in normal between neighbouring pixels above which a line is drawn, when Outline Normals is enabled"""
+        id_outline: BooleanSocket
+        """Draw lines between the regions of an ID pass, such as chains, in the outline colour"""
+        id: FloatSocket
+        """A float pass identifying regions, such as a chain_id AOV from the Render Layers node. Use small IDs: the render's pixel filter blends IDs along edges, so a large gap between neighbours draws a heavier line"""
+        id_min_difference: FloatSocket
+        """Difference in ID above which two pixels belong to different regions"""
+        id_low: FloatSocket
+        """Number of differing neighbours, of 24, at which a line starts to appear"""
+        id_high: FloatSocket
+        """Number of differing neighbours, of 24, at which a line is fully opaque"""
         background: BooleanSocket
         """Composite the result over a flat background colour"""
         background_color: ColorSocket
@@ -226,6 +257,11 @@ class Illustrate(AssetCompositorGroup):
         outline_smooth: InputBoolean = True,
         outline_normals: InputBoolean = False,
         outline_normal_threshold: InputFloat = 3.0,
+        id_outline: InputBoolean = False,
+        id: InputFloat = 0.0,
+        id_min_difference: InputFloat = 0.5,
+        id_low: InputFloat = 3.0,
+        id_high: InputFloat = 10.0,
         background: InputBoolean = False,
         background_color: InputColor = None,
     ):
@@ -252,6 +288,11 @@ class Illustrate(AssetCompositorGroup):
                 "Outline Smooth": outline_smooth,
                 "Outline Normals": outline_normals,
                 "Outline Normal Threshold": outline_normal_threshold,
+                "ID Outline": id_outline,
+                "ID": id,
+                "ID Min Difference": id_min_difference,
+                "ID Low": id_low,
+                "ID High": id_high,
                 "Background": background,
                 "Background Color": background_color,
             }
@@ -390,6 +431,40 @@ class Illustrate(AssetCompositorGroup):
                 min_value=0.0,
                 max_value=10_000.0,
             )
+        with tree.inputs.panel("ID Outline"):
+            id_outline = tree.inputs.boolean(
+                "ID Outline",
+                False,
+                description="Draw lines between the regions of an ID pass, such as chains, in the outline colour",
+                is_panel_toggle=True,
+            )
+            id = tree.inputs.float(
+                "ID",
+                0.0,
+                description="A float pass identifying regions, such as a chain_id AOV from the Render Layers node. Use small IDs: the render's pixel filter blends IDs along edges, so a large gap between neighbours draws a heavier line",
+                hide_value=True,
+            )
+            id_min_difference = tree.inputs.float(
+                "ID Min Difference",
+                0.5,
+                description="Difference in ID above which two pixels belong to different regions",
+                min_value=0.0,
+                max_value=1_000_000.0,
+            )
+            id_low = tree.inputs.float(
+                "ID Low",
+                3.0,
+                description="Number of differing neighbours, of 24, at which a line starts to appear",
+                min_value=0.0,
+                max_value=24.0,
+            )
+            id_high = tree.inputs.float(
+                "ID High",
+                10.0,
+                description="Number of differing neighbours, of 24, at which a line is fully opaque",
+                min_value=0.0,
+                max_value=24.0,
+            )
         with tree.inputs.panel("Background"):
             background = tree.inputs.boolean(
                 "Background",
@@ -448,13 +523,22 @@ class Illustrate(AssetCompositorGroup):
                 set_alpha,
                 Outline(image=set_alpha, mask=depth_outline, color=outline_color),
             )
+        with c.Frame("ID Outline"):
+            outline_1 = Outline(
+                image=switch,
+                mask=IDOutline(
+                    id=id, min_difference=id_min_difference, low=id_low, high=id_high
+                ),
+                color=outline_color,
+            )
+            switch_1 = id_outline.switch.color(switch, outline_1)
         with c.Frame("Background"):
             (
                 background.switch.color(
-                    switch,
+                    switch_1,
                     c.AlphaOver(
                         background=background_color,
-                        foreground=switch,
+                        foreground=switch_1,
                         straight_alpha=True,
                     ),
                 )

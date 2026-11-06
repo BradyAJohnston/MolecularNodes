@@ -1,5 +1,6 @@
 from typing import cast
 import bpy
+import numpy as np
 from bpy.types import UILayout
 from ..blender.registered import (
     object_annotations,
@@ -389,6 +390,12 @@ def layout_dssp_settings(layout: UILayout, traj: Molecule) -> None:
     op = operator_props(row.operator("mn.dssp_init", text="", icon="FILE_REFRESH"))
     op.uuid = uuid
     op.selection = props.selection
+    # DSSP is added even when it can't run on its selection
+    error = traj.calculations._dssp._setup_error
+    if error is not None:
+        row = layout.row()
+        row.alert = True
+        row.label(text=f"DSSP failed: {error}", icon="ERROR")
     # display options
     if traj._entity_type == EntityType.MD_STREAMING:
         layout.prop(props, "display_option_streaming")
@@ -971,6 +978,14 @@ class MN_PT_Attributes(bpy.types.Panel):
         # poll ensures a linked trajectory is active
         assert obj is not None
         traj = cast(Molecule, get_session(context).get(object_uuid(obj)))
+        props = object_props(obj)
+        layout.prop(props, "hidden_selection")
+        if props.hidden_message:
+            layout.label(text=props.hidden_message, icon="ERROR")
+        if "hidden" in traj.list_attributes():
+            n_hidden = np.count_nonzero(traj.named_attribute("hidden"))
+            if n_hidden:
+                layout.label(text=f"{n_hidden} of {len(traj.position)} atoms hidden")
         layout_frame_attributes(layout, traj, panel=False)
 
 

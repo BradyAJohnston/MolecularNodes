@@ -20,7 +20,12 @@ from ..session import get_session
 from ..ui import addon
 from ..utils import _UNSET, Unset, suppress_stdout, temp_override_properties
 from .camera import Camera, Viewpoint
-from .compositor import CompositorTree, add_view_layer_aov, setup_compositor
+from .compositor import (
+    CompositorTree,
+    _pixel_size,
+    add_view_layer_aov,
+    setup_compositor,
+)
 from .engines import EEVEE, Cycles
 from .recorder import _ANIMATION_FORMATS, FrameRecorder, _resolve_format, _write_gif
 from .world import WorldTree
@@ -730,6 +735,21 @@ class Canvas:
         self._view_settings.gamma = value
 
     @property
+    def pixel_size(self) -> float:
+        """
+        Size of one rendered pixel in nanometres, for scale bars.
+
+        Exact for an orthographic camera. A perspective camera has no single
+        scale, so this is the size at the mid-depth of the entities.
+
+        Returns
+        -------
+        float
+            Nanometres per pixel, including ``render_scale``.
+        """
+        return _pixel_size(self.scene)
+
+    @property
     def look(self) -> str:
         """
         Get the color-management look (contrast preset).
@@ -862,9 +882,14 @@ class Canvas:
         value : ViewTransform | str
             The view transform to set. Accepts a ``ViewTransform``, its full name
             (case-insensitive), or its short enum name (e.g. ``"agx"``,
-            ``"filmic_log"``).
+            ``"filmic_log"``). ``"Standard"`` also clears the look, so that
+            colors come out as specified; set ``look`` afterwards to add one.
         """
-        self._view_settings.view_transform = ViewTransform(value)  # ty: ignore[invalid-assignment]
+        view_transform = ViewTransform(value)
+        self._view_settings.view_transform = view_transform  # ty: ignore[invalid-assignment]
+        # Blender carries the preset's contrast look across view transforms
+        if view_transform is ViewTransform.STANDARD:
+            self._view_settings.look = "None"  # ty: ignore[invalid-assignment]
 
     def look_at(
         self,

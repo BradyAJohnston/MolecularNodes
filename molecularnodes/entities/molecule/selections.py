@@ -226,6 +226,7 @@ class SelectionManager:
         update_attributes : Called after item creation to generate the AtomGroup.
         _unique_selection_name : Generates unique names when not provided.
         """
+        self._check_name(name)
         with FrozenUpdates(self):
             item: TrajectorySelectionItem = self.ui_items.add()
             item.name = name if name else self._unique_selection_name()
@@ -236,6 +237,15 @@ class SelectionManager:
         self.update_attributes()
 
         return item
+
+    def _check_name(self, name: str | None) -> None:
+        """Reject the name of the attribute styles read for hidden atoms, which a
+        selection would overwrite on every frame."""
+        if name == "hidden":
+            raise ValueError(
+                "'hidden' is reserved for `mol.hidden`, `mol.hide()` and `mol.show()`. "
+                "Use another name, and give the selection to a style."
+            )
 
     def _unique_selection_name(self) -> str:
         """Generate a unique selection name.
@@ -309,6 +319,7 @@ class SelectionManager:
         from_string : Create selection from MDAnalysis selection string.
         ag_to_attribute : Called to immediately store the selection as an attribute.
         """
+        self._check_name(name)
         with FrozenUpdates(self):
             item: TrajectorySelectionItem = self.ui_items.add()
             item.name = name if name else self._unique_selection_name()

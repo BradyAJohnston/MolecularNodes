@@ -17,15 +17,19 @@ import bpy
 import databpy as db
 import MDAnalysis as mda
 import numpy as np
+import numpy.typing as npt
 from MDAnalysis.core.groups import AtomGroup
 from nodebpy.builder import MaterialBuilder
 from nodebpy.nodes.geometry import NamedAttribute
+from scipy.sparse import coo_matrix
+from scipy.sparse.csgraph import connected_components
 from ... import download
 from ...assets import data
 from ...blender import coll, path_resolve, set_obj_active
 from ...blender import utils as blender_utils
 from ...converters import universe_from_atoms
 from ...material import PresetMaterial, append_material
+from ...nodes import frame_updates
 from ...nodes import handlers as node_handlers
 from ...nodes._assets import link_asset_groups
 from ...nodes._utils import STYLE_LITERALS, STYLE_NODE_MAPPING
@@ -52,6 +56,12 @@ if TYPE_CHECKING:
     from ..density import Density
 
 logger = logging.getLogger(__name__)
+
+#: Boolean attribute of atoms left out of every style, read by `Deselect Hidden`
+_HIDDEN_ATTRIBUTE = "hidden"
+
+#: Styles that draw every atom, which look wrong on a CA or P trace model
+_ALL_ATOM_STYLES = ("spheres", "sticks", "ball_and_stick", "surface")
 
 #: Colour keywords understood by ``Molecule.add_style(color=...)``. Anything else must
 #: name an existing attribute, be an RGBA sequence, or be a callable building the nodes.
@@ -481,6 +491,24 @@ class Molecule(MolecularEntity):
     def _compute_atom_id(self) -> np.ndarray:
         return self.atoms.ids
 
+    def _compute_fragment_id(self) -> np.ndarray:
+        # bonded molecules, numbered as MDAnalysis `fragindices`, but found from
+        # the bonds already on the mesh, as building fragments in MDAnalysis is
+        # slow for large topologies, as is checking `hasattr(self.atoms, "bonds")`.
+        # Raises NoDataError without bonds
+        mesh = cast(bpy.types.Mesh, self.object.data)
+        if len(mesh.edges) == 0:
+            raise mda.NoDataError("structure has no bonds")
+        n_atoms = len(mesh.vertices)
+        edges = np.zeros(len(mesh.edges) * 2, dtype=np.int32)
+        mesh.edges.foreach_get("vertices", edges)
+        edges = edges.reshape(-1, 2)
+        graph = coo_matrix(
+            (np.ones(len(edges), dtype=np.int8), (edges[:, 0], edges[:, 1])),
+            shape=(n_atoms, n_atoms),
+        )
+        return connected_components(graph, directed=False)[1]
+
     def _compute_segindices(self) -> np.ndarray:
         segs = []
         for seg in self.atoms.segments:
@@ -698,6 +726,7 @@ class Molecule(MolecularEntity):
             "segid": self._compute_segindices,
             "res_name": self._compute_res_name_int,
             "atom_id": self._compute_atom_id,
+            "fragment_id": self._compute_fragment_id,
             "b_factor": self._compute_b_factor,
             "occupancy": self._compute_occupancy,
             "charge": self._compute_charge,
@@ -899,6 +928,7 @@ class Molecule(MolecularEntity):
         create_object: bool = True,
         name: str | None = None,
         data_block: str | None = None,
+        hide: str | AtomGroup | np.ndarray | None = None,
         **kwargs,
     ) -> "Molecule":
         """Load a single structure file, or an MD topology + trajectory.
@@ -929,6 +959,8 @@ class Molecule(MolecularEntity):
         data_block : str | None, optional
             For a ``.cif``/``.bcif`` with several structures in separate data blocks,
             the name of the block to load (see :meth:`from_file`).
+        hide : str | AtomGroup | np.ndarray, optional
+            Atoms to hide from every style, such as ``"element H"``; see :meth:`hide`.
         kwargs : dict, optional
             Additional keyword arguments to pass to the `MDAnalysis.Universe()` constructor.
 
@@ -946,6 +978,8 @@ class Molecule(MolecularEntity):
                 create_object=create_object,
             )
 
+        if hide is not None and create_object:
+            entity._hide_on_import(hide)
         if style is not None and create_object:
             entity.add_style(style=style, selection=selection)
 
@@ -1043,6 +1077,7 @@ class Molecule(MolecularEntity):
         format: str = ".bcif",
         cache: Path | str | None = download.CACHE_DIR,
         database: str = "rcsb",
+        hide: str | AtomGroup | np.ndarray | None = None,
     ) -> "Molecule":
         """Fetch a structure from an online database into a Universe-backed entity.
 
@@ -1076,6 +1111,8 @@ class Molecule(MolecularEntity):
         # record the source so the entity can be re-fetched into a fresh session
         entity.props.code = code
         entity.props.database = database
+        if hide is not None:
+            entity._hide_on_import(hide)
         return entity
 
     def _store_structure_metadata(
@@ -1228,8 +1265,8 @@ class Molecule(MolecularEntity):
             self._update_attributes(frame)
             # update annotation object
             self.annotations._update_annotation_object()
-            # update periodic box nodes
-            self._update_box()
+            # update node inputs from the universe, such as the periodic box
+            self._update_nodes()
         finally:
             self._updating_in_progress = False
 
@@ -1282,10 +1319,8 @@ class Molecule(MolecularEntity):
             raise ValueError("step must be a positive integer")
 
         n_frames = self.universe.trajectory.n_frames
-        if stop is None:
-            stop = n_frames
         start = max(0, min(start, n_frames))
-        stop = max(0, min(stop, n_frames))
+        stop = max(0, min(n_frames if stop is None else stop, n_frames))
 
         frames = coll.frames(name or self.name)
         # clear any previously-baked frames so re-baking replaces rather than appends
@@ -1389,26 +1424,9 @@ class Molecule(MolecularEntity):
         self.position = values.pop("position")
         return values
 
-    def _update_box(self) -> None:
-        """Update any Periodic Box nodes in the geometry node tree."""
-        dimensions: tuple[float] | None = self.universe.trajectory.ts.dimensions
-        if dimensions is None:
-            return
-        names = ["a", "b", "c", "alpha", "beta", "gamma"]
-        nodes_to_update = ["Periodic Box", "Periodic Array"]
-        for node in self.modifier_node_tree.nodes:
-            if (
-                not isinstance(node, bpy.types.GeometryNodeGroup)
-                or node.node_tree is None
-                or node.node_tree.name not in nodes_to_update
-                or not cast(
-                    bpy.types.NodeSocketBool, node.inputs["Update"]
-                ).default_value
-            ):
-                continue
-
-            for name, value in zip(names, dimensions):
-                cast(bpy.types.NodeSocketFloat, node.inputs[name]).default_value = value
+    def _update_nodes(self) -> None:
+        """Update node inputs that come from the universe, such as the periodic box."""
+        frame_updates.update_nodes(self.modifier_node_tree, self)
 
     def __repr__(self) -> str:
         return f"<Molecule, `universe`: {self.universe}, `object`: {self.object}"
@@ -1595,6 +1613,191 @@ class Molecule(MolecularEntity):
         )
         return None
 
+    @property
+    def hidden(self) -> db.AttributeArray:
+        """
+        Mask of the atoms left out of every style, one boolean per atom.
+
+        Changes write straight back to the molecule, as with ``position``, and
+        update existing styles. Only styles read this: calculations, selections and
+        other nodes still see every atom. A style keeps these atoms when its
+        ``Include Hidden`` input is on.
+
+        ```python
+        mol.hidden[:100] = True
+        mol.universe.atoms[mol.hidden]  # the hidden atoms
+        mol.hidden = mol.named_attribute("atomic_number") == 1
+        ```
+
+        Returns
+        -------
+        db.AttributeArray
+            A boolean numpy array subclass with one value per atom.
+        """
+        if _HIDDEN_ATTRIBUTE not in self.list_attributes():
+            self.store_named_attribute(
+                np.zeros(len(self.position), dtype=bool),
+                _HIDDEN_ATTRIBUTE,
+                atype="BOOLEAN",
+            )
+        return db.AttributeArray(self.object, _HIDDEN_ATTRIBUTE)
+
+    @hidden.setter
+    def hidden(self, value: npt.ArrayLike) -> None:
+        self._store_hidden(np.asarray(value, dtype=bool))
+        self._set_hidden_selection("")
+
+    def _store_hidden(self, mask: np.ndarray) -> None:
+        self.store_named_attribute(mask, _HIDDEN_ATTRIBUTE, atype="BOOLEAN")
+
+    def _set_hidden_selection(self, text: str, message: str = "") -> None:
+        """Set the text shown in the UI, without running its update callback."""
+        self.props["hidden_selection"] = text
+        self.props["hidden_message"] = message
+
+    def _atom_mask(self, selection: str | AtomGroup | npt.ArrayLike) -> np.ndarray:
+        """A boolean mask with one value per atom, evaluated at the current frame.
+
+        A string is an existing boolean attribute first, then an MDAnalysis
+        selection. Raises for anything that cannot be evaluated once.
+        """
+        if callable(selection):
+            raise TypeError(
+                "A callable builds a node, so it cannot be evaluated here. Use a "
+                "selection string, AtomGroup or boolean array."
+            )
+        if isinstance(selection, str):
+            if selection in self.list_attributes():
+                values = self.named_attribute(selection)
+                if values.dtype == bool:
+                    return values
+            try:
+                selection = self.universe.select_atoms(selection)
+            except Exception as e:
+                raise ValueError(f"Invalid selection {selection!r}: {e}") from e
+        if isinstance(selection, AtomGroup):
+            if self.selections.ag_is_updating(selection):
+                raise ValueError(
+                    "An updating AtomGroup cannot be hidden, because hidden atoms "
+                    "are fixed. Use a custom selection instead: "
+                    "`mol.selections.from_atomgroup()`, then "
+                    "`mol.add_style(selection=...)`."
+                )
+            mask = np.zeros(len(self.position), dtype=bool)
+            mask[selection.ix] = True
+            return mask
+        mask = np.asarray(selection, dtype=bool)
+        if mask.shape != (len(self.position),):
+            raise ValueError(
+                f"Expected one value for each of {len(self.position)} atoms, "
+                f"got shape {mask.shape}"
+            )
+        return mask
+
+    def hide(self, selection: str | AtomGroup | npt.ArrayLike) -> "Molecule":
+        """
+        Add atoms to those left out of every style.
+
+        The selection is evaluated once, so a selection that depends on position
+        uses the current frame. For a selection that updates, give it to a style
+        with ``add_style(selection=...)`` instead.
+
+        ```python
+        mol.hide("element H").hide("resname HOH")
+        mol.show("resname ATP")  # ATP hydrogens are drawn again
+        ```
+
+        Parameters
+        ----------
+        selection : str | AtomGroup | array_like
+            An existing boolean attribute, MDAnalysis selection string, static
+            ``AtomGroup`` or boolean mask with one value per atom.
+
+        Returns
+        -------
+        Molecule
+            Returns self for method chaining.
+
+        Raises
+        ------
+        TypeError
+            If ``selection`` is a callable.
+        ValueError
+            If the selection is invalid, or an updating ``AtomGroup``.
+        """
+        self.hidden = np.asarray(self.hidden) | self._atom_mask(selection)
+        return self
+
+    def show(
+        self, selection: str | AtomGroup | npt.ArrayLike | None = None
+    ) -> "Molecule":
+        """
+        Remove atoms from those left out of every style.
+
+        Parameters
+        ----------
+        selection : str | AtomGroup | array_like, optional
+            The atoms to show, as for :meth:`hide`. Left out, every atom is shown.
+
+        Returns
+        -------
+        Molecule
+            Returns self for method chaining.
+        """
+        if selection is None:
+            self.hidden = np.zeros(len(self.position), dtype=bool)
+        else:
+            self.hidden = np.asarray(self.hidden) & ~self._atom_mask(selection)
+        return self
+
+    def _hide_on_import(self, selection: str | AtomGroup | npt.ArrayLike) -> None:
+        self.hide(selection)
+        if isinstance(selection, str):
+            self._set_hidden_selection(selection)
+
+    def _apply_hidden_selection(self) -> None:
+        """Replace the hidden atoms with those of the text in the UI."""
+        text = self.props.hidden_selection.strip()
+        try:
+            mask = (
+                self._atom_mask(text)
+                if text
+                else np.zeros(len(self.position), dtype=bool)
+            )
+        except (TypeError, ValueError) as e:
+            self.props["hidden_message"] = str(e)
+            return
+        self._store_hidden(mask)
+        self.props["hidden_message"] = ""
+
+    def _warn_if_all_hidden(self, attribute_name: str) -> None:
+        """Warn when a style's selection only contains hidden atoms."""
+        if _HIDDEN_ATTRIBUTE not in self.list_attributes():
+            return
+        selected = self.named_attribute(attribute_name).astype(bool)
+        if selected.any() and not (selected & ~self.hidden).any():
+            warnings.warn(
+                f"Every atom in selection '{attribute_name}' is hidden, so the style "
+                "draws nothing. Pass `include_hidden=True` to draw them, or use "
+                "`mol.show()`."
+            )
+
+    def _warn_if_trace_only(self, style: str) -> None:
+        """Warn when the polymers are only a CA or P trace, such as a low resolution
+        model, because an all-atom style draws them as disconnected beads."""
+        polymer = self.named_attribute("is_peptide") | self.named_attribute(
+            "is_nucleic"
+        )
+        n_polymer = np.count_nonzero(polymer)
+        if n_polymer == 0:
+            return
+        n_trace = np.count_nonzero(np.isin(self.atoms.names[polymer], ("CA", "P")))
+        if n_trace / n_polymer > 0.5:
+            warnings.warn(
+                f"'{self.name}' is mostly CA or P atoms, so the {style!r} style will "
+                "look sparse. The 'cartoon' or 'ribbon' styles suit a trace model."
+            )
+
     def add_style(
         self,
         style: STYLE_LITERALS | Callable = "spheres",
@@ -1721,6 +1924,8 @@ class Molecule(MolecularEntity):
 
         color_by_density = isinstance(color, Density)
         style_is_callable = callable(style)
+        if isinstance(style, str) and style in _ALL_ATOM_STYLES:
+            self._warn_if_trace_only(style)
         if not style_is_callable and style not in STYLE_NODE_MAPPING:
             raise ValueError(
                 f"Invalid style '{style}'. Supported styles are "
@@ -1748,6 +1953,8 @@ class Molecule(MolecularEntity):
 
         material = "Default" if isinstance(material, Unset) else material
         attribute_name = self._resolve_style_selection(selection)
+        if attribute_name is not None and not kwargs.get("include_hidden"):
+            self._warn_if_all_hidden(attribute_name)
 
         # oxDNA nucleotides get their own ribbon; override locally so the
         # module-level mapping used by every other entity is left untouched
@@ -1801,7 +2008,7 @@ class Molecule(MolecularEntity):
                 if color is not None and not color_by_density
                 else None
             )
-            (
+            _ = (
                 tree.atoms
                 >> (g.SetColor(color=color_input) if color_input is not None else None)
                 >> style_node

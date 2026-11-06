@@ -15,7 +15,7 @@ from ..blender.registered import object_props, object_uuid
 from ..blender.utils import JSONProperty, annotated_props, set_object_visibility
 from ..entities import Density, Molecule
 from ..entities.base import EntityType
-from ..handlers import _update_entities, _update_selections
+from ..handlers import _update_entities, _update_hidden_selection, _update_selections
 from ..session import get_entity, get_session
 
 uuid_property = StringProperty(
@@ -504,6 +504,24 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         StringProperty(
             name="Data Block",
             description="Data block of a multi-structure CIF file this entity was loaded from",
+            default="",
+            options={"HIDDEN"},
+        ),
+    ]
+    hidden_selection: Annotated[
+        str,
+        StringProperty(
+            name="Hidden",
+            description="MDAnalysis selection of atoms to leave out of every style, such as 'water'. Evaluated once, and replaces the hidden atoms",
+            default="",
+            update=_update_hidden_selection,
+        ),
+    ]
+    hidden_message: Annotated[
+        str,
+        StringProperty(
+            name="Hidden Error",
+            description="Why the selection of atoms to hide could not be used",
             default="",
             options={"HIDDEN"},
         ),
