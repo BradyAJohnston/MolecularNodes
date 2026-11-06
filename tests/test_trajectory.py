@@ -493,6 +493,28 @@ class TestTrajectory:
             traj.position, traj.frame_manager._position_at_frame(last_frame)
         )
 
+    @pytest.mark.parametrize("offset", [1, 2, 3, -1])
+    def test_offset_subframes_interpolation(self, universe, offset: int):
+        # playback with an offset is the same playback, moved along the timeline
+        traj = mn.entities.Molecule(universe)
+        traj.subframes = 1
+        expected = [traj.frame_manager.get_positions_at_frame(f) for f in range(6)]
+        traj.offset = offset
+        for frame, position in enumerate(expected):
+            assert np.allclose(
+                traj.frame_manager.get_positions_at_frame(frame + offset), position
+            )
+
+    def test_offset_subframes_before_start(self, universe):
+        # frames before playback starts hold the first frame of the trajectory
+        traj = mn.entities.Molecule(universe)
+        traj.subframes = 1
+        traj.offset = 3
+        assert np.allclose(
+            traj.frame_manager.get_positions_at_frame(0),
+            traj.frame_manager._position_at_frame(0),
+        )
+
     def test_frame_hidden_follows_universe_frame(self, universe):
         traj = mn.entities.Molecule(universe)
         traj.update_with_scene = False

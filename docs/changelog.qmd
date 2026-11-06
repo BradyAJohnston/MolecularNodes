@@ -59,6 +59,7 @@ title: "Changelog"
 
 ## Fixed
 - The trajectory frame shown in the panel now updates, it stayed at 0.
+- Trajectories with both `Subframes` and an `Offset` no longer jump backwards during playback: interpolation ignored the offset.
 - `Cone Shadow` nodes update their `Pixel Size` before each render, so they follow camera and resolution changes made after `compositor.illustrate()`.
 - The pixel size for a perspective camera no longer falls back to the camera clip range with `Style Spheres` point clouds, which the object's bounding box misses.
 - Cycles no longer hangs on the virtual GPU of a macOS virtual machine (such as GitHub's macOS runners): the device is skipped with a warning and Cycles falls back to the CPU.

@@ -255,6 +255,11 @@ class FrameManager:
             )
         return frames_to_cache
 
+    def _playback_frame(self, frame: float) -> float:
+        """The frame counted from the start of playback, after any offset."""
+        offset = self.trajectory.offset if self.trajectory.update_with_scene else 0
+        return max(frame - offset, 0)
+
     def _mapped_uframes(self, frame: float) -> tuple[int, int]:
         """Map a scene or manual frame to the current and next universe frames.
 
@@ -278,9 +283,8 @@ class FrameManager:
             Current and next universe frame numbers
         """
         uframe_current = frame_mapper(
-            frame=frame,
+            frame=self._playback_frame(frame),
             subframes=self.trajectory.subframes,
-            offset=self.trajectory.offset if self.trajectory.update_with_scene else 0,
         )
         uframe_next = uframe_current + 1
 
@@ -483,7 +487,7 @@ class FrameManager:
         """
         uframe_current, uframe_next = self._mapped_uframes(frame)
 
-        t = fraction(frame, self.trajectory.subframes + 1)
+        t = fraction(self._playback_frame(frame), self.trajectory.subframes + 1)
         if t > 0 and self.trajectory.interpolate:
             # Interpolate between current and next frame
             current = self.cache_mean(uframe_current)
