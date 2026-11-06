@@ -127,6 +127,14 @@ def test_frame_mapper_with_subframes():
     assert frame_mapper(9, subframes=2) == 3
 
 
+def test_frame_mapper_fractional():
+    assert frame_mapper(2.5) == 2
+    assert isinstance(frame_mapper(2.5), int)
+    assert frame_mapper(3.9, subframes=1) == 1
+    assert frame_mapper(4.0, subframes=1) == 2
+    assert frame_mapper(2.5, mapping=[0, 0, 7, 9]) == 7
+
+
 def test_frame_mapper_with_mapping():
     mapping = np.array([0, 0, 0, 1, 2])
     assert frame_mapper(1, mapping=mapping) == 0

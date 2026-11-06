@@ -39,6 +39,8 @@ title: "Changelog"
 - `Color PyMOL`, `Color VMD` and `Color CSS` nodes under Color give PyMOL's (including its element colours), VMD's and CSS's named colours, with the same values as `mn.color.parse_color()`.
 
 ## Changed
+- `Molecule.frame` and the manual `Frame` input are now floats, so keyframes on them play back smoothly: `frame = 1.5` is halfway between trajectory frames 1 and 2 when `Interpolate` is on. Keyframes in existing files stop rounding to whole frames when the file is opened. [#1282](https://github.com/BradyAJohnston/MolecularNodes/issues/1282)
+- `Subframes` no longer applies to the manual frame, as `Offset` already did not: it is disabled in the panel when `Update with Scene` is off, and the manual frame is always a trajectory frame. Files that keyed the manual frame with subframes set need those keys divided by `Subframes + 1`. [#1282](https://github.com/BradyAJohnston/MolecularNodes/issues/1282)
 - Setting `Canvas.view_transform` to `Standard` also clears the look, so colors come out as specified. The preset's contrast look was carried over before, which shifted them. Set `Canvas.look` afterwards to keep a look.
 - `Density Style Wire` no longer hides small mesh islands by default: `Hide Dust` is now 0, matching `Density Style Surface`. The previous default of 20 nm² removed ligand-sized meshes entirely.
 - The box lengths `a`, `b` and `c` of `Periodic Box` and `Periodic Array` are in world units (1 m is 1 nm) rather than Å, as distances, matching the other periodic nodes and positions in the tree. The trajectory sets them on frame changes while `Update` is on, so only values typed by hand, or passed from a script, with `Update` off need dividing by 10.
@@ -57,6 +59,9 @@ title: "Changelog"
 - `ty` type checking runs in CI alongside ruff. Properties registered on Blender types are read through typed accessors in `molecularnodes.blender.registered`.
 
 ## Fixed
+- The trajectory frame shown in the panel now updates, it stayed at 0. With interpolated subframes it shows the position between frames, such as `1.50`.
+- Trajectories with both `Subframes` and an `Offset` no longer jump backwards during playback: interpolation ignored the offset.
+- Selections and calculations that update on frame changes used a later frame than the one shown while interpolating between frames.
 - `Cone Shadow` nodes update their `Pixel Size` before each render, so they follow camera and resolution changes made after `compositor.illustrate()`.
 - The pixel size for a perspective camera no longer falls back to the camera clip range with `Style Spheres` point clouds, which the object's bounding box misses.
 - Cycles no longer hangs on the virtual GPU of a macOS virtual machine (such as GitHub's macOS runners): the device is skipped with a warning and Cycles falls back to the CPU.

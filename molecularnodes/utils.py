@@ -140,12 +140,13 @@ def minimum_image_positions(
 
 
 def frame_mapper(
-    frame: int,
+    frame: float,
     subframes: int = 0,
     offset: int = 0,
     mapping: np.ndarray | List | None = None,
 ) -> int:
-    frame = max(frame - offset, 0)
+    # a fractional frame sits between universe frames, starting from the lower
+    frame = int(max(frame - offset, 0))
 
     if mapping is not None:
         if isinstance(mapping, list):

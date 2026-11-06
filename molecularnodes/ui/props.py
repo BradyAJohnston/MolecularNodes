@@ -46,15 +46,13 @@ ENTITY_ITEMS = (
 
 
 def _get_frame(self):
-    return self.get("frame", 0)
+    return float(self.get("frame", 0))
 
 
 def _set_frame(self, frame):
-    # the manual frame is stepped through subframes like the scene frame, so the
-    # last frame that maps onto the trajectory is the last universe frame expanded
-    # by the subframes. `_mapped_uframes` clamps the universe frame regardless;
-    # this keeps the value shown in the UI on the trajectory
-    last_frame = max((self.n_frames - 1) * (self.subframes + 1), 0)
+    # `_mapped_uframes` clamps the universe frame regardless; this keeps the value
+    # shown in the UI on the trajectory
+    last_frame = max(self.n_frames - 1, 0)
     if frame > last_frame:
         frame = last_frame
     self["frame"] = frame
@@ -611,22 +609,15 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
             default=0,
         ),
     ]
-    frame_hidden: Annotated[
-        int,
-        IntProperty(
-            name="Frame",
-            description="Frame of the loaded trajectory",
-            default=0,
-            min=0,
-        ),
-    ]
     frame: Annotated[
-        int,
-        IntProperty(
+        float,
+        FloatProperty(
             name="Frame",
-            description="Manual frame of the loaded trajectory. Stepped through subframes like the scene frame, with the resolved trajectory frame shown alongside",
-            default=0,
-            min=0,
+            description="Manual frame of the loaded trajectory. Fractional frames interpolate between trajectory frames when Interpolate is enabled",
+            default=0.0,
+            min=0.0,
+            step=10,
+            precision=2,
             set=_set_frame,
             get=_get_frame,
         ),
@@ -653,7 +644,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         int,
         IntProperty(
             name="Subframes",
-            description="Number of subframes to insert between frames of the loaded trajectory",
+            description="Number of subframes to insert between frames of the loaded trajectory when updating with the scene",
             default=0,
             update=_update_entities,
             min=0,

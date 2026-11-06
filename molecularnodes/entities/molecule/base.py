@@ -192,8 +192,9 @@ class Molecule(MolecularEntity):
         Molecule annotations
     world_scale : float
         Scale factor from Angstroms to Blender units
-    frame : int
-        Current animation frame (synced with Blender)
+    frame : float
+        Manual frame of the trajectory, used when not updating with the scene.
+        Fractional frames interpolate between trajectory frames
     subframes : int
         Interpolation steps between frames
     offset : int
@@ -227,17 +228,21 @@ class Molecule(MolecularEntity):
     _universe_kwargs: dict = {}
 
     @property
-    def frame(self) -> int:
-        """Manual frame of the trajectory, used when not updating with the scene."""
+    def frame(self) -> float:
+        """Manual frame of the trajectory, used when not updating with the scene.
+
+        Fractional frames interpolate between trajectory frames when `interpolate`
+        is on, otherwise they stay on the lower frame.
+        """
         return self.props.frame
 
     @frame.setter
-    def frame(self, value: int) -> None:
+    def frame(self, value: float) -> None:
         self.props.frame = value
 
     @property
     def subframes(self) -> int:
-        """Number of subframes to insert between frames of the trajectory."""
+        """Number of subframes to insert between frames when updating with the scene."""
         return self.props.subframes
 
     @subframes.setter
@@ -1211,7 +1216,7 @@ class Molecule(MolecularEntity):
 
         return data_obj
 
-    def _update_attributes(self, frame: int) -> None:
+    def _update_attributes(self, frame: float) -> None:
         """Write the attributes of every source for the scene frame.
 
         The trajectory goes first: it moves the universe to the frame and sets
@@ -1219,8 +1224,8 @@ class Molecule(MolecularEntity):
 
         Parameters
         ----------
-        frame : int
-            Scene frame number
+        frame : float
+            Scene frame number, or the manual frame
         """
         trajectory = self._update_trajectory_positions(frame)
         self._store_frame_attributes(trajectory, "TRAJECTORY")
@@ -1232,7 +1237,7 @@ class Molecule(MolecularEntity):
         self._store_frame_attributes(self.calculations._frame_values(), "CALCULATION")
         self._sync_frame_attributes(["position", *trajectory])
 
-    def set_frame(self, frame: int) -> None:
+    def set_frame(self, frame: float) -> None:
         """Update trajectory state for scene frame.
 
         Main entry point called by Blender's animation system. Updates positions,
@@ -1240,8 +1245,8 @@ class Molecule(MolecularEntity):
 
         Parameters
         ----------
-        frame : int
-            Scene frame number (mapping applied to get Universe frame)
+        frame : float
+            Scene frame number or manual frame (mapping applied to get Universe frame)
 
         Notes
         -----
@@ -1401,7 +1406,7 @@ class Molecule(MolecularEntity):
                 level = logging.DEBUG if expected else logging.ERROR
                 logger.log(level, f"Skipping baked attribute '{name}': {e}")
 
-    def _update_trajectory_positions(self, frame: int) -> dict[str, np.ndarray]:
+    def _update_trajectory_positions(self, frame: float) -> dict[str, np.ndarray]:
         """Update trajectory positions for the given frame.
 
         This method can be overridden by subclasses to implement custom
@@ -1409,8 +1414,8 @@ class Molecule(MolecularEntity):
 
         Parameters
         ----------
-        frame : int
-            Scene frame number
+        frame : float
+            Scene frame number, or the manual frame
 
         Returns
         -------

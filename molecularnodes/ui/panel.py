@@ -240,23 +240,26 @@ def layout_trajectory_playback(
 
     col = row.column()
     if props.update_with_scene:
-        col.prop(props, "frame_hidden")
+        if props.subframes > 0 and props.interpolate and not is_streaming:
+            # the positions are between frames, so show how far
+            scene = bpy.context.scene
+            assert scene is not None
+            uframe = traj.frame_manager.interpolated_uframe(scene.frame_current)
+            col.label(text=f"Frame: {uframe:.2f}")
+        else:
+            col.label(text=f"Frame: {traj.uframe}")
     else:
         col.prop(props, "frame")
-        # with subframes the manual frame is stepped through them, so show the
-        # trajectory frame it resolved to
-        if props.subframes > 0:
-            subrow = col.row()
-            subrow.prop(props, "frame_hidden", text="Trajectory Frame")
-            subrow.enabled = False
     col.enabled = not props.update_with_scene
     row.prop(props, "update_with_scene")
     row = playback.row()
     col = row.column()
     col.prop(props, "average")
-    col.prop(props, "subframes")
-    # the offset shifts where playback starts on the timeline, so it only
-    # applies when updating with the scene
+    # subframes and the offset place the trajectory on the timeline, so they only
+    # apply when updating with the scene
+    subrow = col.row()
+    subrow.prop(props, "subframes")
+    subrow.enabled = props.update_with_scene
     subrow = col.row()
     subrow.prop(props, "offset")
     subrow.enabled = props.update_with_scene

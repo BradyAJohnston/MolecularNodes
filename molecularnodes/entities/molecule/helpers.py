@@ -255,20 +255,54 @@ class FrameManager:
             )
         return frames_to_cache
 
-    def _mapped_uframes(self, frame: int) -> tuple[int, int]:
-        """Map a scene or manual frame to the current and next universe frames.
+    def _playback_frame(self, frame: float) -> float:
+        """The frame counted from the start of playback, after any offset."""
+        offset = self.trajectory.offset if self.trajectory.update_with_scene else 0
+        return max(frame - offset, 0)
 
-        Applies the subframe/offset mapping, clamps to trajectory bounds for
-        non-streaming trajectories, and updates the UI frame property.
+    def _playback_subframes(self) -> int:
+        """Subframes in use: a manual frame sets its fraction directly instead."""
+        return self.trajectory.subframes if self.trajectory.update_with_scene else 0
 
-        The offset only applies when updating with the scene: it shifts where
-        playback starts on the timeline, which has no meaning for a manually
-        chosen frame. Subframes apply in both modes, so the manual frame is
-        stepped through subframes the same way the scene frame is.
+    def _interpolation_fraction(self, frame: float) -> float:
+        """How far a frame is towards the next universe frame, 0 if not interpolating."""
+        if not self.trajectory.interpolate:
+            return 0.0
+        return fraction(self._playback_frame(frame), self._playback_subframes() + 1)
+
+    def interpolated_uframe(self, frame: float) -> float:
+        """The universe frame a frame shows, with the fraction towards the next one.
 
         Parameters
         ----------
-        frame : int
+        frame : float
+            Scene frame number, or the manual frame when not updating with the
+            scene
+
+        Returns
+        -------
+        float
+            Universe frame, which is whole at the end of the trajectory
+        """
+        uframe_current, uframe_next = self._mapped_uframes(frame)
+        if uframe_current == uframe_next:
+            return float(uframe_current)
+        return uframe_current + self._interpolation_fraction(frame)
+
+    def _mapped_uframes(self, frame: float) -> tuple[int, int]:
+        """Map a scene or manual frame to the current and next universe frames.
+
+        Applies the subframe/offset mapping and clamps to trajectory bounds for
+        non-streaming trajectories.
+
+        The offset and subframes only apply when updating with the scene: they
+        place the trajectory on the timeline, which has no meaning for a manually
+        chosen frame. The manual frame is a universe frame, and its fraction is
+        how far it is towards the next one.
+
+        Parameters
+        ----------
+        frame : float
             Scene frame number, or the manual frame when not updating with the
             scene
 
@@ -278,9 +312,8 @@ class FrameManager:
             Current and next universe frame numbers
         """
         uframe_current = frame_mapper(
-            frame=frame,
-            subframes=self.trajectory.subframes,
-            offset=self.trajectory.offset if self.trajectory.update_with_scene else 0,
+            frame=self._playback_frame(frame),
+            subframes=self._playback_subframes(),
         )
         uframe_next = uframe_current + 1
 
@@ -290,13 +323,6 @@ class FrameManager:
             if uframe_current >= last_frame:
                 uframe_current = last_frame
                 uframe_next = uframe_current
-
-        # Update the frame_hidden property for the UI
-        try:
-            self.trajectory._frame = uframe_current
-        except AttributeError:
-            # Silently ignore if we can't write to Blender property
-            pass
 
         return uframe_current, uframe_next
 
@@ -462,7 +488,7 @@ class FrameManager:
         """Get mean positions from cached frames, see `cache_mean`."""
         return self.cache_mean(frame)["position"]
 
-    def get_values_at_frame(self, frame: int) -> dict[str, np.ndarray]:
+    def get_values_at_frame(self, frame: float) -> dict[str, np.ndarray]:
         """Get per-frame attributes for a given frame with all processing applied.
 
         Main entry point for frame updates. Handles frame mapping, interpolation,
@@ -472,7 +498,7 @@ class FrameManager:
 
         Parameters
         ----------
-        frame : int
+        frame : float
             Scene frame number, or the manual frame when not updating with the
             scene
 
@@ -483,11 +509,11 @@ class FrameManager:
         """
         uframe_current, uframe_next = self._mapped_uframes(frame)
 
-        if self.trajectory.subframes > 0 and self.trajectory.interpolate:
+        t = self._interpolation_fraction(frame)
+        if t > 0:
             # Interpolate between current and next frame
             current = self.cache_mean(uframe_current)
             after = self.cache_mean(uframe_next)
-            t = fraction(frame, self.trajectory.subframes + 1)
             values = {}
             for name, value in current.items():
                 # integer and boolean values are not interpolated
@@ -504,6 +530,9 @@ class FrameManager:
                         value, value_next, uframe_current
                     )
                 values[name] = db.lerp(value, value_next, t=t)
+            # reading ahead moved the universe past this frame, and selections
+            # and calculations are computed from where it is left
+            self.trajectory.uframe = uframe_current
             return values
         elif self.trajectory.average > 0:
             # Return mean values for cached frames
@@ -512,6 +541,6 @@ class FrameManager:
             # Just return current values
             return self.read_and_cache(uframe_current)
 
-    def get_positions_at_frame(self, frame: int) -> np.ndarray:
+    def get_positions_at_frame(self, frame: float) -> np.ndarray:
         """Get positions for a given frame, see `get_values_at_frame`."""
         return self.get_values_at_frame(frame)["position"]

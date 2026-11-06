@@ -23,7 +23,7 @@ from bpy.app.handlers import (
 )
 from bpy.props import CollectionProperty, PointerProperty
 from .. import assets, session
-from ..handlers import render_pre_handler, update_entities
+from ..handlers import render_pre_handler, update_entities, update_frame_fcurves
 from ..nodes import handlers as node_handlers
 from ..templates import register_templates_menu, unregister_templates_menu
 from . import ops, panel, pref, props
@@ -71,6 +71,7 @@ def register():
 
     save_post.append(session._pickle)
     load_post.append(session._load)
+    load_post.append(update_frame_fcurves)
     load_pre.append(session._remove_draw_handlers)
     frame_change_pre.append(update_entities)
     render_pre.append(render_pre_handler)
@@ -121,6 +122,7 @@ def unregister():
 
     save_post.remove(session._pickle)
     load_post.remove(session._load)
+    load_post.remove(update_frame_fcurves)
     load_pre.remove(session._remove_draw_handlers)
     frame_change_pre.remove(update_entities)
     render_pre.remove(render_pre_handler)

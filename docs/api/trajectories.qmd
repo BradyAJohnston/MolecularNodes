@@ -47,8 +47,8 @@ The connection to the `Universe` is maintained as the scene frame changes, so th
 update live during playback. Several properties on the `Molecule` control how frames are
 sampled and interpolated:
 
-- [](`~mn.Molecule.frame`) — the current frame (synced with Blender's scene frame).
-- [](`~mn.Molecule.subframes`) — interpolation steps inserted between frames.
+- [](`~mn.Molecule.frame`) — the manual frame, used when `update_with_scene` is off. It can be fractional, so keyframes on it play back smoothly.
+- [](`~mn.Molecule.subframes`) — interpolation steps inserted between frames when playing with the scene.
 - [](`~mn.Molecule.offset`) — a frame offset applied during playback.
 - [](`~mn.Molecule.average`) — number of frames to average for smoothing.
 - [](`~mn.Molecule.interpolate`) — enable position interpolation between frames.
@@ -72,10 +72,10 @@ string — equivalent to doing `u.select_atoms()` and passing that atom group as
 
 # Materials on Point Clouds
 
-The default geometry for `StyleSpheres()` is `"Point"` which uses point cloud rendering 
+The default geometry for `StyleSpheres()` is `"Point"` which uses point cloud rendering
 inside of Blender. It's a limitation of Blender that we can't have multiple materials
 on the same point cloud, so we get issues if we try to assign different materials and join
-them back together. To get around this we have to use the `"Instance"` geometry (which can 
+them back together. To get around this we have to use the `"Instance"` geometry (which can
 be combined with a point cloud that has a different material).
 
 :::
@@ -168,8 +168,8 @@ col_array
 
 Create the `Molecule` object that will be visualised inside of Blender. After initialising
 it, we store the computed colors as a `Named Attribute` on the mesh with the
-`store_named_attribute()` function, or directly by doing `Molecule["Color"] = col_array`. 
-We have direct access to the named attributes on the mesh of the Molecule object, to get 
+`store_named_attribute()` function, or directly by doing `Molecule["Color"] = col_array`.
+We have direct access to the named attributes on the mesh of the Molecule object, to get
 and set the values. By defualt the Nodes will use the `Color` named attribute for assigning
 the final color that is used in the render.
 
