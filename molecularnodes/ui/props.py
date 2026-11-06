@@ -385,6 +385,14 @@ class CalculationItem(bpy.types.PropertyGroup):
             description="Object the calculation writes to, for one that writes an object rather than an attribute",
         ),
     ]
+    text: Annotated[
+        bpy.types.Text | None,
+        PointerProperty(
+            type=bpy.types.Text,
+            name="Text",
+            description="Text block the calculation was loaded from, which it is loaded from again when the file is reopened",
+        ),
+    ]
 
 
 @annotated_props

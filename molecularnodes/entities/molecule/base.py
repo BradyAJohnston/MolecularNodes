@@ -819,6 +819,8 @@ class Molecule(MolecularEntity):
             (item.name, "SELECTION") for item in self.selections.ui_items if item.name
         ]
         wanted += [(name, "CALCULATION") for name in self.calculations]
+        # calculations from text stay listed until they are loaded again
+        wanted += [(name, "CALCULATION") for name in self.calculations._unloaded()]
         # only write when something changed, as writing redraws the panel
         if wanted == current:
             return
@@ -1226,9 +1228,10 @@ class Molecule(MolecularEntity):
         self._store_frame_attributes(trajectory, "TRAJECTORY")
         self._store_frame_attributes(self.selections._frame_values(), "SELECTION")
         # DSSP and hydrogen bonds are rebuilt from their saved settings after a
-        # file is reopened
+        # file is reopened, and calculations from text when Blender allows it
         self.calculations._dssp._restore()
         self.calculations._hbonds._restore()
+        self.calculations._restore_texts()
         self._store_frame_attributes(self.calculations._frame_values(), "CALCULATION")
         self._sync_frame_attributes(["position", *trajectory])
 
@@ -2089,7 +2092,7 @@ class Molecule(MolecularEntity):
 
                     pickle.dumps(calc_func)
                     preserved_calculations[name] = calc_func
-                except (TypeError, AttributeError):
+                except (TypeError, AttributeError, pickle.PicklingError):
                     logger.debug(f"Skipping unpicklable calculation function: {name}")
 
             if preserved_calculations:

@@ -15,6 +15,8 @@ built-in ones such as DSSP are rebuilt from their saved settings.
 
 from __future__ import annotations
 import logging
+import os
+from fnmatch import fnmatch
 from typing import TYPE_CHECKING, Callable, Iterator
 import bpy
 import numpy as np
@@ -49,6 +51,7 @@ class CalculationManager:
         self._funcs: dict[str, Calculation] = {}
         self._dssp = DSSPCalculation(entity)
         self._hbonds = HBondCalculation(entity)
+        self._failed_texts: set[str] = set()
 
     def dssp(
         self, selection: str | None = None, *, updating: bool | None = None
@@ -134,6 +137,98 @@ class CalculationManager:
         """
         self._hbonds._init(selection=selection, updating=updating, **kwargs)
         return self._hbonds
+
+    def from_text(
+        self, text: bpy.types.Text | str, *, updating: bool | None = None
+    ) -> list[str]:
+        """Add the `BaseCalculation` subclasses defined in a text block.
+
+        The text is run as Python, with `BaseCalculation` and `np` already
+        available, and each subclass it defines is added as a calculation
+        named after the subclass, replacing any with the same name.
+
+        Parameters
+        ----------
+        text : bpy.types.Text or str
+            The text block, or its name in `bpy.data.texts`.
+        updating : bool, optional
+            Whether the calculations recalculate on every frame change. Left
+            out, a calculation that was already added keeps its setting, and a
+            new one updates.
+
+        Returns
+        -------
+        list[str]
+            The names of the calculations that were added.
+
+        Raises
+        ------
+        ValueError
+            When the text defines no `BaseCalculation` subclasses, or one of
+            them returns a number of values other than the number of atoms.
+        """
+        if isinstance(text, str):
+            text = bpy.data.texts[text]
+        calculations = calculations_from_code(text.as_string(), self._entity)
+        if not calculations:
+            raise ValueError(f"No BaseCalculation subclasses found in '{text.name}'")
+        n_atoms = self._entity.atoms.n_atoms
+        values = {}
+        for calculation in calculations:
+            result = calculation.calculate()
+            if len(result) != n_atoms:
+                raise ValueError(
+                    f"'{calculation.name}' returned {len(result)} values, "
+                    f"expected one for each of the {n_atoms} atoms"
+                )
+            values[calculation.name] = result
+        for calculation in calculations:
+            if updating is None:
+                item = self._item(calculation.name)
+                keep = item.updating if item is not None else True
+            else:
+                keep = updating
+            self.add(calculation.name, calculation, updating=keep, refresh=False)
+            item = self._item(calculation.name)
+            if item is not None:
+                item.text = text
+        self._entity._store_frame_attributes(values, "CALCULATION")
+        return list(values)
+
+    def _unloaded(self) -> list[str]:
+        """Names of calculations from text that are saved on the object but not
+        loaded, such as after a file is reopened."""
+        try:
+            items = self.ui_items
+        except (LinkedObjectError, AttributeError):
+            return []
+        return [
+            item.name
+            for item in items
+            if item.text is not None and item.name not in self._funcs
+        ]
+
+    def _restore_texts(self) -> None:
+        """Load calculations from their text blocks again after a file is reopened.
+
+        Calculations loaded from text can't be saved with the file, but their
+        items on the object record the text block. Running a file's code when
+        it is opened isn't safe, so like Blender's own scripts they are only
+        loaded again when Auto Run Python Scripts allows it. Otherwise they
+        stay listed as not loaded until Reload is pressed.
+        """
+        if not scripts_auto_execute():
+            return
+        items = [self._item(name) for name in self._unloaded()]
+        for text in {item.text for item in items if item is not None}:
+            if text.name in self._failed_texts:
+                continue
+            try:
+                self.from_text(text)
+            except Exception as e:
+                # don't retry on every frame change
+                self._failed_texts.add(text.name)
+                logger.warning(f"Could not load calculations from '{text.name}': {e}")
 
     @property
     def ui_items(self):
@@ -249,7 +344,9 @@ class CalculationManager:
         return self._funcs[name]
 
     def __delitem__(self, name: str) -> None:
-        del self._funcs[name]
+        if name not in self._funcs and name not in self._unloaded():
+            raise KeyError(name)
+        self._funcs.pop(name, None)
         if name == "sec_struct":
             # removing DSSP's calculation removes DSSP, it can be set up again
             self._dssp = DSSPCalculation(self._entity)
@@ -279,3 +376,71 @@ class CalculationManager:
 
     def get(self, name: str, default=None):
         return self._funcs.get(name, default)
+
+
+class BaseCalculation:
+    """
+    A base class for custom calculations that are run on every frame.
+
+    Create a subclass and write the calculation inside its `calculate()`
+    method. The result is stored as an attribute on the molecule, named
+    after the subclass, with its type inferred from the returned array.
+    """
+
+    def __init__(self, molecule: Molecule, name: str | None = None):
+        self.molecule = molecule
+        self.name = name or type(self).__name__
+
+    @property
+    def universe(self) -> Universe:
+        return self.molecule.universe
+
+    def calculate(self) -> np.ndarray:
+        """
+        Calculate the values for the current frame.
+
+        Use `self.universe` to access the data for the current frame.
+
+        Returns
+        -------
+        np.ndarray
+            One value for each atom, so the length must match the number
+            of atoms in the molecule.
+        """
+        raise NotImplementedError("Subclasses must implement calculate()")
+
+    def __call__(self, universe: Universe) -> np.ndarray:
+        return self.calculate()
+
+
+def scripts_auto_execute() -> bool:
+    """Whether Blender's Auto Run Python Scripts allows scripts in the open file.
+
+    True when the preference is on and the file isn't in one of its excluded
+    paths.
+    """
+    preferences = bpy.context.preferences
+    if preferences is None or not preferences.filepaths.use_scripts_auto_execute:
+        return False
+    filepath = os.path.normcase(bpy.data.filepath)
+    for excluded in preferences.autoexec_paths:
+        path = os.path.normcase(bpy.path.abspath(excluded.path))
+        if not path:
+            continue
+        if excluded.use_glob and fnmatch(filepath, path):
+            return False
+        if not excluded.use_glob and filepath.startswith(path):
+            return False
+    return True
+
+
+def calculations_from_code(code: str, molecule: Molecule) -> list[BaseCalculation]:
+    namespace = {"BaseCalculation": BaseCalculation, "np": np}
+    exec(code, namespace)
+    return [
+        obj(molecule)
+        for obj in namespace.values()
+        if isinstance(obj, type)
+        and issubclass(obj, BaseCalculation)
+        and obj is not BaseCalculation
+    ]
