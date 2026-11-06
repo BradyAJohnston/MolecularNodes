@@ -616,7 +616,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
             description="Manual frame of the loaded trajectory. Fractional frames interpolate between trajectory frames when Interpolate is enabled",
             default=0.0,
             min=0.0,
-            step=100,
+            step=10,
             precision=2,
             set=_set_frame,
             get=_get_frame,
