@@ -1,12 +1,12 @@
 """Atoms with the `hidden` attribute are left out of every style."""
 
-import inspect
 import warnings
 import bpy
 import MDAnalysis as mda
 import numpy as np
 import pytest
 from databpy import ObjectTracker
+from nodebpy import geometry as g
 import molecularnodes as mn
 from molecularnodes.blender import utils as blender_utils
 from molecularnodes.nodes import geometry as mg
@@ -36,25 +36,6 @@ def _rendered(mol):
     return points[np.lexsort(points.T)]
 
 
-@pytest.mark.parametrize(
-    "style",
-    [
-        mg.StyleSpheres,
-        mg.StyleSticks,
-        mg.StyleBallAndStick,
-        mg.StyleCartoon,
-        mg.StyleRibbon,
-        mg.StyleSurface,
-        mg.StyleHBonds,
-        mg.OxDNAStyleClassic,
-    ],
-)
-def test_include_hidden_keeps_positional_arguments(style):
-    # style nodes are called positionally, so a new input has to go last
-    parameters = list(inspect.signature(style).parameters)
-    assert parameters[-1] == "include_hidden"
-
-
 @pytest.fixture(autouse=True)
 def canvas():
     return mn.Canvas(mn.scene.Cycles(samples=1, device="CPU"))
@@ -75,14 +56,27 @@ def test_hidden_matches_selection(style):
     assert np.allclose(_rendered(hidden), _rendered(selected))
 
 
-@pytest.mark.parametrize("style", STYLES)
-def test_include_hidden(style):
+@pytest.mark.parametrize(
+    "style",
+    [
+        mg.StyleSpheres,
+        mg.StyleSticks,
+        mg.StyleBallAndStick,
+        mg.StyleCartoon,
+        mg.StyleRibbon,
+        mg.StyleSurface,
+    ],
+)
+def test_store_named_attribute_shows_hidden_atoms(style):
     plain = _molecule()
-    plain.add_style(style)
+    with plain.tree.reset() as (atoms, join):
+        atoms >> style() >> join
 
     hidden = _molecule()
     hidden.store_named_attribute(_hidden_mask(hidden), "hidden", atype="BOOLEAN")
-    hidden.add_style(style, include_hidden=True)
+    with hidden.tree.reset() as (atoms, join):
+        show = g.StoreNamedAttribute.point.boolean(name="hidden", value=False)
+        atoms >> show >> style() >> join
 
     assert np.allclose(_rendered(hidden), _rendered(plain))
 
@@ -115,9 +109,9 @@ def test_hidden_atoms_are_not_computed_by_style_hbonds(fetch):
     n_bonds = len(obj.data.edges)
     assert n_bonds > 0
 
-    def vertices(**inputs):
+    def vertices():
         with mol.tree.reset() as (atoms, join):
-            atoms >> mg.StyleHBonds(data_object=obj, quality=2, **inputs) >> join
+            atoms >> mg.StyleHBonds(data_object=obj, quality=2) >> join
         return evaluated_vertex_count(mol.object)
 
     visible = vertices()
@@ -125,7 +119,6 @@ def test_hidden_atoms_are_not_computed_by_style_hbonds(fetch):
     hydrogens = mol.named_attribute("atomic_number") == 1
     mol.store_named_attribute(hydrogens, "hidden", atype="BOOLEAN")
     assert vertices() == 0
-    assert vertices(include_hidden=True) == visible
 
 
 def test_hidden_in_oxdna_style():
@@ -243,6 +236,20 @@ def test_python_edits_clear_the_selection_text():
     assert mol.hidden.sum() == n_hidden
 
 
+def test_renaming_a_selection_to_hidden_is_rejected():
+    mol = _molecule()
+    mol.hide("name CA")
+    n_hidden = mol.hidden.sum()
+    item = mol.selections.from_string("name N", name="backbone_n")
+
+    item.name = "hidden"
+
+    assert item.name != "hidden"
+    assert "reserved" in item.message
+    mol.selections.update_attributes()
+    assert mol.hidden.sum() == n_hidden
+
+
 def test_add_style_warns_when_selection_is_all_hidden():
     mol = _molecule()
     mol.hide("name CA")
@@ -250,7 +257,6 @@ def test_add_style_warns_when_selection_is_all_hidden():
         mol.add_style("spheres", selection="name CA")
     with warnings.catch_warnings():
         warnings.filterwarnings("error", message=".*is hidden.*")
-        mol.add_style("spheres", selection="name CA", include_hidden=True)
         mol.add_style("spheres", selection="name CA or name N")
 
 

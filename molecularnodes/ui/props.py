@@ -15,7 +15,12 @@ from ..blender.registered import object_props, object_uuid
 from ..blender.utils import JSONProperty, annotated_props, set_object_visibility
 from ..entities import Density, Molecule
 from ..entities.base import EntityType
-from ..handlers import _update_entities, _update_hidden_selection, _update_selections
+from ..handlers import (
+    _update_entities,
+    _update_hidden_selection,
+    _update_selection_name,
+    _update_selections,
+)
 from ..session import get_entity, get_session
 
 uuid_property = StringProperty(
@@ -767,6 +772,7 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         StringProperty(
             name="Attribute Name",
             description="Name of the attribute that will be created when storing on the mesh",
+            update=_update_selection_name,
         ),
     ]
 

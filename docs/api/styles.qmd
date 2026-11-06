@@ -253,9 +253,10 @@ mol.show("resname ATP")  # removes from them
 mol.show()  # shows every atom
 
 mol.hidden[:100] = True  # a boolean mask, written back like mol.position
-mol.add_style("spheres", include_hidden=True)  # this style keeps hidden atoms
 ```
 
 A selection is evaluated once. For a selection that updates on every frame, give it to a style with `add_style(selection=...)`, because `hide()` and `show()` reject updating `AtomGroup`s and `hidden` is a reserved selection name.
 
 The `Hidden` field in the Attributes panel and the import dialog takes a selection string. Applying it replaces the hidden atoms, and editing them from Python clears the field. The import dialog starts with `water`. Imports from Python hide nothing unless you pass `hide=`.
+
+To draw hidden atoms in only some styles of a hand-built tree, set the `hidden` attribute to false with a `Store Named Attribute` node before those styles.

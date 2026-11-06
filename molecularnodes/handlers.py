@@ -32,6 +32,20 @@ def _update_selections(self, context: bpy.types.Context) -> None:
         entity.selections.update_attributes()
 
 
+def _update_selection_name(self, context: bpy.types.Context) -> None:
+    """
+    Update callback for the name of a `TrajectorySelectionItem`. Moves a selection
+    off the reserved name `hidden`, which it would overwrite on every frame
+    """
+    if self.name != "hidden":
+        return
+    assert context.scene is not None
+    entity = scene_session(context.scene).match(self.id_data)
+    if isinstance(entity, Molecule):
+        self.name = entity.selections._unique_selection_name()
+        self.message = "'hidden' is reserved for the Hidden field. Use another name."
+
+
 def _update_hidden_selection(self, context: bpy.types.Context) -> None:
     """
     Update callback for the hidden selection text of a molecule, which replaces

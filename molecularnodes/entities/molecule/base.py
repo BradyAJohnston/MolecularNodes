@@ -1617,8 +1617,7 @@ class Molecule(MolecularEntity):
 
         Changes write straight back to the molecule, as with ``position``, and
         update existing styles. Only styles read this: calculations, selections and
-        other nodes still see every atom. A style keeps these atoms when its
-        ``Include Hidden`` input is on.
+        other nodes still see every atom.
 
         ```python
         mol.hidden[:100] = True
@@ -1775,8 +1774,7 @@ class Molecule(MolecularEntity):
         if selected.any() and not (selected & ~self.hidden).any():
             warnings.warn(
                 f"Every atom in selection '{attribute_name}' is hidden, so the style "
-                "draws nothing. Pass `include_hidden=True` to draw them, or use "
-                "`mol.show()`."
+                "draws nothing. Use `mol.show()` to draw them."
             )
 
     def _warn_if_trace_only(self, style: str) -> None:
@@ -1950,7 +1948,7 @@ class Molecule(MolecularEntity):
 
         material = "Default" if isinstance(material, Unset) else material
         attribute_name = self._resolve_style_selection(selection)
-        if attribute_name is not None and not kwargs.get("include_hidden"):
+        if attribute_name is not None:
             self._warn_if_all_hidden(attribute_name)
 
         # oxDNA nucleotides get their own ribbon; override locally so the

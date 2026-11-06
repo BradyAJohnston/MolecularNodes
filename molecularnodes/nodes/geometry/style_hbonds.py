@@ -64,8 +64,6 @@ class StyleHBonds(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     material : InputMaterial
         Material to apply to the resulting geometry
-    include_hidden : InputBoolean
-        Also apply this style to atoms with the hidden attribute
 
     Inputs
     ------
@@ -93,8 +91,6 @@ class StyleHBonds(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     i.material : MaterialSocket
         Material to apply to the resulting geometry
-    i.include_hidden : BooleanSocket
-        Also apply this style to atoms with the hidden attribute
 
     Outputs
     -------
@@ -138,8 +134,6 @@ class StyleHBonds(AssetGeometryGroup):
         """Apply smooth shading to the created geometry"""
         material: MaterialSocket
         """Material to apply to the resulting geometry"""
-        include_hidden: BooleanSocket
-        """Also apply this style to atoms with the hidden attribute"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -166,7 +160,6 @@ class StyleHBonds(AssetGeometryGroup):
         angle: InputFloat = 5 * math.pi / 6,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
-        include_hidden: InputBoolean = False,
     ):
         super().__init__(
             **{
@@ -182,7 +175,6 @@ class StyleHBonds(AssetGeometryGroup):
                 "Angle": angle,
                 "Shade Smooth": shade_smooth,
                 "Material": material,
-                "Include Hidden": include_hidden,
             }
         )
 
@@ -259,19 +251,11 @@ class StyleHBonds(AssetGeometryGroup):
                 description="Material to apply to the resulting geometry",
                 optional_label=True,
             )
-        with tree.inputs.panel("Hidden", default_closed=True):
-            include_hidden = tree.inputs.boolean(
-                "Include Hidden",
-                False,
-                description="Also apply this style to atoms with the hidden attribute",
-            )
         geometry = tree.outputs.geometry(
             "Geometry", description="The generated geometry for the style node group"
         )
 
-        deselect_hidden = DeselectHidden(
-            selection=selection, include_hidden=include_hidden
-        )
+        deselect_hidden = DeselectHidden(selection=selection)
         with g.Frame("Unit length dashed cylinder along Z"):
             math_1 = 1.0 / dashes
             cylinder = g.Cylinder(
