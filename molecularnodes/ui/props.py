@@ -611,15 +611,6 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
             default=0,
         ),
     ]
-    frame_hidden: Annotated[
-        int,
-        IntProperty(
-            name="Frame",
-            description="Frame of the loaded trajectory",
-            default=0,
-            min=0,
-        ),
-    ]
     frame: Annotated[
         float,
         FloatProperty(

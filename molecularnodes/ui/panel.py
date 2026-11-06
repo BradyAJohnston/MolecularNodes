@@ -240,14 +240,14 @@ def layout_trajectory_playback(
 
     col = row.column()
     if props.update_with_scene:
-        col.prop(props, "frame_hidden")
+        col.label(text=f"Frame: {traj.uframe}")
     else:
         col.prop(props, "frame")
         # with subframes the manual frame is stepped through them, so show the
         # trajectory frame it resolved to
         if props.subframes > 0:
             subrow = col.row()
-            subrow.prop(props, "frame_hidden", text="Trajectory Frame")
+            subrow.label(text=f"Trajectory Frame: {traj.uframe}")
             subrow.enabled = False
     col.enabled = not props.update_with_scene
     row.prop(props, "update_with_scene")

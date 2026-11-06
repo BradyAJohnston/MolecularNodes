@@ -263,8 +263,8 @@ class FrameManager:
     def _mapped_uframes(self, frame: float) -> tuple[int, int]:
         """Map a scene or manual frame to the current and next universe frames.
 
-        Applies the subframe/offset mapping, clamps to trajectory bounds for
-        non-streaming trajectories, and updates the UI frame property.
+        Applies the subframe/offset mapping and clamps to trajectory bounds for
+        non-streaming trajectories.
 
         The offset only applies when updating with the scene: it shifts where
         playback starts on the timeline, which has no meaning for a manually
@@ -294,13 +294,6 @@ class FrameManager:
             if uframe_current >= last_frame:
                 uframe_current = last_frame
                 uframe_next = uframe_current
-
-        # Update the frame_hidden property for the UI
-        try:
-            self.trajectory.props.frame_hidden = uframe_current
-        except AttributeError:
-            # Silently ignore if we can't write to Blender property
-            pass
 
         return uframe_current, uframe_next
 
