@@ -59,7 +59,7 @@ title: "Changelog"
 - `ty` type checking runs in CI alongside ruff. Properties registered on Blender types are read through typed accessors in `molecularnodes.blender.registered`.
 
 ## Fixed
-- The trajectory frame shown in the panel now updates, it stayed at 0.
+- The trajectory frame shown in the panel now updates, it stayed at 0. With interpolated subframes it shows the position between frames, such as `1.50`.
 - Trajectories with both `Subframes` and an `Offset` no longer jump backwards during playback: interpolation ignored the offset.
 - Selections and calculations that update on frame changes used a later frame than the one shown while interpolating between frames.
 - `Cone Shadow` nodes update their `Pixel Size` before each render, so they follow camera and resolution changes made after `compositor.illustrate()`.

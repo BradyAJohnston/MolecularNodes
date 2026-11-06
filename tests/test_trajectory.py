@@ -487,6 +487,38 @@ class TestTrajectory:
                 traj.frame_manager.get_positions_at_frame(frame + offset), position
             )
 
+    @pytest.mark.parametrize(
+        "subframes, offset, frame, expected",
+        [
+            (1, 0, 3, 1.5),
+            (3, 0, 5, 1.25),
+            (1, 1, 4, 1.5),
+            (1, 0, 4, 2.0),
+            (0, 0, 2, 2.0),
+        ],
+    )
+    def test_interpolated_uframe(
+        self, universe, subframes: int, offset: int, frame: int, expected: float
+    ):
+        traj = mn.entities.Molecule(universe)
+        traj.subframes = subframes
+        traj.offset = offset
+        assert traj.frame_manager.interpolated_uframe(frame) == expected
+
+    def test_interpolated_uframe_no_interpolate(self, universe):
+        traj = mn.entities.Molecule(universe)
+        traj.subframes = 1
+        traj.interpolate = False
+        assert traj.frame_manager.interpolated_uframe(3) == 1
+
+    def test_interpolated_uframe_trajectory_end(self, universe):
+        # there is no next frame to be part way towards at the end
+        traj = mn.entities.Molecule(universe)
+        traj.subframes = 1
+        last_frame = universe.trajectory.n_frames - 1
+        scene_frame = last_frame * 2 + 1
+        assert traj.frame_manager.interpolated_uframe(scene_frame) == last_frame
+
     def test_offset_subframes_before_start(self, universe):
         # frames before playback starts hold the first frame of the trajectory
         traj = mn.entities.Molecule(universe)

@@ -240,7 +240,14 @@ def layout_trajectory_playback(
 
     col = row.column()
     if props.update_with_scene:
-        col.label(text=f"Frame: {traj.uframe}")
+        if props.subframes > 0 and props.interpolate and not is_streaming:
+            # the positions are between frames, so show how far
+            uframe = traj.frame_manager.interpolated_uframe(
+                bpy.context.scene.frame_current
+            )
+            col.label(text=f"Frame: {uframe:.2f}")
+        else:
+            col.label(text=f"Frame: {traj.uframe}")
     else:
         col.prop(props, "frame")
     col.enabled = not props.update_with_scene

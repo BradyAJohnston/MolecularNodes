@@ -264,6 +264,31 @@ class FrameManager:
         """Subframes in use: a manual frame sets its fraction directly instead."""
         return self.trajectory.subframes if self.trajectory.update_with_scene else 0
 
+    def _interpolation_fraction(self, frame: float) -> float:
+        """How far a frame is towards the next universe frame, 0 if not interpolating."""
+        if not self.trajectory.interpolate:
+            return 0.0
+        return fraction(self._playback_frame(frame), self._playback_subframes() + 1)
+
+    def interpolated_uframe(self, frame: float) -> float:
+        """The universe frame a frame shows, with the fraction towards the next one.
+
+        Parameters
+        ----------
+        frame : float
+            Scene frame number, or the manual frame when not updating with the
+            scene
+
+        Returns
+        -------
+        float
+            Universe frame, which is whole at the end of the trajectory
+        """
+        uframe_current, uframe_next = self._mapped_uframes(frame)
+        if uframe_current == uframe_next:
+            return float(uframe_current)
+        return uframe_current + self._interpolation_fraction(frame)
+
     def _mapped_uframes(self, frame: float) -> tuple[int, int]:
         """Map a scene or manual frame to the current and next universe frames.
 
@@ -484,8 +509,8 @@ class FrameManager:
         """
         uframe_current, uframe_next = self._mapped_uframes(frame)
 
-        t = fraction(self._playback_frame(frame), self._playback_subframes() + 1)
-        if t > 0 and self.trajectory.interpolate:
+        t = self._interpolation_fraction(frame)
+        if t > 0:
             # Interpolate between current and next frame
             current = self.cache_mean(uframe_current)
             after = self.cache_mean(uframe_next)
