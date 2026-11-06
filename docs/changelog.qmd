@@ -40,6 +40,7 @@ title: "Changelog"
 
 ## Changed
 - `Molecule.frame` and the manual `Frame` input are now floats, so keyframes on them play back smoothly: `frame = 1.5` is halfway between trajectory frames 1 and 2 when `Interpolate` is on. Keyframes in existing files stop rounding to whole frames when the file is opened. [#1282](https://github.com/BradyAJohnston/MolecularNodes/issues/1282)
+- `Molecule.uframe` is now private: read `mol.universe.trajectory.frame` for the frame the universe is on, and set `mol.frame` or `canvas.frame` to change what is shown. Setting it moved the universe without updating the positions.
 - `Subframes` no longer applies to the manual frame, as `Offset` already did not: it is disabled in the panel when `Update with Scene` is off, and the manual frame is always a trajectory frame. Files that keyed the manual frame with subframes set need those keys divided by `Subframes + 1`. [#1282](https://github.com/BradyAJohnston/MolecularNodes/issues/1282)
 - Setting `Canvas.view_transform` to `Standard` also clears the look, so colors come out as specified. The preset's contrast look was carried over before, which shifted them. Set `Canvas.look` afterwards to keep a look.
 - `Density Style Wire` no longer hides small mesh islands by default: `Hide Dust` is now 0, matching `Density Style Surface`. The previous default of 20 nm² removed ligand-sized meshes entirely.

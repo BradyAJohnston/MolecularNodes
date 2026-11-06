@@ -247,7 +247,7 @@ def layout_trajectory_playback(
             uframe = traj.frame_manager.interpolated_uframe(scene.frame_current)
             col.label(text=f"Frame: {uframe:.2f}")
         else:
-            col.label(text=f"Frame: {traj.uframe}")
+            col.label(text=f"Frame: {traj._uframe}")
     else:
         col.prop(props, "frame")
     col.enabled = not props.update_with_scene

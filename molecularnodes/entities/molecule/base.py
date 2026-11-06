@@ -363,7 +363,7 @@ class Molecule(MolecularEntity):
         return self.atoms.positions * self.world_scale
 
     @property
-    def uframe(self) -> int:
+    def _uframe(self) -> int:
         """Current frame number in MDAnalysis Universe.
 
         Differs from `frame` property (Blender scene frame). Query actual trajectory frame.
@@ -375,8 +375,8 @@ class Molecule(MolecularEntity):
         """
         return self.universe.trajectory.frame
 
-    @uframe.setter
-    def uframe(self, value: int) -> None:
+    @_uframe.setter
+    def _uframe(self, value: int) -> None:
         """Set current frame in MDAnalysis Universe.
 
         Only updates if changed to avoid redundant operations.
@@ -778,7 +778,7 @@ class Molecule(MolecularEntity):
 
     def _store_extra_attributes(self) -> None:
         # TODO: enable adding of arbitrary mda.Universe attirbutes not currently applied
-        values = self.frame_manager.read_and_cache(self.uframe)
+        values = self.frame_manager.read_and_cache(self._uframe)
         self._sync_frame_attributes(values)
         values.pop("position")
         self._store_frame_attributes(values, "TRAJECTORY")
@@ -1339,10 +1339,10 @@ class Molecule(MolecularEntity):
         sources: dict[str, str] = {}
 
         # bake each requested frame, restoring the current frame afterwards
-        original_uframe = self.uframe
+        original_uframe = self._uframe
         try:
             for i, frame in enumerate(range(start, stop, step)):
-                self.uframe = frame
+                self._uframe = frame
                 obj = db.create_object(
                     vertices=self._scaled_position,
                     name=f"{self.name}_frame_{i:04d}",
@@ -1365,7 +1365,7 @@ class Molecule(MolecularEntity):
                     sources.update(dict.fromkeys(frame_values, source))
                 self._store_baked_attributes(obj, values, sources)
         finally:
-            self.uframe = original_uframe
+            self._uframe = original_uframe
 
         return frames
 
@@ -2226,9 +2226,9 @@ class Molecule(MolecularEntity):
                     f"{frame} is not within range [0, {self.universe.trajectory.n_frames - 1}]"
                 )
         else:
-            frame = self.uframe
+            frame = self._uframe
         # temporarily set trajectory frame to specified value
-        with temp_override_property(self, "uframe", frame):
+        with temp_override_property(self, "_uframe", frame):
             if selection is None:
                 # return bbox of object when no selection specified
                 return self._view_points(None)
