@@ -50,11 +50,9 @@ def _get_frame(self):
 
 
 def _set_frame(self, frame):
-    # the manual frame is stepped through subframes like the scene frame, so the
-    # last frame that maps onto the trajectory is the last universe frame expanded
-    # by the subframes. `_mapped_uframes` clamps the universe frame regardless;
-    # this keeps the value shown in the UI on the trajectory
-    last_frame = max((self.n_frames - 1) * (self.subframes + 1), 0)
+    # `_mapped_uframes` clamps the universe frame regardless; this keeps the value
+    # shown in the UI on the trajectory
+    last_frame = max(self.n_frames - 1, 0)
     if frame > last_frame:
         frame = last_frame
     self["frame"] = frame
@@ -615,7 +613,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         float,
         FloatProperty(
             name="Frame",
-            description="Manual frame of the loaded trajectory. Stepped through subframes like the scene frame, with the resolved trajectory frame shown alongside. Fractional frames interpolate between trajectory frames when Interpolate is enabled",
+            description="Manual frame of the loaded trajectory. Fractional frames interpolate between trajectory frames when Interpolate is enabled",
             default=0.0,
             min=0.0,
             step=100,
@@ -646,7 +644,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         int,
         IntProperty(
             name="Subframes",
-            description="Number of subframes to insert between frames of the loaded trajectory",
+            description="Number of subframes to insert between frames of the loaded trajectory when updating with the scene",
             default=0,
             update=_update_entities,
             min=0,

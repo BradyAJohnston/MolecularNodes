@@ -260,16 +260,20 @@ class FrameManager:
         offset = self.trajectory.offset if self.trajectory.update_with_scene else 0
         return max(frame - offset, 0)
 
+    def _playback_subframes(self) -> int:
+        """Subframes in use: a manual frame sets its fraction directly instead."""
+        return self.trajectory.subframes if self.trajectory.update_with_scene else 0
+
     def _mapped_uframes(self, frame: float) -> tuple[int, int]:
         """Map a scene or manual frame to the current and next universe frames.
 
         Applies the subframe/offset mapping and clamps to trajectory bounds for
         non-streaming trajectories.
 
-        The offset only applies when updating with the scene: it shifts where
-        playback starts on the timeline, which has no meaning for a manually
-        chosen frame. Subframes apply in both modes, so the manual frame is
-        stepped through subframes the same way the scene frame is.
+        The offset and subframes only apply when updating with the scene: they
+        place the trajectory on the timeline, which has no meaning for a manually
+        chosen frame. The manual frame is a universe frame, and its fraction is
+        how far it is towards the next one.
 
         Parameters
         ----------
@@ -284,7 +288,7 @@ class FrameManager:
         """
         uframe_current = frame_mapper(
             frame=self._playback_frame(frame),
-            subframes=self.trajectory.subframes,
+            subframes=self._playback_subframes(),
         )
         uframe_next = uframe_current + 1
 
@@ -480,7 +484,7 @@ class FrameManager:
         """
         uframe_current, uframe_next = self._mapped_uframes(frame)
 
-        t = fraction(self._playback_frame(frame), self.trajectory.subframes + 1)
+        t = fraction(self._playback_frame(frame), self._playback_subframes() + 1)
         if t > 0 and self.trajectory.interpolate:
             # Interpolate between current and next frame
             current = self.cache_mean(uframe_current)

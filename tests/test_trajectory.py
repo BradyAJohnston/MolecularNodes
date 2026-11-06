@@ -392,30 +392,22 @@ class TestTrajectory:
         assert np.allclose(traj.position, traj.frame_manager._position_at_frame(3))
 
     @pytest.mark.parametrize("interpolate", [True, False])
-    def test_manual_frame_subframes(self, universe, interpolate: bool):
-        # the manual frame steps through subframes like the scene frame does
+    @pytest.mark.parametrize("subframes", [1, 2, 4])
+    def test_manual_frame_ignores_subframes(
+        self, universe, subframes: int, interpolate: bool
+    ):
+        # subframes place the trajectory on the timeline, which has no meaning for
+        # a manually chosen frame: its fraction sets the interpolation instead
         traj = mn.entities.Molecule(universe)
         traj.update_with_scene = False
-        traj.subframes = 0
         traj.interpolate = interpolate
-        traj.frame = 0
-        verts_a = traj.position
-        traj.frame = 1
-        verts_b = traj.position
-        assert not np.allclose(verts_a, verts_b)
-
-        for subframes in [1, 2, 3, 4]:
-            frame = 1
-            fraction = frame % (subframes + 1) / (subframes + 1)
-            traj.subframes = subframes
-            traj.frame = frame
-            verts_c = traj.position
-
-            if interpolate:
-                assert not np.allclose(verts_b, verts_c)
-                assert np.allclose(verts_c, databpy.lerp(verts_a, verts_b, t=fraction))
-            else:
-                assert np.allclose(verts_a, verts_c)
+        traj.frame = 1.5
+        expected = traj.position
+        traj.subframes = subframes
+        assert np.allclose(traj.position, expected)
+        traj.frame = 2
+        assert traj.uframe == 2
+        assert np.allclose(traj.position, traj.frame_manager._position_at_frame(2))
 
     def test_manual_frame_average(self, universe):
         traj = mn.entities.Molecule(universe)
@@ -440,8 +432,8 @@ class TestTrajectory:
         assert np.allclose(traj.position, pos_2)
 
     def test_manual_frame_clamp(self, universe):
-        # the manual frame clamps to the last frame that maps onto the
-        # trajectory, which is expanded by the subframes
+        # the manual frame clamps to the last frame of the trajectory, whatever
+        # the subframes
         traj = mn.entities.Molecule(universe)
         traj.update_with_scene = False
         n_frames = universe.trajectory.n_frames
@@ -449,7 +441,7 @@ class TestTrajectory:
         assert traj.frame == n_frames - 1
         traj.subframes = 2
         traj.frame = 100
-        assert traj.frame == (n_frames - 1) * 3
+        assert traj.frame == n_frames - 1
         assert np.allclose(
             traj.position, traj.frame_manager._position_at_frame(n_frames - 1)
         )
@@ -472,16 +464,6 @@ class TestTrajectory:
         traj.interpolate = False
         traj.frame = 1.75
         assert np.allclose(traj.position, traj.frame_manager._position_at_frame(1))
-
-    def test_manual_frame_fractional_subframes(self, universe):
-        # frames are counted in subframes, so 2.5 of every 2 is universe frame 1.25
-        traj = mn.entities.Molecule(universe)
-        traj.update_with_scene = False
-        traj.subframes = 1
-        traj.frame = 2.5
-        pos_a = traj.frame_manager._position_at_frame(1)
-        pos_b = traj.frame_manager._position_at_frame(2)
-        assert np.allclose(traj.position, databpy.lerp(pos_a, pos_b, t=0.25))
 
     def test_manual_frame_fractional_clamp(self, universe):
         traj = mn.entities.Molecule(universe)
@@ -515,17 +497,23 @@ class TestTrajectory:
             traj.frame_manager._position_at_frame(0),
         )
 
-    @pytest.mark.parametrize("subframes, frame", [(0, 1.5), (0, 2.25), (1, 3), (2, 4)])
-    def test_interpolating_leaves_universe_on_frame(
-        self, universe, subframes: int, frame: float
-    ):
+    @pytest.mark.parametrize("frame", [1.5, 2.25])
+    def test_interpolating_leaves_universe_on_frame(self, universe, frame: float):
         # reading ahead to interpolate must not leave the universe on a later
         # frame, as everything else that updates on the frame reads from it
         traj = mn.entities.Molecule(universe)
         traj.update_with_scene = False
-        traj.subframes = subframes
         traj.frame = frame
-        assert traj.uframe == int(frame / (subframes + 1))
+        assert traj.uframe == int(frame)
+
+    @pytest.mark.parametrize("subframes, frame", [(1, 3), (2, 4)])
+    def test_interpolating_subframes_leaves_universe_on_frame(
+        self, universe, subframes: int, frame: int
+    ):
+        traj = mn.entities.Molecule(universe)
+        traj.subframes = subframes
+        traj.frame_manager.get_positions_at_frame(frame)
+        assert traj.uframe == frame // (subframes + 1)
 
     def test_interpolated_selection_matches_frame(self, universe):
         traj = mn.entities.Molecule(universe)

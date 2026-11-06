@@ -242,7 +242,7 @@ class Molecule(MolecularEntity):
 
     @property
     def subframes(self) -> int:
-        """Number of subframes to insert between frames of the trajectory."""
+        """Number of subframes to insert between frames when updating with the scene."""
         return self.props.subframes
 
     @subframes.setter

@@ -243,24 +243,16 @@ def layout_trajectory_playback(
         col.label(text=f"Frame: {traj.uframe}")
     else:
         col.prop(props, "frame")
-        # with subframes the manual frame is stepped through them, so show the
-        # trajectory frame it resolved to
-        if props.subframes > 0:
-            subrow = col.row()
-            subrow.label(text=f"Trajectory Frame: {traj.uframe}")
-            subrow.enabled = False
     col.enabled = not props.update_with_scene
     row.prop(props, "update_with_scene")
     row = playback.row()
     col = row.column()
     col.prop(props, "average")
-    # a manual frame is set between frames directly, so subframes are for
-    # playback with the scene
+    # subframes and the offset place the trajectory on the timeline, so they only
+    # apply when updating with the scene
     subrow = col.row()
     subrow.prop(props, "subframes")
     subrow.enabled = props.update_with_scene
-    # the offset shifts where playback starts on the timeline, so it only
-    # applies when updating with the scene
     subrow = col.row()
     subrow.prop(props, "offset")
     subrow.enabled = props.update_with_scene
