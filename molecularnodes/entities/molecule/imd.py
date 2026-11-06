@@ -63,7 +63,7 @@ class StreamingTrajectory(Molecule):
         create_object=True,
     ):
         super().__init__(universe, name=name, create_object=create_object)
-        self._last_scene_frame: Optional[int] = None
+        self._last_scene_frame: Optional[float] = None
 
     @property
     def n_frames(self) -> Optional[int]:

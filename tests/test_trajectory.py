@@ -563,6 +563,7 @@ class TestTrajectory:
         channelbag = anim_utils.action_get_channelbag_for_slot(
             animation.action, animation.action_slot
         )
+        assert channelbag is not None
         return channelbag.fcurves[0]
 
     def test_manual_frame_keyframes_not_rounded(self, universe):
@@ -576,7 +577,7 @@ class TestTrajectory:
         for point in fcurve.keyframe_points:
             point.interpolation = "LINEAR"
 
-        bpy.context.scene.frame_set(2)
+        scene().frame_set(2)
         assert traj.frame == pytest.approx(0.3)
         pos_a = traj.frame_manager._position_at_frame(0)
         pos_b = traj.frame_manager._position_at_frame(1)
@@ -586,9 +587,9 @@ class TestTrajectory:
         # an F-curve keyed on an integer property rounds, as those from when the
         # manual frame was one do, until it is updated on load
         traj = mn.entities.Molecule(universe)
-        traj.object.mn.subframes = 0
+        traj.subframes = 0
         traj.object.keyframe_insert("mn.subframes", frame=1)
-        traj.object.mn.subframes = 3
+        traj.subframes = 3
         traj.object.keyframe_insert("mn.subframes", frame=11)
         fcurve = self._frame_fcurve(traj)
         for point in fcurve.keyframe_points:
