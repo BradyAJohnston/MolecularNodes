@@ -46,7 +46,7 @@ ENTITY_ITEMS = (
 
 
 def _get_frame(self):
-    return self.get("frame", 0)
+    return float(self.get("frame", 0))
 
 
 def _set_frame(self, frame):
@@ -621,12 +621,14 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         ),
     ]
     frame: Annotated[
-        int,
-        IntProperty(
+        float,
+        FloatProperty(
             name="Frame",
-            description="Manual frame of the loaded trajectory. Stepped through subframes like the scene frame, with the resolved trajectory frame shown alongside",
-            default=0,
-            min=0,
+            description="Manual frame of the loaded trajectory. Stepped through subframes like the scene frame, with the resolved trajectory frame shown alongside. Fractional frames interpolate between trajectory frames when Interpolate is enabled",
+            default=0.0,
+            min=0.0,
+            step=100,
+            precision=2,
             set=_set_frame,
             get=_get_frame,
         ),

@@ -79,7 +79,7 @@ class StreamingTrajectory(Molecule):
         """
         return None
 
-    def _update_trajectory_positions(self, frame: int) -> dict:
+    def _update_trajectory_positions(self, frame: float) -> dict:
         """Override to handle streaming frame updates.
 
         For streaming trajectories, the requested frame number can't be seeked
@@ -90,7 +90,7 @@ class StreamingTrajectory(Molecule):
 
         Parameters
         ----------
-        frame : int
+        frame : float
             Scene frame number, only used to detect frame changes
 
         Raises

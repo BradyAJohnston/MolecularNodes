@@ -276,7 +276,7 @@ class MolecularEntity(
     def _register_with_session(self) -> None:
         bpy.context.scene.MNSession.register_entity(self)  # type: ignore
 
-    def set_frame(self, frame: int) -> None:
+    def set_frame(self, frame: float) -> None:
         """
         Update the underlying data to correspond to changes in the scene frame.
 
@@ -285,7 +285,7 @@ class MolecularEntity(
         and performing other necessary calculations.
 
         Args:
-            frame (int): The frame number to update the entity's data to.
+            frame (float): The frame number to update the entity's data to.
 
         Raises:
             NotImplementedError: If the method is not implemented by a subclass.

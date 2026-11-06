@@ -8,11 +8,13 @@ import databpy
 import MDAnalysis as mda
 import numpy as np
 import pytest
+from bpy_extras import anim_utils
 from nodebpy.nodes.geometry import SetPosition
 from numpy.testing import assert_almost_equal
 import molecularnodes as mn
 from molecularnodes.blender.registered import object_props, object_uuid
 from molecularnodes.entities import Molecule
+from molecularnodes.handlers import update_frame_fcurves
 from molecularnodes.nodes.geometry import Force, Velocity
 from molecularnodes.session import get_session
 from .constants import data_dir
@@ -451,6 +453,94 @@ class TestTrajectory:
         assert np.allclose(
             traj.position, traj.frame_manager._position_at_frame(n_frames - 1)
         )
+
+    @pytest.mark.parametrize("frame, t", [(1.25, 0.25), (1.5, 0.5), (1.75, 0.75)])
+    def test_manual_frame_fractional(self, universe, frame: float, t: float):
+        # a fractional frame interpolates without needing subframes
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        traj.subframes = 0
+        traj.frame = frame
+        assert traj.frame == frame
+        pos_a = traj.frame_manager._position_at_frame(1)
+        pos_b = traj.frame_manager._position_at_frame(2)
+        assert np.allclose(traj.position, databpy.lerp(pos_a, pos_b, t=t))
+
+    def test_manual_frame_fractional_no_interpolate(self, universe):
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        traj.interpolate = False
+        traj.frame = 1.75
+        assert np.allclose(traj.position, traj.frame_manager._position_at_frame(1))
+
+    def test_manual_frame_fractional_subframes(self, universe):
+        # frames are counted in subframes, so 2.5 of every 2 is universe frame 1.25
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        traj.subframes = 1
+        traj.frame = 2.5
+        pos_a = traj.frame_manager._position_at_frame(1)
+        pos_b = traj.frame_manager._position_at_frame(2)
+        assert np.allclose(traj.position, databpy.lerp(pos_a, pos_b, t=0.25))
+
+    def test_manual_frame_fractional_clamp(self, universe):
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        last_frame = universe.trajectory.n_frames - 1
+        traj.frame = last_frame + 0.5
+        assert traj.frame == last_frame
+        assert np.allclose(
+            traj.position, traj.frame_manager._position_at_frame(last_frame)
+        )
+
+    def test_frame_hidden_follows_universe_frame(self, universe):
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        traj.frame = 2.5
+        assert traj.props.frame_hidden == 2
+        traj.frame = 3
+        assert traj.props.frame_hidden == 3
+
+    def _frame_fcurve(self, traj) -> bpy.types.FCurve:
+        animation = traj.object.animation_data
+        channelbag = anim_utils.action_get_channelbag_for_slot(
+            animation.action, animation.action_slot
+        )
+        return channelbag.fcurves[0]
+
+    def test_manual_frame_keyframes_not_rounded(self, universe):
+        traj = mn.entities.Molecule(universe)
+        traj.update_with_scene = False
+        traj.frame = 0
+        traj.object.keyframe_insert("mn.frame", frame=1)
+        traj.frame = 3
+        traj.object.keyframe_insert("mn.frame", frame=11)
+        fcurve = self._frame_fcurve(traj)
+        for point in fcurve.keyframe_points:
+            point.interpolation = "LINEAR"
+
+        bpy.context.scene.frame_set(2)
+        assert traj.frame == pytest.approx(0.3)
+        pos_a = traj.frame_manager._position_at_frame(0)
+        pos_b = traj.frame_manager._position_at_frame(1)
+        assert np.allclose(traj.position, databpy.lerp(pos_a, pos_b, t=traj.frame))
+
+    def test_update_frame_fcurves(self, universe):
+        # an F-curve keyed on an integer property rounds, as those from when the
+        # manual frame was one do, until it is updated on load
+        traj = mn.entities.Molecule(universe)
+        traj.object.mn.subframes = 0
+        traj.object.keyframe_insert("mn.subframes", frame=1)
+        traj.object.mn.subframes = 3
+        traj.object.keyframe_insert("mn.subframes", frame=11)
+        fcurve = self._frame_fcurve(traj)
+        for point in fcurve.keyframe_points:
+            point.interpolation = "LINEAR"
+        fcurve.data_path = "mn.frame"
+        assert fcurve.evaluate(2) == 0
+
+        update_frame_fcurves("")
+        assert fcurve.evaluate(2) == pytest.approx(0.3)
 
     def test_gui_selection_add_remove(self, universe):
         traj = mn.Molecule(universe)

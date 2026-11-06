@@ -255,7 +255,7 @@ class FrameManager:
             )
         return frames_to_cache
 
-    def _mapped_uframes(self, frame: int) -> tuple[int, int]:
+    def _mapped_uframes(self, frame: float) -> tuple[int, int]:
         """Map a scene or manual frame to the current and next universe frames.
 
         Applies the subframe/offset mapping, clamps to trajectory bounds for
@@ -268,7 +268,7 @@ class FrameManager:
 
         Parameters
         ----------
-        frame : int
+        frame : float
             Scene frame number, or the manual frame when not updating with the
             scene
 
@@ -293,7 +293,7 @@ class FrameManager:
 
         # Update the frame_hidden property for the UI
         try:
-            self.trajectory._frame = uframe_current
+            self.trajectory.props.frame_hidden = uframe_current
         except AttributeError:
             # Silently ignore if we can't write to Blender property
             pass
@@ -462,7 +462,7 @@ class FrameManager:
         """Get mean positions from cached frames, see `cache_mean`."""
         return self.cache_mean(frame)["position"]
 
-    def get_values_at_frame(self, frame: int) -> dict[str, np.ndarray]:
+    def get_values_at_frame(self, frame: float) -> dict[str, np.ndarray]:
         """Get per-frame attributes for a given frame with all processing applied.
 
         Main entry point for frame updates. Handles frame mapping, interpolation,
@@ -472,7 +472,7 @@ class FrameManager:
 
         Parameters
         ----------
-        frame : int
+        frame : float
             Scene frame number, or the manual frame when not updating with the
             scene
 
@@ -483,11 +483,11 @@ class FrameManager:
         """
         uframe_current, uframe_next = self._mapped_uframes(frame)
 
-        if self.trajectory.subframes > 0 and self.trajectory.interpolate:
+        t = fraction(frame, self.trajectory.subframes + 1)
+        if t > 0 and self.trajectory.interpolate:
             # Interpolate between current and next frame
             current = self.cache_mean(uframe_current)
             after = self.cache_mean(uframe_next)
-            t = fraction(frame, self.trajectory.subframes + 1)
             values = {}
             for name, value in current.items():
                 # integer and boolean values are not interpolated
@@ -512,6 +512,6 @@ class FrameManager:
             # Just return current values
             return self.read_and_cache(uframe_current)
 
-    def get_positions_at_frame(self, frame: int) -> np.ndarray:
+    def get_positions_at_frame(self, frame: float) -> np.ndarray:
         """Get positions for a given frame, see `get_values_at_frame`."""
         return self.get_values_at_frame(frame)["position"]
