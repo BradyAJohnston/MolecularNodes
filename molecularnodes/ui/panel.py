@@ -254,7 +254,11 @@ def layout_trajectory_playback(
     row = playback.row()
     col = row.column()
     col.prop(props, "average")
-    col.prop(props, "subframes")
+    # a manual frame is set between frames directly, so subframes are for
+    # playback with the scene
+    subrow = col.row()
+    subrow.prop(props, "subframes")
+    subrow.enabled = props.update_with_scene
     # the offset shifts where playback starts on the timeline, so it only
     # applies when updating with the scene
     subrow = col.row()
