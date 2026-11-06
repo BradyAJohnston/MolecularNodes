@@ -143,7 +143,7 @@ class FrameManager:
         np.ndarray
             Scaled atom positions
         """
-        self.trajectory.uframe = frame
+        self.trajectory._uframe = frame
         return self.trajectory._scaled_position
 
     def _box_at_frame(self, frame: Optional[int]) -> Optional[np.ndarray]:
@@ -455,7 +455,7 @@ class FrameManager:
         # cache updates the universe sits on whichever frame happened to be a
         # cache miss, and in an NPT box a borderline (half-box) correction
         # would flip between evaluations of the same frame
-        self.trajectory.uframe = frame
+        self.trajectory._uframe = frame
 
         # average exactly the window for this frame — the cache can hold other
         # frames (interpolation look-ahead, a previous window), which must not
@@ -532,7 +532,7 @@ class FrameManager:
                 values[name] = db.lerp(value, value_next, t=t)
             # reading ahead moved the universe past this frame, and selections
             # and calculations are computed from where it is left
-            self.trajectory.uframe = uframe_current
+            self.trajectory._uframe = uframe_current
             return values
         elif self.trajectory.average > 0:
             # Return mean values for cached frames

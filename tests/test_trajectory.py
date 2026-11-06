@@ -114,7 +114,7 @@ class TestTrajectory:
             assert len(_mesh(obj).vertices) == n_atoms
 
         # a baked frame's positions match the universe at that frame
-        traj.uframe = 2
+        traj._uframe = 2
         expected = traj._scaled_position
         got = databpy.named_attribute(
             frames.objects[f"{traj.name}_frame_0002"], "position"
@@ -141,13 +141,13 @@ class TestTrajectory:
             updating=False,
         )
         scene().frame_set(1)
-        traj.uframe = 0
+        traj._uframe = 0
         frame_number = traj.named_attribute("frame_number").copy()
 
         frames = traj.frames_to_collection()
         for frame in range(traj.universe.trajectory.n_frames):
             obj = frames.objects[f"{traj.name}_frame_{frame:04d}"]
-            traj.uframe = frame
+            traj._uframe = frame
             # selections and updating calculations are evaluated at the frame
             assert np.array_equal(
                 databpy.named_attribute(obj, "near"),
@@ -406,7 +406,7 @@ class TestTrajectory:
         traj.subframes = subframes
         assert np.allclose(traj.position, expected)
         traj.frame = 2
-        assert traj.uframe == 2
+        assert traj._uframe == 2
         assert np.allclose(traj.position, traj.frame_manager._position_at_frame(2))
 
     def test_manual_frame_average(self, universe):
@@ -536,7 +536,7 @@ class TestTrajectory:
         traj = mn.entities.Molecule(universe)
         traj.update_with_scene = False
         traj.frame = frame
-        assert traj.uframe == int(frame)
+        assert traj._uframe == int(frame)
 
     @pytest.mark.parametrize("subframes, frame", [(1, 3), (2, 4)])
     def test_interpolating_subframes_leaves_universe_on_frame(
@@ -545,7 +545,7 @@ class TestTrajectory:
         traj = mn.entities.Molecule(universe)
         traj.subframes = subframes
         traj.frame_manager.get_positions_at_frame(frame)
-        assert traj.uframe == frame // (subframes + 1)
+        assert traj._uframe == frame // (subframes + 1)
 
     def test_interpolated_selection_matches_frame(self, universe):
         traj = mn.entities.Molecule(universe)
@@ -769,7 +769,7 @@ class TestTrajectory:
         )
         traj.calculations["center_of_mass"] = dummy_calculation_for_pickle_test
         # Change frame to check frame restore
-        traj.uframe = 1
+        traj._uframe = 1
 
         with tempfile.NamedTemporaryFile() as tmp_file:
             try:
@@ -1236,7 +1236,7 @@ class TestTrajectory:
         shown_vel = {1: 1, 2: 1, 3: 3, 4: 3, 0: 3}
         for frame in [1, 2, 3, 4, 0]:
             scene().frame_set(frame)
-            assert traj.uframe == frame
+            assert traj._uframe == frame
             assert np.allclose(
                 traj.named_attribute("velocity"),
                 vel[shown_vel[frame]] * traj.world_scale,
