@@ -61,7 +61,7 @@ title: "Changelog"
 - `ty` type checking runs in CI alongside ruff. Properties registered on Blender types are read through typed accessors in `molecularnodes.blender.registered`.
 
 ## Fixed
-- Reloading a molecule or density, with Reload in the Molecular Nodes panel or `reload_entity()`, lost its annotations, and reloading a CellPack lost its instance collection. Multi-file trajectories reloaded only their first file.
+- Reloading a molecule or density, with Reload in the Molecular Nodes panel or `reload_entity()`, lost its annotations, and reloading a CellPack lost its instance collection. Multi-file trajectories reloaded only their first file. A structure fetched by its code reloads from the file it was downloaded to when that is still there, rather than downloading it again.
 - The trajectory frame shown in the panel now updates, it stayed at 0. With interpolated subframes it shows the position between frames, such as `1.50`.
 - Trajectories with both `Subframes` and an `Offset` no longer jump backwards during playback: interpolation ignored the offset.
 - Selections and calculations that update on frame changes used a later frame than the one shown while interpolating between frames.

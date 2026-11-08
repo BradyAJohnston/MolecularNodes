@@ -32,14 +32,17 @@ def _reload_molecule(obj: bpy.types.Object) -> Molecule:
     # one parsed from a structure file or fetched records filepath/code instead
     if mn.filepath_topology:
         return _reload_trajectory(obj)
-    if mn.code:
+    # a fetched structure records the file it was downloaded to, which is read
+    # when it is still there rather than downloading the code again
+    local = path_resolve(mn.filepath) if mn.filepath else None
+    if local is not None and (local.exists() or not mn.code):
+        file_path = local
+    elif mn.code:
         file_path = StructureDownloader().download(
             code=mn.code, format="bcif", database=mn.database or "rcsb"
         )
         # binary CIF is never downloaded as text
         assert isinstance(file_path, (Path, BytesIO))
-    elif mn.filepath:
-        file_path = path_resolve(mn.filepath)
     else:
         raise ValueError("No source file or PDB code recorded for this molecule")
     reader = read_structure(file_path, data_block=mn.data_block or None)
