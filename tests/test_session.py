@@ -270,7 +270,7 @@ def test_session_roundtrip_keeps_annotations(tmp_path):
     session = save_and_reopen(tmp_path / "test.blend")
 
     restored = session.get(mol.uuid)
-    assert restored is not None
+    assert isinstance(restored, mn.Molecule)
     assert len(restored.annotations) == 1
 
 

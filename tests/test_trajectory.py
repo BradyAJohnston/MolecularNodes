@@ -973,8 +973,9 @@ class TestTrajectory:
         u = mda.Universe(
             data_dir / "md_ppr/box.gro", data_dir / "md_ppr/first_5_frames.xtc"
         )
-        uuid = mn.Molecule(u).uuid
-        mn.session.get_session().get(uuid).calculations.dssp(updating=True)
+        t = mn.Molecule(u)
+        t.calculations.dssp(updating=True)
+        uuid = t.uuid
         blend_path = tmp_path / "test.blend"
         bpy.ops.wm.save_as_mainfile(filepath=str(blend_path))
         bpy.ops.wm.open_mainfile(filepath=str(blend_path))

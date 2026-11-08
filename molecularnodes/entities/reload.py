@@ -125,7 +125,10 @@ def _instance_collection(obj: bpy.types.Object) -> bpy.types.Collection | None:
             continue
         for node in mod.node_group.nodes:
             for socket in node.inputs:
-                if socket.type == "COLLECTION" and socket.default_value is not None:
+                if (
+                    isinstance(socket, bpy.types.NodeSocketCollection)
+                    and socket.default_value is not None
+                ):
                     return socket.default_value
     return None
 
@@ -211,9 +214,12 @@ def restore_entity(obj: bpy.types.Object) -> MolecularEntity:
     uuid = object_uuid(obj)
     entity = reload_entity(obj)
     if uuid and entity.uuid != uuid:
-        session = scene_session(bpy.context.scene)
+        scene = bpy.context.scene
+        assert scene is not None
+        session = scene_session(scene)
         session.entities.pop(entity.uuid, None)
         entity._uuid = uuid
         entity.object = obj
-        session.register_entity(entity)
+        # every reloader returns a Molecule, Ensemble or Density
+        session.register_entity(entity)  # ty: ignore[invalid-argument-type]
     return entity
