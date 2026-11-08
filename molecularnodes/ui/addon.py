@@ -19,7 +19,7 @@ from bpy.app.handlers import (
     load_pre,
     persistent,
     render_pre,
-    save_post,
+    save_pre,
 )
 from bpy.props import CollectionProperty, PointerProperty
 from .. import assets, session
@@ -69,7 +69,7 @@ def register():
     bpy.types.VIEW3D_MT_object_context_menu.append(panel.pt_object_context)
     bpy.types.VIEW3D_MT_add.append(panel.add_menu_options)
 
-    save_post.append(session._pickle)
+    save_pre.append(session._save_pre)
     load_post.append(session._load)
     load_post.append(update_frame_fcurves)
     load_pre.append(session._remove_draw_handlers)
@@ -120,7 +120,7 @@ def unregister():
     bpy.types.VIEW3D_MT_object_context_menu.remove(panel.pt_object_context)
     bpy.types.VIEW3D_MT_add.remove(panel.add_menu_options)
 
-    save_post.remove(session._pickle)
+    save_pre.remove(session._save_pre)
     load_post.remove(session._load)
     load_post.remove(update_frame_fcurves)
     load_pre.remove(session._remove_draw_handlers)

@@ -701,6 +701,12 @@ class Molecule(MolecularEntity):
             self.props.filepath_trajectory = str(
                 path_resolve(self.universe.trajectory.filename)
             )
+        # multi-file universes (ChainReader) list every coordinate file in
+        # `filenames`, while `filename` only holds the first one
+        filenames = getattr(self.universe.trajectory, "filenames", None)
+        self.props.filepaths_trajectory = (
+            [str(path_resolve(f)) for f in filenames] if filenames is not None else None
+        )
 
     def reset_playback(self) -> None:
         """Set the playback settings to their default values"""

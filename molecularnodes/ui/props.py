@@ -744,6 +744,21 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
             default="",
         ),
     ]
+    internal_filepaths_trajectory: Annotated[
+        str,
+        StringProperty(
+            name="Trajectory Files",
+            description="Every coordinate file of a multi-file trajectory, used to reload it",
+            default="",
+            options={"HIDDEN"},
+        ),
+    ]
+
+    #: Every coordinate file of a multi-file trajectory, stored as JSON;
+    #: `filepath_trajectory` only holds the first
+    filepaths_trajectory = JSONProperty[list[str]](
+        "internal_filepaths_trajectory", list
+    )
     dssp: Annotated[DSSPProperties, PointerProperty(type=DSSPProperties)]
     hbonds: Annotated[HBondProperties, PointerProperty(type=HBondProperties)]
 

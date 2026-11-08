@@ -1,6 +1,5 @@
-import pickle as pk
+import os
 import warnings
-from contextlib import chdir
 from pathlib import Path
 from typing import Dict, Union
 import bpy
@@ -8,100 +7,72 @@ from bpy.app.handlers import persistent
 from bpy.props import StringProperty
 from bpy.types import Context
 from databpy.object import LinkedObjectError, get_from_uuid
-from .blender.registered import object_uuid, scene_session
+from .blender.registered import object_props, object_uuid, scene_session
 from .entities import Molecule
 from .entities.density.base import Density
 from .entities.ensemble.base import Ensemble
-from .entities.reload import can_reload, reload_entity
+from .entities.reload import can_reload, reload_entity, restore_entity
+
+# the source paths recorded on an entity object, which saving makes relative to
+# the .blend so that a project folder can be moved or shared as a whole
+_PATH_PROPS = ("filepath", "filepath_topology", "filepath_trajectory")
 
 
-def trim(dictionary: dict):
-    """Drop entities whose Blender object no longer exists.
+def _relative_to(path: str, folder: Path) -> str:
+    """``path`` as a Blender-relative ``//`` path from ``folder``.
 
-    ``.object`` raises ``LinkedObjectError`` rather than returning ``None`` once
-    the object is gone, so this has to catch as well as test - otherwise a single
-    entity deleted from the outliner takes the whole session save down with it,
-    and every other entity in the file silently loses its state.
+    The path is returned unchanged when it is empty, or when no relative path to
+    it exists (a different drive on Windows).
     """
-    dic = dictionary.copy()
-    for key in list(dic.keys()):
-        try:
-            if dic[key].object is None:
-                dic.pop(key)
-        except LinkedObjectError:
-            dic.pop(key)
-    return dic
+    if not path:
+        return path
+    try:
+        relative = os.path.relpath(bpy.path.abspath(path), folder)
+    except ValueError:
+        return path
+    return "//" + Path(relative).as_posix()
 
 
-def _has_ondisk_trajectory(traj: Molecule) -> bool:
-    """Whether a trajectory is backed by a relocatable on-disk trajectory file.
-
-    Streaming (IMD) trajectories and in-memory universes (e.g. biotite-converted
-    molecules, whose ``filename`` is a ``BiotiteWrapper`` or ``None``) have no
-    on-disk trajectory file whose path can be made relative/absolute.
-    """
-    filename = traj.universe.trajectory.filename
-    if not isinstance(filename, (str, Path)):
-        return False
-    return not str(filename).startswith("imd://")
-
-
-def _remap_trajectory_paths(trajectories: Dict[str, Molecule], remap) -> None:
-    for key, traj in trajectories.items():
-        if not _has_ondisk_trajectory(traj):
+def _make_paths_relative(folder: Path) -> None:
+    """Make the source paths on every entity object relative to ``folder``."""
+    for obj in bpy.data.objects:
+        # linked objects can't be edited, and their paths are relative to
+        # their own library file
+        if obj.library is not None:
             continue
-        # multi-file universes (ChainReader) list every coordinate file in
-        # `filenames`, while `filename` only holds the first one
-        filenames = getattr(traj.universe.trajectory, "filenames", None)
-        # save linked universe frame
-        uframe = traj._uframe
-        previous = traj.universe.trajectory
-        if filenames is not None:
-            traj.universe.load_new([remap(f) for f in filenames])
-        else:
-            # keep the current reader class: formats that were loaded with an
-            # explicit reader (e.g. OXDNAReader for .dat files) can't be
-            # re-inferred from the file extension
-            traj.universe.load_new(
-                remap(traj.universe.trajectory.filename),
-                format=type(traj.universe.trajectory),
+        mn = object_props(obj)
+        if mn.entity_type == "None":
+            continue
+        for name in _PATH_PROPS:
+            setattr(mn, name, _relative_to(getattr(mn, name), folder))
+        filepaths = mn.filepaths_trajectory
+        if filepaths:
+            mn.filepaths_trajectory = [_relative_to(f, folder) for f in filepaths]
+
+
+def _restore_entities() -> None:
+    """Rebuild the session entity of every entity object in the file.
+
+    Everything needed to rebuild an entity is recorded on its object, so each one
+    is reloaded from its source files (or PDB code) and linked back to the object
+    under the uuid it already has. One entity failing to reload doesn't stop the
+    rest.
+    """
+    for obj in bpy.data.objects:
+        if obj.library is not None or not can_reload(obj):
+            continue
+        try:
+            restore_entity(obj)
+        except Exception as e:
+            warnings.warn(
+                f"Could not restore `{obj.name}` from its source files, so it "
+                "won't update with the scene. Once its source files are "
+                "available, select it and use Reload in the Molecular Nodes "
+                f"panel to relink it. {e}"
             )
-        # restore linked universe frame
-        traj._uframe = uframe
-        traj._save_filepaths_on_object()
-        # close the replaced reader's files, which an analysis such as DSSP can
-        # otherwise keep open
-        previous.close()
-
-
-def _make_trajectory_paths_relative(trajectories: Dict[str, Molecule]) -> None:
-    _remap_trajectory_paths(trajectories, _make_path_relative)
-
-
-def _make_trajectory_paths_absolute(trajectories: Dict[str, Molecule]) -> None:
-    _remap_trajectory_paths(trajectories, _make_path_absolute)
-
-
-def _make_path_relative(filepath):
-    "Take a path and make it relative"
-    try:
-        return Path(filepath).relative_to(Path.cwd(), walk_up=True)
-    except ValueError:
-        return filepath
-
-
-def _make_path_absolute(filepath):
-    "Take a path and make it absolute"
-    try:
-        return Path(filepath).resolve()
-    except ValueError:
-        return filepath
 
 
 class MNSession:
-    # set only on the stash written by `pickle()`: uuid -> (name, pickled entity)
-    _pickled_entities: dict[str, tuple[str, bytes]]
-
     def __init__(self) -> None:
         self.entities: Dict[str, Union[Molecule, Ensemble, Density]] = {}
 
@@ -156,87 +127,6 @@ class MNSession:
     def __repr__(self) -> str:
         return f"MNSession with {len(self.molecules)} molecules and {len(self.ensembles)} ensembles."
 
-    def pickle(self, filepath) -> None:
-        pickle_path = self.stashpath(filepath)
-
-        self.entities = trim(self.entities)
-
-        # don't save anything if there is nothing to save
-        if self.n_items == 0:
-            return None
-
-        # pickle each entity on its own, so that one bad entity - either failing to
-        # save now or failing to restore on load - doesn't lose the session state
-        # for everything else in the scene
-        pickled = {}
-        _make_trajectory_paths_relative(self.molecules)
-        try:
-            for uuid, entity in self.entities.items():
-                try:
-                    pickled[uuid] = (entity.name, pk.dumps(entity))
-                except Exception as e:
-                    warnings.warn(
-                        f"Not saving `{entity.name}` with the session, "
-                        f"as it cannot be serialized: {e}"
-                    )
-        finally:
-            _make_trajectory_paths_absolute(self.molecules)
-        if len(pickled) == 0:
-            return None
-
-        # `entities` stays empty so older versions load the file as an empty session
-        stash = MNSession()
-        stash._pickled_entities = pickled
-        # dump to a temporary file and swap it into place, so that a failed dump
-        # can't leave a truncated session file next to the .blend
-        temp_path = pickle_path.with_name(f"{pickle_path.name}.tmp")
-        try:
-            with open(temp_path, "wb") as f:
-                pk.dump(stash, f)
-            temp_path.replace(pickle_path)
-        finally:
-            temp_path.unlink(missing_ok=True)
-
-        print(f"Saved session to: {pickle_path}")
-
-    def load(self, filepath) -> None:
-        pickle_path = self.stashpath(filepath)
-        if not pickle_path.exists():
-            raise FileNotFoundError(f"MNSession file `{pickle_path}` not found")
-        with open(pickle_path, "rb") as f:
-            session = pk.load(f)
-
-        if hasattr(session, "_pickled_entities"):
-            for name, data in session._pickled_entities.values():
-                try:
-                    self.register_entity(pk.loads(data))
-                except Exception as e:
-                    warnings.warn(
-                        f"Could not restore `{name}` from the saved session, so it "
-                        "won't update with the scene. Once its source files are "
-                        "available, select it and use Reload in the Molecular Nodes "
-                        f"panel to relink it. {e}"
-                    )
-        # TODO: clear up in later versions
-        # this handles reloading sessions saved before entities were pickled
-        # individually, or which don't have the `entities` attribute
-        elif hasattr(session, "entities"):
-            for item in session.entities.values():
-                self.register_entity(item)
-        else:
-            for mol in session.molecules.values():
-                self.register_entity(mol)
-
-            for traj in session.trajectories.values():
-                self.register_entity(traj)
-
-            for ens in session.ensembles.values():
-                self.register_entity(ens)
-
-        _make_trajectory_paths_absolute(self.molecules)
-
-        print(f"Loaded a MNSession from: {pickle_path}")
-
     def remove_draw_handlers(self) -> None:
         for e in self.entities.values():
             annotations = getattr(e, "annotations", None)
@@ -249,9 +139,6 @@ class MNSession:
             annotations = getattr(e, "annotations", None)
             if annotations is not None and annotations.visible:
                 annotations._draw_handler_add()
-
-    def stashpath(self, filepath) -> Path:
-        return Path(f"{filepath}.MNSession")
 
     def clear(self) -> None:
         """Remove references to all molecules, trajectories and ensembles."""
@@ -297,35 +184,19 @@ def get_entity(context: Context | None = None) -> Molecule | Ensemble:
 
 
 @persistent
-def _pickle(filepath) -> None:
-    with chdir(Path(filepath).parent):
-        get_session().pickle(filepath)
+def _save_pre(filepath: str) -> None:
+    """Make entity source paths relative to the .blend about to be written."""
+    _make_paths_relative(Path(filepath).parent)
 
 
 @persistent
-def _load(filepath: str, printing: str = "quiet") -> None:
-    """
-    Load a session from the specified file path.
+def _load(filepath: str) -> None:
+    """Rebuild the session entities of the file that was just opened.
 
-    This function attempts to load a session from the given file path using the
-    `get_session().load(filepath)` method. If the file path is empty, the function
-    returns immediately without attempting to load anything. If the file is not found,
-    it handles the `FileNotFoundError` exception and optionally prints a message
-    based on the `printing` parameter.
-
-    Args:
-        filepath (str): The path to the file from which to load the session. If this
-            is an empty string, the function will return without doing anything.
-        printing (str, optional): Controls the verbosity of the function. If set to
-            "verbose", a message will be printed when the file is not found. Defaults
-            to "quiet".
-
-    Returns:
-        None: This function does not return any value.
-
-    Raises:
-        FileNotFoundError: If the file specified by `filepath` does not exist and
-            `printing` is set to "verbose", a message will be printed.
+    The entities are rebuilt from what is recorded on their objects. A
+    ``.MNSession`` file saved next to the .blend by older versions is never read:
+    it is a pickle, and unpickling a file that came with a downloaded .blend
+    could run arbitrary code.
     """
     # the objects belonging to the file we just closed are gone, so drop the
     # entities that pointed at them before registering this file's own -
@@ -333,18 +204,17 @@ def _load(filepath: str, printing: str = "quiet") -> None:
     session = get_session()
     session.prune()
 
-    # the file hasn't been saved or we are opening a fresh file, so don't
-    # attempt to load anything
+    # the file hasn't been saved or we are opening a fresh file, so there is
+    # nothing to restore
     if filepath == "":
         return None
-    try:
-        with chdir(Path(filepath).parent):
-            session.load(filepath)
-    except FileNotFoundError:
-        if printing == "verbose":
-            print("No MNSession found to load for this .blend file.")
-        else:
-            pass
+    _restore_entities()
+    if Path(f"{filepath}.MNSession").exists():
+        print(
+            f"Ignoring `{Path(filepath).name}.MNSession`: Molecular Nodes no longer "
+            "reads these files, and rebuilds entities from their source files "
+            "instead. It can be deleted."
+        )
 
 
 @persistent

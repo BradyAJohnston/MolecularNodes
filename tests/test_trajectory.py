@@ -697,7 +697,6 @@ class TestTrajectory:
 
         filepath = str(tmp_path / "test.blend")
 
-        assert not os.path.exists(session.stashpath(filepath))
         try:
             bpy.ops.wm.save_as_mainfile(filepath=filepath)
         except Exception as e:
@@ -707,7 +706,8 @@ class TestTrajectory:
                 raise
 
         assert os.path.exists(filepath)
-        assert os.path.exists(session.stashpath(filepath))
+        # the session is stored on the objects, not in a file next to the .blend
+        assert not os.path.exists(f"{filepath}.MNSession")
         # Rewind the trajectory to force a reopen of file by the reader
         # Fails if the trajectory paths aren't converted back to abs paths
         traj.universe.trajectory.rewind()
@@ -968,17 +968,18 @@ class TestTrajectory:
         assert "selection_0" not in shown("TRAJECTORY")
 
     def test_dssp_after_session_save(self, tmp_path):
-        # saving the session replaces the universe's trajectory reader; DSSP
-        # reads frames through the new one and the replaced reader is closed,
-        # so it doesn't hold the trajectory file open
+        # reopening the file rebuilds the molecule with a new universe, and DSSP
+        # reads frames through its trajectory reader
         u = mda.Universe(
             data_dir / "md_ppr/box.gro", data_dir / "md_ppr/first_5_frames.xtc"
         )
-        t = mn.Molecule(u)
-        t.calculations.dssp(updating=True)
-        reader = t.universe.trajectory
-        mn.session.get_session().pickle(tmp_path / "test.blend")
-        assert t.universe.trajectory is not reader
+        uuid = mn.Molecule(u).uuid
+        mn.session.get_session().get(uuid).calculations.dssp(updating=True)
+        blend_path = tmp_path / "test.blend"
+        bpy.ops.wm.save_as_mainfile(filepath=str(blend_path))
+        bpy.ops.wm.open_mainfile(filepath=str(blend_path))
+        t = mn.session.get_session().get(uuid)
+        assert isinstance(t, mn.Molecule)
 
         for frame in [2, 3]:
             scene().frame_set(frame)

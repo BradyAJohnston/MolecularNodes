@@ -13,7 +13,7 @@ from io import BytesIO
 from pathlib import Path
 import bpy
 import MDAnalysis as mda
-from ..blender.registered import object_props
+from ..blender.registered import object_props, object_uuid, scene_session
 from ..blender.utils import path_resolve, resolve_file_path
 from ..converters import universe_from_atoms
 from ..download import StructureDownloader
@@ -63,8 +63,16 @@ def _reload_trajectory(obj: bpy.types.Object) -> Molecule:
         )
         entity = OXDNA(universe, create_object=False)
     elif mn.filepath_trajectory:
-        path_traj = resolve_file_path(mn.filepath_trajectory, "Trajectory file")
-        entity = Molecule.load(path_topo, path_traj, create_object=False)
+        # a multi-file trajectory records every coordinate file, not just the first
+        paths_traj = [
+            resolve_file_path(path, "Trajectory file")
+            for path in mn.filepaths_trajectory or [mn.filepath_trajectory]
+        ]
+        entity = Molecule.load(
+            path_topo,
+            paths_traj if len(paths_traj) > 1 else paths_traj[0],
+            create_object=False,
+        )
     else:
         # a topology-only universe (e.g. a `.gro` with its own coordinates)
         entity = Molecule(mda.Universe(path_topo), create_object=False)
@@ -86,7 +94,12 @@ def _reload_density(obj: bpy.types.Object) -> Grids:
 
 def _reload_ensemble_star(obj: bpy.types.Object) -> StarFile:
     # StarFile records its source path in the `mn.filepath` property
-    return StarFile.from_blender_object(obj)
+    mn = object_props(obj)
+    if not mn.filepath:
+        raise ValueError("No source file recorded for this ensemble")
+    entity = StarFile(path_resolve(mn.filepath))
+    entity.object = obj
+    return entity
 
 
 def _reload_ensemble_cellpack(obj: bpy.types.Object) -> CellPack:
@@ -95,7 +108,26 @@ def _reload_ensemble_cellpack(obj: bpy.types.Object) -> CellPack:
         raise ValueError("No source file recorded for this ensemble")
     entity = CellPack(path_resolve(mn.filepath))
     entity.object = obj
+    collection = _instance_collection(obj)
+    if collection is not None:
+        entity.instance_collection = collection
     return entity
+
+
+def _instance_collection(obj: bpy.types.Object) -> bpy.types.Collection | None:
+    """The collection of instances an ensemble object's node tree instances.
+
+    The ensemble only remembers the collection by name in Python, but its tree
+    references the collection directly, which survives the collection being renamed.
+    """
+    for mod in obj.modifiers:
+        if not isinstance(mod, bpy.types.NodesModifier) or mod.node_group is None:
+            continue
+        for node in mod.node_group.nodes:
+            for socket in node.inputs:
+                if socket.type == "COLLECTION" and socket.default_value is not None:
+                    return socket.default_value
+    return None
 
 
 # streaming trajectories are backed by a live IMD connection with no source file,
@@ -110,8 +142,17 @@ _RELOADERS = {
 
 
 def can_reload(obj: bpy.types.Object) -> bool:
-    """Whether ``obj`` is an entity object that can be reloaded into the session."""
-    return obj is not None and object_props(obj).entity_type in _RELOADERS
+    """Whether ``obj`` is an entity object that can be reloaded into the session.
+
+    The object has to record a source to reload from: the objects a CellPack
+    instances share its entity type, but have no source of their own.
+    """
+    if obj is None:
+        return False
+    mn = object_props(obj)
+    return mn.entity_type in _RELOADERS and bool(
+        mn.filepath or mn.code or mn.filepath_topology
+    )
 
 
 def reload_entity(obj: bpy.types.Object) -> MolecularEntity:
@@ -138,4 +179,41 @@ def reload_entity(obj: bpy.types.Object) -> MolecularEntity:
     reloader = _RELOADERS.get(entity_type)
     if reloader is None:
         raise ValueError(f"Cannot reload an object with entity type '{entity_type}'")
-    return reloader(obj)
+    entity = reloader(obj)
+    # the annotation manager is created before the entity is linked to its
+    # object, so it couldn't read the annotations stored on the object then
+    annotations = getattr(entity, "annotations", None)
+    if annotations is not None and len(annotations) == 0:
+        annotations._restore_annotation_instances_from_props()
+    return entity
+
+
+def restore_entity(obj: bpy.types.Object) -> MolecularEntity:
+    """
+    Rebuild the session entity of ``obj`` after a file was opened, keeping its uuid.
+
+    Unlike [](`~reload_entity`), which gives the object a new uuid so that an entity
+    still held from before can't take the object back, the entity keeps the uuid
+    the object was saved with. Nothing from before the file was opened can still
+    hold it, and anything that looks the entity up by that uuid - a script, or the
+    session - keeps finding it.
+
+    Parameters
+    ----------
+    obj : bpy.types.Object
+        The entity object to restore, using the source recorded on ``obj.mn``.
+
+    Returns
+    -------
+    MolecularEntity
+        The restored entity, registered in the session under the object's uuid.
+    """
+    uuid = object_uuid(obj)
+    entity = reload_entity(obj)
+    if uuid and entity.uuid != uuid:
+        session = scene_session(bpy.context.scene)
+        session.entities.pop(entity.uuid, None)
+        entity._uuid = uuid
+        entity.object = obj
+        session.register_entity(entity)
+    return entity

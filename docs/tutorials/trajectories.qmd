@@ -24,8 +24,8 @@ The imported structure will have an object created that will act as the topology
 ::: callout-warning
 ## Saving the File
 
-When saving the `.blend` file, a corresponding `.MNSession` file will be saved next to your Blender file.
-When reloading the file, the `MDAnalysis.Universe` will be reloaded from this file, so ensure you keep it next to the `.blend` file.
+The `.blend` file records where the topology and trajectory files are, and opening it reloads the `MDAnalysis.Universe` from them.
+Saving makes those paths relative to the `.blend`, so keep the files in the same place relative to it: a project folder can be moved or shared as a whole.
 :::
 
 ## MD Trajectory Panel

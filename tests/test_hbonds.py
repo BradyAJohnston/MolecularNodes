@@ -160,13 +160,17 @@ def test_hbonds_cutoff_properties(fetch):
 
 
 def test_hbonds_after_session_save(universe, tmp_path):
-    # saving the session replaces the universe's trajectory reader, and the
-    # analysis reads frames through the new one
+    # reopening the file rebuilds the molecule with a new universe, and the
+    # analysis reads frames through its trajectory reader
     mol = mn.Molecule(universe)
+    mol.calculations.hbonds()
+    uuid = mol.uuid
+    blend_path = tmp_path / "test.blend"
+    bpy.ops.wm.save_as_mainfile(filepath=str(blend_path))
+    bpy.ops.wm.open_mainfile(filepath=str(blend_path))
+    mol = mn.session.get_session().get(uuid)
+    assert isinstance(mol, mn.Molecule)
     obj = mol.calculations.hbonds().object
-    reader = mol.universe.trajectory
-    mn.session.get_session().pickle(tmp_path / "test.blend")
-    assert mol.universe.trajectory is not reader
     u = mda.Universe(
         data_dir / "md_ppr/box.gro", data_dir / "md_ppr/first_5_frames.xtc"
     )
