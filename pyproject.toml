@@ -7,7 +7,7 @@ license = "GPL-3.0-or-later"
 dependencies = [
     "databpy>=0.12.0",
     "mdanalysis>=2.11",
-    "biotite>=1.7.1,<2",
+    "biotite>=1.7.1,<3",
     "mrcfile",
     "starfile",
     "imdclient>=0.2.3",
