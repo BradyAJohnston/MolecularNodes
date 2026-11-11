@@ -101,7 +101,10 @@ class PDBXReader(ReaderBase[pdbx.CIFFile | pdbx.BinaryCIFFile]):
         try:
             self._ensure_group_pdb()
             array = pdbx.get_structure(
-                self.file, model=model, extra_fields=self._extra_fields
+                self.file,
+                model=model,
+                extra_fields=self._extra_fields,
+                use_author_fields=True,
             )
         except InvalidFileError:
             array = self._get_component()
@@ -156,7 +159,10 @@ class PDBXReader(ReaderBase[pdbx.CIFFile | pdbx.BinaryCIFFile]):
         # with the same filtering. Each read parses the whole category
         models = [
             pdbx.get_structure(
-                self.file, model=i, extra_fields=["b_factor", "occupancy"]
+                self.file,
+                model=i,
+                extra_fields=["b_factor", "occupancy"],
+                use_author_fields=True,
             )
             for i in range(1, n_models + 1)
         ]
