@@ -80,9 +80,9 @@ def register():
     # attributes registered onto Blender types are unknown to the bpy stubs, and
     # are read elsewhere through molecularnodes.blender.registered
     if _mn_session is not None:
-        bpy.types.Scene.MNSession = _mn_session  # ty: ignore[unresolved-attribute]
+        bpy.types.Scene.MNSession = _mn_session  # ty: ignore[missing-attribute]
     else:
-        bpy.types.Scene.MNSession = session.MNSession()  # ty: ignore[unresolved-attribute]
+        bpy.types.Scene.MNSession = session.MNSession()  # ty: ignore[missing-attribute]
     bpy.types.Object.uuid = props.uuid_property  # type: ignore
     bpy.types.Object.mn = PointerProperty(type=props.MolecularNodesObjectProperties)  # type: ignore
     bpy.types.Scene.mn = PointerProperty(type=props.MolecularNodesSceneProperties)  # type: ignore
@@ -95,7 +95,7 @@ def register():
     if _mn_annotations is not None:
         # if the extension is being re-registered and the modules are already
         # loaded, reuse the saved value
-        bpy.types.Object.mn_annotations = _mn_annotations  # ty: ignore[unresolved-attribute]
+        bpy.types.Object.mn_annotations = _mn_annotations  # ty: ignore[missing-attribute]
     register_templates_menu()
     assets._ensure_mn_asset_library()
     if _mn_session is not None:
@@ -131,12 +131,12 @@ def unregister():
 
     session._remove_draw_handlers(filepath=None)
 
-    _mn_session = bpy.types.Scene.MNSession  # ty: ignore[unresolved-attribute]
+    _mn_session = bpy.types.Scene.MNSession  # ty: ignore[missing-attribute]
     del bpy.types.Scene.MNSession  # type: ignore
     del bpy.types.Scene.mn  # type: ignore
     del bpy.types.Object.mn  # type: ignore
     del bpy.types.Object.mn_trajectory_selections  # type: ignore
-    _mn_annotations = bpy.types.Object.mn_annotations  # ty: ignore[unresolved-attribute]
+    _mn_annotations = bpy.types.Object.mn_annotations  # ty: ignore[missing-attribute]
     del bpy.types.Object.mn_annotations  # type: ignore
     unregister_templates_menu()
     assets._remove_mn_asset_library()

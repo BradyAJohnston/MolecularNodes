@@ -229,7 +229,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         # Re-register the new AnnotationProperties class
         bpy.utils.register_class(AnnotationProperties)
         # Re-assign the annotation properties to Object - old data is retained
-        bpy.types.Object.mn_annotations = bpy.props.CollectionProperty(  # ty: ignore[unresolved-attribute]  # registers the property
+        bpy.types.Object.mn_annotations = bpy.props.CollectionProperty(  # ty: ignore[missing-attribute]  # registers the property
             type=AnnotationProperties
         )
 

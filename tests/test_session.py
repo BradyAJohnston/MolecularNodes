@@ -12,8 +12,8 @@ def test_session_present():
 
 
 def test_persistent_handlers_added():
-    load_handlers = [handler.__name__ for handler in bpy.app.handlers.load_post]  # ty: ignore[unresolved-attribute]  # handlers are plain functions
-    save_handlers = [handler.__name__ for handler in bpy.app.handlers.save_post]  # ty: ignore[unresolved-attribute]  # handlers are plain functions
+    load_handlers = [handler.__name__ for handler in bpy.app.handlers.load_post]  # ty: ignore[missing-attribute]  # handlers are plain functions
+    save_handlers = [handler.__name__ for handler in bpy.app.handlers.save_post]  # ty: ignore[missing-attribute]  # handlers are plain functions
     assert "_pickle" in save_handlers
     assert "_load" in load_handlers
 

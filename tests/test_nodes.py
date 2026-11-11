@@ -144,7 +144,7 @@ def test_selection_working(
         pos = mol.named_attribute("position", evaluate=True)
         assert snapshot_custom == pos.shape
         assert snapshot_custom == pos
-        inp.default_value = False  # ty: ignore[unresolved-attribute]  # nodebpy sockets don't declare default_value
+        inp.default_value = False  # ty: ignore[missing-attribute]  # nodebpy sockets don't declare default_value
 
 
 @pytest.mark.parametrize("code", codes)
@@ -1855,4 +1855,7 @@ def test_ures_id_without_chains():
     mol = mn.Molecule.load(
         data_dir / "md_ppr/box.gro", data_dir / "md_ppr/first_5_frames.xtc"
     )
-    assert np.array_equal(mol.named_attribute("ures_id"), mol.universe.atoms.resindices)
+    assert mol.universe is not None
+    atoms = mol.universe.atoms
+    assert atoms is not None
+    assert np.array_equal(mol.named_attribute("ures_id"), atoms.resindices)

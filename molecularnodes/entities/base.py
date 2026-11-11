@@ -90,7 +90,7 @@ class MolecularTree(TreeBuilder[GeometryNodeTree]):
         return self._wrap(self._input_node().outputs[item.identifier])
 
     @property
-    def geometry(  # ty: ignore[invalid-property-type-override]  # shadows the TreeBuilder.geometry() constructor on purpose
+    def geometry(  # ty: ignore[incompatible-property-override]  # shadows the TreeBuilder.geometry() constructor on purpose
         self,
     ) -> GeometrySocket:
         """The geometry output of the tree, adding the output if it is missing."""

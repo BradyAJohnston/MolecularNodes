@@ -162,7 +162,8 @@ include = [
 invalid-argument-type = "ignore"
 invalid-assignment = "ignore"
 not-subscriptable = "ignore"
-unresolved-attribute = "ignore"
+missing-attribute = "ignore"
+missing-union-attribute = "ignore"
 
 # The node-asset pipeline (nodebpy build|dump|ensure|check):
 # molecularnodes/nodes/ is the source of truth, nodes.blend the built,
