@@ -8,11 +8,14 @@ from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
+    FloatSocket,
     IntegerSocket,
     PackageLibrary,
     SocketAccessor,
 )
 from nodebpy.types import InputInteger
+from ._shared.index_to_factor import IndexToFactor
+from .group_info import GroupInfo
 
 
 class GroupParameter(AssetGeometryGroup):
@@ -31,14 +34,20 @@ class GroupParameter(AssetGeometryGroup):
 
     Outputs
     -------
+    o.factor : FloatSocket
+        A point's relative position in its group, 0 for the first point and 1 for the last
+    o.index : IntegerSocket
+        Index of the point within its group, starting at 0 for the first point
+    o.count : IntegerSocket
+        Number of points in the group
     o.is_first : BooleanSocket
-        If the point is the first point in the `Group ID`
+        If the point is the first point in its group
     o.is_last : BooleanSocket
-        If the point is the last item in the `Group ID`
-    o.relative_index : IntegerSocket
-        The relative index of the point within the `Group ID`. Starts at `0` for the first point counting up to `Group Size - 1`
-    o.group_size : IntegerSocket
-        Group Size
+        If the point is the last point in its group
+    o.index_of_first : IntegerSocket
+        `Index` (in the whole geometry) of the first point in the group
+    o.index_of_last : IntegerSocket
+        `Index` (in the whole geometry) of the last point in the group
     """
 
     _name = "Group Parameter"
@@ -51,14 +60,20 @@ class GroupParameter(AssetGeometryGroup):
         """The identifier specifying groupings of the points"""
 
     class _Outputs(SocketAccessor):
+        factor: FloatSocket
+        """A point's relative position in its group, 0 for the first point and 1 for the last"""
+        index: IntegerSocket
+        """Index of the point within its group, starting at 0 for the first point"""
+        count: IntegerSocket
+        """Number of points in the group"""
         is_first: BooleanSocket
-        """If the point is the first point in the `Group ID`"""
+        """If the point is the first point in its group"""
         is_last: BooleanSocket
-        """If the point is the last item in the `Group ID`"""
-        relative_index: IntegerSocket
-        """The relative index of the point within the `Group ID`. Starts at `0` for the first point counting up to `Group Size - 1`"""
-        group_size: IntegerSocket
-        """Group Size"""
+        """If the point is the last point in its group"""
+        index_of_first: IntegerSocket
+        """`Index` (in the whole geometry) of the first point in the group"""
+        index_of_last: IntegerSocket
+        """`Index` (in the whole geometry) of the last point in the group"""
 
     if TYPE_CHECKING:
 
@@ -80,30 +95,50 @@ class GroupParameter(AssetGeometryGroup):
             description="The identifier specifying groupings of the points",
             hide_value=True,
         )
+        factor = tree.outputs.float(
+            "Factor",
+            description="A point's relative position in its group, 0 for the first point and 1 for the last",
+            min_value=0.0,
+            max_value=1.0,
+            subtype="FACTOR",
+        )
+        index = tree.outputs.integer(
+            "Index",
+            description="Index of the point within its group, starting at 0 for the first point",
+        )
+        count = tree.outputs.integer(
+            "Count", description="Number of points in the group"
+        )
         is_first = tree.outputs.boolean(
-            "Is First", description="If the point is the first point in the `Group ID`"
+            "Is First", description="If the point is the first point in its group"
         )
         is_last = tree.outputs.boolean(
-            "Is Last", description="If the point is the last item in the `Group ID`"
+            "Is Last", description="If the point is the last point in its group"
         )
-        relative_index = tree.outputs.integer(
-            "Relative Index",
-            description="The relative index  of the point within the `Group ID`. Starts at `0` for the first point counting up to `Group Size - 1`",
+        index_of_first = tree.outputs.integer(
+            "Index of First",
+            description="`Index` (in the whole geometry) of the first point in the group",
         )
-        group_size = tree.outputs.integer("Group Size")
+        index_of_last = tree.outputs.integer(
+            "Index of Last",
+            description="`Index` (in the whole geometry) of the last point in the group",
+        )
 
-        accumulate_field = g.AccumulateField.point.integer(group_id=group_id)
-        boolean_math = g.BooleanMath.l_not(accumulate_field.o.trailing)
+        group_info = GroupInfo(group_id=group_id)
+        g.Compare.integer.equal(group_info.o.index_in_group, 0) >> is_first
         (
-            g.Compare.integer.equal(
-                accumulate_field.o.leading, accumulate_field.o.total
-            )
+            IndexToFactor(index=group_info.o.index_in_group, size=group_info.o.size)
+            >> factor
+        )
+        (
+            g.Compare.integer.equal(group_info.o.index_in_group, group_info.o.size - 1)
             >> is_last
         )
 
-        boolean_math >> is_first
-        accumulate_field.o.trailing >> relative_index
-        accumulate_field.o.total >> group_size
+        group_info.o.index_in_group >> index
+        group_info >> count
+        group_info.o.index_of_first >> index_of_first
+        group_info.o.index_of_last >> index_of_last
 
 
 ASSET = GroupParameter
