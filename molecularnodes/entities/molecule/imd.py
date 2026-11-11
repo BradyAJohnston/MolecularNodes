@@ -115,7 +115,7 @@ class StreamingTrajectory(Molecule):
             raise
 
     @classmethod
-    def load(  # ty: ignore[invalid-method-override]  # positional order differs from Molecule.load; changing it would break callers
+    def load(  # ty: ignore[incompatible-method-override]  # positional order differs from Molecule.load; changing it would break callers
         cls,
         topology: Path | str,
         coordinates: Path | str,

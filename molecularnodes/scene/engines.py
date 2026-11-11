@@ -43,7 +43,7 @@ class EEVEE(RenderEngine):
 
     @property
     def engine(self) -> bpy.types.SceneEEVEE:
-        return bpy.context.scene.eevee  # ty: ignore[invalid-return-type, unresolved-attribute]
+        return bpy.context.scene.eevee  # ty: ignore[invalid-return-type, missing-union-attribute]
 
     @property
     def samples(self) -> int:

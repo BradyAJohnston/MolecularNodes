@@ -418,7 +418,7 @@ class OXDNA(Molecule):
         )
 
     @classmethod
-    def load(  # ty: ignore[invalid-method-override]  # positional order differs from Molecule.load; changing it would break callers
+    def load(  # ty: ignore[incompatible-method-override]  # positional order differs from Molecule.load; changing it would break callers
         cls,
         topology: str | Path,
         coordinates: str | Path,

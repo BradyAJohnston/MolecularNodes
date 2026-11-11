@@ -24,7 +24,7 @@ def test_starfile_attributes(type, snapshot):
 
     if type == "relion":
         assert isinstance(star, dict)
-        df: DataFrame = star["particles"].merge(star["optics"], on="rlnOpticsGroup")  # ty: ignore[unresolved-attribute]
+        df: DataFrame = star["particles"].merge(star["optics"], on="rlnOpticsGroup")  # ty: ignore[missing-union-attribute]
         euler_angles = df[["rlnAngleRot", "rlnAngleTilt", "rlnAnglePsi"]].to_numpy()
 
     elif type == "cistem":
@@ -61,7 +61,7 @@ def test_starfile_attributes(type, snapshot):
     )  # blender stores quaternions as scalar-first
 
     # To compare the two rotation we multiply one with the inverse of the other and should get something very small
-    assert (rotation_scipy * rotation_scipy_from_gn.inv()).magnitude().max() < 1e-5  # ty: ignore[unresolved-attribute]
+    assert (rotation_scipy * rotation_scipy_from_gn.inv()).magnitude().max() < 1e-5  # ty: ignore[missing-union-attribute]
     assert snapshot == geo
 
 

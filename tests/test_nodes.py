@@ -35,6 +35,8 @@ from molecularnodes.nodes.geometry import (
     BestView,
     BreakBonds,
     BuildElasticNetwork,
+    ChainID,
+    ChainParameter,
     Charge,
     ColorCSS,
     ColorPyMOL,
@@ -44,6 +46,7 @@ from molecularnodes.nodes.geometry import (
     FadeGeometry,
     FindBonds,
     GetGeometryAtoms,
+    GroupParameter,
     NucleicChi,
     NucleicDihedral,
     OKLabToColor,
@@ -51,10 +54,12 @@ from molecularnodes.nodes.geometry import (
     PeptideChi,
     PeptideDihedral,
     PeriodicArray,
+    ResidueParameter,
     SegmentID,
     SetColor,
     SimulateElasticNetwork,
     StaggerValue,
+    StructureParameter,
     StyleBallAndStick,
     StyleCartoon,
     StyleRibbon,
@@ -139,7 +144,7 @@ def test_selection_working(
         pos = mol.named_attribute("position", evaluate=True)
         assert snapshot_custom == pos.shape
         assert snapshot_custom == pos
-        inp.default_value = False  # ty: ignore[unresolved-attribute]  # nodebpy sockets don't declare default_value
+        inp.default_value = False  # ty: ignore[missing-attribute]  # nodebpy sockets don't declare default_value
 
 
 @pytest.mark.parametrize("code", codes)
@@ -1711,3 +1716,146 @@ def test_best_view_hysteresis_holds_the_previous_direction(fetch):
     assert np.degrees(np.arccos(np.clip(moved @ best, -1, 1))) < 1.0
     assert np.allclose(held, previous, atol=1e-5)
     assert held_visible == previous_visible
+
+
+def _within(groups: np.ndarray) -> dict[str, np.ndarray]:
+    "Factor, Index, Count, Is First/Last and Index of First/Last of each item in its group"
+    index = np.zeros(len(groups), dtype=int)
+    count = np.zeros(len(groups), dtype=int)
+    for group in np.unique(groups):
+        mask = groups == group
+        index[mask] = np.arange(mask.sum())
+        count[mask] = mask.sum()
+    with np.errstate(divide="ignore", invalid="ignore"):
+        factor = np.where(count > 1, index / (count - 1), 0.0)
+    return {
+        "factor": factor,
+        "index": index,
+        "count": count,
+        "is_first": index == 0,
+        "is_last": index == count - 1,
+    }
+
+
+def _parameter_truth(code: str) -> dict[str, np.ndarray]:
+    "Expected outputs of the * Parameter nodes, from biotite residues and chains"
+    from biotite.structure import AtomArrayStack, get_residue_starts
+    from molecularnodes.entities.molecule.reader import read_structure
+
+    array = read_structure(data_dir / f"{code}.bcif").array
+    if isinstance(array, AtomArrayStack):
+        array = array[0]
+    n = array.array_length()
+    # biotite splits residues on insertion codes, unlike res_id alone
+    residue = np.zeros(n, dtype=int)
+    residue[get_residue_starts(array)[1:]] = 1
+    residue = np.cumsum(residue)
+    _, chain = np.unique(array.chain_id, return_inverse=True)
+    atoms = np.arange(n)
+
+    def first_last(groups):
+        first = {g: atoms[groups == g][0] for g in np.unique(groups)}
+        last = {g: atoms[groups == g][-1] for g in np.unique(groups)}
+        return (
+            np.array([first[g] for g in groups]),
+            np.array([last[g] for g in groups]),
+        )
+
+    in_residue = _within(residue)
+    # residues within each chain: number the residues of the chain, per atom
+    chain_residue = np.zeros(n, dtype=int)
+    chain_count = np.zeros(n, dtype=int)
+    for c in np.unique(chain):
+        mask = chain == c
+        residues = np.unique(residue[mask])
+        chain_residue[mask] = np.searchsorted(residues, residue[mask])
+        chain_count[mask] = len(residues)
+    in_chain = {
+        "factor": np.where(
+            chain_count > 1, chain_residue / np.maximum(chain_count - 1, 1), 0.0
+        ),
+        "index": chain_residue,
+        "count": chain_count,
+        "is_first": chain_residue == 0,
+        "is_last": chain_residue == chain_count - 1,
+    }
+    in_group = _within(chain)
+    n_residues = residue[-1] + 1
+
+    expected = {}
+    first, last = first_last(residue)
+    for key, name in [
+        ("factor", "factor"),
+        ("index", "atom_index"),
+        ("count", "atom_count"),
+        ("is_first", "is_first"),
+        ("is_last", "is_last"),
+    ]:
+        expected[f"residue|{name}"] = in_residue[key]
+    expected["residue|index_of_first"] = first
+    expected["residue|index_of_last"] = last
+    first, last = first_last(chain)
+    for key, name in [
+        ("factor", "factor"),
+        ("index", "residue_index"),
+        ("count", "residue_count"),
+        ("is_first", "is_first"),
+        ("is_last", "is_last"),
+    ]:
+        expected[f"chain|{name}"] = in_chain[key]
+    expected["chain|index_of_first"] = first
+    expected["chain|index_of_last"] = last
+    expected["structure|factor"] = atoms / (n - 1)
+    expected["structure|atom_index"] = atoms
+    expected["structure|atom_count"] = np.full(n, n)
+    expected["structure|residue_factor"] = residue / (n_residues - 1)
+    expected["structure|residue_index"] = residue
+    expected["structure|residue_count"] = np.full(n, n_residues)
+    for key in in_group:
+        expected[f"group|{key}"] = in_group[key]
+    expected["group|index_of_first"] = first
+    expected["group|index_of_last"] = last
+    return expected
+
+
+# 8FAT has insertion codes (52, 52A, 52B, ...), 1BNA has waters after the other chain
+@pytest.mark.parametrize("code", ["4ozs", "1BNA", "8FAT"])
+def test_parameter_nodes(fetch, code):
+    mol = fetch(code)
+    expected = _parameter_truth(code)
+    with mol.tree.reset() as (atoms, join):
+        nodes = {
+            "residue": ResidueParameter(),
+            "chain": ChainParameter(),
+            "structure": StructureParameter(),
+            "group": GroupParameter(group_id=ChainID()),
+        }
+        geometry = atoms
+        for name in expected:
+            node, output = name.split("|")
+            store = (
+                StoreNamedAttribute.point.float
+                if "factor" in output
+                else StoreNamedAttribute.point.integer
+            )
+            geometry = geometry >> store(
+                name=name, value=getattr(nodes[node].o, output)
+            )
+        geometry >> join
+
+    for name, values in expected.items():
+        got = mol.named_attribute(name, evaluate=True)
+        assert np.allclose(got, values, atol=1e-5), name
+    assert np.array_equal(
+        mol.named_attribute("ures_id"), expected["structure|residue_index"]
+    )
+
+
+def test_ures_id_without_chains():
+    mol = mn.Molecule.load(
+        data_dir / "md_ppr/box.gro", data_dir / "md_ppr/first_5_frames.xtc"
+    )
+    assert mol.universe is not None
+    atoms = mol.universe.atoms
+    assert atoms is not None
+    assert np.array_equal(mol.named_attribute("ures_id"), atoms.resindices)

@@ -277,7 +277,7 @@ class Grids(Density):
             delta=np.linalg.norm(axes, axis=1),
             metadata=metadata,
         )
-        grid.mn_axes = axes  # ty: ignore[unresolved-attribute]  # stashed on the Grid for _voxel_axes
+        grid.mn_axes = axes  # ty: ignore[missing-attribute]  # stashed on the Grid for _voxel_axes
         return grid
 
     def _voxel_axes(self, file: str, gobj) -> np.ndarray:

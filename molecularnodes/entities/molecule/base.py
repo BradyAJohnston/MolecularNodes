@@ -37,7 +37,6 @@ from ...nodes.geometry import AssemblyInstance
 from ...utils import (
     _UNSET,
     Unset,
-    count_value_changes,
     is_periodic_box,
     temp_override_property,
 )
@@ -491,7 +490,8 @@ class Molecule(MolecularEntity):
         return self.atoms.resids
 
     def _compute_ures_id(self) -> np.ndarray:
-        return count_value_changes(self.atoms.resids, self._compute_chain_id_int())
+        # MDAnalysis residues, which topologies without chains also have
+        return self.atoms.resindices
 
     def _compute_atom_id(self) -> np.ndarray:
         return self.atoms.ids

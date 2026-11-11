@@ -90,10 +90,12 @@ class GroupPickIndex(AssetGeometryGroup):
             min_value=0,
         )
 
-        compare = g.Compare.integer.equal(
-            relative_index, GroupParameter(group_id=group_id).o.relative_index
+        group_pick = GroupPick(
+            pick=g.Compare.integer.equal(
+                relative_index, GroupParameter(group_id=group_id).o.index
+            ),
+            group_id=group_id,
         )
-        group_pick = GroupPick(pick=compare, group_id=group_id)
 
         group_pick >> is_valid
         group_pick.o.index >> index
