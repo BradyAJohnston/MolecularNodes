@@ -55,7 +55,7 @@ dev = [
     "rdkit",
     "ruff",
     "syrupy",
-    "ty==0.0.92",
+    "ty==0.0.101",
 ]
 
 [tool.extbpy]
