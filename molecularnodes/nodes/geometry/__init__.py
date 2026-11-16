@@ -75,6 +75,7 @@ from .curve_endpoint_values import CurveEndpointValues
 from .curve_offset_dihedral import CurveOffsetDihedral
 from .curve_offset_dot import CurveOffsetDot
 from .curve_rotation import CurveRotation
+from .curve_spline_c2 import CurveSplineC2
 from .curve_transform import CurveTransform
 from .curve_vectors import CurveVectors
 from .curve_visualize import CurveVisualize
@@ -362,6 +363,7 @@ __all__ = (
     "CurveOffsetDihedral",
     "CurveOffsetDot",
     "CurveRotation",
+    "CurveSplineC2",
     "CurveTransform",
     "CurveVectors",
     "CurveVisualize",

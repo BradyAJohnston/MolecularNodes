@@ -408,6 +408,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.CurveRotation
         children: embedded
+      - name: nodes.geometry.CurveSplineC2
+        children: embedded
       - name: nodes.geometry.CurveTransform
         children: embedded
       - name: nodes.geometry.CurveVectors

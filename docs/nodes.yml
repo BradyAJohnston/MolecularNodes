@@ -561,6 +561,19 @@ Curve Transform:
     The transform for the point, combining the `Position` and `Curve Rotation` using `Normal` and `Tangent`
 Curve Rotation:
   description: The `Rotation` for the point, using the `Normal` and `Tangent` of the point
+Curve Spline C2:
+  description: >-
+    Turn curves into Bézier curves that pass through every point with continuous curvature, a C2 cubic spline.
+    Built-in Catmull-Rom curves and Bézier curves with `Auto` handles also pass through every point, but their
+    curvature jumps at each point. The handles are solved across the whole curve, so moving one point changes
+    the shape of the whole curve, most of all near that point. Open curves have zero curvature at their ends.
+    Curves with fewer than 3 points are converted to Bézier but not solved. `Chord Length::Boolean` (on by
+    default) spaces the spline by the distance between points, which stops overshoot and small loops where the
+    spacing is uneven, such as at chain breaks; off spaces every segment equally, as the reference
+    implementation does. `Iterations::Integer` sets the number of solver steps; each at least halves the
+    error, and the default of 24 is enough for any curve length. Use `Set Spline Resolution` to change how
+    many points each segment evaluates to. Port of the `CubicC2` spline from
+    [aurimasg/splines](https://github.com/aurimasg/splines).
 Cumulative Length:
   description: >-
     The length of the current point, added onto the cumulative length with all previous splines in the curve
