@@ -70,8 +70,10 @@ from .color_to_oklab import ColorToOKLab
 from .color_vmd import ColorVMD
 from .contains_geometry import ContainsGeometry
 from .cumulative_length import CumulativeLength
+from .curve_bridge import CurveBridge
 from .curve_custom_profile import CurveCustomProfile
 from .curve_endpoint_values import CurveEndpointValues
+from .curve_extend import CurveExtend
 from .curve_offset_dihedral import CurveOffsetDihedral
 from .curve_offset_dot import CurveOffsetDot
 from .curve_rotation import CurveRotation
@@ -358,8 +360,10 @@ __all__ = (
     "ColorVMD",
     "ContainsGeometry",
     "CumulativeLength",
+    "CurveBridge",
     "CurveCustomProfile",
     "CurveEndpointValues",
+    "CurveExtend",
     "CurveOffsetDihedral",
     "CurveOffsetDot",
     "CurveRotation",

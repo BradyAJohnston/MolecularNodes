@@ -7,6 +7,7 @@ title: "Changelog"
 
 
 ## Added
+- `Curve Bridge` and `Curve Extend` nodes under Curves: join curves end to end with a Bézier segment along their tangents, and extend open ends with arcs that keep their curvature.
 - `Curve Spline C2` node under Curves: turns curves into Bézier curves that pass through every point with continuous curvature (a C2 cubic spline), ported from [aurimasg/splines](https://github.com/aurimasg/splines), with an option to space the spline by the distance between points.
 - `Canvas.pixel_size` gives the size of one rendered pixel in nanometres for scale bars, and `canvas.camera.orthographic` and `canvas.camera.ortho_scale` set up an orthographic camera with an exact scale.
 - `compositor.illustrate(id_pass=...)` and an `ID Outline` panel on the `Illustrate` node draw lines between the regions of an ID pass, such as chains, which depth outlines cannot do on all-atom styles.

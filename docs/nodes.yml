@@ -561,6 +561,22 @@ Curve Transform:
     The transform for the point, combining the `Position` and `Curve Rotation` using `Normal` and `Tangent`
 Curve Rotation:
   description: The `Rotation` for the point, using the `Normal` and `Tangent` of the point
+Curve Bridge:
+  description: >-
+    Join each selected curve to the next curve by index with a Bézier segment. The segment leaves the end of one
+    curve along its tangent and arrives at the start of the next along its tangent. `Tension::Float` sets the
+    handle length as a share of a third of the gap, so 0 gives a straight bridge. `Selection::Boolean` is read on
+    the curve domain, and cyclic curves are never joined. Point attributes are kept. The `Bridge::Boolean` output
+    marks the points at either end of each new segment. Output curves are Bézier with free handles.
+    Idea from [Eterea Curves Toolkit](https://github.com/Eterea/etr_curves_toolkit).
+Curve Extend:
+  description: >-
+    Extend the ends of open curves with circular arcs that leave each end with its tangent and curvature, so the
+    curve carries on bending as it was. Turn off `Follow Curvature::Boolean` to extend straight along the tangent.
+    `Start::Float` and `End::Float` are the lengths of the two extensions; an arc stops after one full turn. Each
+    extension adds 4 points that copy the attributes of the end point, marked by the `Extension::Boolean` output.
+    Cyclic curves are left alone. Output curves are Bézier with free handles.
+    Idea from [Eterea Curves Toolkit](https://github.com/Eterea/etr_curves_toolkit).
 Curve Spline C2:
   description: >-
     Turn curves into Bézier curves that pass through every point with continuous curvature, a C2 cubic spline.
