@@ -2,6 +2,7 @@
 
 import warnings
 import bpy
+import databpy as db
 import MDAnalysis as mda
 import numpy as np
 import pytest
@@ -46,11 +47,11 @@ def test_hidden_matches_selection(style):
     hidden = _molecule()
     mask = _hidden_mask(hidden)
     assert 0 < mask.sum() < len(mask)
-    hidden.store_named_attribute(mask, "hidden", atype="BOOLEAN")
+    hidden["hidden"] = db.boolean(mask)
     hidden.add_style(style)
 
     selected = _molecule()
-    selected.store_named_attribute(~mask, "shown", atype="BOOLEAN")
+    selected["shown"] = db.boolean(~mask)
     selected.add_style(style, selection="shown")
 
     assert np.allclose(_rendered(hidden), _rendered(selected))
@@ -73,7 +74,8 @@ def test_store_named_attribute_shows_hidden_atoms(style):
         atoms >> style() >> join
 
     hidden = _molecule()
-    hidden.store_named_attribute(_hidden_mask(hidden), "hidden", atype="BOOLEAN")
+    hidden["hidden"] = db.boolean(_hidden_mask(hidden))
+
     with hidden.tree.reset() as (atoms, join):
         show = g.StoreNamedAttribute.point.boolean(name="hidden", value=False)
         atoms >> show >> style() >> join
@@ -85,19 +87,19 @@ def test_hidden_updates_existing_styles():
     mol = _molecule()
     mol.add_style("spheres")
     before = len(_rendered(mol))
-    mol.store_named_attribute(_hidden_mask(mol), "hidden", atype="BOOLEAN")
+    mol["hidden"] = db.boolean(_hidden_mask(mol))
     assert len(_rendered(mol)) < before
 
 
 def test_hidden_wins_over_selection():
     hidden = _molecule()
     mask = _hidden_mask(hidden)
-    hidden.store_named_attribute(mask, "hidden", atype="BOOLEAN")
-    hidden.store_named_attribute(np.ones_like(mask), "wanted", atype="BOOLEAN")
+    hidden["hidden"] = db.boolean(mask)
+    hidden["wanted"] = db.boolean(np.ones_like(mask))
     hidden.add_style("spheres", selection="wanted")
 
     selected = _molecule()
-    selected.store_named_attribute(~mask, "shown", atype="BOOLEAN")
+    selected["shown"] = db.boolean(~mask)
     selected.add_style("spheres", selection="shown")
 
     assert np.allclose(_rendered(hidden), _rendered(selected))
@@ -117,7 +119,7 @@ def test_hidden_atoms_are_not_computed_by_style_hbonds(fetch):
     visible = vertices()
     assert visible > 0
     hydrogens = mol.named_attribute("atomic_number") == 1
-    mol.store_named_attribute(hydrogens, "hidden", atype="BOOLEAN")
+    mol["hidden"] = db.boolean(hydrogens)
     assert vertices() == 0
 
 
@@ -127,7 +129,7 @@ def test_hidden_in_oxdna_style():
     )
     before = len(_rendered(mol))
     mask = np.arange(len(mol.position)) < len(mol.position) // 2
-    mol.store_named_attribute(mask, "hidden", atype="BOOLEAN")
+    mol["hidden"] = db.boolean(mask)
     assert len(_rendered(mol)) < before
 
 
@@ -173,7 +175,7 @@ def test_hide_accepts_each_selection_type():
     expected = mol.universe.select_atoms("name CA")
     mask = np.zeros(len(mol.position), dtype=bool)
     mask[expected.ix] = True
-    mol.store_named_attribute(mask, "alpha", atype="BOOLEAN")
+    mol["alpha"] = db.boolean(mask)
     for selection in ("name CA", "alpha", expected, mask):
         mol.show().hide(selection)
         assert np.array_equal(mol.hidden, mask)

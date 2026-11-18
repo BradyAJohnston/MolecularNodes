@@ -449,14 +449,14 @@ wheels = [
 
 [[package]]
 name = "databpy"
-version = "0.12.0"
+version = "0.13.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/30/56/ccbb9734b72fd0cb1617de023367205bf3473e49644755f53a203ccc8280/databpy-0.12.0.tar.gz", hash = "sha256:00275ba0cc17082ea263fe243176b71763b0f4ee7e05e4152e5404de847334a3", size = 39286, upload-time = "2026-10-21T12:43:57.108Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/43/45/81e5836a5fb1a9c59130d55512bd6ff1cecf9177e147482c1b8f1ffb958b/databpy-0.13.0.tar.gz", hash = "sha256:16c3174490993f42d5155c309e005ab6f395b1721688dc60d3edb408dbbc9545", size = 52753, upload-time = "2026-11-17T09:37:09.651Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9c/dd/5e6d2e32758f62059f569fe4831c7c4125417c0ffe99e5e614abe4383fbe/databpy-0.12.0-py3-none-any.whl", hash = "sha256:3666d0424a1dba90fa5a5af15dcbff7ad3bcc9b12ecbff42ca48f4d25fec3d61", size = 46567, upload-time = "2026-10-21T12:43:55.852Z" },
+    { url = "https://files.pythonhosted.org/packages/26/8f/04249e98e1534e7dbef4a97c3ab354889f35fad65a4fa7313038e740d6ea/databpy-0.13.0-py3-none-any.whl", hash = "sha256:bc1c6a6aa5912e4025452dc56e07e6db303c64ac81fe4bb2a9f2ca62f24c20df", size = 60253, upload-time = "2026-11-17T09:37:08.501Z" },
 ]
 
 [[package]]
@@ -1412,7 +1412,7 @@ jupyter = [
 requires-dist = [
     { name = "biotite", specifier = ">=1.7.1,<3" },
     { name = "bpy", marker = "extra == 'bpy'", specifier = "==5.2.*" },
-    { name = "databpy", specifier = ">=0.12.0" },
+    { name = "databpy", specifier = ">=0.13.0" },
     { name = "fake-bpy-module", marker = "extra == 'dev'", specifier = ">=20260816" },
     { name = "griddataformats", specifier = ">=1.2.0" },
     { name = "griffe", marker = "extra == 'docs'", specifier = "<2.0" },

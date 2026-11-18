@@ -95,6 +95,4 @@ class CellPack(Ensemble):
 
         # if we are dealing with petworld data, overwrite the chain_id for the data object
         if self.file._is_petworld:
-            self.store_named_attribute(
-                self.named_attribute("pdb_model_num"), "chain_id"
-            )
+            self["chain_id"] = self["pdb_model_num"]

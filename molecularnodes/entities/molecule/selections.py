@@ -4,7 +4,7 @@ Managing selections for the ``Molecule``
 For selectively applying styles inside of Blender, we represent selections as a
 boolean attribute on the mesh of the ``trajectory.object``.
 
-These could be directly created with ``traj.store_named_attribute(array, "selection_name")``
+These could be directly created with ``traj["selection_name"] = array``
 but the SelectionManager class is a convenience class for helping to manage selections
 and allow editing and updating via the GUI.
 
@@ -184,9 +184,7 @@ class SelectionManager:
         _ag_to_bool : Helper function that performs the AtomGroup to boolean conversion.
         update_attributes : Calls this method to sync selections to geometry attributes.
         """
-        self.trajectory.store_named_attribute(
-            data=_ag_to_bool(ag), name=name, atype=db.AttributeTypes.BOOLEAN
-        )
+        self.trajectory[name] = db.boolean(_ag_to_bool(ag))
 
     def from_string(
         self,

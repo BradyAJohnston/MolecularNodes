@@ -2,11 +2,11 @@ import json
 from pathlib import Path
 from typing import cast
 import bpy
-import databpy
+import databpy as db
 import mrcfile
 import numpy as np
 import starfile
-from databpy import AttributeTypes, BlenderObject
+from databpy import BlenderObject
 from pandas import CategoricalDtype, DataFrame
 from PIL import Image
 from scipy.spatial.transform import Rotation
@@ -80,21 +80,15 @@ class EnsembleDataFrame:
 
     def store_data_on_object(self, obj: bpy.types.Object) -> None:
         bob = BlenderObject(obj)
-
-        bob.store_named_attribute(
-            self.image_id_values(),
-            name="image_id",
-            atype=AttributeTypes.INT,
-        )
+        bob.point["image_id"] = db.int32(self.image_id_values())
 
         categories: dict[str, list] = {}
         for col in self.data.columns:
             if isinstance(self.data[col].dtype, CategoricalDtype):
                 categories[col] = self.data[col].cat.categories.tolist()
-                data = self.data[col].cat.codes.to_numpy()
-                bob.store_named_attribute(data, name=col, atype=AttributeTypes.INT)
+                bob[col] = db.int32(self.data[col].cat.codes.to_numpy())
             else:
-                bob.store_named_attribute(self.data[col].to_numpy(), name=col)
+                bob[col] = self.data[col].to_numpy()
 
         object_props(bob.object).categories = categories
 
@@ -183,22 +177,12 @@ class NDJSONDataFrame(EnsembleDataFrame):
 
     def store_data_on_object(self, obj: bpy.types.Object) -> None:
         bob = BlenderObject(obj)
+        bob.point["image_id"] = db.int32(self.image_id_values())
+        bob.point["transform"] = db.mat4(self.transforms())
 
-        bob.store_named_attribute(
-            self.image_id_values(),
-            name="image_id",
-            atype=AttributeTypes.INT,
-        )
-        bob.store_named_attribute(
-            self.transforms(),
-            name="transform",
-            atype=AttributeTypes.FLOAT4X4,
-        )
         if "instance_id" in self.data:
-            bob.store_named_attribute(
-                self.data["instance_id"].to_numpy(dtype=int),
-                name="instance_id",
-                atype=AttributeTypes.INT,
+            bob.point["instance_id"] = db.int32(
+                self.data["instance_id"].to_numpy(dtype=int)
             )
 
 
@@ -368,7 +352,7 @@ class StarFile(Ensemble):
         if self.data_frame is None:
             raise ValueError("DataFrame not assigned. Call StarFile.load() first.")
 
-        self.object = databpy.create_object(
+        self.object = db.create_object(
             self.data_frame.coordinates_scaled,
             collection=bl.coll.mn(),
             name=name,
