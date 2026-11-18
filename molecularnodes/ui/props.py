@@ -325,12 +325,18 @@ FRAME_ATTRIBUTE_SOURCES = (
     (
         "TRAJECTORY",
         "Trajectory",
-        "Read from each frame of the trajectory",
-        "FILE_MOVIE",
+        "Attributes read from the trajectory that change with each frame.",
+        "SPREADSHEET",
         0,
     ),
-    ("SELECTION", "Selection", "A selection of the molecule", "RESTRICT_SELECT_OFF", 1),
-    ("CALCULATION", "Calculation", "Calculated from the universe", "DRIVER", 2),
+    ("SELECTION", "Selection", "A custom selection via a selection string.", "RESTRICT_SELECT_OFF", 1),
+    (
+        "CALCULATION",
+        "Calculation",
+        "A custom calculation that is user-defined and re-computed on each frame.",
+        "DRIVER_TRANSFORM",
+        2,
+    ),
 )
 
 

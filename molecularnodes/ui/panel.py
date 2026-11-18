@@ -289,7 +289,12 @@ def layout_frame_attributes(
         layout = body
     obj = traj.object
     props = traj.props
-    layout.row().prop(props, "frame_attributes_filter", expand=True)
+    layout.row().prop(
+        props,
+        "frame_attributes_filter",
+        # props.frame_attributes_filter,
+    )
+
     row = layout.row()
     row.template_list(
         "MN_UL_FrameAttributesList",
