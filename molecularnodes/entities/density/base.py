@@ -1,7 +1,7 @@
 import os
 from abc import ABCMeta
 from pathlib import Path
-from typing import Union
+from typing import Union, overload
 import databpy
 import numpy as np
 from nodebpy import geometry as g
@@ -73,10 +73,24 @@ class Density(MolecularEntity, metaclass=ABCMeta):
         self.file_vdb: str
         self.annotations = DensityAnnotationManager(self)
 
-    def named_attribute(self, name: str, evaluate: bool = True) -> np.ndarray:
+    @overload
+    def named_attribute(
+        self, name: str, evaluate: bool = True, *, atype: None = None
+    ) -> np.ndarray: ...
+    @overload
+    def named_attribute[T: databpy.AttributeArray](
+        self, name: str, evaluate: bool = True, *, atype: type[T]
+    ) -> T: ...
+    def named_attribute(
+        self,
+        name: str,
+        evaluate: bool = True,
+        *,
+        atype: type[databpy.AttributeArray] | None = None,
+    ) -> np.ndarray:
         # volume objects can't be evaluated to a mesh data-block directly, but the
         # evaluated geometry holds the mesh their node tree generates
-        return databpy.GeometrySet(self.object).named_attribute(name)
+        return databpy.GeometrySet(self.object).named_attribute(name, atype=atype)
 
     def path_to_vdb(self, file: str, center: bool = False, invert: bool = False):
         """
