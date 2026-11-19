@@ -37,7 +37,7 @@ class DensityStyleSurface(AssetGeometryGroup):
     shade_smooth : InputBoolean
         Apply smooth shading to the created geometry
     hide_dust : InputFloat
-        Hide Dust
+        Hide mesh islands with a total face area below this, in nm². 0 keeps everything
     color : InputColor
         Color
     material : InputMaterial
@@ -52,7 +52,7 @@ class DensityStyleSurface(AssetGeometryGroup):
     i.shade_smooth : BooleanSocket
         Apply smooth shading to the created geometry
     i.hide_dust : FloatSocket
-        Hide Dust
+        Hide mesh islands with a total face area below this, in nm². 0 keeps everything
     i.color : ColorSocket
         Color
     i.material : MaterialSocket
@@ -78,7 +78,7 @@ class DensityStyleSurface(AssetGeometryGroup):
         shade_smooth: BooleanSocket
         """Apply smooth shading to the created geometry"""
         hide_dust: FloatSocket
-        """Hide Dust"""
+        """Hide mesh islands with a total face area below this, in nm². 0 keeps everything"""
         color: ColorSocket
         """Color"""
         material: MaterialSocket
@@ -124,7 +124,11 @@ class DensityStyleSurface(AssetGeometryGroup):
             description="Apply smooth shading to the created geometry",
         )
         hide_dust = tree.inputs.float(
-            "Hide Dust", 0.0, min_value=-10_000.0, max_value=10_000.0
+            "Hide Dust",
+            0.0,
+            description="Hide mesh islands with a total face area below this, in nm². 0 keeps everything",
+            min_value=-10_000.0,
+            max_value=10_000.0,
         )
         with tree.inputs.panel("Material"):
             color = tree.inputs.color("Color", (0.199436, 0.509163, 0.13218, 1.0))

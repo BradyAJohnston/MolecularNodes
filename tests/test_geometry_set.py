@@ -25,6 +25,7 @@ def test_specific_attribute(fetch):
     geom = GeometrySet(mol.object)
 
     mesh = geom.mesh
+    assert mesh is not None
     b_factor_attr = db.Attribute(mesh.attributes["b_factor"])
     b_factor = b_factor_attr.as_array()
 
@@ -34,6 +35,7 @@ def test_specific_attribute(fetch):
     assert b_factor.max() < 200
 
     instances = geom.instances
+    assert instances is not None
     if ".reference_index" in instances.attributes:
         ref_attr = db.Attribute(instances.attributes[".reference_index"])
         ref_index = ref_attr.as_array()
@@ -51,9 +53,11 @@ def test_attribute_comparison(fetch):
     geom_spheres = GeometrySet(mol_spheres.object)
 
     pc = geom_spheres.pointcloud
+    assert pc is not None
     pc_count = len(db.Attribute(pc.attributes["position"]))
 
     instances = geom_ribbon.instances
+    assert instances is not None
     inst_count = len(db.Attribute(instances.attributes["position"]))
 
     assert pc_count > inst_count

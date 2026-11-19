@@ -1,34 +1,44 @@
-import json
 import logging
 from abc import ABCMeta
-from io import BytesIO
+from io import BytesIO, StringIO
 from pathlib import Path
+from typing import Any, Callable, cast
 import numpy as np
 from biotite.file import File, InvalidFileError
-from biotite.structure import AtomArray, AtomArrayStack, BondType, filter
+from biotite.structure import (
+    AtomArray,
+    AtomArrayStack,
+    BondType,
+    filter,
+    get_residue_starts,
+)
 from ... import color
 from ...assets import data
-from ...utils import count_value_changes
 
 logger = logging.getLogger(__name__)
 
 
 def read_structure(
-    file_path: str | Path | BytesIO, data_block: str | None = None
+    file_path: str | Path | BytesIO | StringIO,
+    data_block: str | None = None,
+    format: str | None = None,
 ) -> "ReaderBase":
     """Open a structure file and return the appropriate reader for its format.
 
-    Dispatches on the file suffix to the biotite-backed reader that can parse it
-    (mmCIF/BinaryCIF, PDB, or SDF/MOL). An in-memory ``BytesIO`` buffer is treated
-    as BinaryCIF.
+    Dispatches on ``format``, or the file suffix, to the biotite-backed reader that
+    can parse it (mmCIF/BinaryCIF, PDB, or SDF/MOL). An in-memory ``BytesIO`` buffer
+    without a ``format`` is treated as BinaryCIF.
 
     Parameters
     ----------
-    file_path : str | Path | BytesIO
-        Path to the structure file, or an in-memory ``bcif`` buffer.
+    file_path : str | Path | BytesIO | StringIO
+        Path to the structure file, or an in-memory buffer of its contents.
     data_block : str | None, optional
         For mmCIF/BinaryCIF files with several structures in separate data
         blocks, the name of the block to read.
+    format : str | None, optional
+        The file format (e.g. ``"cif"`` or ``".pdb"``). Needed for a ``StringIO``
+        buffer, otherwise taken from the file suffix.
 
     Returns
     -------
@@ -44,13 +54,15 @@ def read_structure(
     # imported lazily: pdb/pdbx/sdf import ReaderBase from this module
     from . import pdb, pdbx, sdf
 
-    if isinstance(file_path, BytesIO):
-        return pdbx.PDBXReader(file_path, data_block=data_block)
+    if format is None:
+        if isinstance(file_path, BytesIO):
+            format = "bcif"
+        elif isinstance(file_path, StringIO):
+            raise ValueError("A `format` is needed to read a StringIO buffer.")
+        else:
+            format = Path(file_path).suffix
 
-    if isinstance(file_path, str):
-        file_path = Path(file_path)
-
-    match file_path.suffix:
+    match "." + format.strip("."):
         case ".cif" | ".bcif":
             return pdbx.PDBXReader(file_path, data_block=data_block)
         case ".pdb":
@@ -61,15 +73,15 @@ def read_structure(
             raise InvalidFileError("The file format is not supported.")
 
 
-class ReaderBase(metaclass=ABCMeta):
+class ReaderBase[F: File](metaclass=ABCMeta):
     """
     Abstract base class for reading molecular data from a file.
     """
 
-    def __init__(self, file_path: str | Path | BytesIO):
+    def __init__(self, file_path: str | Path | BytesIO | StringIO):
         self._extra_annotations: dict
         self.file_path = file_path
-        self.file = self.read(file_path)
+        self.file: F = self.read(file_path)
         self.array: AtomArray | AtomArrayStack = self.get_structure()
         self.array = self._connect_cyclic_peptides(self.array)
         self.array = self.set_extra_annotations(
@@ -79,16 +91,15 @@ class ReaderBase(metaclass=ABCMeta):
 
     @property
     def n_models(self) -> int:
+        assert isinstance(self.array, AtomArrayStack)
         return self.array.stack_depth()
 
-    def read(self, file_path: str | Path | BytesIO) -> File:
+    def read(self, file_path: str | Path | BytesIO | StringIO) -> F:
         raise NotImplementedError("Subclasses must implement this method.")
 
     @classmethod
-    def set_standard_annotations(
-        cls, array: AtomArray | AtomArrayStack
-    ) -> AtomArray | AtomArrayStack:
-        annotations = {
+    def set_standard_annotations[A: AtomArray | AtomArrayStack](cls, array: A) -> A:
+        annotations: dict[str, Callable[[Any], Any]] = {
             "mass": cls._compute_mass,
             "atomic_number": cls._compute_atomic_number,
             "res_name_int": cls._compute_res_name_int,
@@ -177,10 +188,8 @@ class ReaderBase(metaclass=ABCMeta):
     def chain_ids(self) -> list[str] | None:
         return np.unique(self.array.get_annotation("chain_id")).tolist()
 
-    def assemblies(self, as_json_string: bool = False) -> dict | str:
+    def assemblies(self) -> dict | str:
         try:
-            if as_json_string:
-                return json.dumps(self._assemblies())
             return self._assemblies()
         except InvalidFileError as e:
             logger.warning(f"Failed to parse biological assemblies: {e}")
@@ -234,9 +243,9 @@ class ReaderBase(metaclass=ABCMeta):
         }
 
     @staticmethod
-    def set_extra_annotations(
-        annotations: dict, array, file
-    ) -> AtomArray | AtomArrayStack:
+    def set_extra_annotations[A: AtomArray | AtomArrayStack](
+        annotations: dict, array: A, file
+    ) -> A:
         for name, func in annotations.items():
             try:
                 # for the getting of some custom attributes, we get it for the full atom_site
@@ -297,7 +306,7 @@ class ReaderBase(metaclass=ABCMeta):
     def _compute_vdw_radii(array):
         return np.array(
             [
-                data.elements.get(x, {}).get("vdw_radii", 100.0) / 100
+                cast(float, data.elements.get(x, {}).get("vdw_radii", 100.0)) / 100
                 for x in np.char.title(array.element)
             ],
             dtype=float,
@@ -418,4 +427,8 @@ class ReaderBase(metaclass=ABCMeta):
 
     @staticmethod
     def _compute_ures_id(array):
-        return count_value_changes(array.res_id, array.chain_id_int)
+        # a new residue starts wherever the chain, res_id, ins_code or res_name
+        # changes, so residues that share a res_id (52, 52A) stay apart
+        starts = np.zeros(array.array_length(), dtype=int)
+        starts[get_residue_starts(array)[1:]] = 1
+        return np.cumsum(starts)

@@ -157,7 +157,7 @@ def has_aov(material: bpy.types.Material, name: str) -> bool:
     if tree is None:
         return False
     return any(
-        node.bl_idname == "ShaderNodeOutputAOV" and node.aov_name == name
+        isinstance(node, bpy.types.ShaderNodeOutputAOV) and node.aov_name == name
         for node in tree.nodes
     )
 
@@ -221,10 +221,12 @@ class PresetMaterial:
     def _handle(self, node_cls):
         """A typed nodebpy handle for the recipe-built node of ``node_cls``,
         so SocketValue properties can address its inputs by name."""
-        for node in self._material.node_tree.nodes:
+        tree = self._material.node_tree
+        assert tree is not None
+        for node in tree.nodes:
             if node.bl_idname != node_cls._bl_idname:
                 continue
-            if node.bl_idname == "ShaderNodeGroup":
+            if isinstance(node, bpy.types.ShaderNodeGroup):
                 group = node.node_tree
                 wanted = node_cls._name
                 if group is None or not (
@@ -244,6 +246,7 @@ class PresetMaterial:
     @property
     def tree(self) -> TreeBuilder:
         "The nodebpy tree builder for the material's node tree."
+        assert self._material.node_tree is not None
         return TreeBuilder(self._material.node_tree)
 
     def node(self) -> g.Material:
@@ -278,11 +281,12 @@ class Default(PresetMaterial):
     roughness : float, optional
         Roughness of the surface. Defaults to the recipe's value.
     ao_distance : float, optional
-        Distance (in world units) that the ambient occlusion samples.
-        Defaults to the recipe's value.
+        Distance in world units (1 unit is 1 nm) that the ambient occlusion
+        samples. Defaults to the recipe's value.
     ao_exponent : float, optional
-        Exponent applied to the occlusion factor; higher values darken
-        crevices more aggressively. Defaults to the recipe's value.
+        Power the occlusion factor is raised to, so higher values darken more.
+        A long ``ao_distance`` occludes most surfaces a little, so it needs a
+        low exponent. Defaults to the recipe's value.
     name : str, optional
         Name for the created material datablock. Defaults to ``"Default"``.
     """
@@ -330,11 +334,14 @@ class AmbientOcclusion(PresetMaterial):
     Parameters
     ----------
     distance : float, optional
-        Distance in metres (nm) that the ambient occlusion samples.
-        Defaults to the recipe's value.
+        Distance in world units (1 unit is 1 nm) that the ambient occlusion
+        samples. Raise it for large assemblies, where form comes from features
+        much larger than the gaps between atoms. Defaults to the recipe's value.
     exponent : float, optional
-        Exponent applied to the occlusion factor; higher values darken
-        crevices more aggressively. Defaults to the recipe's value.
+        Power the occlusion factor is raised to, so higher values darken more.
+        A long ``distance`` occludes most surfaces a little, so it needs a low
+        exponent: around 1 at ``distance=10``, where 10 renders almost black.
+        Defaults to the recipe's value.
     name : str, optional
         Name for the created material datablock. Defaults to
         ``"Ambient Occlusion"``.
@@ -395,7 +402,7 @@ class Flat(PresetMaterial):
         name: str | None = None,
     ):
         self._build(name)
-        self.node = self._handle(FlatShader)
+        self.internal_node: FlatShader = self._handle(FlatShader)
         if outline is not None:
             self.outline = outline
         if threshold is not None:
@@ -404,18 +411,20 @@ class Flat(PresetMaterial):
             self.thickness = thickness
 
     threshold = SocketValue[float](
-        "node", "threshold", "Threshold for the outline edge detection."
+        "internal_node", "threshold", "Threshold for the outline edge detection."
     )
-    thickness = SocketValue[float]("node", "thickness", "Thickness of the outline.")
+    thickness = SocketValue[float](
+        "internal_node", "thickness", "Thickness of the outline."
+    )
 
     @property
     def outline(self) -> bool:
         "Whether the dark outline is rendered."
-        return self.node.i.outline.default_value == "Outline"
+        return self.internal_node.i.outline.default_value == "Outline"
 
     @outline.setter
     def outline(self, value: bool) -> None:
-        self.node.i.outline.default_value = "Outline" if value else "None"
+        self.internal_node.i.outline.default_value = "Outline" if value else "None"
 
 
 class Squishy(PresetMaterial):
@@ -492,7 +501,9 @@ class Transparent(PresetMaterial):
         name: str | None = None,
     ):
         self._build(name)
-        self.node = self._handle(TransparentOutlineShader)
+        self.internal_node: TransparentOutlineShader = self._handle(
+            TransparentOutlineShader
+        )
         if transparency is not None:
             self.transparency = transparency
         if fresnel is not None:
@@ -501,17 +512,21 @@ class Transparent(PresetMaterial):
             self.outline_color = outline_color
 
     transparency = SocketValue[float](
-        "node", "transparency", "How see-through the surface is (0 opaque, 1 clear)."
+        "internal_node",
+        "transparency",
+        "How see-through the surface is (0 opaque, 1 clear).",
     )
     outline_color = SocketValue[tuple[float, float, float, float]](
-        "node", "outline_color", "Color blended in at grazing angles in Fresnel mode."
+        "internal_node",
+        "outline_color",
+        "Color blended in at grazing angles in Fresnel mode.",
     )
 
     @property
     def fresnel(self) -> bool:
         "Whether the rim color is blended in at grazing angles."
-        return self.node.i.menu.default_value == "Fresnel"
+        return self.internal_node.i.menu.default_value == "Fresnel"
 
     @fresnel.setter
     def fresnel(self, value: bool) -> None:
-        self.node.i.menu.default_value = "Fresnel" if value else "Transparent"
+        self.internal_node.i.menu.default_value = "Fresnel" if value else "Transparent"

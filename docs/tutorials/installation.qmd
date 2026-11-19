@@ -36,6 +36,15 @@ Clicking the `Install` button will download and install the add-on. The download
 
 All of the additional python packages now come pre-installed. To update the add-on, use the same panel and Blender should automatically detect updates.
 
+### From the command line
+
+For headless machines and CI, the extension can be installed without opening Blender. Blender refuses to reach the extensions platform unless online access is enabled, so pass `--online-mode`:
+
+```bash
+blender --online-mode --command extension sync
+blender --online-mode --command extension install --enable molecularnodes
+```
+
 ## Installing the Startup Template
 
 There are a number of settings that are useful to have tweaked on startup. You can install the `Molecular Nodes` startup template in the add-on preferences or uninstall the template.

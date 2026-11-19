@@ -2,7 +2,7 @@ import os
 from abc import ABCMeta
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Iterator, Union
+from typing import Generator, Union, overload
 import databpy
 import numpy as np
 from nodebpy.builder import GeometrySocket
@@ -31,7 +31,7 @@ class DensityTree(MolecularTree):
         )
 
     @contextmanager
-    def reset(self, output: str = "Geometry") -> Iterator[ResetSockets]:
+    def reset(self, output: str = "Geometry") -> Generator[ResetSockets]:
         """
         Clear the tree and build within it.
 
@@ -41,7 +41,7 @@ class DensityTree(MolecularTree):
         with self:
             self.clear()
             self.outputs.geometry(output)
-            yield ResetSockets(None, self.join)
+            yield ResetSockets(None, self.join)  # ty: ignore[invalid-argument-type]  # no input geometry to yield
 
 
 class Density(MolecularEntity, metaclass=ABCMeta):
@@ -51,18 +51,32 @@ class Density(MolecularEntity, metaclass=ABCMeta):
     """
 
     _tree_class = DensityTree
+    _entity_type = EntityType.DENSITY
 
     def __init__(self, file_path: Union[str, Path]):
         super().__init__()
-        self._entity_type = EntityType.DENSITY
         self.file_path: Path = bl.path_resolve(file_path)
         self.file_vdb: str
         self.annotations = DensityAnnotationManager(self)
 
-    def named_attribute(self, name: str, evaluate: bool = True) -> np.ndarray:
+    @overload
+    def named_attribute(
+        self, name: str, evaluate: bool = True, *, atype: None = None
+    ) -> np.ndarray: ...
+    @overload
+    def named_attribute[T: databpy.AttributeArray](
+        self, name: str, evaluate: bool = True, *, atype: type[T]
+    ) -> T: ...
+    def named_attribute(
+        self,
+        name: str,
+        evaluate: bool = True,
+        *,
+        atype: type[databpy.AttributeArray] | None = None,
+    ) -> np.ndarray:
         # volume objects can't be evaluated to a mesh data-block directly, but the
         # evaluated geometry holds the mesh their node tree generates
-        return databpy.GeometrySet(self.object).named_attribute(name)
+        return databpy.GeometrySet(self.object).named_attribute(name, atype=atype)
 
     def path_to_vdb(self, file: str, center: bool = False, invert: bool = False):
         """

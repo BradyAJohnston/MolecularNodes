@@ -1,6 +1,7 @@
 import colorsys
 import math
 import random
+import re
 import numpy as np
 import numpy.typing as npt
 
@@ -120,6 +121,78 @@ def random_rgb(seed=None):
         random.seed(seed)
     r, g, b = colorsys.hls_to_rgb(random.random(), 0.6, 0.6)
     return np.array((r, g, b, 1))
+
+
+def srgb_to_linear(values: npt.ArrayLike) -> npt.NDArray[np.float64]:
+    """Convert sRGB values (0 to 1) to the linear values Blender stores colors as."""
+    values = np.asarray(values, dtype=float)
+    return np.where(
+        values <= 0.04045, values / 12.92, ((values + 0.055) / 1.055) ** 2.4
+    )
+
+
+def parse_color(color: str) -> npt.NDArray[np.float64]:
+    """Linear RGB, or RGBA if it has an alpha, from a hex string or colour name.
+
+    Accepts:
+
+    - hex, ``"#00FFCC"``, also ``#RGB``, ``#RGBA`` and ``#RRGGBBAA``, with or
+      without the ``#``
+    - CSS colour names, ``"salmon"``, as used by MolViewSpec and ChimeraX, whose
+      spaced names (``"dark slate gray"``) also work
+    - PyMOL and VMD colour names with a prefix, ``"pymol:salmon"``, ``"vmd:mauve"``
+    - anything else matplotlib accepts, such as ``"tab:blue"`` or ``"xkcd:sky blue"``
+
+    A name without a prefix is a CSS name first, so ``"green"`` is CSS's dark
+    green rather than PyMOL's or VMD's pure green. Names CSS doesn't have, such as
+    ``"slate"``, ``"carbon"`` (both PyMOL) or ``"iceblue"`` (VMD), work without one.
+
+    All of these are sRGB, so the colour channels are converted to linear; alpha
+    is already linear and is kept as is.
+
+    Parameters
+    ----------
+    color : str
+        The hex colour or colour name
+
+    Returns
+    -------
+    np.ndarray
+        Linear RGB (3 values), or RGBA (4 values) for hex with an alpha
+
+    Raises
+    ------
+    ValueError
+        If the colour isn't recognised
+    """
+    from matplotlib.colors import to_rgba
+    from ._color_names import PYMOL_COLORS, VMD_COLORS
+
+    tables = {"pymol": PYMOL_COLORS, "vmd": VMD_COLORS}
+    prefix, sep, name = color.strip().partition(":")
+    if sep and prefix.lower() in tables:
+        try:
+            return srgb_to_linear(tables[prefix.lower()][name.lower()])
+        except KeyError:
+            raise ValueError(f"'{name}' is not a {prefix} colour name") from None
+    key = color.strip()
+    if not sep:
+        # ChimeraX's spaced names, such as "dark slate gray"
+        key = key.replace(" ", "")
+        if re.fullmatch(r"[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8}", key):
+            key = f"#{key}"
+    try:
+        rgba = np.array(to_rgba(key))
+    except ValueError:
+        for table in tables.values():
+            if key.lower() in table:
+                return srgb_to_linear(table[key.lower()])
+        raise ValueError(
+            f"'{color}' is not a hex colour or a CSS, PyMOL or VMD colour name"
+        ) from None
+    rgba[:3] = srgb_to_linear(rgba[:3])
+    has_alpha = key.startswith("#") and len(key) in (5, 9)
+    return rgba if has_alpha else rgba[:3]
 
 
 def plddt(b_factor: np.ndarray) -> npt.NDArray[np.float32]:

@@ -147,13 +147,12 @@ def align(
         mobile_array = _as_single_chain(mobile_array)
 
     if method == "sequence":
-        fitted, transform, fixed_idx, mobile_idx = struc.superimpose_homologs(
-            fixed_array, mobile_array
-        )
+        result = struc.superimpose_homologs(fixed_array, mobile_array)
     else:
-        fitted, transform, fixed_idx, mobile_idx = (
-            struc.superimpose_structural_homologs(fixed_array, mobile_array)
-        )
+        result = struc.superimpose_structural_homologs(fixed_array, mobile_array)
+    # biotite < 2 also returns the fitted structure as the first item
+    transform, fixed_idx, mobile_idx = result[-3:]
+    fitted = transform.apply(mobile_array)
 
     if len(fixed_idx) == 0:
         raise ValueError("No corresponding atoms were found to align on")

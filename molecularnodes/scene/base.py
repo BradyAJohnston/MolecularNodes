@@ -4,7 +4,7 @@ import tempfile
 from contextlib import ExitStack, contextmanager
 from enum import StrEnum
 from pathlib import Path
-from typing import Literal, Sequence, Tuple
+from typing import Any, Literal, Sequence, Tuple
 import bpy
 import numpy as np
 import numpy.typing as npt
@@ -13,14 +13,19 @@ from mathutils.bvhtree import BVHTree
 from tqdm.auto import tqdm
 from .. import assets, framing
 from .. import viewpoint as _viewpoint
-from ..assets.template import list_templates
+from ..assets.template import find_startup
 from ..blender import utils as blender_utils
 from ..entities.base import MolecularEntity
 from ..session import get_session
 from ..ui import addon
 from ..utils import _UNSET, Unset, suppress_stdout, temp_override_properties
 from .camera import Camera, Viewpoint
-from .compositor import CompositorTree, add_view_layer_aov, setup_compositor
+from .compositor import (
+    CompositorTree,
+    _pixel_size,
+    add_view_layer_aov,
+    setup_compositor,
+)
 from .engines import EEVEE, Cycles
 from .recorder import _ANIMATION_FORMATS, FrameRecorder, _resolve_format, _write_gif
 from .world import WorldTree
@@ -109,6 +114,26 @@ def _restore_frame(scene: bpy.types.Scene):
         yield
     finally:
         scene.frame_set(original)
+
+
+def _sample_cap_overrides(scene: bpy.types.Scene) -> list[tuple[Any, str, Any]]:
+    """
+    Temporary overrides capping the render samples at ``MN_MAX_RENDER_SAMPLES``.
+
+    For builds that only need renders to run, not to look good (such as building
+    the docs on CI), the environment variable caps the samples of every render
+    from the Canvas, whatever the engine settings say. Unset, nothing changes.
+    """
+    cap = os.environ.get("MN_MAX_RENDER_SAMPLES")
+    if not cap:
+        return []
+    cap = int(cap)
+    cycles: Any = scene.cycles
+    eevee: Any = scene.eevee
+    return [
+        (cycles, "samples", min(cycles.samples, cap)),
+        (eevee, "taa_render_samples", min(eevee.taa_render_samples, cap)),
+    ]
 
 
 @contextmanager
@@ -257,7 +282,7 @@ class Canvas:
         self._world: WorldTree | None = None
 
         requested = template is not _UNSET
-        if not requested:
+        if isinstance(template, Unset):
             template = _DEFAULT_TEMPLATE
 
         session = get_session()
@@ -710,6 +735,21 @@ class Canvas:
         self._view_settings.gamma = value
 
     @property
+    def pixel_size(self) -> float:
+        """
+        Size of one rendered pixel in nanometres, for scale bars.
+
+        Exact for an orthographic camera. A perspective camera has no single
+        scale, so this is the size at the mid-depth of the entities.
+
+        Returns
+        -------
+        float
+            Nanometres per pixel, including ``render_scale``.
+        """
+        return _pixel_size(self.scene)
+
+    @property
     def look(self) -> str:
         """
         Get the color-management look (contrast preset).
@@ -833,7 +873,7 @@ class Canvas:
         return ViewTransform(self._view_settings.view_transform)
 
     @view_transform.setter
-    def view_transform(self, value: ViewTransform) -> None:
+    def view_transform(self, value: ViewTransform | str) -> None:
         """
         Set the view transform setting.
 
@@ -842,9 +882,14 @@ class Canvas:
         value : ViewTransform | str
             The view transform to set. Accepts a ``ViewTransform``, its full name
             (case-insensitive), or its short enum name (e.g. ``"agx"``,
-            ``"filmic_log"``).
+            ``"filmic_log"``). ``"Standard"`` also clears the look, so that
+            colors come out as specified; set ``look`` afterwards to add one.
         """
-        self._view_settings.view_transform = ViewTransform(value)  # ty: ignore[invalid-assignment]
+        view_transform = ViewTransform(value)
+        self._view_settings.view_transform = view_transform  # ty: ignore[invalid-assignment]
+        # Blender carries the preset's contrast look across view transforms
+        if view_transform is ViewTransform.STANDARD:
+            self._view_settings.look = "None"  # ty: ignore[invalid-assignment]
 
     def look_at(
         self,
@@ -1089,13 +1134,15 @@ class Canvas:
             if file.is_file() and file.suffix == ".blend":
                 self.load(file)
             elif isinstance(template, str):
-                if template in list_templates():
-                    bpy.ops.wm.read_homefile(app_template=template)
-                    self._scene_changed()
-                else:
+                startup = find_startup(template)
+                if startup is None:
                     raise ValueError(
                         f"Template '{template}' is not a valid .blend file or app template name."
                     )
+                # given the file explicitly, Blender raises if it has gone missing
+                # since; by name alone it warns and loads the factory startup instead
+                bpy.ops.wm.read_homefile(filepath=str(startup), app_template=template)
+                self._scene_changed()
 
             else:
                 raise ValueError(
@@ -1155,6 +1202,7 @@ class Canvas:
                     (image_settings, "media_type", "IMAGE"),
                     (image_settings, "file_format", file_format),
                     (render_settings, "resolution_percentage", render_scale),
+                    *_sample_cap_overrides(self.scene),
                 ],
             )
             render_file = path_stem.with_name(
@@ -1356,12 +1404,14 @@ class Canvas:
         render_settings = scene.render
         image_settings = render_settings.image_settings
         # temporary properties to override
-        override_props = [
+        # (owner, property name, temporary value)
+        override_props: list[tuple[Any, str, Any]] = [
             (render_settings, "use_lock_interface", True),
             (render_settings, "use_file_extension", True),
             (render_settings, "resolution_percentage", render_scale),
             (scene, "frame_start", start),
             (scene, "frame_end", end),
+            *_sample_cap_overrides(scene),
         ]
         if fps is not None:
             override_props.append((render_settings, "fps", fps))

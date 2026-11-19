@@ -6,6 +6,7 @@ import pytest
 import molecularnodes as mn
 from molecularnodes.nodes import compositor as mc
 from .constants import data_dir
+from .utils import node_input, socket_links
 
 GROUPS = [
     mc.ConeShadow,
@@ -189,19 +190,24 @@ def test_material_add_aov():
     node = mat.add_aov("chain_id")
     assert node.node.bl_idname == "ShaderNodeOutputAOV"
     assert node.node.aov_name == "chain_id"
-    (link,) = node.node.inputs["Value"].links
+    (link,) = socket_links(node_input(node.node, "Value"))
     _assert_instancer_mix(link.from_node, "chain_id", "Factor")
 
     # the offset is added after the mix, so instanced IDs are offset too
     node = mat.add_aov("res_id", attribute="res_id", offset=1.0)
-    (link,) = node.node.inputs["Value"].links
+    (link,) = socket_links(node_input(node.node, "Value"))
     add = link.from_node
+    assert isinstance(add, bpy.types.ShaderNodeMath)
     assert add.bl_idname == "ShaderNodeMath" and add.operation == "ADD"
-    assert add.inputs[1].default_value == pytest.approx(1.0)
-    _assert_instancer_mix(add.inputs[0].links[0].from_node, "res_id", "Factor")
+    value = node_input(add, 1)
+    assert isinstance(value, bpy.types.NodeSocketFloat)
+    assert value.default_value == pytest.approx(1.0)
+    _assert_instancer_mix(
+        socket_links(node_input(add, 0))[0].from_node, "res_id", "Factor"
+    )
 
     colour = mn.material.add_aov(mat.material, "tint", attribute="Color", type="COLOR")
-    (link,) = colour.node.inputs["Color"].links
+    (link,) = socket_links(node_input(colour.node, "Color"))
     _assert_instancer_mix(link.from_node, "Color", "Color")
 
 
@@ -290,7 +296,7 @@ def test_cone_shadow_sample_count(canvas):
     samples = [
         n
         for n in tree.nodes
-        if n.bl_idname == "CompositorNodeGroup"
+        if isinstance(n, bpy.types.CompositorNodeGroup)
         and n.node_tree
         and n.node_tree.name == "Cone Shadow Sample"
     ]
@@ -332,3 +338,41 @@ def test_render_illustrate(tmp_path):
     near_structure = _dilate(covered, 3)
     assert (~near_structure).any()
     assert illustrated[~near_structure, 3].max() <= 1.5 / 255
+
+
+def test_illustrate_id_pass(canvas):
+    node = canvas.compositor.illustrate()
+    assert node.i.id_outline.default_value is False
+    assert not node.node.inputs["ID"].is_linked
+
+    node = canvas.compositor.illustrate(id_pass="chain_id")
+    assert "chain_id" in canvas.aovs
+    assert node.i.id_outline.default_value is True
+    (link,) = node.node.inputs["ID"].links
+    assert link.from_socket.name == "chain_id"
+
+
+def test_cone_shadow_pixel_size_follows_camera(canvas):
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir, format="bcif")
+    mol.add_style("cartoon", material=mn.material.Flat())
+    canvas.look_at(mol, viewpoint="front", margin=0.5)
+    node = canvas.compositor.illustrate()
+    (link,) = node.node.inputs["Shadow"].links
+    pixel_size = link.from_node.inputs["Pixel Size"]
+    before = pixel_size.default_value
+
+    canvas.look_at(mol, viewpoint="front", margin=0.0)
+    assert pixel_size.default_value == pytest.approx(before)
+    mn.scene.compositor.update_cone_shadows(canvas.scene)
+    assert pixel_size.default_value < before
+    assert pixel_size.default_value == pytest.approx(canvas.pixel_size)
+
+
+def test_pixel_size_with_point_cloud_spheres(canvas):
+    # spheres evaluate to a point cloud, which the object's bounding box misses
+    mol = mn.Molecule.fetch("4ozs", cache=data_dir, format="bcif")
+    mol.add_style("spheres", material=mn.material.Flat())
+    canvas.look_at(mol, viewpoint="front", margin=0.5)
+    wide = canvas.pixel_size
+    canvas.look_at(mol, viewpoint="front", margin=0.0)
+    assert canvas.pixel_size < wide

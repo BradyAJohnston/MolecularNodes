@@ -24,6 +24,7 @@ from nodebpy.types import (
     InputMaterial,
     InputMenu,
 )
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_units import MNUnits
 from ._shared.mn_utils_style_sticks import MN_utils_style_sticks
 from .evaluate_on_atoms import EvaluateOnAtoms
@@ -183,7 +184,7 @@ class StyleSticks(AssetGeometryGroup):
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
         separate_geometry = atoms_1.output >> g.SeparateGeometry.point(
-            selection=selection
+            selection=DeselectHidden(selection=selection)
         )
         mn_utils_style_sticks = MN_utils_style_sticks(
             atoms=separate_geometry.o.selection,

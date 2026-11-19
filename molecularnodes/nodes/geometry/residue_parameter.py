@@ -4,18 +4,19 @@
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
 from nodebpy import TreeBuilder
+from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
+    BooleanSocket,
     FloatSocket,
     IntegerSocket,
     PackageLibrary,
     SocketAccessor,
 )
 from ._shared.index_to_factor import IndexToFactor
-from .atom_name import AtomName
 from .chain_id import ChainID
-from .residue_id import ResidueID
 from .sub_group_info import SubGroupInfo
+from .ures_id import UResID
 
 
 class ResidueParameter(AssetGeometryGroup):
@@ -25,19 +26,19 @@ class ResidueParameter(AssetGeometryGroup):
     Outputs
     -------
     o.factor : FloatSocket
-        An atom's relative position in a residue, with the first atom being 0 and the last atom being 1
-    o.atom_count : IntegerSocket
-        Number of atoms in a residue
+        An atom's relative position in its residue, 0 for the first atom and 1 for the last
     o.atom_index : IntegerSocket
-        Index of an atom in a residue when counting from 0
-    o.first_atom_name : IntegerSocket
-        the atom_name for the first atom in a residue
-    o.last_atom_name : IntegerSocket
-        The atom_name for the last atom in a residue
+        Index of the atom within its residue, starting at 0 for the first atom
+    o.atom_count : IntegerSocket
+        Number of atoms in the residue
+    o.is_first : BooleanSocket
+        If the atom is the first atom in its residue
+    o.is_last : BooleanSocket
+        If the atom is the last atom in its residue
     o.index_of_first : IntegerSocket
-        Index (in the whole structure) for the first atom in a residue
+        `Index` (in the whole structure) of the first atom in the residue
     o.index_of_last : IntegerSocket
-        Index (in the whole structure) for the last atom in a residue
+        `Index` (in the whole structure) of the last atom in the residue
     """
 
     _name = "Residue Parameter"
@@ -51,19 +52,19 @@ class ResidueParameter(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         factor: FloatSocket
-        """An atom's relative position in a residue, with the first atom being 0 and the last atom being 1"""
-        atom_count: IntegerSocket
-        """Number of atoms in a residue"""
+        """An atom's relative position in its residue, 0 for the first atom and 1 for the last"""
         atom_index: IntegerSocket
-        """Index of an atom in a residue when counting from 0"""
-        first_atom_name: IntegerSocket
-        """the atom_name for the first atom in a residue"""
-        last_atom_name: IntegerSocket
-        """The atom_name for the last atom in a residue"""
+        """Index of the atom within its residue, starting at 0 for the first atom"""
+        atom_count: IntegerSocket
+        """Number of atoms in the residue"""
+        is_first: BooleanSocket
+        """If the atom is the first atom in its residue"""
+        is_last: BooleanSocket
+        """If the atom is the last atom in its residue"""
         index_of_first: IntegerSocket
-        """Index (in the whole structure) for the first atom in a residue"""
+        """`Index` (in the whole structure) of the first atom in the residue"""
         index_of_last: IntegerSocket
-        """Index (in the whole structure) for the last atom in a residue"""
+        """`Index` (in the whole structure) of the last atom in the residue"""
 
     if TYPE_CHECKING:
 
@@ -78,46 +79,52 @@ class ResidueParameter(AssetGeometryGroup):
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         factor = tree.outputs.float(
             "Factor",
-            description="An atom's relative position in a residue, with the first atom being 0 and the last atom being 1",
+            description="An atom's relative position in its residue, 0 for the first atom and 1 for the last",
             min_value=0.0,
             max_value=1.0,
             subtype="FACTOR",
         )
-        atom_count = tree.outputs.integer(
-            "Atom Count", description="Number of  atoms in a residue"
-        )
         atom_index = tree.outputs.integer(
             "Atom Index",
-            description="Index of an atom in a residue when counting from 0",
+            description="Index of the atom within its residue, starting at 0 for the first atom",
         )
-        first_atom_name = tree.outputs.integer(
-            "First atom_name",
-            description="the atom_name for the first atom in a residue",
+        atom_count = tree.outputs.integer(
+            "Atom Count", description="Number of atoms in the residue"
         )
-        last_atom_name = tree.outputs.integer(
-            "Last atom_name", description="The atom_name for the last atom in a residue"
+        is_first = tree.outputs.boolean(
+            "Is First", description="If the atom is the first atom in its residue"
+        )
+        is_last = tree.outputs.boolean(
+            "Is Last", description="If the atom is the last atom in its residue"
         )
         index_of_first = tree.outputs.integer(
             "Index of First",
-            description="Index (in the whole structure) for the first atom in a  residue",
+            description="`Index` (in the whole structure) of the first atom in the residue",
         )
         index_of_last = tree.outputs.integer(
             "Index of Last",
-            description="Index (in the whole structure) for the last atom in a  residue",
+            description="`Index` (in the whole structure) of the last atom in the residue",
         )
 
-        sub_group_info = SubGroupInfo(sub_group_id=ResidueID(), group_id=ChainID())
-        AtomName(index=sub_group_info.o.index_of_first) >> first_atom_name
-        AtomName(index=sub_group_info.o.index_of_last) >> last_atom_name
+        sub_group_info = SubGroupInfo(
+            sub_group_id=UResID().o.ures_id, group_id=ChainID()
+        )
+        g.Compare.integer.equal(sub_group_info.o.index_in_group_id, 0) >> is_first
         (
             IndexToFactor(
                 index=sub_group_info.o.index_in_group_id, size=sub_group_info.o.size
             )
             >> factor
         )
+        (
+            g.Compare.integer.equal(
+                sub_group_info.o.index_in_group_id, sub_group_info.o.size - 1
+            )
+            >> is_last
+        )
 
-        sub_group_info >> atom_count
         sub_group_info.o.index_in_group_id >> atom_index
+        sub_group_info >> atom_count
         sub_group_info.o.index_of_first >> index_of_first
         sub_group_info.o.index_of_last >> index_of_last
 

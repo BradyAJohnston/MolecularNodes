@@ -37,7 +37,8 @@ class CellPackCIFFileReader(pdbx.CIFFile):
                     block_starts.append(i)
                     block_names.append(data_block_name)
         return pdbx.CIFFile(
-            pdbx.cif._create_element_dict(lines, block_names, block_starts)
+            # biotite's private parser returns the raw block text, which CIFFile accepts
+            pdbx.cif._create_element_dict(lines, block_names, block_starts)  # ty: ignore[invalid-argument-type]
         )
 
 
@@ -62,9 +63,9 @@ class CellPackReader(PDBXReader):
     def read(self, file_path):
         suffix = Path(file_path).suffix
         if suffix == ".bcif":
-            return pdbx.BinaryCIFFile.read(self.file_path)
+            return pdbx.BinaryCIFFile.read(file_path)
         elif suffix == ".cif":
-            return CellPackCIFFileReader.read(self.file_path)
+            return CellPackCIFFileReader.read(file_path)
         else:
             raise ValueError(f"Invalid file format: '{suffix}")
 
@@ -93,7 +94,7 @@ class CellPackReader(PDBXReader):
         if "PDB_model_num" in self.blocks["pdbx_struct_assembly_gen"]:
             self._is_petworld = True
 
-        molecules = {}
+        molecules: dict[str, struc.AtomArray] = {}
 
         try:
             # Skip bond computation for CellPack files as it's extremely slow with large structures
@@ -102,6 +103,7 @@ class CellPackReader(PDBXReader):
 
             if isinstance(array, struc.AtomArrayStack):
                 array = array[0]
+            assert isinstance(array, struc.AtomArray)
 
             molecules = {
                 c: array[array.chain_id == c] for c in np.unique(array.chain_id)
@@ -112,8 +114,9 @@ class CellPackReader(PDBXReader):
             for i in range(self.n_molecules):
                 # Skip bond computation for CellPack files
                 array = self.get_structure(model=int(i + 1), include_bonds=False)
+                assert isinstance(array, struc.AtomArray)
                 array.set_annotation("pdbx_PDB_model_num", np.repeat(i + 1, len(array)))
-                array.chain_id = array.pdbx_PDB_model_num
+                array.chain_id = array.get_annotation("pdbx_PDB_model_num")
                 chain_name = "{}_{}".format(
                     str(i).rjust(4, "0"), str(array.chain_id[0])
                 )

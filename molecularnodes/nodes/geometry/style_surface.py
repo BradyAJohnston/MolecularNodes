@@ -25,6 +25,7 @@ from nodebpy.types import (
     InputMaterial,
     InputMenu,
 )
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_constants_atom_name_nucleic import MN_constants_atom_name_nucleic
 from ._shared.mn_world_scale import MN_world_scale
 from .angstrom_to_world import AngstromToWorld
@@ -708,6 +709,7 @@ class StyleSurface(AssetGeometryGroup):
             "Geometry", description="The generated geometry for the style node group"
         )
 
+        deselect_hidden = DeselectHidden(selection=selection)
         _mn_utils_style_surface_new = MN_utils_style_surface_new()
         with g.Frame("Create grid and turn into mesh"):
             with g.Frame("Old-style 'manual SDF creation"):
@@ -820,7 +822,7 @@ class StyleSurface(AssetGeometryGroup):
         geometry_7 = closure_zone_5.outputs.geometry("Geometry")
         mn_utils_style_surface_sdf = MN_utils_style_surface_sdf(
             Atoms=geometry_6.output,
-            Selection=selection,
+            Selection=deselect_hidden,
             Quality=quality,
             **{
                 "Scale Radii": scale,
@@ -896,7 +898,7 @@ class StyleSurface(AssetGeometryGroup):
         (
             EvaluateOnAtoms(
                 geometry=atoms,
-                selection=selection,
+                selection=deselect_hidden,
                 closure=closure_zone_4.closure,
                 result="Representation",
             )

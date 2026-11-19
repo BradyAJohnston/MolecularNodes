@@ -30,7 +30,8 @@ def link_asset_groups(groups: Iterable[type]) -> None:
         # without a built library the asset classes build from source instead
         if not os.path.exists(path):
             continue
-        with bpy.data.libraries.load(path, link=True, pack=True, assets_only=True) as (
+        # fake-bpy-module types the context manager returned here as None
+        with bpy.data.libraries.load(path, link=True, pack=True, assets_only=True) as (  # ty: ignore[invalid-context-manager]
             src,
             dst,
         ):

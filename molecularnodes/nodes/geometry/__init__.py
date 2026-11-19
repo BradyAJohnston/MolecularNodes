@@ -52,6 +52,7 @@ from .color_attribute_map import ColorAttributeMap
 from .color_attribute_random import ColorAttributeRandom
 from .color_backbone import ColorBackbone
 from .color_common import ColorCommon
+from .color_css import ColorCSS
 from .color_element import ColorElement
 from .color_goodsell import ColorGoodsell
 from .color_matplotlib import ColorMatplotlib
@@ -59,12 +60,14 @@ from .color_mix_intermediate import ColorMixIntermediate
 from .color_oklab_mix import ColorOKLabMix
 from .color_oklab_offset import ColorOKLabOffset
 from .color_plddt import ColorPLDDT
+from .color_pymol import ColorPyMOL
 from .color_rainbow import ColorRainbow
 from .color_res_name import ColorResName
 from .color_sample_grid import ColorSampleGrid
 from .color_secondary_structure import ColorSecondaryStructure
 from .color_to_lch import ColorToLCh
 from .color_to_oklab import ColorToOKLab
+from .color_vmd import ColorVMD
 from .contains_geometry import ContainsGeometry
 from .cumulative_length import CumulativeLength
 from .curve_custom_profile import CurveCustomProfile
@@ -116,6 +119,7 @@ from .force_brownian import ForceBrownian
 from .force_gravity import ForceGravity
 from .force_mesh_collide import ForceMeshCollide
 from .fractionate_float import FractionateFloat
+from .fragment_id import FragmentID
 from .frame_id import FrameID
 from .geometry_field_remap import GeometryFieldRemap
 from .geometry_to_planar import GeometryToPlanar
@@ -187,7 +191,10 @@ from .peptide_chi import PeptideChi
 from .peptide_dihedral import PeptideDihedral
 from .periodic_array import PeriodicArray
 from .periodic_box import PeriodicBox
+from .periodic_cell import PeriodicCell
 from .periodic_image import PeriodicImage
+from .periodic_offset import PeriodicOffset
+from .periodic_unwrap import PeriodicUnwrap
 from .plexus import Plexus
 from .point_edge_angle import PointEdgeAngle
 from .points_of_edge import PointsOfEdge
@@ -331,6 +338,7 @@ __all__ = (
     "ColorAttributeMap",
     "ColorAttributeRandom",
     "ColorBackbone",
+    "ColorCSS",
     "ColorCommon",
     "ColorElement",
     "ColorGoodsell",
@@ -339,12 +347,14 @@ __all__ = (
     "ColorOKLabMix",
     "ColorOKLabOffset",
     "ColorPLDDT",
+    "ColorPyMOL",
     "ColorRainbow",
     "ColorResName",
     "ColorSampleGrid",
     "ColorSecondaryStructure",
     "ColorToLCh",
     "ColorToOKLab",
+    "ColorVMD",
     "ContainsGeometry",
     "CumulativeLength",
     "CurveCustomProfile",
@@ -396,6 +406,7 @@ __all__ = (
     "ForceGravity",
     "ForceMeshCollide",
     "FractionateFloat",
+    "FragmentID",
     "FrameID",
     "GeometryFieldRemap",
     "GeometryToPlanar",
@@ -467,7 +478,10 @@ __all__ = (
     "PeptideDihedral",
     "PeriodicArray",
     "PeriodicBox",
+    "PeriodicCell",
     "PeriodicImage",
+    "PeriodicOffset",
+    "PeriodicUnwrap",
     "Plexus",
     "PointEdgeAngle",
     "PointsOfEdge",

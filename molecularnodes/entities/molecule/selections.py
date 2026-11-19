@@ -4,7 +4,7 @@ Managing selections for the ``Molecule``
 For selectively applying styles inside of Blender, we represent selections as a
 boolean attribute on the mesh of the ``trajectory.object``.
 
-These could be directly created with ``traj.store_named_attribute(array, "selection_name")``
+These could be directly created with ``traj["selection_name"] = array``
 but the SelectionManager class is a convenience class for helping to manage selections
 and allow editing and updating via the GUI.
 
@@ -47,7 +47,7 @@ import databpy as db
 import numpy as np
 from bpy.types import Object
 from MDAnalysis import AtomGroup, Universe
-from ..utilities import IntObjectMNProperty, _unique_aname
+from ..utilities import _unique_aname
 from .helpers import _ag_to_bool
 
 
@@ -113,16 +113,23 @@ class SelectionManager:
     ----------
     atomgroups : dict[str, AtomGroup]
         Cached ``AtomGroup`` objects keyed by selection name.
-    ui_index : IntObjectMNProperty
-        Property descriptor for current UI selection index.
+    ui_index : int
+        Index of the current UI selection.
     """
-
-    ui_index = IntObjectMNProperty("trajectory_selection_index")
 
     def __init__(self, trajectory: Molecule):
         self.trajectory = trajectory
         self.atomgroups: dict[str, AtomGroup] = {}
         self._is_frozen: bool = False
+
+    @property
+    def ui_index(self) -> int:
+        """Index of the current UI selection."""
+        return self.trajectory.props.trajectory_selection_index
+
+    @ui_index.setter
+    def ui_index(self, value: int) -> None:
+        self.trajectory.props.trajectory_selection_index = value
 
     @property
     def ui_items(self) -> bpy.types.bpy_prop_collection_idprop:
@@ -177,9 +184,7 @@ class SelectionManager:
         _ag_to_bool : Helper function that performs the AtomGroup to boolean conversion.
         update_attributes : Calls this method to sync selections to geometry attributes.
         """
-        self.trajectory.store_named_attribute(
-            data=_ag_to_bool(ag), name=name, atype=db.AttributeTypes.BOOLEAN
-        )
+        self.trajectory[name] = db.boolean(_ag_to_bool(ag))
 
     def from_string(
         self,
@@ -219,6 +224,7 @@ class SelectionManager:
         update_attributes : Called after item creation to generate the AtomGroup.
         _unique_selection_name : Generates unique names when not provided.
         """
+        self._check_name(name)
         with FrozenUpdates(self):
             item: TrajectorySelectionItem = self.ui_items.add()
             item.name = name if name else self._unique_selection_name()
@@ -229,6 +235,15 @@ class SelectionManager:
         self.update_attributes()
 
         return item
+
+    def _check_name(self, name: str | None) -> None:
+        """Reject the name of the attribute styles read for hidden atoms, which a
+        selection would overwrite on every frame."""
+        if name == "hidden":
+            raise ValueError(
+                "'hidden' is reserved for `mol.hidden`, `mol.hide()` and `mol.show()`. "
+                "Use another name, and give the selection to a style."
+            )
 
     def _unique_selection_name(self) -> str:
         """Generate a unique selection name.
@@ -302,6 +317,7 @@ class SelectionManager:
         from_string : Create selection from MDAnalysis selection string.
         ag_to_attribute : Called to immediately store the selection as an attribute.
         """
+        self._check_name(name)
         with FrozenUpdates(self):
             item: TrajectorySelectionItem = self.ui_items.add()
             item.name = name if name else self._unique_selection_name()

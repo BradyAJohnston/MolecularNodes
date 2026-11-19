@@ -24,6 +24,7 @@ from nodebpy.types import (
     InputMaterial,
     InputMenu,
 )
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_utils_style_spheres_icosphere import MN_utils_style_spheres_icosphere
 from ._shared.mn_utils_style_spheres_points import MN_utils_style_spheres_points
 from .evaluate_on_atoms import EvaluateOnAtoms
@@ -178,19 +179,23 @@ class StyleSpheres(AssetGeometryGroup):
             "Geometry", description="The generated geometry for the style node group"
         )
 
+        deselect_hidden = DeselectHidden(selection=selection)
         closure_zone = g.ClosureZone()
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
         mn_utils_style_spheres_icosphere = MN_utils_style_spheres_icosphere(
             atoms=atoms_1.output,
-            selection=selection,
+            selection=deselect_hidden,
             scale=scale,
             subdivisions=quality,
             shade_smooth=shade_smooth,
             material=material,
         )
         mn_utils_style_spheres_points = MN_utils_style_spheres_points(
-            atoms=atoms_1.output, selection=selection, scale=scale, material=material
+            atoms=atoms_1.output,
+            selection=deselect_hidden,
+            scale=scale,
+            material=material,
         )
         realize_instances = g.RealizeInstances(
             geometry=mn_utils_style_spheres_icosphere, realize_to_point_domain=True

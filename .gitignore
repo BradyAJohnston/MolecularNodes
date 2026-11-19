@@ -5,7 +5,7 @@
 
 *.blend1
 tests/blend_files/*.blend
-# built asset library — rebuild with: uv run -m nodebpy.assets build
+# built asset library — rebuild with: uv run nodebpy build
 molecularnodes/assets/nodes.blend
 molecularnodes/assets/nodes.blend.stamp
 tests/image_failures/

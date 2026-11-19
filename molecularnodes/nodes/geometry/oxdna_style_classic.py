@@ -31,6 +31,7 @@ from nodebpy.types import (
     InputMenu,
     InputVector,
 )
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.set_instancer import SetInstancer
 from ._shared.smooth_by_angle import SmoothByAngle
 from ._shared.vector_in_angstroms import VectorInAngstroms
@@ -493,7 +494,9 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             "Geometry", description="The generated geometry for the style node group"
         )
 
-        separate_geometry = g.SeparateGeometry.point(atoms, selection)
+        separate_geometry = g.SeparateGeometry.point(
+            atoms, DeselectHidden(selection=selection)
+        )
         with g.Frame("Color strands if Auto-color is False"):
             index_switch = g.IndexSwitch.color(
                 g.IntegerMath.modulo(ChainID(), 4),

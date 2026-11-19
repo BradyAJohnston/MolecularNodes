@@ -49,7 +49,7 @@ def test_parse_core_cif():
 def test_load_core_cif():
     mol = mn.Molecule.load(CRYSTAL_FILE)
     assert len(mol) == 6
-    assert set(mol.universe.atoms.elements) == {"Na", "Cl"}
+    assert set(mol.atoms.elements) == {"Na", "Cl"}
     assert set(mol.named_attribute("atomic_number")) == {11, 17}
 
 
@@ -61,5 +61,5 @@ def test_structure_factor_file_errors():
 def test_load_xyz():
     mol = mn.Molecule.load(data_dir / "mn_test.xyz")
     assert len(mol) == 5
-    assert list(mol.universe.atoms.elements) == ["C", "H", "H", "H", "H"]
+    assert list(mol.atoms.elements) == ["C", "H", "H", "H", "H"]
     assert set(mol.named_attribute("atomic_number")) == {6, 1}

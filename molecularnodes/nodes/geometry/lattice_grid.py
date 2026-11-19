@@ -23,37 +23,37 @@ class LatticeGrid(AssetGeometryGroup):
     Parameters
     ----------
     a : InputVector
-        A
+        Box vector A in world units, such as from Periodic Box
     b : InputVector
-        B
+        Box vector B in world units, such as from Periodic Box
     c : InputVector
-        C
+        Box vector C in world units, such as from Periodic Box
     x : InputInteger
-        Number of images along the a vector
+        Number of lattice points along box vector A
     y : InputInteger
-        Number of images along the b vector
+        Number of lattice points along box vector B
     z : InputInteger
-        Number of images along the c vector
+        Number of lattice points along box vector C
 
     Inputs
     ------
     i.a : VectorSocket
-        A
+        Box vector A in world units, such as from Periodic Box
     i.b : VectorSocket
-        B
+        Box vector B in world units, such as from Periodic Box
     i.c : VectorSocket
-        C
+        Box vector C in world units, such as from Periodic Box
     i.x : IntegerSocket
-        Number of images along the a vector
+        Number of lattice points along box vector A
     i.y : IntegerSocket
-        Number of images along the b vector
+        Number of lattice points along box vector B
     i.z : IntegerSocket
-        Number of images along the c vector
+        Number of lattice points along box vector C
 
     Outputs
     -------
     o.grid : GeometrySocket
-        Grid
+        A point at each lattice point, starting at the origin and going along box vectors A, B and C
     """
 
     _name = "Lattice Grid"
@@ -63,21 +63,21 @@ class LatticeGrid(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         a: VectorSocket
-        """A"""
+        """Box vector A in world units, such as from Periodic Box"""
         b: VectorSocket
-        """B"""
+        """Box vector B in world units, such as from Periodic Box"""
         c: VectorSocket
-        """C"""
+        """Box vector C in world units, such as from Periodic Box"""
         x: IntegerSocket
-        """Number of images along the a vector"""
+        """Number of lattice points along box vector A"""
         y: IntegerSocket
-        """Number of images along the b vector"""
+        """Number of lattice points along box vector B"""
         z: IntegerSocket
-        """Number of images along the c vector"""
+        """Number of lattice points along box vector C"""
 
     class _Outputs(SocketAccessor):
         grid: GeometrySocket
-        """Grid"""
+        """A point at each lattice point, starting at the origin and going along box vectors A, B and C"""
 
     if TYPE_CHECKING:
 
@@ -98,32 +98,50 @@ class LatticeGrid(AssetGeometryGroup):
         super().__init__(**{"A": a, "B": b, "C": c, "X": x, "Y": y, "Z": z})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        a = tree.inputs.vector("A", (0.0, 0.0, 1.0), subtype="XYZ")
-        b = tree.inputs.vector("B", (0.0, 0.0, 1.0), subtype="XYZ")
-        c_ = tree.inputs.vector("C", (0.0, 0.0, 1.0), subtype="XYZ")
+        a = tree.inputs.vector(
+            "A",
+            (0.0, 0.0, 1.0),
+            description="Box vector A in world units, such as from Periodic Box",
+            subtype="XYZ",
+        )
+        b = tree.inputs.vector(
+            "B",
+            (0.0, 0.0, 1.0),
+            description="Box vector B in world units, such as from Periodic Box",
+            subtype="XYZ",
+        )
+        c_ = tree.inputs.vector(
+            "C",
+            (0.0, 0.0, 1.0),
+            description="Box vector C in world units, such as from Periodic Box",
+            subtype="XYZ",
+        )
         with tree.inputs.panel("Count"):
             x = tree.inputs.integer(
                 "X",
                 3,
-                description="Number of images along the a vector",
+                description="Number of lattice points along box vector A",
                 min_value=1,
                 max_value=10000,
             )
             y = tree.inputs.integer(
                 "Y",
                 3,
-                description="Number of images along the b vector",
+                description="Number of lattice points along box vector B",
                 min_value=1,
                 max_value=10000,
             )
             z = tree.inputs.integer(
                 "Z",
                 3,
-                description="Number of images along the c vector",
+                description="Number of lattice points along box vector C",
                 min_value=1,
                 max_value=10000,
             )
-        grid = tree.outputs.geometry("Grid")
+        grid = tree.outputs.geometry(
+            "Grid",
+            description="A point at each lattice point, starting at the origin and going along box vectors A, B and C",
+        )
 
         (
             g.MeshLine(count=x, offset=a)

@@ -24,6 +24,7 @@ from nodebpy.types import (
     InputMaterial,
     InputMenu,
 )
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_utils_style_sticks import MN_utils_style_sticks
 from .evaluate_on_atoms import EvaluateOnAtoms
 from .find_bonds import FindBonds
@@ -248,7 +249,7 @@ class StyleBallAndStick(AssetGeometryGroup):
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
         separate_geometry = atoms_1.output >> g.SeparateGeometry.point(
-            selection=selection
+            selection=DeselectHidden(selection=selection)
         )
         style_spheres = StyleSpheres(
             atoms=separate_geometry.o.selection,

@@ -59,7 +59,7 @@ def register_on_add(match: str | Callable[[str], bool], setup: NodeSetup) -> Non
         Called with each newly added node instance and the object whose modifier
         tree it was added to (or ``None`` when that can't be determined).
     """
-    if not callable(match):
+    if isinstance(match, str):
         name = match
         match = lambda n: n == name  # noqa: E731
     _registry.append((match, setup))
@@ -125,7 +125,7 @@ def _object_using_tree(tree: bpy.types.NodeTree) -> bpy.types.Object | None:
     """Find the object using this tree as a geometry nodes modifier, if any."""
     for obj in bpy.data.objects:
         for mod in obj.modifiers:
-            if mod.type == "NODES" and mod.node_group == tree:
+            if isinstance(mod, bpy.types.NodesModifier) and mod.node_group == tree:
                 return obj
     return None
 
@@ -149,7 +149,7 @@ def _process_pending() -> None:
                 continue
             for node in host.nodes:
                 if (
-                    node.bl_idname != "GeometryNodeGroup"
+                    not isinstance(node, bpy.types.GeometryNodeGroup)
                     or node.node_tree is None
                     # match by name so appended, linked and packed copies of
                     # the same asset group are all handled
@@ -190,7 +190,9 @@ def _style_node_material(
     """
     from ..material import add_all_materials
 
-    socket = next((s for s in node.inputs if s.bl_idname == "NodeSocketMaterial"), None)
+    socket = next(
+        (s for s in node.inputs if isinstance(s, bpy.types.NodeSocketMaterial)), None
+    )
     if socket is None or socket.default_value is not None:
         return
     socket.default_value = add_all_materials()["Default"]

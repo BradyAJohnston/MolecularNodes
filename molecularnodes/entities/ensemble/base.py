@@ -7,6 +7,8 @@ from ..base import EntityType, MolecularEntity
 
 
 class Ensemble(MolecularEntity, metaclass=ABCMeta):
+    _entity_type = EntityType.ENSEMBLE
+
     def __init__(self, file_path: str | Path):
         """
         Initialize an Ensemble object.
@@ -17,7 +19,6 @@ class Ensemble(MolecularEntity, metaclass=ABCMeta):
             The path to the file.
         """
         super().__init__()
-        self._entity_type = EntityType.ENSEMBLE
         self.type: str = "ensemble"
         self.file_path: Path = bl.path_resolve(file_path)
 
@@ -47,7 +48,7 @@ class Ensemble(MolecularEntity, metaclass=ABCMeta):
         self = cls(file_path)
         self.create_object(name=name or Path(file_path).name, node_setup=node_setup)
         # record the source so the entity can be reloaded into a fresh session
-        self.object.mn.filepath = str(file_path)
+        self.props.filepath = str(file_path)
         return self
 
     @property

@@ -1,7 +1,9 @@
 import itertools
 from abc import ABCMeta, abstractmethod
+from collections.abc import Sequence
 from math import cos, radians, sin, sqrt
 from pathlib import Path
+from typing import TYPE_CHECKING, Any, cast
 import blf
 import bmesh
 import bpy
@@ -20,9 +22,26 @@ from .utils import get_view_matrix, is_perspective_projection
 
 FONT_INTER = Path(__file__).parent / "fonts/Inter.woff2"
 
+#: A position or direction, as a ``Vector`` or a sequence of floats
+VectorLike = Vector | Sequence[float]
+
+
+def _seq(v: VectorLike) -> Sequence[float]:
+    """A vector typed as the sequence mathutils functions take.
+
+    mathutils accepts a ``Vector`` anywhere it takes a sequence of floats, but its
+    stubs don't count ``Vector`` as a ``Sequence``.
+    """
+    return cast(Sequence[float], v)
+
+
+def _vector(v: VectorLike) -> Vector:
+    """``Vector(v)`` for a ``Vector`` or a sequence of floats."""
+    return Vector(_seq(v))
+
 
 class _get_params:
-    def __init__(self, interface: AnnotationInterface, overrides: dict = None):
+    def __init__(self, interface: AnnotationInterface, overrides: dict | None = None):
         self.interface = interface
         self.overrides = overrides
 
@@ -59,8 +78,24 @@ class BaseAnnotation(metaclass=ABCMeta):
 
     """
 
-    name: str = None
+    name: str | None = None
     interface: AnnotationInterface
+
+    if TYPE_CHECKING:
+        # Class annotations are the inputs of an annotation type (see
+        # `get_all_class_annotations`), so these are declared for type checkers only.
+        # Set by each annotation class, registering it under this type
+        annotation_type: str
+        # set on each instance by the annotation manager
+        _ready: bool
+        _update_props: bool
+        _invalid_inputs: list[str]
+        _invalid_input_messages: dict[str, str]
+        _draw_error: str | None
+        # draw state, set by the annotation manager before each draw
+        geometry: dict[str, Any] | None
+        _scene: bpy.types.Scene
+        _image: Image.Image
 
     def __init__(self):
         self._world_scale = 0.1
@@ -71,23 +106,23 @@ class BaseAnnotation(metaclass=ABCMeta):
             if not bpy.app.background
             else None
         )
-        self._scene = None
         self._scale = 1.0
         self._render_mode = False
-        self._dpi_scale = 2 * (72 / bpy.context.preferences.system.dpi)
+        preferences = bpy.context.preferences
+        assert preferences is not None
+        self._dpi_scale = 2 * (72 / preferences.system.dpi)
         # distance params
         self._min_dist = 0
         self._max_dist = 0
         self._dist_range = 0
         # viewport params
-        self._region = None
-        self._rv3d = None
+        self._region: bpy.types.Region | None = None
+        self._rv3d: bpy.types.RegionView3D | None = None
         # render params
         self._render_scale = 1.0
-        self._image = None
         self._image_scale = 1
 
-    def validate(self, input_name: str = None) -> bool:
+    def validate(self, input_name: str | None = None) -> bool:
         """
         Optional method to validate annotation inputs
         This is called during annotation creation and any time the inputs change
@@ -123,22 +158,26 @@ class BaseAnnotation(metaclass=ABCMeta):
         raise NotImplementedError("Subclasses must implement this method")
 
     @property
-    def viewport_width(self) -> int:
+    def viewport_width(self) -> float:
         """Get the viewport region width in pixels"""
         if self._render_mode:
             return self._image.width / self._image_scale
         else:
+            assert self._region is not None
             return self._region.width
 
     @property
-    def viewport_height(self) -> int:
+    def viewport_height(self) -> float:
         """Get the viewport region height in pixels"""
         if self._render_mode:
             return self._image.height / self._image_scale
         else:
+            assert self._region is not None
             return self._region.height
 
-    def draw_text_3d(self, pos_3d: Vector, text: str, overrides: dict = None) -> None:
+    def draw_text_3d(
+        self, pos_3d: Vector, text: str, overrides: dict | None = None
+    ) -> None:
         """
         Draw text at a given 3D position
 
@@ -156,7 +195,9 @@ class BaseAnnotation(metaclass=ABCMeta):
         """
         self._draw_text(pos_3d, text, is3d=True, overrides=overrides)
 
-    def draw_text_2d(self, pos_2d: Vector, text: str, overrides: dict = None) -> None:
+    def draw_text_2d(
+        self, pos_2d: Vector, text: str, overrides: dict | None = None
+    ) -> None:
         """
         Draw text at a given 2D position (normalized co-ordinates) of Viewport.
 
@@ -174,14 +215,14 @@ class BaseAnnotation(metaclass=ABCMeta):
         """
         if self.geometry:
             return
-        if not self._render_mode and self._rv3d.view_perspective == "CAMERA":
+        if self._is_camera_view():
             pos_2d = self._get_camera_view_coords(pos_2d)
         else:
             pos_2d = self._get_viewport_coords(pos_2d)
         self._draw_text(pos_2d, text, is3d=False, overrides=overrides)
 
     def _draw_text(
-        self, pos: Vector, text: str, is3d: bool = False, overrides: dict = None
+        self, pos: Vector, text: str, is3d: bool = False, overrides: dict | None = None
     ) -> None:
         """Internal: Draw text 3D or 2D"""
         if pos is None:
@@ -320,12 +361,12 @@ class BaseAnnotation(metaclass=ABCMeta):
         self,
         v1: Vector,
         v2: Vector,
-        v1_text: str = None,
-        v2_text: str = None,
-        mid_text: str = None,
+        v1_text: str | None = None,
+        v2_text: str | None = None,
+        mid_text: str | None = None,
         v1_arrow: bool = False,
         v2_arrow: bool = False,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ) -> None:
         """
         Draw a line between two points in 3D space
@@ -373,12 +414,12 @@ class BaseAnnotation(metaclass=ABCMeta):
         self,
         v1: Vector,
         v2: Vector,
-        v1_text: str = None,
-        v2_text: str = None,
-        mid_text: str = None,
+        v1_text: str | None = None,
+        v2_text: str | None = None,
+        mid_text: str | None = None,
         v1_arrow: bool = False,
         v2_arrow: bool = False,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ) -> None:
         """
         Draw a line between two points (normalized co-ordinates) in 2D viewport space
@@ -414,7 +455,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         """
         if self.geometry:
             return
-        if not self._render_mode and self._rv3d.view_perspective == "CAMERA":
+        if self._is_camera_view():
             v1 = self._get_camera_view_coords(v1)
             v2 = self._get_camera_view_coords(v2)
         else:
@@ -432,7 +473,7 @@ class BaseAnnotation(metaclass=ABCMeta):
             overrides=overrides,
         )
 
-    def distance(self, v1: Vector, v2: Vector) -> float:
+    def distance(self, v1: VectorLike, v2: VectorLike) -> float:
         """
         Distance between two vectors
 
@@ -449,7 +490,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         Distance between the two vectors
 
         """
-        return (Vector(v2) - Vector(v1)).length
+        return (_vector(v2) - _vector(v1)).length
 
     def draw_circle_3d(
         self,
@@ -457,10 +498,10 @@ class BaseAnnotation(metaclass=ABCMeta):
         radius: float,
         normal: Vector | None = None,
         angle: float = 360.0,
-        start_dv: Vector = None,
+        start_dv: Vector | None = None,
         c_arrow: bool = False,
         cc_arrow: bool = False,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ):
         """
         Draw a circle around a 3D point in the plane perpendicular to the
@@ -514,10 +555,10 @@ class BaseAnnotation(metaclass=ABCMeta):
         center: Vector,
         radius: float,
         angle: float = 360.0,
-        start_dv: Vector = None,
+        start_dv: Vector | None = None,
         c_arrow: bool = False,
         cc_arrow: bool = False,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ):
         """
         Draw a circle around a 2D point (normalized coordinate) in the viewport space
@@ -551,7 +592,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         """
         if self.geometry:
             return
-        if not self._render_mode and self._rv3d.view_perspective == "CAMERA":
+        if self._is_camera_view():
             center = self._get_camera_view_coords(center)
             _, camera_view_width, _ = self._get_camera_view_info()
             radius *= camera_view_width / self._scene.render.resolution_x
@@ -575,11 +616,11 @@ class BaseAnnotation(metaclass=ABCMeta):
         radius: float,
         normal: Vector | None = None,
         angle: float = 360.0,
-        start_dv: Vector = None,
+        start_dv: Vector | None = None,
         c_arrow: bool = False,
         cc_arrow: bool = False,
         is3d: bool = False,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ):
         """Internal: Draw circle 3D or 2D"""
         # convert to vectors
@@ -591,6 +632,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         else:
             center = Vector((center[0], center[1], 0))
             normal = Vector((0, 0, -1))
+        assert normal is not None
         if not isinstance(normal, Vector):
             normal = Vector(normal)
         # get a point in the circle plane to start the circle
@@ -601,9 +643,9 @@ class BaseAnnotation(metaclass=ABCMeta):
         n_steps = 36  # number of individual line segments of the circle
         step = radians(angle) / n_steps
         # matrices to translate to center, rotate and translate back
-        mat_trans1 = Matrix.Translation(-center)
-        mat_rot = Matrix.Rotation(step, 4, normal)
-        mat_trans2 = Matrix.Translation(center)
+        mat_trans1 = Matrix.Translation(_seq(-center))
+        mat_rot = Matrix.Rotation(step, 4, _seq(normal))
+        mat_trans2 = Matrix.Translation(_seq(center))
         p1 = start
         # draw individual line segments
         for i in range(n_steps):
@@ -632,9 +674,9 @@ class BaseAnnotation(metaclass=ABCMeta):
 
     def draw_sphere(
         self,
-        location: Vector = (0, 0, 0),
+        location: VectorLike = (0, 0, 0),
         radius: float = 1.0,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ):
         """
         Draw a sphere
@@ -657,18 +699,18 @@ class BaseAnnotation(metaclass=ABCMeta):
             bmesh.ops.create_icosphere(
                 bm, radius=radius * self._world_scale, subdivisions=4
             )
-            loc = Matrix.Translation(Vector(location) * self._world_scale)
+            loc = Matrix.Translation(_seq(_vector(location) * self._world_scale))
             bm.transform(loc)
             self.draw_bmesh(bm, overrides=overrides)
 
     def draw_cone(
         self,
-        location: Vector = (0, 0, 0),
+        location: VectorLike = (0, 0, 0),
         radius: float = 1.0,
         height: float = 1.0,
-        axis: Vector = (0, 0, 1),
+        axis: VectorLike = (0, 0, 1),
         cap_ends: bool = True,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ):
         """
         Draw a cone
@@ -708,12 +750,12 @@ class BaseAnnotation(metaclass=ABCMeta):
 
     def draw_cylinder(
         self,
-        location: Vector = (0, 0, 0),
+        location: VectorLike = (0, 0, 0),
         radius: float = 1.0,
         height: float = 1.0,
-        axis: Vector = (0, 0, 1),
+        axis: VectorLike = (0, 0, 1),
         cap_ends: bool = True,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ):
         """
         Draw a cylinder
@@ -759,9 +801,9 @@ class BaseAnnotation(metaclass=ABCMeta):
         alpha: float = 90.0,
         beta: float = 90.0,
         gamma: float = 90.0,
-        origin: Vector = (0, 0, 0),
+        origin: VectorLike = (0, 0, 0),
         show_lattice: bool = False,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ):
         """
         Draw a triclinic box based on box vector lengths and angles
@@ -810,10 +852,10 @@ class BaseAnnotation(metaclass=ABCMeta):
         vor = vx + vxy
         with new_bmesh() as bm:
             # create the four vertices in the xy plane
-            v1 = bm.verts.new(vo)
-            v2 = bm.verts.new(vx)
-            v3 = bm.verts.new(vor)
-            v4 = bm.verts.new(vxy)
+            v1 = bm.verts.new(_seq(vo))
+            v2 = bm.verts.new(_seq(vx))
+            v3 = bm.verts.new(_seq(vor))
+            v4 = bm.verts.new(_seq(vxy))
             # create face in the xy plane
             bm.verts.ensure_lookup_table()
             face = bm.faces.new((v1, v2, v3, v4))
@@ -823,12 +865,12 @@ class BaseAnnotation(metaclass=ABCMeta):
                 v for v in ext_geom["geom"] if isinstance(v, bmesh.types.BMVert)
             ]
             # extrude verts along box vector c
-            bmesh.ops.translate(bm, vec=vz, verts=ext_verts)
+            bmesh.ops.translate(bm, vec=_seq(vz), verts=ext_verts)
             # translate origin
-            mat = Matrix.Translation(Vector(origin) * self._world_scale)
+            mat = Matrix.Translation(_seq(_vector(origin) * self._world_scale))
             bm.transform(mat)
             # update face normals
-            bmesh.ops.recalc_face_normals(bm, faces=bm.faces)
+            bmesh.ops.recalc_face_normals(bm, faces=bm.faces[:])
             # show a 3x3x3 lattice if enabled
             if show_lattice:
                 box = bm.verts[:] + bm.edges[:] + bm.faces[:]
@@ -847,7 +889,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         triclinic_vectors: npt.ArrayLike,
         center_to_origin: bool = False,
         show_lattice: bool = False,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ):
         """
         Draw a Wigner-Seitz cell from triclinic vectors
@@ -871,7 +913,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         if self.geometry is None:
             return
         # convert to blender world scale
-        box_vectors = triclinic_vectors * self._world_scale
+        box_vectors = np.asarray(triclinic_vectors) * self._world_scale
         # From apply_compact_PBC of MDAnalysis
         pbc_img_coeffs = np.array(list(itertools.product([0, -1, 1], repeat=3)))
         pbc_img_vecs = np.matmul(pbc_img_coeffs, box_vectors)
@@ -894,17 +936,17 @@ class BaseAnnotation(metaclass=ABCMeta):
                 bm.verts.new(vert)
             # use convex hull to create faces from vertices
             bm.verts.ensure_lookup_table()
-            ch = bmesh.ops.convex_hull(bm, input=bm.verts)
+            ch = bmesh.ops.convex_hull(bm, input=[*bm.verts])
             # delete interior verts
             bmesh.ops.delete(bm, geom=ch["geom_interior"], context="VERTS")
             # delete any duplicate vertices
-            bmesh.ops.remove_doubles(bm, verts=bm.verts, dist=1e-3)
+            bmesh.ops.remove_doubles(bm, verts=bm.verts[:], dist=1e-3)
             # convert triangles to n-gons for clean faces
             bmesh.ops.dissolve_limit(
                 bm,
                 angle_limit=1e-3,
-                verts=bm.verts,
-                edges=bm.edges,
+                verts=bm.verts[:],
+                edges=bm.edges[:],
             )
             # update face normals
             bm.normal_update()
@@ -932,10 +974,10 @@ class BaseAnnotation(metaclass=ABCMeta):
         n: int = 6,
         radius: float = 10,
         height: float = 10,
-        origin: Vector = (0, 0, 0),
-        axis: Vector = (0, 0, 1),
+        origin: VectorLike = (0, 0, 0),
+        axis: VectorLike = (0, 0, 1),
         cap_ends: bool = True,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ):
         """
         Draw an n sided pyramid
@@ -984,10 +1026,10 @@ class BaseAnnotation(metaclass=ABCMeta):
         n: int = 6,
         radius: float = 10,
         height: float = 10,
-        origin: Vector = (0, 0, 0),
-        axis: Vector = (0, 0, 1),
+        origin: VectorLike = (0, 0, 0),
+        axis: VectorLike = (0, 0, 1),
         cap_ends: bool = True,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ):
         """
         Draw an n sided cylinder
@@ -1034,7 +1076,7 @@ class BaseAnnotation(metaclass=ABCMeta):
     def draw_bmesh(
         self,
         bm: bmesh.types.BMesh,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ):
         """
         Draw a Blender bmesh
@@ -1094,7 +1136,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         pos_x, pos_y = pos_2d
         x, y = self._get_viewport_coords(pos_2d)
         # adjust viewport position for camera view mode
-        if not self._render_mode and self._rv3d.view_perspective == "CAMERA":
+        if self._is_camera_view():
             x, y = self._get_camera_view_coords(pos_2d)
             _, camera_view_width, _ = self._get_camera_view_info()
             scale *= camera_view_width / self._scene.render.resolution_x
@@ -1123,7 +1165,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         shader = gpu.shader.from_builtin("IMAGE")
         batch = batch_for_shader(
             shader,
-            "TRI_FAN",
+            "TRI_FAN",  # ty: ignore[invalid-argument-type]  # missing from the gpu stubs
             {
                 "pos": ((x, y), (x1, y), (x1, y1), (x, y1)),
                 "texCoord": ((0, 0), (1, 0), (1, 1), (0, 1)),
@@ -1199,14 +1241,14 @@ class BaseAnnotation(metaclass=ABCMeta):
 
     def _draw_cone(
         self,
-        location: Vector,
+        location: VectorLike,
         radius1: float,
         radius2: float,
         height: float,
-        axis: Vector = (0, 0, 1),
+        axis: VectorLike = (0, 0, 1),
         segments: int = 24,
         cap_ends: bool = True,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ):
         """Internal: Common method for cone, cylinder, pyramid bmesh"""
         if self.geometry is None:
@@ -1223,10 +1265,10 @@ class BaseAnnotation(metaclass=ABCMeta):
                 radius2=radius2,
                 depth=height,
             )
-            base_offset = Matrix.Translation(Vector((0, 0, height / 2)))
+            base_offset = Matrix.Translation((0, 0, height / 2))
             up = Vector((0, 0, 1))
             rot = up.rotation_difference(axis).to_matrix().to_4x4()
-            loc = Matrix.Translation(Vector(location) * self._world_scale)
+            loc = Matrix.Translation(_seq(_vector(location) * self._world_scale))
             mat = loc @ rot @ base_offset
             bm.transform(mat)
             self.draw_bmesh(bm, overrides=overrides)
@@ -1250,14 +1292,14 @@ class BaseAnnotation(metaclass=ABCMeta):
         self,
         v1: Vector,
         v2: Vector,
-        v1_text: str = None,
-        v2_text: str = None,
-        mid_text: str = None,
+        v1_text: str | None = None,
+        v2_text: str | None = None,
+        mid_text: str | None = None,
         v1_arrow: bool = False,
         v2_arrow: bool = False,
-        arrow_plane_pt: Vector = None,
+        arrow_plane_pt: Vector | None = None,
         is3d: bool = False,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ) -> None:
         """Internal: Draw line 3D or 2D"""
         if v1 is None or v2 is None:
@@ -1304,7 +1346,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         self,
         v1: Vector,
         v2: Vector,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ):
         if self.geometry is None:
             return
@@ -1324,6 +1366,7 @@ class BaseAnnotation(metaclass=ABCMeta):
 
     def _add_material_to_geometry(self, mesh_type, mesh_material):
         geometry = self.geometry
+        assert geometry is not None
         if mesh_material:
             if isinstance(mesh_material, str):
                 material = mesh_material
@@ -1343,7 +1386,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         v1: Vector,
         v2: Vector,
         arrow_plane_pt: Vector,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ):
         if self.geometry is None:
             return
@@ -1361,9 +1404,9 @@ class BaseAnnotation(metaclass=ABCMeta):
         v2: Vector,
         v1_arrow: bool = False,
         v2_arrow: bool = False,
-        arrow_plane_pt: Vector = None,
+        arrow_plane_pt: Vector | None = None,
         is3d: bool = False,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ) -> None:
         """Internal: Draw a line between two 2D points with arrows"""
         if v1 is None or v2 is None:
@@ -1391,9 +1434,9 @@ class BaseAnnotation(metaclass=ABCMeta):
         v2: Vector,
         v1_2d: Vector,
         v2_2d: Vector,
-        arrow_plane_pt: Vector = None,
+        arrow_plane_pt: Vector | None = None,
         is3d: bool = False,
-        overrides: dict = None,
+        overrides: dict | None = None,
     ) -> None:
         """Internal: Draw arrow ends"""
         params = _get_params(self.interface, overrides)
@@ -1420,8 +1463,8 @@ class BaseAnnotation(metaclass=ABCMeta):
         self,
         v1: Vector,
         v2: Vector,
-        arrow_plane_pt: Vector = None,
-        overrides: dict = None,
+        arrow_plane_pt: Vector | None = None,
+        overrides: dict | None = None,
     ) -> tuple:
         """Internal: Get arrow end point positions 3D"""
         if arrow_plane_pt is None:
@@ -1431,21 +1474,24 @@ class BaseAnnotation(metaclass=ABCMeta):
         pv2 = v2 - arrow_plane_pt
         # calculate rotation axis
         ra = pv1.cross(pv2)
+        assert isinstance(ra, Vector)  # cross of 3D vectors
         ra.normalize()
         # use Rodrigues' Rotation Formula
         # https://en.wikipedia.org/wiki/Rodrigues%27_rotation_formula
         v = v2 - v1
+        ra_v = ra.cross(v)
+        assert isinstance(ra_v, Vector)
         # +45 degrees direction vector
         dva = (
             v * cos(self._rad45)
-            + (ra.cross(v) * sin(self._rad45))
+            + (ra_v * sin(self._rad45))
             + (ra * ra.dot(v) * (1 - cos(self._rad45)))
         )
         dva.normalize()
         # -45 degrees direction vector
         dvb = (
             v * cos(-1 * self._rad45)
-            + (ra.cross(v) * sin(-1 * self._rad45))
+            + (ra_v * sin(-1 * self._rad45))
             + (ra * ra.dot(v) * (1 - cos(-1 * self._rad45)))
         )
         dvb.normalize()
@@ -1454,7 +1500,7 @@ class BaseAnnotation(metaclass=ABCMeta):
         return (v1 + (dva * d), v1 + (dvb * d))
 
     def _get_arrow_end_points_2d(
-        self, v1: Vector, v2: Vector, overrides: dict = None
+        self, v1: Vector, v2: Vector, overrides: dict | None = None
     ) -> tuple:
         """Internal: Get arrow end point positions 2D"""
         params = _get_params(self.interface, overrides)
@@ -1471,7 +1517,9 @@ class BaseAnnotation(metaclass=ABCMeta):
         )
         return (va, vb)
 
-    def _draw_line_2d(self, v1: Vector, v2: Vector, overrides: dict = None) -> None:
+    def _draw_line_2d(
+        self, v1: VectorLike, v2: VectorLike, overrides: dict | None = None
+    ) -> None:
         """Internal: Draw a line between two 2D points"""
         if self.geometry:
             return
@@ -1500,21 +1548,26 @@ class BaseAnnotation(metaclass=ABCMeta):
         else:
             viewport_size = (self.viewport_width, self.viewport_height)
             coords = [(v1[0], v1[1], 0), (v2[0], v2[1], 0)]
+            shader = self._shader_line
+            # only None in background mode, where nothing draws to a viewport
+            assert shader is not None
             gpu.state.blend_set("ALPHA")
-            batch = batch_for_shader(self._shader_line, "LINES", {"pos": coords})
+            batch = batch_for_shader(shader, "LINES", {"pos": coords})
             try:
-                self._shader_line.bind()
-                self._shader_line.uniform_float("color", rgba)
-                self._shader_line.uniform_float("lineWidth", line_width)
-                self._shader_line.uniform_float("viewportSize", viewport_size)
-                batch.draw(self._shader_line)
+                shader.bind()
+                shader.uniform_float("color", rgba)
+                shader.uniform_float("lineWidth", line_width)
+                shader.uniform_float("viewportSize", viewport_size)
+                batch.draw(shader)
             except Exception as e:
                 print(e)
 
-    def _interpolate_3d(self, v1: Vector, v2: Vector, d1: float) -> Vector:
+    def _interpolate_3d(
+        self, v1: VectorLike, v2: VectorLike, d1: float
+    ) -> tuple[float, float, float]:
         """Internal: Interpolated 3D point between two 3D points at distance d1"""
         # calculate displacement vector
-        v = Vector(v2) - Vector(v1)
+        v = _vector(v2) - _vector(v1)
         # calculate distance between points
         d0 = self.distance(v1, v2)
         # calculate interpolate factor (distance from origin / distance total)
@@ -1531,9 +1584,18 @@ class BaseAnnotation(metaclass=ABCMeta):
         self._max_dist = max_dist
         self._dist_range = max_dist - min_dist
 
+    def _is_camera_view(self) -> bool:
+        """Internal: Whether drawing in a 3D viewport looking through the camera"""
+        return (
+            not self._render_mode
+            and self._rv3d is not None
+            and self._rv3d.view_perspective == "CAMERA"
+        )
+
     def _get_camera_view_info(self):
         """Internal: Get 3D viewport camera view details"""
         # camera view mode in 3D viewport
+        assert self._rv3d is not None
         zoom = self._rv3d.view_camera_zoom
         # From: BKE_screen_view3d_zoom_to_fac in blender/blenkernel/intern/screen.cc
         zoom_factor = (((zoom / 50.0) + sqrt(2)) / 2) ** 2
@@ -1555,9 +1617,11 @@ class BaseAnnotation(metaclass=ABCMeta):
         self._scene = scene
         self._region = region
         self._rv3d = rv3d
-        self._scale = bpy.context.preferences.system.ui_scale
+        preferences = bpy.context.preferences
+        assert preferences is not None
+        self._scale = preferences.system.ui_scale
         self._render_mode = False
-        if self._rv3d.view_perspective == "CAMERA":
+        if self._is_camera_view():
             # camera view mode in 3D viewport
             _, camera_view_width, _ = self._get_camera_view_info()
             self._scale *= (
@@ -1585,6 +1649,7 @@ class BaseAnnotation(metaclass=ABCMeta):
             pos_3d = Vector(pos_3d)
         if self._render_mode:
             scene = self._scene
+            assert scene.camera is not None
             pos_2d = object_utils.world_to_camera_view(
                 scene, scene.camera, pos_3d * self._world_scale
             )
@@ -1601,12 +1666,18 @@ class BaseAnnotation(metaclass=ABCMeta):
     def _get_viewport_normal(self, pos_3d: Vector) -> Vector | None:
         """Internal: Get the viewport normal"""
         if self._render_mode:
-            return self._scene.camera.matrix_world.to_3x3().col[2]
+            camera = self._scene.camera
+            assert camera is not None
+            # mathutils stubs give MatrixAccess no __getitem__
+            return camera.matrix_world.to_3x3().col[2]  # ty: ignore[not-subscriptable]
         elif self._rv3d is not None and self._region is not None:
             if not isinstance(pos_3d, Vector):
                 pos_3d = Vector(pos_3d)
             pos_2d = self._get_2d_point(pos_3d)
-            return view3d_utils.region_2d_to_vector_3d(self._region, self._rv3d, pos_2d)
+            assert pos_2d is not None
+            return view3d_utils.region_2d_to_vector_3d(
+                self._region, self._rv3d, _seq(pos_2d)
+            )
         else:
             return None
 
@@ -1625,6 +1696,7 @@ class BaseAnnotation(metaclass=ABCMeta):
             self._get_camera_view_info()
         )
         # offsets are based off the center of the viewport
+        assert self._rv3d is not None
         camera_offset_x = self._rv3d.view_camera_offset[0]
         camera_offset_y = self._rv3d.view_camera_offset[1]
         # calculate the origin (bottom left) of the camera view

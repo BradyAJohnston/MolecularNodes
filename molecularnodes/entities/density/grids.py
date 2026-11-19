@@ -6,8 +6,10 @@ import bpy
 import databpy
 import numpy as np
 from gridData import Grid
+from nodebpy.builder import MaterialBuilder
 from ... import blender as bl
 from ...blender import coll
+from ...material import PresetMaterial, append_material
 from ...nodes.geometry import (
     DensityStyleISOSurface,
     DensityStyleSurface,
@@ -15,6 +17,12 @@ from ...nodes.geometry import (
     ImportVolume,
 )
 from .base import Density
+
+_STYLE_NODES = {
+    "density_iso_surface": DensityStyleISOSurface,
+    "density_surface": DensityStyleSurface,
+    "density_wire": DensityStyleWire,
+}
 
 
 def cell_vectors(lengths, angles) -> np.ndarray:
@@ -107,7 +115,7 @@ class Grids(Density):
             raise ValueError("No grid files given")
         super().__init__(file_path=paths[0])
         self.file_paths: list[Path] = [bl.path_resolve(p) for p in paths]
-        self.grid: Grid = None  # GridDataFormats Grid object, of the first file
+        self.grid: Grid | None = None  # GridDataFormats Grid object, of the first file
         if len(self.file_paths) == 1:
             targets = [None]
         else:
@@ -150,6 +158,12 @@ class Grids(Density):
         overwrite: bool = False,
         follow_frame: bool | None = None,
         frame_start: int | None = None,
+        material: bpy.types.Material
+        | PresetMaterial
+        | MaterialBuilder
+        | str
+        | None = None,
+        **inputs,
     ) -> "Grids":
         """Load density grid files and create their density object.
 
@@ -176,6 +190,10 @@ class Grids(Density):
         frame_start : int | None, optional
             Scene frame that shows the first file when following the frame. Defaults
             to the scene's start frame.
+        material : bpy.types.Material | PresetMaterial | MaterialBuilder | str, optional
+            Material for the style; see :meth:`add_style`.
+        **inputs
+            Inputs of the style node, such as ``threshold``; see :meth:`add_style`.
 
         Returns
         -------
@@ -198,9 +216,11 @@ class Grids(Density):
             if follow_frame is None
             else follow_frame,
             frame_start=frame_start,
+            material=material,
+            **inputs,
         )
         # record the source so the entity can be reloaded into a fresh session
-        density.object.mn.filepath = str(density.file_paths[0])
+        density.props.filepath = str(density.file_paths[0])
         return density
 
     def _parse_grid_with_fallback(
@@ -315,7 +335,7 @@ class Grids(Density):
             delta=np.linalg.norm(axes, axis=1),
             metadata=metadata,
         )
-        grid.mn_axes = axes
+        grid.mn_axes = axes  # ty: ignore[missing-attribute]  # stashed on the Grid for _voxel_axes
         return grid
 
     def _voxel_axes(self, file: str, gobj) -> np.ndarray:
@@ -334,12 +354,86 @@ class Grids(Density):
                 return delta
         return np.diag(np.asarray(gobj.delta, dtype=float))
 
+    def _style_node(self, style: str, material=None, **inputs):
+        """The node for a density style. Call inside the tree context."""
+        if style not in _STYLE_NODES:
+            raise ValueError(
+                f"Invalid style {style!r}. Supported styles are {sorted(_STYLE_NODES)}"
+            )
+        if "threshold" not in inputs and self.grid is not None:
+            inputs["threshold"] = float(np.quantile(self.grid.grid, 0.995))
+        if isinstance(material, (PresetMaterial, MaterialBuilder)):
+            material = material.material
+        if isinstance(material, str):
+            material = append_material(material)
+        return _STYLE_NODES[style](material=material, **inputs)
+
+    def add_style(
+        self,
+        style: str = "density_surface",
+        material: bpy.types.Material
+        | PresetMaterial
+        | MaterialBuilder
+        | str
+        | None = None,
+        **inputs,
+    ) -> "Grids":
+        """Add a style to the density, alongside any it already has.
+
+        ```python
+        density = Grids.load("map.mrc", style=None)
+        density.add_style(
+            "density_wire",
+            threshold=0.4,
+            color=(0.1, 0.1, 0.2, 1.0),
+            material=mn.material.AmbientOcclusion(),
+        )
+        ```
+
+        Parameters
+        ----------
+        style : str, default "density_surface"
+            One of ``"density_surface"``, ``"density_iso_surface"`` or
+            ``"density_wire"``.
+        material : bpy.types.Material | PresetMaterial | MaterialBuilder | str, optional
+            Material for the style; a string is appended from the asset library.
+        **inputs
+            Inputs of the style node, such as ``threshold``, ``color`` or
+            ``wire_radius``. Without a ``threshold``, the 99.5th percentile of the
+            grid is used. ``"density_iso_surface"`` draws a surface at both
+            ``threshold`` and ``-threshold``, coloured by ``positive`` and
+            ``negative``, so mask a grid with zeros rather than a negative value.
+
+        Returns
+        -------
+        Grids
+            Returns self for method chaining.
+
+        Raises
+        ------
+        ValueError
+            If ``style`` is not a density style.
+        TypeError
+            If an input does not exist on the style node.
+        """
+        with self.tree as tree:
+            (
+                self.import_volume(
+                    follow_frame=self._follow_frame, frame_start=self._frame_start
+                )
+                >> self._style_node(style, material, **inputs)
+                >> tree.join
+            )
+        return self
+
     def create_object(
         self,
         name="NewDensity",
         style="density_surface",
         follow_frame: bool = False,
         frame_start: int | None = None,
+        material=None,
+        **inputs,
     ) -> bpy.types.Object:
         """
         Create the density's object: an empty mesh whose node tree imports the grids.
@@ -359,6 +453,10 @@ class Grids(Density):
         frame_start : int | None, optional
             Scene frame that shows the first grid when following the frame. Defaults
             to the scene's start frame.
+        material : bpy.types.Material | PresetMaterial | MaterialBuilder | str, optional
+            Material for the style; see :meth:`add_style`.
+        **inputs
+            Inputs of the style node; see :meth:`add_style`.
 
         Returns
         -------
@@ -369,23 +467,21 @@ class Grids(Density):
         self.object = databpy.create_object(
             name=name or "NewDensity", collection=coll.mn()
         )
-        self.object.mn.entity_type = self._entity_type.value
+        self.props.entity_type = self._entity_type.value
 
         if name and name != "":
             self.name = name
 
-        threshold = float(np.quantile(self.grid.grid, 0.995))
+        # styles added later import the grids the same way
+        self._follow_frame = follow_frame
+        self._frame_start = frame_start
         with self.tree.reset() as (_, join):
             (
                 self.import_volume(follow_frame=follow_frame, frame_start=frame_start)
                 >> (
                     None
                     if style is None
-                    else {
-                        "density_iso_surface": DensityStyleISOSurface,
-                        "density_surface": DensityStyleSurface,
-                        "density_wire": DensityStyleWire,
-                    }[style](threshold=threshold)
+                    else self._style_node(style, material, **inputs)
                 )
                 >> join
             )
@@ -425,13 +521,13 @@ class Grids(Density):
         ImportVolume
             The node, added to the tree being built.
         """
+        scene = bpy.context.scene
+        assert scene is not None
         return ImportVolume(
             path=self.vdb_path,
             index=index,
             follow_frame=follow_frame,
-            frame_start=bpy.context.scene.frame_start
-            if frame_start is None
-            else frame_start,
+            frame_start=scene.frame_start if frame_start is None else frame_start,
             count=len(self.files_vdb),
             name=name,
         )
