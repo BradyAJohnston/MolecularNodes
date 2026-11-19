@@ -401,10 +401,12 @@ class BaseCalculation:
 def calculations_from_code(code: str, molecule: Molecule) -> list[BaseCalculation]:
     namespace = {"BaseCalculation": BaseCalculation, "np": np}
     exec(code, namespace)
+    # subclasses without their own calculate(), such as a shared base class,
+    # aren't calculations themselves
     return [
         obj(molecule)
         for obj in namespace.values()
         if isinstance(obj, type)
         and issubclass(obj, BaseCalculation)
-        and obj is not BaseCalculation
+        and obj.calculate is not BaseCalculation.calculate
     ]

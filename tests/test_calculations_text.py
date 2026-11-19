@@ -69,6 +69,20 @@ def test_from_text_without_subclasses(mol):
         mol.calculations.from_text(new_text("empty.py", "x = 1"))
 
 
+def test_from_text_skips_base_classes(mol):
+    code = """
+class Base(BaseCalculation):
+    def z(self):
+        return self.universe.atoms.positions[:, 2]
+
+
+class ZFromBase(Base):
+    def calculate(self):
+        return self.z()
+"""
+    assert mol.calculations.from_text(new_text("base.py", code)) == ["ZFromBase"]
+
+
 def test_reload_replaces_calculation(mol):
     text = new_text("calcs.py", CODE)
     mn_ops.calculations_from_text(uuid=mol.uuid, text=text.name)
