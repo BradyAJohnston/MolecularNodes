@@ -180,7 +180,7 @@ def get_entity(context: Context | None = None) -> Molecule | Ensemble:
     assert context.active_object is not None
     # the active object can also be a Density or have no entity; the narrower
     # return type is kept for the UI callers
-    return session.match(context.active_object)  # ty: ignore[invalid-return-type]
+    return session.match(context.active_object)  # ty: ignore[invalid-explicit-return]
 
 
 @persistent

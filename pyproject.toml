@@ -5,7 +5,7 @@ description = "Toolbox for molecular animations with Blender and Geometry Nodes.
 readme = "README.md"
 license = "GPL-3.0-or-later"
 dependencies = [
-    "databpy>=0.12.0",
+    "databpy>=0.13.0",
     "mdanalysis>=2.11",
     "biotite>=1.7.1,<3",
     "mrcfile",
@@ -55,7 +55,7 @@ dev = [
     "rdkit",
     "ruff",
     "syrupy",
-    "ty==0.0.101",
+    "ty==0.0.107",
 ]
 
 [tool.extbpy]

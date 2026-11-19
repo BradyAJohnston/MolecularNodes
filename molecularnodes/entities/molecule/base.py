@@ -771,12 +771,7 @@ class Molecule(MolecularEntity):
                     raise ValueError("Unable to convert to attribute for storage")
                 # "Color" is an (n, 4) RGBA array which would otherwise be guessed as a
                 # generic 4-vector; store it as a colour attribute explicitly.
-                atype = db.AttributeTypes.FLOAT_COLOR if name == "Color" else None
-                self.store_named_attribute(
-                    data=data,
-                    name=name,
-                    atype=atype,
-                )
+                self[name] = db.color(data) if name == "Color" else data
             except (mda.NoDataError, AttributeError) as e:
                 logger.debug(f"Skipping attribute '{name}': {e}")
             except Exception as e:
@@ -857,10 +852,9 @@ class Molecule(MolecularEntity):
         """
         # selections are always boolean, other existing attributes keep their
         # type and new ones get the type of their values
-        atype = db.AttributeTypes.BOOLEAN if source == "SELECTION" else None
         for name, value in values.items():
             try:
-                self.store_named_attribute(data=value, name=name, atype=atype)
+                self[name] = db.boolean(value) if source == "SELECTION" else value
             except Exception as e:
                 # values a trajectory reader has but Blender can't store are
                 # expected, a calculation or selection that can't be stored is not
@@ -889,12 +883,7 @@ class Molecule(MolecularEntity):
         # aligned to the universe's bond ordering used for the edges above)
         bond_types = getattr(self.universe, "_mn_bond_types", None)
         if bond_types is not None:
-            self.store_named_attribute(
-                data=bond_types,
-                name="bond_type",
-                domain=db.AttributeDomains.EDGE,
-                atype=db.AttributeTypes.INT,
-            )
+            self.edge["bond_type"] = db.int32(bond_types)
 
         self._mn_entity_type = self._entity_type.value
         try:
@@ -1642,12 +1631,8 @@ class Molecule(MolecularEntity):
             A boolean numpy array subclass with one value per atom.
         """
         if _HIDDEN_ATTRIBUTE not in self.list_attributes():
-            self.store_named_attribute(
-                np.zeros(len(self.position), dtype=bool),
-                _HIDDEN_ATTRIBUTE,
-                atype="BOOLEAN",
-            )
-        return db.AttributeArray(self.object, _HIDDEN_ATTRIBUTE)
+            self.point[_HIDDEN_ATTRIBUTE] = db.boolean(False)
+        return self[_HIDDEN_ATTRIBUTE, db.boolean]
 
     @hidden.setter
     def hidden(self, value: npt.ArrayLike) -> None:
@@ -1655,7 +1640,7 @@ class Molecule(MolecularEntity):
         self._set_hidden_selection("")
 
     def _store_hidden(self, mask: np.ndarray) -> None:
-        self.store_named_attribute(mask, _HIDDEN_ATTRIBUTE, atype="BOOLEAN")
+        self[_HIDDEN_ATTRIBUTE] = db.boolean(mask)
 
     def _set_hidden_selection(self, text: str, message: str = "") -> None:
         """Set the text shown in the UI, without running its update callback."""

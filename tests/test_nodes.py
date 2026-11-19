@@ -973,7 +973,7 @@ def test_animate_ease_penner(fetch):
     mol = fetch("4ozs")
     grid = np.linspace(0.0, 1.0, 9)
     t = grid[np.arange(len(mol)) % len(grid)]
-    mol.store_named_attribute(t, "t")
+    mol["t"] = t
     combos = [(curve, ease) for curve in EASE_CURVES for ease in EASE_TYPES]
 
     with mol.tree.reset() as (atoms, join):
@@ -1006,7 +1006,7 @@ def test_animate_ease_penner(fetch):
 def test_animate_ease_range_and_clamp(fetch):
     mol = fetch("4ozs")
     raw = np.linspace(-1.0, 2.0, 7)[np.arange(len(mol)) % 7]
-    mol.store_named_attribute(raw, "raw")
+    mol["raw"] = raw
 
     def ease(clamp: bool):
         return EaseValue(
@@ -1045,10 +1045,10 @@ def test_stagger_value(fetch):
     mol = fetch("4ozs")
     index = np.arange(len(mol))
     rank = index % 4
-    mol.store_named_attribute(rank, "rank")
+    mol["rank"] = rank
     # ids 0..7 split into two groups of 0..3 and 4..7
-    mol.store_named_attribute(index % 8, "grouped")
-    mol.store_named_attribute(index % 8 // 4, "group")
+    mol["grouped"] = index % 8
+    mol["group"] = index % 8 // 4
     values = [0.0, 0.2, 0.5, 0.75, 1.0]
     widths = [0.0, 1.0, 3.0]
 
@@ -1086,7 +1086,7 @@ def test_stagger_value(fetch):
 def test_animate_action(fetch):
     mol = fetch("4ozs")
     rank = np.arange(len(mol)) % 4
-    mol.store_named_attribute(rank, "rank")
+    mol["rank"] = rank
     times = [0.0, 12.0, 17.0, 20.0, 30.0]
 
     def action(time, **kwargs):
@@ -1282,7 +1282,7 @@ def _evaluate_colormap(fetch, x: np.ndarray, param: str, name: str, reverse=Fals
     mol = fetch("4ozs")
     values = np.zeros(len(mol.atoms), dtype=np.float32)
     values[: len(x)] = x
-    mol.store_named_attribute(values, "cmap_x")
+    mol["cmap_x"] = values
     with mol.tree.reset() as (atoms, join):
         colormap = ColorMatplotlib(
             value=NamedAttribute.float("cmap_x"),
@@ -1433,7 +1433,7 @@ def test_fade_geometry_zero_removes_geometry(fetch):
 def _flag_ligand(mol, resname="REA"):
     ligand = np.zeros(len(mol), dtype=bool)
     ligand[mol.universe.select_atoms(f"resname {resname}").indices] = True
-    mol.store_named_attribute(ligand, "is_ligand")
+    mol["is_ligand"] = ligand
     return ligand
 
 
