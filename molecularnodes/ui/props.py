@@ -405,7 +405,7 @@ class CalculationItem(bpy.types.PropertyGroup):
         PointerProperty(
             type=bpy.types.Text,
             name="Text",
-            description="Text block the calculation was loaded from, which it is loaded from again when the file is reopened",
+            description="Text block the calculation was loaded from, which Reload loads it from again, such as after the file is reopened",
         ),
     ]
 

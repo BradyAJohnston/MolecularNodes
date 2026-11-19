@@ -15,8 +15,6 @@ built-in ones such as DSSP are rebuilt from their saved settings.
 
 from __future__ import annotations
 import logging
-import os
-from fnmatch import fnmatch
 from typing import TYPE_CHECKING, Callable, Iterator
 import bpy
 import numpy as np
@@ -51,7 +49,6 @@ class CalculationManager:
         self._funcs: dict[str, Calculation] = {}
         self._dssp = DSSPCalculation(entity)
         self._hbonds = HBondCalculation(entity)
-        self._failed_texts: set[str] = set()
 
     def dssp(
         self, selection: str | None = None, *, updating: bool | None = None
@@ -197,7 +194,17 @@ class CalculationManager:
 
     def _unloaded(self) -> list[str]:
         """Names of calculations from text that are saved on the object but not
-        loaded, such as after a file is reopened."""
+        loaded, such as after a file is reopened.
+
+        These are never loaded again automatically, only by Reload
+        (`from_text`). Running the file's text on open would run code that came
+        with the .blend, and whether Blender trusts the open file to run scripts
+        isn't available from Python: the Auto Run Python Scripts preference is
+        overridden by `-Y` / `--enable-autoexec` and the Trusted Source choice
+        when opening, and `bpy.app.autoexec_fail` is only set once something
+        has been blocked. Rather than guessing, the user chooses to run the text
+        by pressing Reload, as they did when adding it.
+        """
         try:
             items = self.ui_items
         except (LinkedObjectError, AttributeError):
@@ -207,28 +214,6 @@ class CalculationManager:
             for item in items
             if item.text is not None and item.name not in self._funcs
         ]
-
-    def _restore_texts(self) -> None:
-        """Load calculations from their text blocks again after a file is reopened.
-
-        Calculations loaded from text can't be saved with the file, but their
-        items on the object record the text block. Running a file's code when
-        it is opened isn't safe, so like Blender's own scripts they are only
-        loaded again when Auto Run Python Scripts allows it. Otherwise they
-        stay listed as not loaded until Reload is pressed.
-        """
-        if not scripts_auto_execute():
-            return
-        items = [self._item(name) for name in self._unloaded()]
-        for text in {item.text for item in items if item is not None}:
-            if text.name in self._failed_texts:
-                continue
-            try:
-                self.from_text(text)
-            except Exception as e:
-                # don't retry on every frame change
-                self._failed_texts.add(text.name)
-                logger.warning(f"Could not load calculations from '{text.name}': {e}")
 
     @property
     def ui_items(self):
@@ -411,27 +396,6 @@ class BaseCalculation:
 
     def __call__(self, universe: Universe) -> np.ndarray:
         return self.calculate()
-
-
-def scripts_auto_execute() -> bool:
-    """Whether Blender's Auto Run Python Scripts allows scripts in the open file.
-
-    True when the preference is on and the file isn't in one of its excluded
-    paths.
-    """
-    preferences = bpy.context.preferences
-    if preferences is None or not preferences.filepaths.use_scripts_auto_execute:
-        return False
-    filepath = os.path.normcase(bpy.data.filepath)
-    for excluded in preferences.autoexec_paths:
-        path = os.path.normcase(bpy.path.abspath(excluded.path))
-        if not path:
-            continue
-        if excluded.use_glob and fnmatch(filepath, path):
-            return False
-        if not excluded.use_glob and filepath.startswith(path):
-            return False
-    return True
 
 
 def calculations_from_code(code: str, molecule: Molecule) -> list[BaseCalculation]:

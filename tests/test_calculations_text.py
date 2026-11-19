@@ -134,24 +134,14 @@ def test_reopening_waits_for_reload(mol, tmp_path, updating):
     )
 
 
-@pytest.mark.parametrize("updating", [True, False])
-def test_reopening_with_auto_run(mol, tmp_path, auto_run, updating):
-    restored = save_and_reopen(mol, tmp_path, updating)
-    assert set(restored.calculations) >= {"ZPosition", "IsHeavy"}
-    assert restored.calculations.updating("ZPosition") is updating
-    assert np.allclose(
-        restored.named_attribute("ZPosition"), restored.atoms.positions[:, 2]
-    )
-
-
-def test_reopening_in_excluded_path(mol, tmp_path, auto_run):
-    excluded = auto_run.autoexec_paths.new()
-    excluded.path = str(tmp_path)
-    try:
-        restored = save_and_reopen(mol, tmp_path)
-    finally:
-        auto_run.autoexec_paths.remove(excluded)
+def test_reopening_with_auto_run_waits_for_reload(mol, tmp_path, auto_run):
+    # the text is never run on open, as whether Blender trusts the file (-Y,
+    # Trusted Source) can't be read from Python, only the preference can
+    restored = save_and_reopen(mol, tmp_path)
+    for frame in (1, 3):
+        scene().frame_set(frame)
     assert "ZPosition" not in restored.calculations
+    assert restored.frame_attributes["ZPosition"] == "CALCULATION"
 
 
 def test_remove_unloaded_calculation(mol, tmp_path):

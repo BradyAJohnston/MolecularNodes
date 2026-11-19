@@ -1228,10 +1228,9 @@ class Molecule(MolecularEntity):
         self._store_frame_attributes(trajectory, "TRAJECTORY")
         self._store_frame_attributes(self.selections._frame_values(), "SELECTION")
         # DSSP and hydrogen bonds are rebuilt from their saved settings after a
-        # file is reopened, and calculations from text when Blender allows it
+        # file is reopened
         self.calculations._dssp._restore()
         self.calculations._hbonds._restore()
-        self.calculations._restore_texts()
         self._store_frame_attributes(self.calculations._frame_values(), "CALCULATION")
         self._sync_frame_attributes(["position", *trajectory])
 
