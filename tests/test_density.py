@@ -263,9 +263,9 @@ def test_iso_surface_signed_threshold(tmp_path, threshold):
     data = 3.0 * blob(centres["positive"]) - 3.0 * blob(centres["negative"])
     path = _write_dx(tmp_path / "signed.dx", data, [x[0]] * 3, np.eye(3) * 0.5)
     density = mn.entities.density.Grids.load(path, style=None)
-    with density.tree.reset() as (_, join):
+    with density.tree.reset() as (volume, join):
         (
-            density.import_volume()
+            volume
             >> DensityStyleISOSurface(threshold=threshold)
             >> g.StoreNamedAttribute.point.vector(name="normal", value=g.Normal())
             >> join
@@ -482,12 +482,12 @@ def test_density_styles_joined_keep_volume(tmp_path):
     )
 
     density = _ramp_density(tmp_path, None)
-    with density.tree.reset() as (_, join):
-        density.import_volume() >> DensityStyleISOSurface(threshold=300.0) >> join
-        density.import_volume() >> DensityStyleSurface(threshold=500.0) >> join
+    with density.tree.reset() as (volume, join):
+        volume >> DensityStyleISOSurface(threshold=300.0) >> join
+        density.tree.import_volume() >> DensityStyleSurface(threshold=500.0) >> join
     # a third style added to the existing tree goes into the same join
     with density.tree as tree:
-        density.import_volume() >> DensityStyleSurface(threshold=200.0) >> tree.join
+        tree.import_volume() >> DensityStyleSurface(threshold=200.0) >> tree.join
 
     nodes = density.modifier_node_tree.nodes
     imports = [
@@ -600,16 +600,15 @@ def test_density_object_is_empty_mesh(tmp_path):
 
 def test_density_tree_has_no_input(tmp_path):
     density = _ramp_density(tmp_path, None)
-    with density.tree.reset() as (unused, join):
-        assert unused is None
-        density.import_volume() >> join
+    with density.tree.reset() as (volume, join):
+        volume >> join
     inputs = [
         item
         for item in density.modifier_node_tree.interface.items_tree
         if item.item_type == "SOCKET" and item.in_out == "INPUT"
     ]
     assert inputs == []
-    with pytest.raises(AttributeError, match="ImportVolume"):
+    with pytest.raises(AttributeError, match="import_volume"):
         density.tree.atoms
 
 
@@ -634,12 +633,53 @@ def test_density_sequence_by_index(tmp_path):
     density = mn.entities.density.Grids.load(paths, style=None, follow_frame=False)
     # two branches import different files, kept apart by their names
     with density.tree.reset() as (_, join):
-        density.import_volume(name="first", index=0) >> join
-        density.import_volume(name="second", index=1) >> join
+        density.tree.import_volume(name="first", index=0) >> join
+        density.tree.import_volume(name="second", index=1) >> join
     point = [[1.5, 1.5, 1.5]]
     for name, expected in [("first", 1.0), ("second", 2.0)]:
         values, _ = _sample_grid_at(density, point, grid_name=name)
         assert values[0] == pytest.approx(expected), name
+
+
+def _import_volume_nodes(density):
+    from molecularnodes.nodes.geometry import ImportVolume
+
+    return [
+        n
+        for n in density.modifier_node_tree.nodes
+        if n.bl_idname == "GeometryNodeGroup"
+        and n.node_tree.name.startswith(ImportVolume._name)
+    ]
+
+
+def test_density_reset_removes_unused_volume(tmp_path):
+    paths = [_constant_dx(tmp_path / f"grid_{i}.dx", i + 1) for i in range(2)]
+    density = mn.entities.density.Grids.load(paths, style=None, follow_frame=False)
+    with density.tree.reset() as (_, join):
+        density.tree.import_volume(name="first", index=0) >> join
+    names = [n.inputs["Name"].default_value for n in _import_volume_nodes(density)]
+    assert names == ["first"]
+
+
+def test_density_import_volume_follows_load_settings(tmp_path):
+    paths = [_constant_dx(tmp_path / f"frame_{i}.dx", i) for i in range(3)]
+    density = mn.entities.density.Grids.load(paths, frame_start=5)
+    density.add_style("density_wire", threshold=0.5)
+    nodes = _import_volume_nodes(density)
+    assert len(nodes) == 2
+    for node in nodes:
+        assert node.inputs["Follow Frame"].default_value
+        assert node.inputs["Frame Start"].default_value == 5
+    # explicit arguments still win
+    with density.tree as tree:
+        tree.import_volume(follow_frame=False, frame_start=2)
+    explicit = [
+        n
+        for n in _import_volume_nodes(density)
+        if not n.inputs["Follow Frame"].default_value
+    ]
+    assert len(explicit) == 1
+    assert explicit[0].inputs["Frame Start"].default_value == 2
 
 
 def test_density_path_with_braces(tmp_path):
