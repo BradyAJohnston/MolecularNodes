@@ -112,6 +112,9 @@ class ImportVolume(AssetGeometryGroup):
             "Path",
             "",
             description="Path of the .vdb file to import. `{index}` is replaced by the index, to pick one of several numbered files",
+            optional_label=True,
+            subtype="FILE_PATH",
+            
         )
         index = tree.inputs.integer(
             "Index",
@@ -133,6 +136,7 @@ class ImportVolume(AssetGeometryGroup):
             "Name",
             "density",
             description="Name to store the `density` grid under in the bundle of the output, as `MN Grid <Name>`. Color Sample Grid finds it by this name after a style has turned the volume into a mesh",
+            optional_label=True,
         )
         count = tree.inputs.integer(
             "Count",
