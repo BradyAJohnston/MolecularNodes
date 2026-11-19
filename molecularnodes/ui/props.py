@@ -329,7 +329,13 @@ FRAME_ATTRIBUTE_SOURCES = (
         "SPREADSHEET",
         0,
     ),
-    ("SELECTION", "Selection", "A custom selection via a selection string.", "RESTRICT_SELECT_OFF", 1),
+    (
+        "SELECTION",
+        "Selection",
+        "A custom selection via a selection string.",
+        "RESTRICT_SELECT_OFF",
+        1,
+    ),
     (
         "CALCULATION",
         "Calculation",
