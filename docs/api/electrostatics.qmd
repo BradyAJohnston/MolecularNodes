@@ -23,9 +23,9 @@ Load the grid as a density and show it with `Density Style ISO Surface`, which m
 ```{python}
 esp = mn.entities.density.Grids.load("../../tests/data/1brs_AD_apbs.dx.gz")
 
-with esp.tree.reset() as (_, join):
+with esp.tree.reset() as (volume, join):
     (
-        esp.import_volume()
+        volume
         >> mg.DensityStyleISOSurface(
             threshold=1.0,
             positive=(0.1, 0.3, 1.0, 1.0),

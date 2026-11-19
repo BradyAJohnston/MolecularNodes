@@ -14,7 +14,6 @@ from ...nodes.geometry import (
     DensityStyleISOSurface,
     DensityStyleSurface,
     DensityStyleWire,
-    ImportVolume,
 )
 from .base import Density
 from .cube import count_datasets, is_cube, read_cube
@@ -457,9 +456,7 @@ class Grids(Density):
         """
         with self.tree as tree:
             (
-                self.import_volume(
-                    follow_frame=self._follow_frame, frame_start=self._frame_start
-                )
+                tree.import_volume()
                 >> self._style_node(style, material, **inputs)
                 >> tree.join
             )
@@ -511,12 +508,12 @@ class Grids(Density):
         if name and name != "":
             self.name = name
 
-        # styles added later import the grids the same way
+        # read by `tree.import_volume()`, so every branch imports the grids the same way
         self._follow_frame = follow_frame
         self._frame_start = frame_start
-        with self.tree.reset() as (_, join):
+        with self.tree.reset() as (volume, join):
             (
-                self.import_volume(follow_frame=follow_frame, frame_start=frame_start)
+                volume
                 >> (
                     None
                     if style is None
@@ -526,50 +523,6 @@ class Grids(Density):
             )
 
         return self.object
-
-    def import_volume(
-        self,
-        name: str = "density",
-        index: int = 0,
-        follow_frame: bool = False,
-        frame_start: int | None = None,
-    ) -> ImportVolume:
-        """
-        An `Import Volume` node that reads this density's ``.vdb`` files.
-
-        Start each branch of the density's tree with one, inside the tree:
-
-        >>> with density.tree.reset() as (_, join):
-        ...     density.import_volume() >> DensityStyleSurface() >> join
-
-        Parameters
-        ----------
-        name : str, optional
-            Name the grid is kept under for `Color Sample Grid`, by default "density".
-            Give each branch that imports a different grid its own name.
-        index : int, optional
-            Which of several files to import, when not following the frame.
-        follow_frame : bool, optional
-            Whether the scene frame picks the file, to play the files as an animation.
-        frame_start : int | None, optional
-            Scene frame that shows the first file when following the frame. Defaults
-            to the scene's start frame.
-
-        Returns
-        -------
-        ImportVolume
-            The node, added to the tree being built.
-        """
-        scene = bpy.context.scene
-        assert scene is not None
-        return ImportVolume(
-            path=self.vdb_path,
-            index=index,
-            follow_frame=follow_frame,
-            frame_start=scene.frame_start if frame_start is None else frame_start,
-            count=len(self.files_vdb),
-            name=name,
-        )
 
     def grid_to_vdb(
         self,
