@@ -271,6 +271,10 @@ class CalculationManager:
             item.updating = updating
         if item.object != data_object:
             item.object = data_object
+        # from_text sets the text again after adding, any other function
+        # replaces a calculation from text
+        if item.text is not None:
+            item.text = None
         if refresh and not updating:
             self.refresh(name)
         self._entity._sync_frame_attributes()

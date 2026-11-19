@@ -100,6 +100,13 @@ def test_reload_keeps_updating_setting(mol):
     assert mol.calculations.updating("IsHeavy") is True
 
 
+def test_replacing_clears_text(mol):
+    mol.calculations.from_text(new_text("calcs.py", CODE))
+    mol.calculations["ZPosition"] = lambda u: u.atoms.positions[:, 0]
+    assert mol.object.mn.calculations["ZPosition"].text is None
+    assert mol.object.mn.calculations["IsHeavy"].text is not None
+
+
 def test_operator_reports_missing_text(mol):
     with pytest.raises(RuntimeError, match="Choose a text block"):
         mn_ops.calculations_from_text(uuid=mol.uuid, text="missing.py")
