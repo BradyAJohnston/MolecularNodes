@@ -1,4 +1,6 @@
+import logging
 from pathlib import Path
+import databpy as db
 import numpy as np
 from MDAnalysis import Universe
 from MDAnalysis.coordinates.base import ReaderBase
@@ -15,9 +17,12 @@ from MDAnalysis.core.topologyattrs import (
 from MDAnalysis.lib import util
 from MDAnalysis.topology.base import TopologyReaderBase
 from ... import color
+from ...blender import coll
 from ...nodes._utils import STYLE_LITERALS
 from ..base import EntityType
 from .base import Molecule
+
+logger = logging.getLogger(__name__)
 
 DNA_SCALE = 10
 
@@ -460,6 +465,65 @@ class OXDNA(Molecule):
         )
         assert isinstance(entity, cls)
         return entity
+
+    def _strands(self) -> tuple[np.ndarray, np.ndarray] | None:
+        """Number of nucleotides in each strand and whether each strand is circular.
+
+        Returns None if the nucleotides aren't listed as contiguous strands, bonded
+        only to their neighbours in index order (plus first-to-last for circles),
+        as then they can't be stored as one curve per strand.
+        """
+        chain = np.asarray(self.atoms.chainIDs)
+        starts = np.flatnonzero(np.r_[True, chain[1:] != chain[:-1]])
+        if len(np.unique(chain)) != len(starts):
+            return None
+        sizes = np.diff(np.r_[starts, len(chain)])
+        ends = starts + sizes - 1
+        strand = np.repeat(np.arange(len(starts)), sizes)
+
+        bonds = np.sort(self.atoms.bonds.indices, axis=1)
+        a, b = bonds[:, 0], bonds[:, 1]
+        same_strand = strand[a] == strand[b]
+        sequential = same_strand & (b - a == 1)
+        closing = same_strand & (a == starts[strand[a]]) & (b == ends[strand[a]])
+        closing &= ~sequential
+        if not np.all(sequential | closing):
+            return None
+        # every neighbour pair must be bonded, or a nicked strand would be joined
+        if sequential.sum() != len(chain) - len(starts):
+            return None
+
+        cyclic = np.zeros(len(starts), dtype=bool)
+        cyclic[strand[a[closing]]] = True
+        return sizes, cyclic
+
+    def _create_geometry(self, name: str) -> None:
+        """Create a Curves object with one poly spline per strand, falling back to
+        the mesh used by other molecules if the strands can't be read in order."""
+        strands = self._strands()
+        if strands is None:
+            logger.warning(
+                "oxDNA strands are not stored in index order, creating a mesh "
+                "instead of curves"
+            )
+            return super()._create_geometry(name=name)
+
+        sizes, cyclic = strands
+        self.object = db.create_curves_object(
+            positions=self._scaled_position,
+            curve_sizes=sizes,
+            name=name,
+            collection=coll.mn(),
+        )
+        self.object.data.set_types(type="POLY")
+        db.store_named_attribute(self.object, cyclic, "cyclic", domain="CURVE")
+        is_5_to_3 = OXDNAParser._is_new_topology(self.universe.filename)
+        db.store_named_attribute(
+            self.object,
+            np.full(len(sizes), is_5_to_3),
+            "is_5_to_3",
+            domain="CURVE",
+        )
 
     def _compute_color(self) -> np.ndarray:
         """Compute equidistant chain coloring for OXDNA"""

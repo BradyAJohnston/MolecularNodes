@@ -70,11 +70,16 @@ class OxDNADirection(CustomGeometryGroup):
             chain_id.o.chain_id.point.at(index),
             chain_id.o.chain_id.point.at(index.o.index + 1),
         )
+        named_attribute = g.NamedAttribute.boolean("is_5_to_3")
         vector_math = (
             g.Position().o.position.point.at(g.Index().o.index + 1) - g.Position()
         ).dot(OxDNAVectors().o.base_normal)
         (
-            (g.AttributeStatistic.point.float(atoms, compare, vector_math).o.mean > 0.0)
+            named_attribute.o.exists.switch.boolean(
+                g.AttributeStatistic.point.float(atoms, compare, vector_math).o.mean
+                > 0.0,
+                ~named_attribute.o.attribute,
+            )
             >> result
         )
 
@@ -86,7 +91,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
     Parameters
     ----------
     atoms : InputGeometry
-        Vertices and edges representing nucleotides and phosphodiester bonds, respectively
+        Curves with a point per nucleotide and a spline per strand, or vertices and edges representing nucleotides and phosphodiester bonds
     selection : InputBoolean
         Selection of atoms to apply this node to
     quality : InputInteger
@@ -143,7 +148,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
     Inputs
     ------
     i.atoms : GeometrySocket
-        Vertices and edges representing nucleotides and phosphodiester bonds, respectively
+        Curves with a point per nucleotide and a spline per strand, or vertices and edges representing nucleotides and phosphodiester bonds
     i.selection : BooleanSocket
         Selection of atoms to apply this node to
     i.quality : IntegerSocket
@@ -214,7 +219,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         atoms: GeometrySocket
-        """Vertices and edges representing nucleotides and phosphodiester bonds, respectively"""
+        """Curves with a point per nucleotide and a spline per strand, or vertices and edges representing nucleotides and phosphodiester bonds"""
         selection: BooleanSocket
         """Selection of atoms to apply this node to"""
         quality: IntegerSocket
@@ -344,7 +349,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         atoms = tree.inputs.geometry(
             "Atoms",
-            description="Vertices and edges representing nucleotides and phosphodiester bonds, respectively",
+            description="Curves with a point per nucleotide and a spline per strand, or vertices and edges representing nucleotides and phosphodiester bonds",
         )
         selection = tree.inputs.boolean(
             "Selection",
@@ -494,8 +499,9 @@ class OxDNAStyleClassic(AssetGeometryGroup):
             "Geometry", description="The generated geometry for the style node group"
         )
 
+        curve_to_mesh = g.CurveToMesh(atoms)
         separate_geometry = g.SeparateGeometry.point(
-            atoms, DeselectHidden(selection=selection)
+            curve_to_mesh, DeselectHidden(selection=selection)
         )
         with g.Frame("Color strands if Auto-color is False"):
             index_switch = g.IndexSwitch.color(
@@ -518,7 +524,9 @@ class OxDNAStyleClassic(AssetGeometryGroup):
         axes_to_rotation = g.AxesToRotation(
             primary_axis=vector_math, secondary_axis=oxdna_vectors.o.base_normal
         )
-        vector_math_1 = g.SampleIndex.point.vector(atoms, vector_math).o.value.length()
+        vector_math_1 = g.SampleIndex.point.vector(
+            curve_to_mesh, vector_math
+        ).o.value.length()
         with g.Frame("Colored bases"):
             menu_switch_1 = g.MenuSwitch.color(
                 base_colors,
@@ -605,7 +613,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     >> g.SetSplineType.bezier()
                     >> g.SetSplineResolution(resolution=quality * 2)
                 )
-                curve_to_mesh = (
+                curve_to_mesh_1 = (
                     g.SetHandleType(set_spline_resolution)
                     >> g.SetCurveNormal()
                     >> g.CurveToMesh(
@@ -614,7 +622,7 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                         fill_caps=True,
                     )
                 )
-                curve_to_mesh_1 = g.CurveToMesh(
+                curve_to_mesh_2 = g.CurveToMesh(
                     curve=reverse_curve_1,
                     profile_curve=curve_circle,
                     scale=switch,
@@ -624,9 +632,9 @@ class OxDNAStyleClassic(AssetGeometryGroup):
                     backbone_shape,
                     {
                         "Sticks": g.JoinGeometry(
-                            (curve_to_mesh_1, instance_on_points_1)
+                            (curve_to_mesh_2, instance_on_points_1)
                         ),
-                        "Ribbon": curve_to_mesh,
+                        "Ribbon": curve_to_mesh_1,
                     },
                 )
         with g.Frame("Base stem"):

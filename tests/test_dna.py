@@ -1,4 +1,5 @@
 import bpy
+import databpy as db
 import MDAnalysis as mda
 import numpy as np
 import pytest
@@ -148,6 +149,31 @@ class TestOXDNAReading:
         assert traj.object.name == "circle"
         for att in oxdna.OXDNA._att_names:
             assert traj.named_attribute(att).shape == (84, 3)
+
+    @pytest.mark.parametrize(
+        "topkey, trajkey, n_strands, n_cyclic, is_5_to_3",
+        [
+            ("lin_top", "lin_traj", 2, 0, True),
+            ("lin_top_old", "lin_traj_old", 2, 0, False),
+            ("circ_top", "circ_conf", 2, 2, True),
+            ("circ_top_old", "circ_conf_old", 2, 2, False),
+            ("orig_top_old", "orig_conf_old", 178, 0, False),
+        ],
+    )
+    def test_load_as_curves(
+        self, file, topkey, trajkey, n_strands, n_cyclic, is_5_to_3
+    ):
+        # one spline per strand, circular strands are cyclic, and the index
+        # order of the source format is stored per strand (#1246)
+        traj = oxdna.OXDNA.load(file(topkey), file(trajkey), style=None)
+        assert traj.object.type == "CURVES"
+        curves = traj.object.data
+        assert len(curves.curves) == n_strands
+        assert len(curves.points) == len(traj.atoms)
+        cyclic = db.named_attribute(traj.object, "cyclic", evaluate=False)
+        assert cyclic.sum() == n_cyclic
+        direction = db.named_attribute(traj.object, "is_5_to_3", evaluate=False)
+        assert np.all(direction == is_5_to_3)
 
     def test_load_without_velocity_columns(self, file, tmp_path):
         # velocity columns are optional in oxDNA configurations; loading must

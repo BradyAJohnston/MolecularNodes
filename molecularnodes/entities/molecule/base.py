@@ -874,6 +874,19 @@ class Molecule(MolecularEntity):
         name : str
             Name for the Blender object
         """
+        self._create_geometry(name=name)
+
+        self._mn_entity_type = self._entity_type.value
+        try:
+            n_frames = self.universe.trajectory.n_frames
+            _validate_non_negative(n_frames)
+            self.props.n_frames = n_frames
+        except RuntimeError:
+            pass
+
+    def _create_geometry(self, name: str) -> None:
+        """Create the Blender object holding the atoms: a mesh with a vertex per
+        atom and an edge per bond. Subclasses can override for other geometry."""
         self.object = db.create_object(
             name=name,
             collection=coll.mn(),
@@ -886,14 +899,6 @@ class Molecule(MolecularEntity):
         bond_types = getattr(self.universe, "_mn_bond_types", None)
         if bond_types is not None:
             self.edge["bond_type"] = db.int32(bond_types)
-
-        self._mn_entity_type = self._entity_type.value
-        try:
-            n_frames = self.universe.trajectory.n_frames
-            _validate_non_negative(n_frames)
-            self.props.n_frames = n_frames
-        except RuntimeError:
-            pass
 
     def create_object(self, name: str = "NewUniverseObject") -> bpy.types.Object:
         """Create and initialize Blender object for trajectory.
