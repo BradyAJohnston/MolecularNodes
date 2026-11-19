@@ -350,7 +350,10 @@ def layout_frame_attribute_details(layout: UILayout, traj: Molecule) -> None:
     calculation = traj.props.calculations.get(item.name)
     if calculation is not None:
         layout.prop(calculation, "updating", text="Update Every Frame")
-        if calculation.text is not None:
+        if calculation.text is None:
+            if item.name not in traj.calculations:
+                layout.label(text="Not loaded, add it again or remove it", icon="INFO")
+        else:
             if item.name not in traj.calculations:
                 layout.label(text="Not loaded, press Reload to run it", icon="INFO")
             row = layout.row()

@@ -193,10 +193,14 @@ class CalculationManager:
         return list(values)
 
     def _unloaded(self) -> list[str]:
-        """Names of calculations from text that are saved on the object but not
-        loaded, such as after a file is reopened.
+        """Names of calculations that are saved on the object but not loaded,
+        such as calculations from text after a file is reopened.
 
-        These are never loaded again automatically, only by Reload
+        Items without a text are included too, such as one whose text block
+        was deleted, so they stay listed and can be removed. DSSP and hydrogen
+        bonds are left out, as they are rebuilt from their saved settings.
+
+        Calculations from text are never loaded again automatically, only by Reload
         (`from_text`). Running the file's text on open would run code that came
         with the .blend, and whether Blender trusts the open file to run scripts
         isn't available from Python: the Auto Run Python Scripts preference is
@@ -212,7 +216,8 @@ class CalculationManager:
         return [
             item.name
             for item in items
-            if item.text is not None and item.name not in self._funcs
+            if item.name not in self._funcs
+            and item.name not in ("sec_struct", "hbonds")
         ]
 
     @property

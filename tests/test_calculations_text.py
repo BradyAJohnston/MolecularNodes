@@ -169,3 +169,14 @@ def test_remove_unloaded_calculation(mol, tmp_path):
     restored = save_and_reopen(mol, tmp_path)
     mn_ops.frame_attribute_remove(uuid=restored.uuid, name="ZPosition")
     assert "ZPosition" not in restored.frame_attributes
+
+
+def test_remove_calculation_after_text_deleted(mol, tmp_path):
+    restored = save_and_reopen(mol, tmp_path)
+    bpy.data.texts.remove(bpy.data.texts["calcs.py"])
+    scene().frame_set(3)
+    # still listed with its text gone, so it can be removed
+    assert restored.frame_attributes["ZPosition"] == "CALCULATION"
+    mn_ops.frame_attribute_remove(uuid=restored.uuid, name="ZPosition")
+    assert "ZPosition" not in restored.frame_attributes
+    assert "ZPosition" not in restored.props.calculations
