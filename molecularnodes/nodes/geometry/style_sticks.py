@@ -51,8 +51,6 @@ class StyleSticks(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     material : InputMaterial
         Material to apply to the resulting geometry
-    include_hidden : InputBoolean
-        Also apply this style to atoms with the hidden attribute
 
     Inputs
     ------
@@ -70,8 +68,6 @@ class StyleSticks(AssetGeometryGroup):
         Apply smooth shading to the created geometry
     i.material : MaterialSocket
         Material to apply to the resulting geometry
-    i.include_hidden : BooleanSocket
-        Also apply this style to atoms with the hidden attribute
 
     Outputs
     -------
@@ -104,8 +100,6 @@ class StyleSticks(AssetGeometryGroup):
         """Apply smooth shading to the created geometry"""
         material: MaterialSocket
         """Material to apply to the resulting geometry"""
-        include_hidden: BooleanSocket
-        """Also apply this style to atoms with the hidden attribute"""
 
     class _Outputs(SocketAccessor):
         geometry: GeometrySocket
@@ -127,7 +121,6 @@ class StyleSticks(AssetGeometryGroup):
         scale: InputFloat = 0.2,
         shade_smooth: InputBoolean = True,
         material: InputMaterial = None,
-        include_hidden: InputBoolean = False,
     ):
         super().__init__(
             **{
@@ -138,7 +131,6 @@ class StyleSticks(AssetGeometryGroup):
                 "Scale": scale,
                 "Shade Smooth": shade_smooth,
                 "Material": material,
-                "Include Hidden": include_hidden,
             }
         )
 
@@ -184,12 +176,6 @@ class StyleSticks(AssetGeometryGroup):
                 description="Material to apply to the resulting geometry",
                 optional_label=True,
             )
-        with tree.inputs.panel("Hidden", default_closed=True):
-            include_hidden = tree.inputs.boolean(
-                "Include Hidden",
-                False,
-                description="Also apply this style to atoms with the hidden attribute",
-            )
         geometry = tree.outputs.geometry(
             "Geometry", description="The generated geometry for the style node group"
         )
@@ -198,7 +184,7 @@ class StyleSticks(AssetGeometryGroup):
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
         separate_geometry = atoms_1.output >> g.SeparateGeometry.point(
-            selection=DeselectHidden(selection=selection, include_hidden=include_hidden)
+            selection=DeselectHidden(selection=selection)
         )
         mn_utils_style_sticks = MN_utils_style_sticks(
             atoms=separate_geometry.o.selection,
@@ -221,7 +207,6 @@ class StyleSticks(AssetGeometryGroup):
             scale=scale,
             shade_smooth=shade_smooth,
             material=material,
-            include_hidden=include_hidden,
         )
         g.JoinGeometry((style_spheres, mn_utils_style_sticks)) >> geometry_1.input
         (

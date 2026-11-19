@@ -112,8 +112,8 @@ class RelativeIndex(AssetGeometryGroup):
         )
         _group_pick_1 = GroupPick(pick=group_parameter.o.is_first, group_id=group_id)
 
-        group_parameter.o.group_size >> group_size
-        group_parameter.o.relative_index >> relative_index
+        group_parameter.o.count >> group_size
+        group_parameter.o.index >> relative_index
 
 
 ASSET = RelativeIndex

@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, cast
 from uuid import uuid1
 import bpy
 import databpy as db
-import numpy as np
 from databpy.object import LinkedObjectError
 from mathutils import Vector
 from PIL import Image
@@ -229,7 +228,7 @@ class BaseAnnotationManager(metaclass=ABCMeta):
         # Re-register the new AnnotationProperties class
         bpy.utils.register_class(AnnotationProperties)
         # Re-assign the annotation properties to Object - old data is retained
-        bpy.types.Object.mn_annotations = bpy.props.CollectionProperty(  # ty: ignore[unresolved-attribute]  # registers the property
+        bpy.types.Object.mn_annotations = bpy.props.CollectionProperty(  # ty: ignore[missing-attribute]  # registers the property
             type=AnnotationProperties
         )
 
@@ -834,39 +833,12 @@ class BaseAnnotationManager(metaclass=ABCMeta):
 
         # add edge attributes
         if len(attr_is_line) > 0:
-            # add the is_line attribute to distinguish lines
-            bob.store_named_attribute(
-                np.array(attr_is_line),
-                name="is_line",
-                atype=db.AttributeTypes.BOOLEAN,
-                domain=db.AttributeDomains.EDGE,
-            )
-            # add the Color attribute for line color
-            bob.store_named_attribute(
-                np.array(attr_color),
-                name="Color",
-                atype=db.AttributeTypes.FLOAT_COLOR,
-                domain=db.AttributeDomains.EDGE,
-            )
-            # add a thickness attribute for line thickness
-            bob.store_named_attribute(
-                np.array(attr_thickness),
-                name="thickness",
-                atype=db.AttributeTypes.FLOAT,
-                domain=db.AttributeDomains.EDGE,
-            )
-            # add material_slot_index attribute
-            # Note: material_index is a reserved attribute
-            bob.store_named_attribute(
-                np.array(attr_material_index),
-                name="material_slot_index",
-                atype=db.AttributeTypes.INT,
-                domain=db.AttributeDomains.EDGE,
-            )
-            # add the shade_smooth attribute
-            bob.store_named_attribute(
-                np.array(attr_shade_smooth),
-                name="shade_smooth",
-                atype=db.AttributeTypes.BOOLEAN,
-                domain=db.AttributeDomains.EDGE,
-            )
+            # material_index is reserved by Blender, so use material_slot_index
+            for key, value in {
+                "is_line": db.boolean(attr_is_line),
+                "Color": db.color(attr_color),
+                "thickness": db.float32(attr_thickness),
+                "material_slot_index": db.int32(attr_material_index),
+                "shade_smooth": db.boolean(attr_shade_smooth),
+            }.items():
+                bob.edge[key] = value

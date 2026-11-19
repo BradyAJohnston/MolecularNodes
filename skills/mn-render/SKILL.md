@@ -177,6 +177,15 @@ mol.add_style(
   A new attribute needs `atype="FLOAT_COLOR"`: `mol["name"] = rgba` infers a `FLOAT4`,
   which `add_style` rejects (it warns and applies nothing). Cartoon colour follows the
   backbone atoms, so colouring only side-chain atoms leaves the cartoon unchanged.
+- **Hiding atoms.** `mol.hide("resname HOH")` leaves atoms out of every style, and
+  `mol.show("resname ATP")` or a bare `mol.show()` brings them back. `mol.hidden` is the
+  boolean mask, written back like `mol.position`, and `load` and `fetch` take `hide=`.
+  Use a style's `selection` for what one style draws, and hiding for atoms no style
+  should draw. Styles do not compute with hidden atoms, so `Style HBonds` loses bonds when
+  hydrogens are hidden. Calculations and selections still see every atom. There is no
+  style input to keep them: in a hand-built tree, set `hidden` to false with a
+  `Store Named Attribute` node before a style. `hide()` takes a static selection, so
+  give an updating one to a style, and `hidden` cannot name a selection.
 - **Spheres in EEVEE.** Point clouds are ray-traced only by Cycles; on other engines
   `add_style` switches `StyleSpheres` from `sphere="Point"` to `"Instance"` for you.
   If you build the tree by hand, set `sphere="Instance"` or `"Mesh"` yourself, and use
@@ -387,8 +396,8 @@ density.add_style(
 ## 13. Large assemblies
 
 - Point cloud spheres stay fast: 966k atoms load in about 19 s and render in seconds on a
-  GPU. Use `selection=lambda: ~mg.IsHydrogen()` to drop hydrogens from high resolution
-  models.
+  GPU. Use `fetch(code, hide="element H")` to leave hydrogens out of high resolution
+  models. Every atom stays in memory, so this does not reduce what is loaded.
 - `add_style` warns on CA or P trace models, where all-atom styles look sparse. Use
   `cartoon`, or choose an all-atom entry for the same complex.
 - Cap memory for heavy runs, such as `Style Surface` on a whole assembly:

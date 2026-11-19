@@ -19,11 +19,11 @@ from bpy.app.handlers import (
     load_pre,
     persistent,
     render_pre,
-    save_post,
+    save_pre,
 )
 from bpy.props import CollectionProperty, PointerProperty
 from .. import assets, session
-from ..handlers import render_pre_handler, update_entities
+from ..handlers import render_pre_handler, update_entities, update_frame_fcurves
 from ..nodes import handlers as node_handlers
 from ..templates import register_templates_menu, unregister_templates_menu
 from . import ops, panel, pref, props
@@ -69,8 +69,9 @@ def register():
     bpy.types.VIEW3D_MT_object_context_menu.append(panel.pt_object_context)
     bpy.types.VIEW3D_MT_add.append(panel.add_menu_options)
 
-    save_post.append(session._pickle)
+    save_pre.append(session._save_pre)
     load_post.append(session._load)
+    load_post.append(update_frame_fcurves)
     load_pre.append(session._remove_draw_handlers)
     frame_change_pre.append(update_entities)
     render_pre.append(render_pre_handler)
@@ -79,9 +80,9 @@ def register():
     # attributes registered onto Blender types are unknown to the bpy stubs, and
     # are read elsewhere through molecularnodes.blender.registered
     if _mn_session is not None:
-        bpy.types.Scene.MNSession = _mn_session  # ty: ignore[unresolved-attribute]
+        bpy.types.Scene.MNSession = _mn_session  # ty: ignore[missing-attribute]
     else:
-        bpy.types.Scene.MNSession = session.MNSession()  # ty: ignore[unresolved-attribute]
+        bpy.types.Scene.MNSession = session.MNSession()  # ty: ignore[missing-attribute]
     bpy.types.Object.uuid = props.uuid_property  # type: ignore
     bpy.types.Object.mn = PointerProperty(type=props.MolecularNodesObjectProperties)  # type: ignore
     bpy.types.Scene.mn = PointerProperty(type=props.MolecularNodesSceneProperties)  # type: ignore
@@ -94,7 +95,7 @@ def register():
     if _mn_annotations is not None:
         # if the extension is being re-registered and the modules are already
         # loaded, reuse the saved value
-        bpy.types.Object.mn_annotations = _mn_annotations  # ty: ignore[unresolved-attribute]
+        bpy.types.Object.mn_annotations = _mn_annotations  # ty: ignore[missing-attribute]
     register_templates_menu()
     assets._ensure_mn_asset_library()
     if _mn_session is not None:
@@ -119,8 +120,9 @@ def unregister():
     bpy.types.VIEW3D_MT_object_context_menu.remove(panel.pt_object_context)
     bpy.types.VIEW3D_MT_add.remove(panel.add_menu_options)
 
-    save_post.remove(session._pickle)
+    save_pre.remove(session._save_pre)
     load_post.remove(session._load)
+    load_post.remove(update_frame_fcurves)
     load_pre.remove(session._remove_draw_handlers)
     frame_change_pre.remove(update_entities)
     render_pre.remove(render_pre_handler)
@@ -129,12 +131,12 @@ def unregister():
 
     session._remove_draw_handlers(filepath=None)
 
-    _mn_session = bpy.types.Scene.MNSession  # ty: ignore[unresolved-attribute]
+    _mn_session = bpy.types.Scene.MNSession  # ty: ignore[missing-attribute]
     del bpy.types.Scene.MNSession  # type: ignore
     del bpy.types.Scene.mn  # type: ignore
     del bpy.types.Object.mn  # type: ignore
     del bpy.types.Object.mn_trajectory_selections  # type: ignore
-    _mn_annotations = bpy.types.Object.mn_annotations  # ty: ignore[unresolved-attribute]
+    _mn_annotations = bpy.types.Object.mn_annotations  # ty: ignore[missing-attribute]
     del bpy.types.Object.mn_annotations  # type: ignore
     unregister_templates_menu()
     assets._remove_mn_asset_library()

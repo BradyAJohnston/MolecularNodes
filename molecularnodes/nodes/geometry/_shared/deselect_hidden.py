@@ -18,15 +18,11 @@ class DeselectHidden(CustomGeometryGroup):
     ----------
     selection : InputBoolean
         Selection of atoms for a style
-    include_hidden : InputBoolean
-        Keep atoms with the hidden attribute in the selection
 
     Inputs
     ------
     i.selection : BooleanSocket
         Selection of atoms for a style
-    i.include_hidden : BooleanSocket
-        Keep atoms with the hidden attribute in the selection
 
     Outputs
     -------
@@ -39,8 +35,6 @@ class DeselectHidden(CustomGeometryGroup):
     class _Inputs(SocketAccessor):
         selection: BooleanSocket
         """Selection of atoms for a style"""
-        include_hidden: BooleanSocket
-        """Keep atoms with the hidden attribute in the selection"""
 
     class _Outputs(SocketAccessor):
         selection: BooleanSocket
@@ -56,9 +50,8 @@ class DeselectHidden(CustomGeometryGroup):
     def __init__(
         self,
         selection: InputBoolean = True,
-        include_hidden: InputBoolean = False,
     ):
-        super().__init__(**{"Selection": selection, "Include Hidden": include_hidden})
+        super().__init__(**{"Selection": selection})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         selection = tree.inputs.boolean(
@@ -67,20 +60,9 @@ class DeselectHidden(CustomGeometryGroup):
             description="Selection of atoms for a style",
             hide_value=True,
         )
-        include_hidden = tree.inputs.boolean(
-            "Include Hidden",
-            False,
-            description="Keep atoms with the hidden attribute in the selection",
-        )
         selection_1 = tree.outputs.boolean(
             "Selection",
             description="The selection without hidden atoms. Atoms are not hidden when the attribute is missing",
         )
 
-        (
-            (
-                selection
-                & (include_hidden | ~g.NamedAttribute.boolean("hidden").o.attribute)
-            )
-            >> selection_1
-        )
+        (selection & ~g.NamedAttribute.boolean("hidden").o.attribute) >> selection_1

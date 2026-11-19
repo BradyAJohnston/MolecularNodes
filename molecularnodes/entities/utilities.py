@@ -100,12 +100,7 @@ def create_object(
     # 'AROMATIC_SINGLE' = 5, 'AROMATIC_DOUBLE' = 6, 'AROMATIC_TRIPLE' = 7
     # https://www.biotite-python.org/apidoc/biotite.structure.BondType.html#biotite.structure.BondType
     if array.bonds:
-        bob.store_named_attribute(
-            array.bonds.as_array()[:, 2],
-            "bond_type",
-            domain=db.AttributeDomains.EDGE,
-            atype=db.AttributeTypes.INT,
-        )
+        bob.edge["bond_type"] = db.int32(array.bonds.as_array()[:, 2])
 
     atom_array_to_named_attributes(array, bob.object, world_scale=world_scale)
 
@@ -174,7 +169,6 @@ def atom_array_to_named_attributes(
         # storing on the meshh we can just remove the `_int`
         db.store_named_attribute(
             obj=obj,
-            data=data,
+            data=db.color(data) if attr == "Color" else data,
             name=attr.replace("_int", ""),
-            atype=db.AttributeTypes.FLOAT_COLOR if attr == "Color" else None,
         )

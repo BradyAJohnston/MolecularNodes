@@ -1,6 +1,7 @@
 import bpy
 import numpy as np
 from bpy.app.handlers import persistent
+from bpy_extras import anim_utils
 from PIL import Image
 from .annotations.utils import render_annotations
 from .blender.registered import scene_session
@@ -30,6 +31,20 @@ def _update_selections(self, context: bpy.types.Context) -> None:
     entity = scene_session(context.scene).match(self.id_data)
     if isinstance(entity, Molecule):
         entity.selections.update_attributes()
+
+
+def _update_selection_name(self, context: bpy.types.Context) -> None:
+    """
+    Update callback for the name of a `TrajectorySelectionItem`. Moves a selection
+    off the reserved name `hidden`, which it would overwrite on every frame
+    """
+    if self.name != "hidden":
+        return
+    assert context.scene is not None
+    entity = scene_session(context.scene).match(self.id_data)
+    if isinstance(entity, Molecule):
+        self.name = entity.selections._unique_selection_name()
+        self.message = "'hidden' is reserved for the Hidden field. Use another name."
 
 
 def _update_hidden_selection(self, context: bpy.types.Context) -> None:
@@ -65,6 +80,27 @@ def update_entities(scene):
             entity.set_frame(frame_to_set)
         except NotImplementedError:
             pass
+
+
+@persistent
+def update_frame_fcurves(filepath: str) -> None:
+    """Let F-curves on the manual frame evaluate to fractional frames.
+
+    The manual frame was an integer property, and an F-curve keeps the rounding of
+    the property it was keyed on, so those from older files are updated on load.
+    """
+    for obj in bpy.data.objects:
+        animation = obj.animation_data
+        if animation is None or animation.action is None:
+            continue
+        channelbag = anim_utils.action_get_channelbag_for_slot(
+            animation.action, animation.action_slot
+        )
+        if channelbag is None:
+            continue
+        fcurve = channelbag.fcurves.find("mn.frame")
+        if fcurve is not None:
+            fcurve.update_autoflags(obj)
 
 
 @persistent

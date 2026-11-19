@@ -1436,7 +1436,7 @@ class MN_OT_Add_Annotation(Operator):
         MN_OT_Add_Annotation._temp_classes = _register_temp_annotation_add_op(entity)
         # invoke the temporary add operator
         # operators registered at runtime aren't in the bpy stubs
-        bpy.ops.mn.temp_annotation_add("INVOKE_DEFAULT")  # ty: ignore[unresolved-attribute]
+        bpy.ops.mn.temp_annotation_add("INVOKE_DEFAULT")  # ty: ignore[missing-attribute]
         return {"FINISHED"}
 
 

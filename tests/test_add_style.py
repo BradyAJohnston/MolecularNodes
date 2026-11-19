@@ -1,5 +1,6 @@
 import warnings
 import bpy
+import databpy as db
 import MDAnalysis as mda
 import pytest
 import molecularnodes as mn
@@ -10,7 +11,7 @@ from .utils import mn_ops, sphere_value, view_layer
 
 def test_add_style_with_selection(fetch):
     mol = fetch("4ozs").add_style("cartoon")
-    mol.store_named_attribute(mol.named_attribute("is_side_chain"), "show_side_chains")
+    mol["show_side_chains"] = mol.named_attribute("is_side_chain")
     mol.add_style("ball_and_stick", selection="show_side_chains")
 
     node_style = [
@@ -237,9 +238,7 @@ def test_add_style_named_color(fetch, color):
 def test_add_style_attribute_wins_over_color_name(fetch):
     "An attribute named like a colour is read, not replaced by the named colour."
     mol = fetch("4ozs")
-    mol.store_named_attribute(
-        mol.named_attribute("Color"), "salmon", atype="FLOAT_COLOR"
-    )
+    mol["salmon"] = db.color(mol["Color"])
     mol.add_style("cartoon", color="salmon")
     (set_color,) = _nodes_using_tree(mol.modifier_node_tree, "Set Color")
     assert set_color.inputs["Color"].links

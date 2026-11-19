@@ -15,7 +15,12 @@ from ..blender.registered import object_props, object_uuid
 from ..blender.utils import JSONProperty, annotated_props, set_object_visibility
 from ..entities import Density, Molecule
 from ..entities.base import EntityType
-from ..handlers import _update_entities, _update_hidden_selection, _update_selections
+from ..handlers import (
+    _update_entities,
+    _update_hidden_selection,
+    _update_selection_name,
+    _update_selections,
+)
 from ..session import get_entity, get_session
 
 uuid_property = StringProperty(
@@ -41,15 +46,13 @@ ENTITY_ITEMS = (
 
 
 def _get_frame(self):
-    return self.get("frame", 0)
+    return float(self.get("frame", 0))
 
 
 def _set_frame(self, frame):
-    # the manual frame is stepped through subframes like the scene frame, so the
-    # last frame that maps onto the trajectory is the last universe frame expanded
-    # by the subframes. `_mapped_uframes` clamps the universe frame regardless;
-    # this keeps the value shown in the UI on the trajectory
-    last_frame = max((self.n_frames - 1) * (self.subframes + 1), 0)
+    # `_mapped_uframes` clamps the universe frame regardless; this keeps the value
+    # shown in the UI on the trajectory
+    last_frame = max(self.n_frames - 1, 0)
     if frame > last_frame:
         frame = last_frame
     self["frame"] = frame
@@ -322,12 +325,24 @@ FRAME_ATTRIBUTE_SOURCES = (
     (
         "TRAJECTORY",
         "Trajectory",
-        "Read from each frame of the trajectory",
-        "FILE_MOVIE",
+        "Attributes read from the trajectory that change with each frame.",
+        "SPREADSHEET",
         0,
     ),
-    ("SELECTION", "Selection", "A selection of the molecule", "RESTRICT_SELECT_OFF", 1),
-    ("CALCULATION", "Calculation", "Calculated from the universe", "DRIVER", 2),
+    (
+        "SELECTION",
+        "Selection",
+        "A custom selection via a selection string.",
+        "RESTRICT_SELECT_OFF",
+        1,
+    ),
+    (
+        "CALCULATION",
+        "Calculation",
+        "A custom calculation that is user-defined and re-computed on each frame.",
+        "DRIVER_TRANSFORM",
+        2,
+    ),
 )
 
 
@@ -614,22 +629,15 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
             default=0,
         ),
     ]
-    frame_hidden: Annotated[
-        int,
-        IntProperty(
-            name="Frame",
-            description="Frame of the loaded trajectory",
-            default=0,
-            min=0,
-        ),
-    ]
     frame: Annotated[
-        int,
-        IntProperty(
+        float,
+        FloatProperty(
             name="Frame",
-            description="Manual frame of the loaded trajectory. Stepped through subframes like the scene frame, with the resolved trajectory frame shown alongside",
-            default=0,
-            min=0,
+            description="Manual frame of the loaded trajectory. Fractional frames interpolate between trajectory frames when Interpolate is enabled",
+            default=0.0,
+            min=0.0,
+            step=10,
+            precision=2,
             set=_set_frame,
             get=_get_frame,
         ),
@@ -656,7 +664,7 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
         int,
         IntProperty(
             name="Subframes",
-            description="Number of subframes to insert between frames of the loaded trajectory",
+            description="Number of subframes to insert between frames of the loaded trajectory when updating with the scene",
             default=0,
             update=_update_entities,
             min=0,
@@ -756,6 +764,21 @@ class MolecularNodesObjectProperties(bpy.types.PropertyGroup):
             default="",
         ),
     ]
+    internal_filepaths_trajectory: Annotated[
+        str,
+        StringProperty(
+            name="Trajectory Files",
+            description="Every coordinate file of a multi-file trajectory, used to reload it",
+            default="",
+            options={"HIDDEN"},
+        ),
+    ]
+
+    #: Every coordinate file of a multi-file trajectory, stored as JSON;
+    #: `filepath_trajectory` only holds the first
+    filepaths_trajectory = JSONProperty[list[str]](
+        "internal_filepaths_trajectory", list
+    )
     dssp: Annotated[DSSPProperties, PointerProperty(type=DSSPProperties)]
     hbonds: Annotated[HBondProperties, PointerProperty(type=HBondProperties)]
 
@@ -775,6 +798,7 @@ class TrajectorySelectionItem(bpy.types.PropertyGroup):
         StringProperty(
             name="Attribute Name",
             description="Name of the attribute that will be created when storing on the mesh",
+            update=_update_selection_name,
         ),
     ]
 

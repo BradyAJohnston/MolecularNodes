@@ -37,7 +37,6 @@ from ...nodes.geometry import AssemblyInstance
 from ...utils import (
     _UNSET,
     Unset,
-    count_value_changes,
     is_periodic_box,
     temp_override_property,
 )
@@ -192,8 +191,9 @@ class Molecule(MolecularEntity):
         Molecule annotations
     world_scale : float
         Scale factor from Angstroms to Blender units
-    frame : int
-        Current animation frame (synced with Blender)
+    frame : float
+        Manual frame of the trajectory, used when not updating with the scene.
+        Fractional frames interpolate between trajectory frames
     subframes : int
         Interpolation steps between frames
     offset : int
@@ -227,17 +227,21 @@ class Molecule(MolecularEntity):
     _universe_kwargs: dict = {}
 
     @property
-    def frame(self) -> int:
-        """Manual frame of the trajectory, used when not updating with the scene."""
+    def frame(self) -> float:
+        """Manual frame of the trajectory, used when not updating with the scene.
+
+        Fractional frames interpolate between trajectory frames when `interpolate`
+        is on, otherwise they stay on the lower frame.
+        """
         return self.props.frame
 
     @frame.setter
-    def frame(self, value: int) -> None:
+    def frame(self, value: float) -> None:
         self.props.frame = value
 
     @property
     def subframes(self) -> int:
-        """Number of subframes to insert between frames of the trajectory."""
+        """Number of subframes to insert between frames when updating with the scene."""
         return self.props.subframes
 
     @subframes.setter
@@ -358,7 +362,7 @@ class Molecule(MolecularEntity):
         return self.atoms.positions * self.world_scale
 
     @property
-    def uframe(self) -> int:
+    def _uframe(self) -> int:
         """Current frame number in MDAnalysis Universe.
 
         Differs from `frame` property (Blender scene frame). Query actual trajectory frame.
@@ -370,8 +374,8 @@ class Molecule(MolecularEntity):
         """
         return self.universe.trajectory.frame
 
-    @uframe.setter
-    def uframe(self, value: int) -> None:
+    @_uframe.setter
+    def _uframe(self, value: int) -> None:
         """Set current frame in MDAnalysis Universe.
 
         Only updates if changed to avoid redundant operations.
@@ -486,7 +490,8 @@ class Molecule(MolecularEntity):
         return self.atoms.resids
 
     def _compute_ures_id(self) -> np.ndarray:
-        return count_value_changes(self.atoms.resids, self._compute_chain_id_int())
+        # MDAnalysis residues, which topologies without chains also have
+        return self.atoms.resindices
 
     def _compute_atom_id(self) -> np.ndarray:
         return self.atoms.ids
@@ -696,6 +701,12 @@ class Molecule(MolecularEntity):
             self.props.filepath_trajectory = str(
                 path_resolve(self.universe.trajectory.filename)
             )
+        # multi-file universes (ChainReader) list every coordinate file in
+        # `filenames`, while `filename` only holds the first one
+        filenames = getattr(self.universe.trajectory, "filenames", None)
+        self.props.filepaths_trajectory = (
+            [str(path_resolve(f)) for f in filenames] if filenames is not None else None
+        )
 
     def reset_playback(self) -> None:
         """Set the playback settings to their default values"""
@@ -760,12 +771,7 @@ class Molecule(MolecularEntity):
                     raise ValueError("Unable to convert to attribute for storage")
                 # "Color" is an (n, 4) RGBA array which would otherwise be guessed as a
                 # generic 4-vector; store it as a colour attribute explicitly.
-                atype = db.AttributeTypes.FLOAT_COLOR if name == "Color" else None
-                self.store_named_attribute(
-                    data=data,
-                    name=name,
-                    atype=atype,
-                )
+                self[name] = db.color(data) if name == "Color" else data
             except (mda.NoDataError, AttributeError) as e:
                 logger.debug(f"Skipping attribute '{name}': {e}")
             except Exception as e:
@@ -773,7 +779,7 @@ class Molecule(MolecularEntity):
 
     def _store_extra_attributes(self) -> None:
         # TODO: enable adding of arbitrary mda.Universe attirbutes not currently applied
-        values = self.frame_manager.read_and_cache(self.uframe)
+        values = self.frame_manager.read_and_cache(self._uframe)
         self._sync_frame_attributes(values)
         values.pop("position")
         self._store_frame_attributes(values, "TRAJECTORY")
@@ -848,10 +854,9 @@ class Molecule(MolecularEntity):
         """
         # selections are always boolean, other existing attributes keep their
         # type and new ones get the type of their values
-        atype = db.AttributeTypes.BOOLEAN if source == "SELECTION" else None
         for name, value in values.items():
             try:
-                self.store_named_attribute(data=value, name=name, atype=atype)
+                self[name] = db.boolean(value) if source == "SELECTION" else value
             except Exception as e:
                 # values a trajectory reader has but Blender can't store are
                 # expected, a calculation or selection that can't be stored is not
@@ -880,12 +885,7 @@ class Molecule(MolecularEntity):
         # aligned to the universe's bond ordering used for the edges above)
         bond_types = getattr(self.universe, "_mn_bond_types", None)
         if bond_types is not None:
-            self.store_named_attribute(
-                data=bond_types,
-                name="bond_type",
-                domain=db.AttributeDomains.EDGE,
-                atype=db.AttributeTypes.INT,
-            )
+            self.edge["bond_type"] = db.int32(bond_types)
 
         self._mn_entity_type = self._entity_type.value
         try:
@@ -1213,7 +1213,7 @@ class Molecule(MolecularEntity):
 
         return data_obj
 
-    def _update_attributes(self, frame: int) -> None:
+    def _update_attributes(self, frame: float) -> None:
         """Write the attributes of every source for the scene frame.
 
         The trajectory goes first: it moves the universe to the frame and sets
@@ -1221,8 +1221,8 @@ class Molecule(MolecularEntity):
 
         Parameters
         ----------
-        frame : int
-            Scene frame number
+        frame : float
+            Scene frame number, or the manual frame
         """
         trajectory = self._update_trajectory_positions(frame)
         self._store_frame_attributes(trajectory, "TRAJECTORY")
@@ -1235,7 +1235,7 @@ class Molecule(MolecularEntity):
         self._store_frame_attributes(self.calculations._frame_values(), "CALCULATION")
         self._sync_frame_attributes(["position", *trajectory])
 
-    def set_frame(self, frame: int) -> None:
+    def set_frame(self, frame: float) -> None:
         """Update trajectory state for scene frame.
 
         Main entry point called by Blender's animation system. Updates positions,
@@ -1243,8 +1243,8 @@ class Molecule(MolecularEntity):
 
         Parameters
         ----------
-        frame : int
-            Scene frame number (mapping applied to get Universe frame)
+        frame : float
+            Scene frame number or manual frame (mapping applied to get Universe frame)
 
         Notes
         -----
@@ -1337,10 +1337,10 @@ class Molecule(MolecularEntity):
         sources: dict[str, str] = {}
 
         # bake each requested frame, restoring the current frame afterwards
-        original_uframe = self.uframe
+        original_uframe = self._uframe
         try:
             for i, frame in enumerate(range(start, stop, step)):
-                self.uframe = frame
+                self._uframe = frame
                 obj = db.create_object(
                     vertices=self._scaled_position,
                     name=f"{self.name}_frame_{i:04d}",
@@ -1363,7 +1363,7 @@ class Molecule(MolecularEntity):
                     sources.update(dict.fromkeys(frame_values, source))
                 self._store_baked_attributes(obj, values, sources)
         finally:
-            self.uframe = original_uframe
+            self._uframe = original_uframe
 
         return frames
 
@@ -1404,7 +1404,7 @@ class Molecule(MolecularEntity):
                 level = logging.DEBUG if expected else logging.ERROR
                 logger.log(level, f"Skipping baked attribute '{name}': {e}")
 
-    def _update_trajectory_positions(self, frame: int) -> dict[str, np.ndarray]:
+    def _update_trajectory_positions(self, frame: float) -> dict[str, np.ndarray]:
         """Update trajectory positions for the given frame.
 
         This method can be overridden by subclasses to implement custom
@@ -1412,8 +1412,8 @@ class Molecule(MolecularEntity):
 
         Parameters
         ----------
-        frame : int
-            Scene frame number
+        frame : float
+            Scene frame number, or the manual frame
 
         Returns
         -------
@@ -1620,8 +1620,7 @@ class Molecule(MolecularEntity):
 
         Changes write straight back to the molecule, as with ``position``, and
         update existing styles. Only styles read this: calculations, selections and
-        other nodes still see every atom. A style keeps these atoms when its
-        ``Include Hidden`` input is on.
+        other nodes still see every atom.
 
         ```python
         mol.hidden[:100] = True
@@ -1635,12 +1634,8 @@ class Molecule(MolecularEntity):
             A boolean numpy array subclass with one value per atom.
         """
         if _HIDDEN_ATTRIBUTE not in self.list_attributes():
-            self.store_named_attribute(
-                np.zeros(len(self.position), dtype=bool),
-                _HIDDEN_ATTRIBUTE,
-                atype="BOOLEAN",
-            )
-        return db.AttributeArray(self.object, _HIDDEN_ATTRIBUTE)
+            self.point[_HIDDEN_ATTRIBUTE] = db.boolean(False)
+        return self[_HIDDEN_ATTRIBUTE, db.boolean]
 
     @hidden.setter
     def hidden(self, value: npt.ArrayLike) -> None:
@@ -1648,7 +1643,7 @@ class Molecule(MolecularEntity):
         self._set_hidden_selection("")
 
     def _store_hidden(self, mask: np.ndarray) -> None:
-        self.store_named_attribute(mask, _HIDDEN_ATTRIBUTE, atype="BOOLEAN")
+        self[_HIDDEN_ATTRIBUTE] = db.boolean(mask)
 
     def _set_hidden_selection(self, text: str, message: str = "") -> None:
         """Set the text shown in the UI, without running its update callback."""
@@ -1778,8 +1773,7 @@ class Molecule(MolecularEntity):
         if selected.any() and not (selected & ~self.hidden).any():
             warnings.warn(
                 f"Every atom in selection '{attribute_name}' is hidden, so the style "
-                "draws nothing. Pass `include_hidden=True` to draw them, or use "
-                "`mol.show()`."
+                "draws nothing. Use `mol.show()` to draw them."
             )
 
     def _warn_if_trace_only(self, style: str) -> None:
@@ -1953,7 +1947,7 @@ class Molecule(MolecularEntity):
 
         material = "Default" if isinstance(material, Unset) else material
         attribute_name = self._resolve_style_selection(selection)
-        if attribute_name is not None and not kwargs.get("include_hidden"):
+        if attribute_name is not None:
             self._warn_if_all_hidden(attribute_name)
 
         # oxDNA nucleotides get their own ribbon; override locally so the
@@ -2226,9 +2220,9 @@ class Molecule(MolecularEntity):
                     f"{frame} is not within range [0, {self.universe.trajectory.n_frames - 1}]"
                 )
         else:
-            frame = self.uframe
+            frame = self._uframe
         # temporarily set trajectory frame to specified value
-        with temp_override_property(self, "uframe", frame):
+        with temp_override_property(self, "_uframe", frame):
             if selection is None:
                 # return bbox of object when no selection specified
                 return self._view_points(None)

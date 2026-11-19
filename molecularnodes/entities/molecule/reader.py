@@ -5,10 +5,15 @@ from pathlib import Path
 from typing import Any, Callable, cast
 import numpy as np
 from biotite.file import File, InvalidFileError
-from biotite.structure import AtomArray, AtomArrayStack, BondType, filter
+from biotite.structure import (
+    AtomArray,
+    AtomArrayStack,
+    BondType,
+    filter,
+    get_residue_starts,
+)
 from ... import color
 from ...assets import data
-from ...utils import count_value_changes
 
 logger = logging.getLogger(__name__)
 
@@ -422,4 +427,8 @@ class ReaderBase[F: File](metaclass=ABCMeta):
 
     @staticmethod
     def _compute_ures_id(array):
-        return count_value_changes(array.res_id, array.chain_id_int)
+        # a new residue starts wherever the chain, res_id, ins_code or res_name
+        # changes, so residues that share a res_id (52, 52A) stay apart
+        starts = np.zeros(array.array_length(), dtype=int)
+        starts[get_residue_starts(array)[1:]] = 1
+        return np.cumsum(starts)

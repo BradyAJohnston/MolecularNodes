@@ -22,7 +22,7 @@ COUNT_SIG_DIGITS = 3
 
 #: the operators Molecular Nodes registers under `bpy.ops.mn`, which the bpy stubs
 #: can't know about
-mn_ops: Any = bpy.ops.mn  # ty: ignore[unresolved-attribute]
+mn_ops: Any = bpy.ops.mn  # ty: ignore[missing-attribute]
 
 
 def scene() -> bpy.types.Scene:
