@@ -64,7 +64,6 @@ title: "Changelog"
 - `ty` type checking runs in CI alongside ruff. Properties registered on Blender types are read through typed accessors in `molecularnodes.blender.registered`.
 
 ## Fixed
-- Saving a file no longer drops a molecule from the session when one of its calculations can't be pickled, such as a `lambda`, which raises `pickle.PicklingError` in Python 3.13. The calculation is skipped and the molecule reopens as before.
 - Reloading a molecule or density, with Reload in the Molecular Nodes panel or `reload_entity()`, lost its annotations, and reloading a CellPack lost its instance collection. Multi-file trajectories reloaded only their first file. A structure fetched by its code reloads from the file it was downloaded to when that is still there, rather than downloading it again.
 - `ures_id` gives each residue its own value, also for residues that share a `res_id` through insertion codes (52, 52A), and is now set for topologies without chains. `Residue Parameter`, `Chain Parameter` and `Structure Parameter` group residues by it, so their values are right for structures with insertion codes. [#1339](https://github.com/BradyAJohnston/MolecularNodes/issues/1339)
 - The trajectory frame shown in the panel now updates, it stayed at 0. With interpolated subframes it shows the position between frames, such as `1.50`.

@@ -9,8 +9,9 @@ when it last ran, which is when it was added, refreshed or set to update.
 
 Whether each calculation updates is stored on the object in
 ``obj.mn.calculations``, so it is saved with the file. The functions live in
-Python: ones that can be pickled are restored with a saved session, and
-built-in ones such as DSSP are rebuilt from their saved settings.
+Python and aren't saved: built-in ones such as DSSP are rebuilt from their
+saved settings, ones from a text block are loaded again by Reload, and others
+have to be added again.
 """
 
 from __future__ import annotations

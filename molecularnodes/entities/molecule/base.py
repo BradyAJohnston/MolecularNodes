@@ -2074,22 +2074,9 @@ class Molecule(MolecularEntity):
         if "annotations" in state:
             del state["annotations"]
         if "calculations" in state:
-            # Preserve picklable calculations
-            preserved_calculations = {}
-            for name, calc_func in state["calculations"].items():
-                # built-in calculations are rebuilt from their saved settings
-                if name in ("sec_struct", "hbonds"):
-                    continue
-                try:
-                    import pickle
-
-                    pickle.dumps(calc_func)
-                    preserved_calculations[name] = calc_func
-                except (TypeError, AttributeError, pickle.PicklingError):
-                    logger.debug(f"Skipping unpicklable calculation function: {name}")
-
-            if preserved_calculations:
-                state["_preserved_calculations"] = preserved_calculations
+            # calculations aren't kept: sessions are rebuilt from the object when
+            # a file is opened, not unpickled, and built-in ones are rebuilt from
+            # their saved settings
             del state["calculations"]
 
         return state
@@ -2160,8 +2147,6 @@ class Molecule(MolecularEntity):
             self.annotations = MoleculeAnnotationManager(self)
         if not hasattr(self, "calculations"):
             self.calculations = CalculationManager(self)
-            preserved = self.__dict__.pop("_preserved_calculations", {})
-            self.calculations._funcs.update(preserved)
 
     def _world_positions(self, selection: mda.AtomGroup) -> np.ndarray:
         """
