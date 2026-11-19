@@ -14,7 +14,7 @@ from .assembly import AssemblyParser
 from .reader import ReaderBase
 
 
-class PDBReader(ReaderBase):
+class PDBReader(ReaderBase[pdb.PDBFile]):
     extra_fields = ["b_factor", "occupancy", "charge", "atom_id"]
     _extra_annotations = {}
 
@@ -22,7 +22,7 @@ class PDBReader(ReaderBase):
     def set_extra_annotations(annotations, array, file):
         return array
 
-    def read(self, file_path):
+    def read(self, file_path) -> pdb.PDBFile:
         return pdb.PDBFile.read(file_path)
 
     def get_structure(self, model: int | None = None):
@@ -175,6 +175,9 @@ def _comp_secondary_structure(array):
     conv_sse_char_int = {"a": 1, "b": 2, "c": 3, "": 0}
 
     char_sse = annotate_sse(array)
+    if char_sse.dtype.kind != "U":
+        # biotite >= 2 returns PSeaElement codes instead of characters
+        char_sse = struc.PSeaElement.to_symbols(char_sse)
     int_sse = np.array([conv_sse_char_int[char] for char in char_sse], dtype=int)
     atom_sse = spread_residue_wise(array, int_sse)
 

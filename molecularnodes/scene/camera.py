@@ -1,6 +1,6 @@
 from enum import StrEnum
 from math import degrees, radians
-from typing import Sequence
+from typing import Literal, Sequence, cast
 import bpy
 import numpy as np
 import numpy.typing as npt
@@ -56,12 +56,14 @@ class Camera:
     @property
     def camera(self) -> bpy.types.Object:
         """Get Camera object"""
-        return bpy.context.scene.camera
+        scene = bpy.context.scene
+        assert scene is not None and scene.camera is not None
+        return scene.camera
 
     @property
     def camera_data(self) -> bpy.types.Camera:
         """Get Camera data"""
-        return self.camera.data
+        return cast(bpy.types.Camera, self.camera.data)
 
     @property
     def lens(self) -> float:
@@ -94,12 +96,34 @@ class Camera:
         self.camera_data.clip_end = value
 
     @property
+    def orthographic(self) -> bool:
+        """Whether the camera is orthographic, which gives figures one exact
+        scale. ``look_at`` fits an orthographic camera by changing its
+        ``ortho_scale``."""
+        return self.camera_data.type == "ORTHO"
+
+    @orthographic.setter
+    def orthographic(self, value: bool) -> None:
+        self.camera_data.type = "ORTHO" if value else "PERSP"
+
+    @property
+    def ortho_scale(self) -> float:
+        """Length in nanometres covered by the longer edge of the frame, for an
+        orthographic camera."""
+        return self.camera_data.ortho_scale
+
+    @ortho_scale.setter
+    def ortho_scale(self, value: float) -> None:
+        self.camera_data.ortho_scale = value
+
+    @property
     def rotation(self) -> tuple[float, float, float]:
         """Get Camera rotation in degrees (XYZ)"""
-        return tuple(degrees(angle) for angle in self.camera.rotation_euler)
+        x, y, z = (degrees(angle) for angle in self.camera.rotation_euler)
+        return (x, y, z)
 
     @rotation.setter
-    def rotation(self, angles: tuple[float, float, float]) -> None:
+    def rotation(self, angles: Sequence[float]) -> None:
         """Set Camera rotation in degrees (XYZ)"""
         self.camera.rotation_euler = tuple(radians(angle) for angle in angles)
 
@@ -176,6 +200,7 @@ class Camera:
             scene = bpy.context.scene
         points = framing.as_points(points)
         # matrix_world lags a rotation just written until the depsgraph updates
+        assert bpy.context.view_layer is not None
         bpy.context.view_layer.update()
         bounds = self.frame_bounds(scene)
         basis = self.basis
@@ -188,7 +213,7 @@ class Camera:
         else:
             location = framing.fit_camera_to_points(points, basis, bounds, margin)
 
-        self.camera.location = location
+        self.camera.location = Vector(location.tolist())
         # a subject sitting beyond the far clip renders as nothing at all, so
         # make room for it rather than silently dropping it
         furthest = float(np.max((points - location) @ basis[2]))
@@ -204,7 +229,12 @@ class Camera:
         """
         right, up, forward = np.asarray(basis, dtype=np.float64)
         matrix = Matrix(np.column_stack([right, up, -forward]).tolist())
-        self.camera.rotation_euler = matrix.to_euler(self.camera.rotation_mode)
+        # to_euler() takes only Euler orders, so a camera in QUATERNION or
+        # AXIS_ANGLE mode raises here
+        mode = cast(
+            Literal["XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"], self.camera.rotation_mode
+        )
+        self.camera.rotation_euler = matrix.to_euler(mode)
 
     def set_viewpoint(self, viewpoint: Viewpoint | str | Sequence[float]) -> None:
         """

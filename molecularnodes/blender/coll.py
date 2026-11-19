@@ -17,6 +17,7 @@ def data() -> Collection:
     except KeyError:
         collection = create_collection(name=name, parent=mn())
 
+        assert bpy.context.view_layer is not None
         bpy.context.view_layer.layer_collection.children["Molecular Nodes"].children[
             collection.name
         ].exclude = True

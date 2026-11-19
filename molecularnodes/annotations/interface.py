@@ -1,5 +1,9 @@
+from typing import TYPE_CHECKING, Any
 import bpy
 import numpy as np
+
+if TYPE_CHECKING:
+    from .base import BaseAnnotation
 
 
 class AnnotationInterface:
@@ -36,6 +40,15 @@ class AnnotationInterface:
     mesh_color: np.ndarray | list | tuple
     mesh_material: str | bpy.types.Material
     mesh_shade_smooth: bool
+    # set by the annotation manager, to look up this interface
+    _uuid: str
 
-    def __init__(self, instance):
+    def __init__(self, instance: "BaseAnnotation"):
         self._instance = instance
+
+    if TYPE_CHECKING:
+        # the inputs of each annotation type are bound to its interface class
+        # when an annotation is created, so they aren't known statically
+        def __getattr__(self, name: str) -> Any: ...
+
+        def __setattr__(self, name: str, value: Any) -> None: ...

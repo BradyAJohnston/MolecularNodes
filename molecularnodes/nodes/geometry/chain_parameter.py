@@ -4,8 +4,10 @@
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
 from nodebpy import TreeBuilder
+from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
+    BooleanSocket,
     FloatSocket,
     IntegerSocket,
     PackageLibrary,
@@ -14,8 +16,8 @@ from nodebpy.builder import (
 from ._shared.index_to_factor import IndexToFactor
 from .chain_id import ChainID
 from .group_info import GroupInfo
-from .residue_id import ResidueID
 from .sub_group_info import SubGroupInfo
+from .ures_id import UResID
 
 
 class ChainParameter(AssetGeometryGroup):
@@ -25,19 +27,19 @@ class ChainParameter(AssetGeometryGroup):
     Outputs
     -------
     o.factor : FloatSocket
-        A residues relative position along a chain. 0 being the first residue in a chain, 1 being the last
+        A residue's relative position along its chain, 0 for the first residue and 1 for the last
+    o.residue_index : IntegerSocket
+        Index of the residue within its chain, starting at 0 for the first residue
     o.residue_count : IntegerSocket
         Number of residues in the chain
-    o.residue_index : IntegerSocket
-        Res ID along the chain if counting from 1
-    o.first_res_id : IntegerSocket
-        The first Res ID in a chain (truncated chains start above 1)
-    o.last_res_id : IntegerSocket
-        The Res ID of the last residue in chain (not equal to Length if chain is truncated)
+    o.is_first : BooleanSocket
+        If the atom is in the first residue of its chain
+    o.is_last : BooleanSocket
+        If the atom is in the last residue of its chain
     o.index_of_first : IntegerSocket
-        Index in whole structure of the first atom in the chain
+        `Index` (in the whole structure) of the first atom in the chain
     o.index_of_last : IntegerSocket
-        Index in the whole structure the last atom in the chain
+        `Index` (in the whole structure) of the last atom in the chain
     """
 
     _name = "Chain Parameter"
@@ -54,19 +56,19 @@ class ChainParameter(AssetGeometryGroup):
 
     class _Outputs(SocketAccessor):
         factor: FloatSocket
-        """A residues relative position along a chain. 0 being the first residue in a chain, 1 being the last"""
+        """A residue's relative position along its chain, 0 for the first residue and 1 for the last"""
+        residue_index: IntegerSocket
+        """Index of the residue within its chain, starting at 0 for the first residue"""
         residue_count: IntegerSocket
         """Number of residues in the chain"""
-        residue_index: IntegerSocket
-        """Res ID along the chain if counting from 1"""
-        first_res_id: IntegerSocket
-        """The first Res ID in a chain (truncated chains start above 1)"""
-        last_res_id: IntegerSocket
-        """The Res ID of the last residue in chain (not equal to Length if chain is truncated)"""
+        is_first: BooleanSocket
+        """If the atom is in the first residue of its chain"""
+        is_last: BooleanSocket
+        """If the atom is in the last residue of its chain"""
         index_of_first: IntegerSocket
-        """Index in whole structure of the first atom in the chain"""
+        """`Index` (in the whole structure) of the first atom in the chain"""
         index_of_last: IntegerSocket
-        """Index in the whole structure the last atom in the chain"""
+        """`Index` (in the whole structure) of the last atom in the chain"""
 
     if TYPE_CHECKING:
 
@@ -81,37 +83,39 @@ class ChainParameter(AssetGeometryGroup):
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         factor = tree.outputs.float(
             "Factor",
-            description="A residues relative position along a chain. 0 being the first residue in a chain, 1 being the last",
+            description="A residue's relative position along its chain, 0 for the first residue and 1 for the last",
             min_value=0.0,
             max_value=1.0,
             subtype="FACTOR",
         )
+        residue_index = tree.outputs.integer(
+            "Residue Index",
+            description="Index of the residue within its chain, starting at 0 for the first residue",
+        )
         residue_count = tree.outputs.integer(
             "Residue Count", description="Number of residues in the chain"
         )
-        residue_index = tree.outputs.integer(
-            "Residue Index", description="Res ID along the chain if counting from 1"
+        is_first = tree.outputs.boolean(
+            "Is First", description="If the atom is in the first residue of its chain"
         )
-        first_res_id = tree.outputs.integer(
-            "First res_id",
-            description="The first Res ID in a chain (truncated chains start above 1)",
-        )
-        last_res_id = tree.outputs.integer(
-            "Last res_id",
-            description="The Res ID of the last residue in chain (not equal to Length if chain is truncated)",
+        is_last = tree.outputs.boolean(
+            "Is Last", description="If the atom is in the last residue of its chain"
         )
         index_of_first = tree.outputs.integer(
             "Index of First",
-            description="Index in whole structure of the first atom in the chain",
+            description="`Index` (in the whole structure) of the first atom in the chain",
         )
         index_of_last = tree.outputs.integer(
             "Index of Last",
-            description="Index in the whole structure the last atom in the chain",
+            description="`Index` (in the whole structure) of the last atom in the chain",
         )
 
         chain_id = ChainID()
         group_info = GroupInfo(group_id=chain_id)
-        sub_group_info = SubGroupInfo(sub_group_id=ResidueID(), group_id=chain_id)
+        sub_group_info = SubGroupInfo(
+            sub_group_id=UResID().o.ures_id, group_id=chain_id
+        )
+        g.Compare.integer.equal(sub_group_info.o.sub_group_id, 0) >> is_first
         (
             IndexToFactor(
                 index=sub_group_info.o.sub_group_id,
@@ -119,11 +123,15 @@ class ChainParameter(AssetGeometryGroup):
             )
             >> factor
         )
-        ResidueID(index=sub_group_info.o.index_of_first) >> first_res_id
-        ResidueID(index=sub_group_info.o.index_of_last) >> last_res_id
+        (
+            g.Compare.integer.equal(
+                sub_group_info.o.sub_group_id, sub_group_info.o.sub_group_total - 1
+            )
+            >> is_last
+        )
 
-        sub_group_info.o.sub_group_total >> residue_count
         sub_group_info.o.sub_group_id >> residue_index
+        sub_group_info.o.sub_group_total >> residue_count
         group_info.o.index_of_first >> index_of_first
         group_info.o.index_of_last >> index_of_last
 

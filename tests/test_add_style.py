@@ -1,13 +1,17 @@
+import warnings
 import bpy
+import databpy as db
+import MDAnalysis as mda
 import pytest
 import molecularnodes as mn
+from molecularnodes.blender.registered import object_uuid
 from .constants import data_dir
-from .utils import sphere_value
+from .utils import mn_ops, sphere_value, view_layer
 
 
 def test_add_style_with_selection(fetch):
     mol = fetch("4ozs").add_style("cartoon")
-    mol.store_named_attribute(mol.named_attribute("is_side_chain"), "show_side_chains")
+    mol["show_side_chains"] = mol.named_attribute("is_side_chain")
     mol.add_style("ball_and_stick", selection="show_side_chains")
 
     node_style = [
@@ -75,7 +79,7 @@ def test_add_style_assembly():
 def test_add_style_operator_color_scheme():
     """mn.add_style applies its color scheme and label through Molecule.add_style."""
     mol = mn.Molecule.load(data_dir / "1cd3.cif")
-    res = bpy.ops.mn.add_style(
+    res = mn_ops.add_style(
         uuid=mol.uuid, style="spheres", color_scheme="common", name="Op Style"
     )
     assert res == {"FINISHED"}
@@ -114,8 +118,8 @@ def test_styles_panel_node_group_lookup_without_session():
     obj = mol.object
 
     # drop the session link (as after re-opening a .blend without the pickle)
-    session.remove_entity(obj.uuid)
-    assert session.get(obj.uuid) is None
+    session.remove_entity(object_uuid(obj))
+    assert session.get(object_uuid(obj)) is None
 
     # the node group and its style nodes are still reachable from the object
     node_group = get_entity_node_group(obj)
@@ -131,16 +135,18 @@ def test_swap_style_operator():
     mol = mn.Molecule.load(data_dir / "1cd3.cif").add_style("cartoon")
     ng = mol.modifier_node_tree
     style = [n for n in ng.nodes if is_style_node(n)][0]
+    assert isinstance(style, bpy.types.GeometryNodeGroup)
+    assert style.node_tree is not None
     assert style.node_tree.name == "Style Cartoon"
 
-    res = bpy.ops.mn.swap_style(
-        name_tree=ng.name, name_node=style.name, style="surface"
-    )
+    res = mn_ops.swap_style(name_tree=ng.name, name_node=style.name, style="surface")
     assert res == {"FINISHED"}
 
     # still exactly one style node, now referencing the Surface style tree
     style_nodes = [n for n in ng.nodes if is_style_node(n)]
     assert len(style_nodes) == 1
+    assert isinstance(style_nodes[0], bpy.types.GeometryNodeGroup)
+    assert style_nodes[0].node_tree is not None
     assert style_nodes[0].node_tree.name == "Style Surface"
 
 
@@ -153,8 +159,8 @@ def test_add_selection_to_style_operator():
     style = [n for n in ng.nodes if is_style_node(n)][0]
     assert not style.inputs["Selection"].links
 
-    bpy.context.view_layer.objects.active = mol.object
-    res = bpy.ops.mn.add_selection_to_style(node_tree=ng.name, node_name=style.name)
+    view_layer().objects.active = mol.object
+    res = mn_ops.add_selection_to_style(node_tree=ng.name, node_name=style.name)
     assert res == {"FINISHED"}
 
     # the style's Selection input is now driven by a named attribute node whose
@@ -163,6 +169,7 @@ def test_add_selection_to_style_operator():
     assert links
     attr_node = links[0].from_node
     assert isinstance(attr_node, bpy.types.GeometryNodeInputNamedAttribute)
+    assert attr_node.inputs is not None
     selection = mol.selections.get(attr_node.inputs["Name"].default_value)
     assert selection is not None
     assert selection.string == "all"
@@ -175,15 +182,13 @@ def test_add_selection_to_style_operator_missing_targets():
     mol = mn.Molecule.load(data_dir / "1cd3.cif").add_style("cartoon")
     ng = mol.modifier_node_tree
     style = [n for n in ng.nodes if is_style_node(n)][0]
-    bpy.context.view_layer.objects.active = mol.object
+    view_layer().objects.active = mol.object
 
     with pytest.raises(RuntimeError, match="not found"):
-        bpy.ops.mn.add_selection_to_style(
-            node_tree="does not exist", node_name=style.name
-        )
+        mn_ops.add_selection_to_style(node_tree="does not exist", node_name=style.name)
 
     with pytest.raises(RuntimeError, match="not found"):
-        bpy.ops.mn.add_selection_to_style(node_tree=ng.name, node_name="does not exist")
+        mn_ops.add_selection_to_style(node_tree=ng.name, node_name="does not exist")
 
     # the style node is untouched by the failed attempts
     assert not style.inputs["Selection"].links
@@ -217,6 +222,26 @@ def test_add_style_valid_color_adds_node(fetch, color):
     mol = fetch("4ozs")
     mol.add_style("cartoon", color=color)
     assert _nodes_using_tree(mol.modifier_node_tree, "Set Color")
+
+
+@pytest.mark.parametrize("color", ["pymol:slate", "slate", "salmon", "#00FFCC80"])
+def test_add_style_named_color(fetch, color):
+    mol = fetch("4ozs")
+    mol.add_style("cartoon", color=color)
+    (set_color,) = _nodes_using_tree(mol.modifier_node_tree, "Set Color")
+    expected = mn.color.parse_color(color)
+    if len(expected) == 3:
+        expected = (*expected, 1.0)
+    assert tuple(set_color.inputs["Color"].default_value) == pytest.approx(expected)
+
+
+def test_add_style_attribute_wins_over_color_name(fetch):
+    "An attribute named like a colour is read, not replaced by the named colour."
+    mol = fetch("4ozs")
+    mol["salmon"] = db.color(mol["Color"])
+    mol.add_style("cartoon", color="salmon")
+    (set_color,) = _nodes_using_tree(mol.modifier_node_tree, "Set Color")
+    assert set_color.inputs["Color"].links
 
 
 def test_add_style_callable_color(fetch):
@@ -314,3 +339,19 @@ def test_callable_style_keeps_its_own_geometry(fetch):
     mn.Canvas(engine="EEVEE")
     mol = fetch("4ozs").add_style(lambda: StyleSpheres())
     assert sphere_value(mol) == "Point"
+
+
+def test_add_style_warns_on_trace_model(tmp_path):
+    trace = tmp_path / "trace.pdb"
+    universe = mda.Universe(data_dir / "1ATN.pdb")
+    universe.select_atoms("protein and name CA").write(trace)
+    mol = mn.Molecule.load(trace)
+    with pytest.warns(UserWarning, match="mostly CA or P atoms"):
+        mol.add_style("spheres")
+
+
+def test_add_style_full_model_does_not_warn():
+    mol = mn.Molecule.load(data_dir / "1ATN.pdb")
+    with warnings.catch_warnings():
+        warnings.filterwarnings("error", message=".*mostly CA or P atoms.*")
+        mol.add_style("spheres")

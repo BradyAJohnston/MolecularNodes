@@ -40,10 +40,22 @@ canvas.compositor.device = (
 )
 ```
 
+In a source checkout, `assets/nodes.blend` is a build product and only the test suite
+refreshes it. Run `uv run nodebpy ensure` before rendering after pulling or changing
+nodes, or the script uses old node groups.
+
 Without the `BLENDER_USER_EXTENSIONS` line, an installed MN extension's bundled wheels
 shadow the venv. `tests/conftest.py` does the same thing. Keep scratch scripts outside
 the repo.
 
+**Inside Blender with the installed extension** (`blender -b --python script.py`), the
+package is `import bl_ext.blender_org.molecularnodes as mn`; `import molecularnodes`
+fails there. Install headless with `blender --online-mode --command extension install
+--enable molecularnodes` (without `--online-mode` Blender refuses to reach the platform).
+Do not call `bpy.ops.wm.read_factory_settings()` to reset between renders: it has been
+reported to strip the extension's bundled wheels mid-run, so the next `Molecule.load()`
+fails on a missing biotite file. Delete the default objects by hand, or use one Blender
+process per render.
 Don't name a scratch script after a standard-library module (`inspect.py`, `code.py`,
 `types.py`, ...). Importing `bpy` imports that module, finds the script instead, and
 Blender initialises twice and aborts with `Check failed: !IsGoogleLoggingInitialized()`.
@@ -73,10 +85,11 @@ return `None`. The canonical docs versions are in `docs/api/index.qmd` and
 | `transparent` | film transparency (alpha background). |
 | `background` | world background RGBA; shortcut into the `MN_world_shader` node. |
 | `world.hdri_strength` | lighting strength of the preset HDRI. |
-| `view_transform`, `exposure`, `gamma`, `look` | colour management. Blender defaults to AgX; use `"Standard"` when colours must come out as specified. `mn.Canvas(view_transform="Standard")` sets it on construction. |
-| `passes` | render passes: combined, z, mist, normal, position, vector, diffuse_color, emit, environment, ambient_occlusion. |
+| `view_transform`, `exposure`, `gamma`, `look` | colour management. Blender defaults to AgX; use `"Standard"` when colours must come out as specified. `mn.Canvas(view_transform="Standard")` sets it on construction, and setting `Standard` clears the look. Set `look` afterwards to add contrast back. |
+| `passes` | render passes: combined, z, mist, normal, position, vector, diffuse_color, emit, environment, ambient_occlusion. Setting it disables every pass not listed, so include `combined` and `z`. |
+| `pixel_size` | size of one rendered pixel in nm, for scale bars. Exact for an orthographic camera; at the mid-depth of the entities for perspective. |
 | `frame`, `frame_start`, `frame_end`, `frame_range`, `fps` | timeline. Setting `frame` uses `frame_set`, so trajectories update. |
-| `camera` | `lens`, `clip_start`, `clip_end`, `rotation` (XYZ Euler in degrees), `basis`, `set_viewpoint(...)`, `frame_points(points, margin)`. |
+| `camera` | `lens`, `clip_start`, `clip_end`, `rotation` (XYZ Euler in degrees), `basis`, `orthographic`, `ortho_scale` (nm along the longer frame edge, for an orthographic camera), `set_viewpoint(...)`, `frame_points(points, margin)`. |
 | `compositor` | `device`, `precision`, denoise settings, `reset()`, `clear()`, `add_annotations()`. |
 
 - `canvas.clear()` deletes every object except cameras and lights (including the
@@ -140,6 +153,39 @@ mol.add_style(
   chain), `"plddt"`, the name of an existing *colour* attribute, an RGBA sequence, or a
   callable returning a colour socket. Any other string warns and applies nothing (this
   replaced a silent black render). Arrays go on directly with `mol["Color"] = rgba_array`.
+- **Chain IDs.** `chain_id` is an index into the sorted labels in `mol.props.chain_ids`,
+  not the order chains appear in the file.
+- **Large distances in AO.** `AmbientOcclusion` shades by `AO ** exponent`. On large
+  assemblies raise `distance` for shading of the overall form, and lower `exponent` with
+  it: `distance=10, exponent=1` suited a 66 nm particle, while `exponent=10` renders almost
+  black. AO whites out on smooth isosurfaces, which have nothing to occlude; use `Default`
+  there.
+- **Colouring part of a representation.** Do not add the same style once per selection
+  to colour regions (a cartoon per section, sticks per nucleotide): each style builds
+  its own geometry, so a cartoon or ribbon is cut at every boundary (blocky helix ends,
+  stubs at the cuts). Add each style once and colour it from a per-atom attribute:
+  ```python
+  mol["Color"][mol.universe.select_atoms("chainID A and resid 19-26").ix, :3] = (
+      0.1,
+      0.7,
+      0.7,
+  )
+  # color=None reads Color; or store under another name and pass color="name"
+  mol.add_style("cartoon")
+  mol.add_style("sticks", selection="chainID A and resid 19-26")
+  ```
+  A new attribute needs `atype="FLOAT_COLOR"`: `mol["name"] = rgba` infers a `FLOAT4`,
+  which `add_style` rejects (it warns and applies nothing). Cartoon colour follows the
+  backbone atoms, so colouring only side-chain atoms leaves the cartoon unchanged.
+- **Hiding atoms.** `mol.hide("resname HOH")` leaves atoms out of every style, and
+  `mol.show("resname ATP")` or a bare `mol.show()` brings them back. `mol.hidden` is the
+  boolean mask, written back like `mol.position`, and `load` and `fetch` take `hide=`.
+  Use a style's `selection` for what one style draws, and hiding for atoms no style
+  should draw. Styles do not compute with hidden atoms, so `Style HBonds` loses bonds when
+  hydrogens are hidden. Calculations and selections still see every atom. There is no
+  style input to keep them: in a hand-built tree, set `hidden` to false with a
+  `Store Named Attribute` node before a style. `hide()` takes a static selection, so
+  give an updating one to a style, and `hidden` cannot name a selection.
 - **Spheres in EEVEE.** Point clouds are ray-traced only by Cycles; on other engines
   `add_style` switches `StyleSpheres` from `sphere="Point"` to `"Instance"` for you.
   If you build the tree by hand, set `sphere="Instance"` or `"Mesh"` yourself, and use
@@ -168,6 +214,14 @@ canvas.look_at(points_xyz)  # any (N, 3) array in world units
   `look_at`, fits against the previous orientation and renders empty or off-centre
   (measured 2026-09-18). Call `bpy.context.view_layer.update()` between the two until
   `look_at` does it itself.
+- **Buried ligands.** `canvas.look_at(ligand_points, viewpoint="unobstructed",
+  occluders=pocket_points)` finds a clear view into a pocket.
+- **Tall subjects in a wide frame.** Roll with the Y angle of an Euler tuple:
+  `viewpoint=(90, 90, 0)` is `"front"` turned on its side.
+- **Exact scale.** Set `canvas.camera.orthographic = True`, then
+  `canvas.camera.ortho_scale` or `look_at`, and read `canvas.pixel_size`. `ortho_scale`
+  spans the longer frame edge, so a width in a portrait frame is not the frame width.
+  Check a scale bar against a known dimension of the subject.
 - `frame_points` extends `clip_end` when the subject would be clipped; if a hand-placed
   camera renders nothing, check `camera.clip_end` first.
 - Rotating the subject instead of the camera: leave the camera at `"default"` and
@@ -254,6 +308,7 @@ This recipe gives clean, evenly lit figures from any viewpoint (used for the Ali
 Molecules PR):
 
 ```python
+import numpy as np
 from molecularnodes.nodes import geometry as mg
 
 canvas = mn.Canvas(
@@ -270,10 +325,11 @@ other.align_to(ref, fixed_selection="chainID A")  # onto the alpha chain
 
 mat = mn.material.AmbientOcclusion()  # one instance, shared by every style
 context, focus, moved = (0.6, 0.6, 0.63, 1), (0.35, 0.6, 0.95, 1), (1.0, 0.45, 0.1, 1)
-ref.add_style(
-    "cartoon", selection="protein and not chainID A", color=context, material=mat
-)
-ref.add_style("cartoon", selection="protein and chainID A", color=focus, material=mat)
+# one cartoon per molecule; the chain colours come from an attribute (section 6)
+rgba = np.tile(context, (ref.universe.atoms.n_atoms, 1))
+rgba[ref.universe.select_atoms("chainID A").ix] = focus
+ref.store_named_attribute(rgba, "chain_color", atype="FLOAT_COLOR")
+ref.add_style("cartoon", selection="protein", color="chain_color", material=mat)
 other.add_style("cartoon", selection="protein", color=moved, material=mat)
 # element colours for the haems, with carbons in their protein's colour
 for mol, carbon in ((ref, context), (other, moved)):
@@ -308,7 +364,81 @@ canvas.snapshot("closeup.png")
 - **Before/after panels** keep the viewpoint fixed and only refit. Tile them with PIL
   onto white (the PNGs may have alpha) with a short title per panel.
 
-## 12. Where to read more
+## 12. Density maps
+
+```python
+density = mn.entities.density.Grids.load("map.mrc", style=None)
+density.add_style("density_iso_surface", threshold=0.2, material=mn.material.Default())
+density.add_style(
+    "density_wire",
+    threshold=0.4,
+    color=(0.1, 0.1, 0.2, 1.0),
+    wire_radius=2.0,
+    material=mn.material.AmbientOcclusion(),
+)
+```
+
+- Styles are `density_surface`, `density_iso_surface` and `density_wire`. `Grids.load`
+  takes the same `material` and style inputs with `style=`. Without a `threshold`, the
+  99.5th percentile of the grid is used, so pass the author's contour level.
+- A map and a model from the same deposition share coordinates. Move both by the same
+  offset and they stay aligned.
+- `density_iso_surface` draws surfaces at `+threshold` and `-threshold`, so mask a map
+  with zeros. A negative fill draws a surface around the whole masked region.
+- `wire_radius` is in picometres and `hide_dust` in nm² of island area. A wire around a
+  ligand in a 3 nm frame suits `wire_radius=2`.
+- Large maps: bin to a manageable grid with `mrcfile` first. 800³ at 1.07 Å binned to 400³
+  renders in seconds. Low-pass filter whole-particle views, because the published contour
+  of a 2 Å map is too noisy at that scale.
+- Caption what the map cannot support. Symmetry averaging draws confident rings and spikes
+  on symmetry axes.
+
+## 13. Large assemblies
+
+- Point cloud spheres stay fast: 966k atoms load in about 19 s and render in seconds on a
+  GPU. Use `fetch(code, hide="element H")` to leave hydrogens out of high resolution
+  models. Every atom stays in memory, so this does not reduce what is loaded.
+- `add_style` warns on CA or P trace models, where all-atom styles look sparse. Use
+  `cartoon`, or choose an all-atom entry for the same complex.
+- Cap memory for heavy runs, such as `Style Surface` on a whole assembly:
+  `systemd-run --user --scope -p MemoryMax=36G -p MemorySwapMax=0 timeout 300 uv run ...`.
+- Colour by domain and by position around a ring to show subunits of a symmetric shell.
+  Compute per-atom RGBA and store it, as in section 6. A ring of N chains cycles cleanly
+  through shades when N divides by the number of shades.
+- Exploded views: write `position` directly, and split by chain rather than by coordinate,
+  because neighbouring chains interdigitate.
+  ```python
+  position = mol.named_attribute("position").copy()
+  position[top_half_chains_mask, 2] += 7.5  # world units
+  mol.store_named_attribute(position.astype(np.float32), "position")
+  ```
+- Cutaways: select atoms on one side of a plane with a boolean attribute. The cut has no
+  cap, so mute the far wall or use a perspective view to show that it is a cut.
+
+## 14. Illustrative rendering and compositing
+
+- **Goodsell style.** Use `Flat` with `canvas.compositor.illustrate()`. Depth outlines fire
+  on every atom of an all-atom style, so write a chain ID to an AOV and draw from that:
+  ```python
+  material = mn.material.Flat()
+  material.add_aov("chain_shade")
+  mol.add_style("spheres", material=material, scale=1.2)
+  canvas.compositor.illustrate(outline=False, id_pass="chain_shade")
+  ```
+  Use pale colours. Keep neighbouring IDs close, such as `ring_position % 3`, because the
+  pixel filter blends IDs along edges and a large gap draws a heavier line.
+- **Custom trees.** `with canvas.compositor.reset() as (image, output):` builds from
+  `nodebpy.compositor` nodes. `canvas.add_aov(name)` and `material.add_aov(name)` add
+  float passes for splitting by domain or chain; `r.o.name` reads one from `c.RenderLayers()`.
+- The compositor works in linear colour. Raise a tone to the power 0.45 before comparing
+  it with a threshold.
+- Scale or transform fine line art at about 1:1 and downsample afterwards. Bilinear
+  `Transform` aliases it.
+- A separate scene can composite a finished image with procedural nodes, such as
+  `NoiseTexture(vector=ImageCoordinates(image).o.normalized)`. It still needs a render for
+  the Render Layers domain, so use one sample.
+
+## 15. Where to read more
 
 - `docs/api/canvas.qmd`, `docs/api/rendering.qmd`, `docs/api/materials.qmd`,
   `docs/api/styles.qmd`, `docs/api/trajectories.qmd`, `docs/api/mdanalysis.qmd`

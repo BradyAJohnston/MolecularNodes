@@ -1,4 +1,4 @@
-from typing import Iterable, List, Literal
+from typing import Any, Iterable, List, Literal, cast
 import bpy
 from bpy.types import GeometryNodeTree, Node
 from databpy.nodes import append_from_blend, get_output, swap_tree
@@ -25,10 +25,6 @@ STYLE_LITERALS = Literal[
 # an existing style node for a different style. Keys match the enum identifiers
 # in ui.style.STYLE_ITEMS and ui.ops.DENSITY_STYLE_ITEMS
 styles_mapping = {
-    "preset_1": "Style Preset 1",
-    "preset_2": "Style Preset 2",
-    "preset_3": "Style Preset 3",
-    "preset_4": "Style Preset 4",
     "spheres": "Style Spheres",
     "cartoon": "Style Cartoon",
     "sticks": "Style Sticks",
@@ -44,25 +40,33 @@ styles_mapping = {
 def append(name: str, link: bool = False) -> bpy.types.GeometryNodeTree:
     "Append a GN node group from the MN data file"
     GN_TREES_PATH = MN_DATA_FILE / "NodeTree"
-    return append_from_blend(name, filepath=str(GN_TREES_PATH), link=link)
+    tree = append_from_blend(name, filepath=str(GN_TREES_PATH), link=link)
+    return cast(bpy.types.GeometryNodeTree, tree)
 
 
 def swap(node: bpy.types.Node, tree: str | bpy.types.NodeTree) -> None:
     "Swap out the node's node_tree, maintaining the old socket connections"
+    if not isinstance(node, bpy.types.GeometryNodeGroup):
+        raise TypeError(
+            f"Can only swap the tree of a GeometryNodeGroup, not {type(node).__name__}"
+        )
     if isinstance(tree, str):
         try:
             tree = bpy.data.node_groups[tree]
         except KeyError:
             tree = append(tree)
     # only change the label if it hasn't been customised away from the tree name
-    if node.label == node.node_tree.name:
+    if node.node_tree is not None and node.label == node.node_tree.name:
         node.label = tree.name
-    swap_tree(node=node, tree=tree)
+    swap_tree(node=node, tree=cast(bpy.types.GeometryNodeTree, tree))
 
 
 def get_star_node(obj: bpy.types.Object) -> bpy.types.Node:
     "The Starfile Instances node in the object's Molecular Nodes tree"
-    tree = obj.modifiers["Molecular Nodes"].node_group
+    modifier = obj.modifiers["Molecular Nodes"]
+    assert isinstance(modifier, bpy.types.NodesModifier)
+    tree = modifier.node_group
+    assert tree is not None
     for node in tree.nodes:
         node_tree = getattr(node, "node_tree", None)
         if node_tree is not None and "Starfile Instances" in node_tree.name:
@@ -70,9 +74,18 @@ def get_star_node(obj: bpy.types.Object) -> bpy.types.Node:
     raise ValueError(f"No Starfile Instances node found in tree for {obj.name}")
 
 
+def _linked_node(socket: bpy.types.NodeSocket) -> Node:
+    "Get the node of the first link into this socket"
+    links = socket.links
+    assert links is not None
+    node = links[0].from_node
+    assert node is not None
+    return node
+
+
 def _previous_node(node: Node) -> Node:
     "Get the node which is the first connection to the first input of this node"
-    return node.inputs[0].links[0].from_socket.node
+    return _linked_node(node.inputs[0])
 
 
 def _final_join(tree: GeometryNodeTree) -> Node | None:
@@ -99,14 +112,16 @@ def get_final_style_nodes(
     """
     join = _final_join(tree)
     node = join if join is not None else get_output(tree)
-    links: bpy.types.NodeLinks = node.inputs[0].links
+    links = node.inputs[0].links
+    assert links is not None
 
     # substring rather than prefix match, so density styles ("Density Style
     # Surface") are found too, matching the styles list in the UI
     return [
-        link.from_socket.node
+        style
         for link in reversed(links)
-        if "Style" in link.from_socket.node.name
+        if isinstance(style := link.from_node, bpy.types.GeometryNodeGroup)
+        and "Style" in style.name
     ]
 
 
@@ -114,9 +129,10 @@ def remove_style_node(node: Node) -> None:
     """
     Remove a style node from its tree, along with the nodes linked into its inputs.
     """
-    tree: bpy.types.NodeTree = node.id_data
+    tree = node.id_data
+    assert isinstance(tree, bpy.types.NodeTree)
     to_remove = [node] + [
-        input.links[0].from_socket.node for input in node.inputs if input.is_linked
+        _linked_node(input) for input in node.inputs if input.is_linked
     ]
     for node_to_remove in to_remove:
         tree.nodes.remove(node_to_remove)
@@ -155,14 +171,16 @@ def custom_color_iswitch(
     with g.tree(name) as tree:
         attr = g.NamedAttribute.integer(attribute_name)
 
-        if not isinstance(items, dict):
-            items: dict[str, tuple[float, ...]] = {
-                str(key): color.random_rgb() for key in items
-            }
+        # random_rgb() returns an RGBA array rather than a tuple
+        colors: dict[Any, Any] = (
+            items
+            if isinstance(items, dict)
+            else {str(key): color.random_rgb() for key in items}
+        )
 
         switch = g.IndexSwitch.color(
             index=attr if offset == 0 else attr + offset,
-            items=[tree.inputs.color(key, value) for key, value in items.items()],
+            items=[tree.inputs.color(key, value) for key, value in colors.items()],
         )
 
         switch >> tree.outputs.color()

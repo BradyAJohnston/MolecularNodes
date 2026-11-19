@@ -1,14 +1,19 @@
+import inspect
 import itertools
 from pathlib import Path
+from typing import Any, cast
 import bpy
 import databpy
 import numpy as np
 import pytest
 from databpy import ObjectTracker
 import molecularnodes as mn
+from molecularnodes.blender.registered import object_props
+from molecularnodes.nodes import geometry as mg
 from molecularnodes.nodes._utils import get_final_style_nodes
+from molecularnodes.session import get_session
 from .constants import data_dir
-from .utils import NumpySnapshotExtension
+from .utils import NumpySnapshotExtension, mn_ops, scene
 
 
 @pytest.fixture
@@ -16,7 +21,7 @@ def density_file(isolated_density_file):
     file = isolated_density_file(data_dir / "emd_24805.map.gz")
     # Make all densities are removed
     for o in bpy.data.objects:
-        if o.mn.entity_type == "density":
+        if object_props(o).entity_type == "density":
             bpy.data.objects.remove(o, do_unlink=True)
     return file
 
@@ -55,7 +60,7 @@ def test_density_invert(density_file):
 
     density = mn.entities.density.Grids.load(density_file, invert=True)
     style_node = get_final_style_nodes(density.modifier_node_tree)[0]
-    style_node.inputs["Threshold"].default_value = 0.01
+    cast(bpy.types.NodeSocketFloat, style_node.inputs["Threshold"]).default_value = 0.01
 
     pos = density.named_attribute("position")
     # At this threshold after inverting we should have a cube the size of the volume
@@ -76,7 +81,7 @@ def test_density_multiple_load(isolated_density_file):
 
 
 def test_density_naming_op(density_file):
-    bpy.ops.mn.import_density(filepath=str(density_file))
+    mn_ops.import_density(filepath=str(density_file))
     _object = bpy.data.objects[density_file.name]
 
 
@@ -86,14 +91,14 @@ def test_density_naming_op(density_file):
 def test_density_operator(
     snapshot_custom: NumpySnapshotExtension, density_file, invert, center
 ):
-    scene = bpy.context.scene
     with ObjectTracker() as o:
-        bpy.ops.mn.import_density(
+        mn_ops.import_density(
             filepath=str(density_file),
             invert=invert,
             center=center,
         )
-        density: mn.entities.Density = scene.MNSession.match(o.latest())
+        density = get_session().match(o.latest())
+    assert isinstance(density, mn.entities.Density)
 
     n_vertices = len(databpy.GeometrySet(density.object).named_attribute("position"))
     assert n_vertices == [198862, 287422][int(invert)]
@@ -104,7 +109,7 @@ def density_file_dx(isolated_density_file):
     file = isolated_density_file(data_dir / "water.dx.gz")
     # Make sure all densities are removed
     for o in bpy.data.objects:
-        if o.mn.entity_type == "density":
+        if object_props(o).entity_type == "density":
             bpy.data.objects.remove(o, do_unlink=True)
     return file
 
@@ -186,9 +191,12 @@ def _grid_matrix(density, name="density"):
     from nodebpy import geometry as g
 
     obj = bpy.data.objects.new("grid_matrix", bpy.data.meshes.new("grid_matrix"))
-    bpy.context.scene.collection.objects.link(obj)
+    scene().collection.objects.link(obj)
     tree = bpy.data.node_groups.new("grid_matrix", "GeometryNodeTree")
-    obj.modifiers.new("probe", "NODES").node_group = tree
+    assert tree is not None
+    mod = obj.modifiers.new("probe", "NODES")
+    assert isinstance(mod, bpy.types.NodesModifier)
+    mod.node_group = tree
     with TreeBuilder(tree) as t:
         result = t.outputs.geometry("Geometry")
         grid = g.GetBundleItem.float(
@@ -213,11 +221,15 @@ def _sample_grid_at(density, points_angstrom, grid_name="density"):
     from molecularnodes.nodes.geometry import ColorSampleGrid
 
     points = np.asarray(points_angstrom, dtype=float) * 0.1
-    obj = bpy.data.objects.new("sample_points", bpy.data.meshes.new("sample_points"))
-    bpy.context.scene.collection.objects.link(obj)
-    obj.data.from_pydata(points.tolist(), [], [])
+    mesh = bpy.data.meshes.new("sample_points")
+    obj = bpy.data.objects.new("sample_points", mesh)
+    scene().collection.objects.link(obj)
+    mesh.from_pydata(points.tolist(), [], [])
     tree = bpy.data.node_groups.new("sample_points", "GeometryNodeTree")
-    obj.modifiers.new("sample", "NODES").node_group = tree
+    assert isinstance(tree, bpy.types.GeometryNodeTree)
+    modifier = obj.modifiers.new("sample", "NODES")
+    assert isinstance(modifier, bpy.types.NodesModifier)
+    modifier.node_group = tree
     with TreeBuilder(tree) as t:
         geometry = t.inputs.geometry("Geometry")
         result = t.outputs.geometry("Geometry")
@@ -262,10 +274,13 @@ def test_iso_surface_signed_threshold(tmp_path, threshold):
     style = next(
         node
         for node in density.modifier_node_tree.nodes
-        if node.bl_idname == "GeometryNodeGroup"
-        and node.node_tree.name.startswith(DensityStyleISOSurface._name)
+        if isinstance(node, bpy.types.GeometryNodeGroup)
+        and cast(bpy.types.NodeTree, node.node_tree).name.startswith(
+            DensityStyleISOSurface._name
+        )
     )
-    assert style.inputs["Threshold"].default_value == pytest.approx(threshold)
+    threshold_socket = cast(bpy.types.NodeSocketFloat, style.inputs["Threshold"])
+    assert threshold_socket.default_value == pytest.approx(threshold)
 
     positions = density.named_attribute("position") / 0.1
     normals = density.named_attribute("normal")
@@ -537,6 +552,7 @@ def test_apbs_1brs_example_grid(isolated_density_file):
 
     path = isolated_density_file(data_dir / "1brs_AD_apbs.dx.gz")
     density = mn.entities.density.Grids.load(path, style="density_iso_surface")
+    assert density.grid is not None
     assert density.grid.grid.shape == (65, 65, 65)
 
     # side-chain charge centres from PDB 1BRS (Å): barnase (chain A) lysines and
@@ -608,7 +624,7 @@ def test_density_sequence_follows_frame(tmp_path):
     point = [[1.5, 1.5, 1.5]]
     # before the start holds the first file, past the end holds the last
     for frame, expected in [(1, 10), (5, 10), (6, 20), (7, 30), (20, 30)]:
-        bpy.context.scene.frame_set(frame)
+        scene().frame_set(frame)
         values, _ = _sample_grid_at(density, point)
         assert values[0] == pytest.approx(expected), frame
 
@@ -736,6 +752,7 @@ def test_cube_pyscf_aspirin(isolated_density_file):
     # aspirin HOMO from PySCF, made by docs/dev/pyscf_cubes.py
     path = isolated_density_file(data_dir / "2244_homo.cube.gz")
     density = mn.entities.density.Grids.load(path, style="density_iso_surface")
+    assert density.grid is not None
     assert density.grid.grid.shape == (24, 24, 24)
     # an orbital has both signs
     assert density.grid.grid.min() < -0.1 < 0.1 < density.grid.grid.max()
@@ -743,10 +760,10 @@ def test_cube_pyscf_aspirin(isolated_density_file):
     # the atoms of the cube are the PubChem conformer they were computed from
     mol = mn.Molecule.load(path)
     ref = mn.Molecule.load(data_dir / "2244.sdf")
-    assert np.allclose(
-        mol.universe.atoms.positions, ref.universe.atoms.positions, atol=1e-4
-    )
-    assert mol.universe.atoms.elements.tolist() == ref.universe.atoms.elements.tolist()
+    atoms, ref_atoms = mol.universe.atoms, ref.universe.atoms
+    assert atoms is not None and ref_atoms is not None
+    assert np.allclose(atoms.positions, ref_atoms.positions, atol=1e-4)
+    assert atoms.elements.tolist() == ref_atoms.elements.tolist()
     assert len(mol.universe.bonds) == len(ref.universe.bonds)
 
 
@@ -771,3 +788,73 @@ def test_cube_datasets_load_as_numbered_grids(tmp_path):
     for i in range(3):
         values, _ = _sample_grid_at(density, point, grid_name=f"orbital {i}")
         assert values[0] == pytest.approx(i + 1.0), i
+
+
+def _style_nodes(density):
+    return [
+        n.node_tree.name
+        for n in density.tree.tree.nodes
+        if isinstance(n, bpy.types.GeometryNodeGroup) and n.node_tree is not None
+    ]
+
+
+def _style_node(density, name) -> Any:
+    (node,) = [
+        n
+        for n in density.tree.tree.nodes
+        if isinstance(n, bpy.types.GeometryNodeGroup)
+        and n.node_tree is not None
+        and n.node_tree.name == name
+    ]
+    return node
+
+
+def test_load_style_inputs(density_file):
+    density = mn.entities.density.Grids.load(
+        density_file,
+        style="density_wire",
+        threshold=0.4,
+        color=(1.0, 0.0, 0.0, 1.0),
+        material=mn.material.Flat(),
+        overwrite=True,
+    )
+    node = _style_node(density, "Density Style Wire")
+    assert node.inputs["Threshold"].default_value == pytest.approx(0.4)
+    assert tuple(node.inputs["Color"].default_value) == pytest.approx((1, 0, 0, 1))
+    assert node.inputs["Material"].default_value is not None
+
+
+def test_load_default_threshold_is_percentile(density_file):
+    density = mn.entities.density.Grids.load(density_file, overwrite=True)
+    node = _style_node(density, "Density Style Surface")
+    assert density.grid is not None
+    assert node.inputs["Threshold"].default_value == pytest.approx(
+        np.quantile(density.grid.grid, 0.995)
+    )
+
+
+def test_add_style_keeps_existing_styles(density_file):
+    density = mn.entities.density.Grids.load(density_file, overwrite=True)
+    assert density.add_style("density_wire", threshold=0.5) is density
+    names = _style_nodes(density)
+    assert "Density Style Surface" in names
+    assert "Density Style Wire" in names
+
+
+def test_add_style_without_initial_style(density_file):
+    density = mn.entities.density.Grids.load(density_file, style=None, overwrite=True)
+    density.add_style("density_iso_surface", threshold=0.5)
+    assert "Density Style ISO Surface" in _style_nodes(density)
+
+
+def test_add_style_rejects_bad_arguments(density_file):
+    density = mn.entities.density.Grids.load(density_file, overwrite=True)
+    with pytest.raises(ValueError, match="Invalid style"):
+        density.add_style("cartoon")
+    with pytest.raises(TypeError):
+        density.add_style("density_wire", not_an_input=1)
+
+
+def test_wire_default_keeps_small_islands():
+    parameters = inspect.signature(mg.DensityStyleWire).parameters
+    assert parameters["hide_dust"].default == 0.0

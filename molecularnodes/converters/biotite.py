@@ -316,8 +316,10 @@ def universe_from_atoms(
     # domain when it builds the object. Attached as a plain attribute since it is only
     # needed once, at object-creation time.
     if reference.bonds is not None and hasattr(universe.atoms, "bonds"):
-        universe._mn_bond_types = _match_bond_types(
-            reference.bonds.as_array(), universe.atoms.bonds.indices
+        setattr(
+            universe,
+            "_mn_bond_types",
+            _match_bond_types(reference.bonds.as_array(), universe.atoms.bonds.indices),
         )
 
     return universe

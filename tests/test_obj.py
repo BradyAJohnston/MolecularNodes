@@ -1,3 +1,4 @@
+import bpy
 import databpy
 import numpy as np
 
@@ -13,7 +14,9 @@ def test_set_position(fetch):
 
 def test_eval_mesh():
     a = databpy.create_object(np.zeros((3, 3)))
+    assert isinstance(a.data, bpy.types.Mesh)
     assert len(a.data.vertices) == 3
     b = databpy.create_object(np.zeros((5, 3)))
+    assert isinstance(b.data, bpy.types.Mesh)
     assert len(b.data.vertices) == 5
     assert len(databpy.GeometrySet(b).named_attribute("position")) == 5

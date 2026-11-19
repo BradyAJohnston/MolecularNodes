@@ -35,9 +35,9 @@ class DensityStyleWire(AssetGeometryGroup):
     threshold : InputFloat
         Threshold
     hide_dust : InputFloat
-        Hide Dust
+        Hide mesh islands with a total face area below this, in nm². 0 keeps everything
     wire_radius : InputFloat
-        Radius of the created wire (in relative nm)
+        Radius of the created wire, in picometres
     wire_resolution : InputInteger
         Wire Resolution
     color : InputColor
@@ -52,9 +52,9 @@ class DensityStyleWire(AssetGeometryGroup):
     i.threshold : FloatSocket
         Threshold
     i.hide_dust : FloatSocket
-        Hide Dust
+        Hide mesh islands with a total face area below this, in nm². 0 keeps everything
     i.wire_radius : FloatSocket
-        Radius of the created wire (in relative nm)
+        Radius of the created wire, in picometres
     i.wire_resolution : IntegerSocket
         Wire Resolution
     i.color : ColorSocket
@@ -80,9 +80,9 @@ class DensityStyleWire(AssetGeometryGroup):
         threshold: FloatSocket
         """Threshold"""
         hide_dust: FloatSocket
-        """Hide Dust"""
+        """Hide mesh islands with a total face area below this, in nm². 0 keeps everything"""
         wire_radius: FloatSocket
-        """Radius of the created wire (in relative nm)"""
+        """Radius of the created wire, in picometres"""
         wire_resolution: IntegerSocket
         """Wire Resolution"""
         color: ColorSocket
@@ -105,7 +105,7 @@ class DensityStyleWire(AssetGeometryGroup):
         self,
         volume: InputGeometry = None,
         threshold: InputFloat = 0.8,
-        hide_dust: InputFloat = 20.0,
+        hide_dust: InputFloat = 0.0,
         wire_radius: InputFloat = 1.0,
         wire_resolution: InputInteger = 3,
         color: InputColor = None,
@@ -127,13 +127,17 @@ class DensityStyleWire(AssetGeometryGroup):
         volume = tree.inputs.geometry("Volume")
         threshold = tree.inputs.float("Threshold", 0.8)
         hide_dust = tree.inputs.float(
-            "Hide Dust", 20.0, min_value=-10_000.0, max_value=10_000.0
+            "Hide Dust",
+            0.0,
+            description="Hide mesh islands with a total face area below this, in nm². 0 keeps everything",
+            min_value=-10_000.0,
+            max_value=10_000.0,
         )
         with tree.inputs.panel("Wire"):
             wire_radius = tree.inputs.float(
                 "Wire Radius",
                 1.0,
-                description="Radius of the created wire (in relative nm)",
+                description="Radius of the created wire, in picometres",
                 min_value=0.0,
             )
             wire_resolution = tree.inputs.integer(

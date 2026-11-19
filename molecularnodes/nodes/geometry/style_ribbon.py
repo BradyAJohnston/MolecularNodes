@@ -28,6 +28,7 @@ from nodebpy.types import (
     InputVector,
 )
 from ._shared.cleanup import Cleanup
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_utils_style_ribbon_nucleic import MN_utils_style_ribbon_nucleic
 from .atoms_to_ca_curves import AtomsToCACurves
 from .check_geometry import CheckGeometry
@@ -401,6 +402,7 @@ class StyleRibbon(AssetGeometryGroup):
             "Geometry", description="The generated geometry for the style node group"
         )
 
+        deselect_hidden = DeselectHidden(selection=selection)
         closure_zone = g.ClosureZone()
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
@@ -421,7 +423,7 @@ class StyleRibbon(AssetGeometryGroup):
         )
         mn_utils_style_ribbon_nucleic = MN_utils_style_ribbon_nucleic(
             atoms=separate_polymers.o.nucleic,
-            selection=selection,
+            selection=deselect_hidden,
             material=material,
             switch=g.IndexSwitch.boolean(menu_switch.o.output, (True, False)),
             backbone_subdivisions=quality * 2,
@@ -437,7 +439,7 @@ class StyleRibbon(AssetGeometryGroup):
         )
         mn_utils_style_ribbon_peptide = MN_utils_style_ribbon_peptide(
             Atoms=separate_polymers.o.peptide,
-            Selection=selection,
+            Selection=deselect_hidden,
             Quality=quality,
             **{"BS Smoothing": backbone_smoothing},
             Radius=peptide_radius,

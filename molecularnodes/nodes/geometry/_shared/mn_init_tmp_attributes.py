@@ -74,7 +74,7 @@ class MN_init_tmp_attributes(CustomGeometryGroup):
         capture = g.CaptureAttribute.point(geometry=store_named_attribute)
         is_first = capture.items.boolean(group_parameter.o.is_first, "Is First")
         is_last = capture.items.boolean(group_parameter.o.is_last, "Is Last")
-        size = capture.items.integer(group_parameter.o.group_size, "Size")
+        size = capture.items.integer(group_parameter.o.count, "Size")
         (
             capture.o.geometry
             >> g.StoreNamedAttribute.point.integer(

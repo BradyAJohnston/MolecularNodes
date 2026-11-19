@@ -5,7 +5,7 @@ from .template import install, uninstall
 
 ASSET_DIR = Path(__file__).resolve().parent
 # The shipped asset library, built from the sources in molecularnodes/nodes/
-# (python -m nodebpy.assets build). Not tracked in git — see resources.blend
+# (nodebpy build). Not tracked in git — see resources.blend
 # for the data-only datablocks the build pulls in.
 MN_DATA_FILE = ASSET_DIR / "nodes.blend"
 LIBRARY_NAME = "Molecular Nodes"
@@ -17,6 +17,7 @@ __all__ = ["data", "install", "uninstall", "MN_DATA_FILE"]
 def _libs(context: bpy.types.Context | None = None) -> bpy.types.AssetLibraryCollection:
     if not context:
         context = bpy.context
+    assert context.preferences is not None
     return context.preferences.filepaths.asset_libraries
 
 

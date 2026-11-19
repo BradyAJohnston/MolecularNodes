@@ -295,6 +295,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.EntityID
         children: embedded
+      - name: nodes.geometry.FragmentID
+        children: embedded
       - name: nodes.geometry.FrameID
         children: embedded
       - name: nodes.geometry.ImageID
@@ -327,6 +329,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.ColorAttributeRandom
         children: embedded
+      - name: nodes.geometry.ColorCSS
+        children: embedded
       - name: nodes.geometry.ColorCommon
         children: embedded
       - name: nodes.geometry.ColorElement
@@ -342,6 +346,8 @@ quartodoc:
       - name: nodes.geometry.ColorOKLabOffset
         children: embedded
       - name: nodes.geometry.ColorPLDDT
+        children: embedded
+      - name: nodes.geometry.ColorPyMOL
         children: embedded
       - name: nodes.geometry.ColorRainbow
         children: embedded
@@ -454,7 +460,13 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.PeriodicBox
         children: embedded
+      - name: nodes.geometry.PeriodicCell
+        children: embedded
       - name: nodes.geometry.PeriodicImage
+        children: embedded
+      - name: nodes.geometry.PeriodicOffset
+        children: embedded
+      - name: nodes.geometry.PeriodicUnwrap
         children: embedded
       - name: nodes.geometry.RotationCisTEM
         children: embedded
@@ -857,6 +869,8 @@ quartodoc:
         desc: ''
       contents:
       - name: nodes.geometry.ColorToOKLab
+        children: embedded
+      - name: nodes.geometry.ColorVMD
         children: embedded
       - name: nodes.geometry.LChToOKLab
         children: embedded

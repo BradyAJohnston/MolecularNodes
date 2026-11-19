@@ -1,5 +1,5 @@
 import random
-from typing import Any
+from typing import Any, cast
 import bpy
 import MDAnalysis as mda
 import numpy as np
@@ -35,12 +35,18 @@ from molecularnodes.nodes.geometry import (
     BestView,
     BreakBonds,
     BuildElasticNetwork,
+    ChainID,
+    ChainParameter,
     Charge,
+    ColorCSS,
+    ColorPyMOL,
     ColorToOKLab,
+    ColorVMD,
     EaseValue,
     FadeGeometry,
     FindBonds,
     GetGeometryAtoms,
+    GroupParameter,
     NucleicChi,
     NucleicDihedral,
     OKLabToColor,
@@ -48,10 +54,12 @@ from molecularnodes.nodes.geometry import (
     PeptideChi,
     PeptideDihedral,
     PeriodicArray,
+    ResidueParameter,
     SegmentID,
     SetColor,
     SimulateElasticNetwork,
     StaggerValue,
+    StructureParameter,
     StyleBallAndStick,
     StyleCartoon,
     StyleRibbon,
@@ -65,7 +73,14 @@ from molecularnodes.nodes.geometry import (
     UResID,
 )
 from .constants import codes, data_dir
-from .utils import GeometrySet, NumpySnapshotExtension
+from .utils import (
+    GeometrySet,
+    NumpySnapshotExtension,
+    interface_items,
+    interface_socket,
+    scene,
+    view_layer,
+)
 
 random.seed(6)
 
@@ -73,23 +88,30 @@ random.seed(6)
 def _input_sockets(tree: bpy.types.NodeTree) -> dict:
     return {
         item.name: item
-        for item in tree.interface.items_tree
-        if item.item_type == "SOCKET" and item.in_out == "INPUT"
+        for item in interface_items(tree)
+        if isinstance(item, bpy.types.NodeTreeInterfaceSocket)
+        and item.in_out == "INPUT"
     }
 
 
 def test_get_nodes(fetch):
     mol = fetch("4ozs").add_style("spheres")
 
-    last = get_output(mol.node_group).inputs[0].links[0].from_node
+    links = get_output(mol.node_group).inputs[0].links
+    assert links is not None
+    last = links[0].from_node
+    assert last is not None
     assert last.name == "Join Geometry"
     style = get_final_style_nodes(mol.node_group)[0]
     assert style.name == "Style Spheres"
+    assert style.node_tree is not None
     assert style.node_tree.name == "Style Spheres"
 
     mol2 = fetch("1cd3").add_style("cartoon")
 
-    assert get_final_style_nodes(mol2.node_group)[0].node_tree.name == "Style Cartoon"
+    style2 = get_final_style_nodes(mol2.node_group)[0]
+    assert style2.node_tree is not None
+    assert style2.node_tree.name == "Style Cartoon"
 
 
 def test_selection():
@@ -122,7 +144,7 @@ def test_selection_working(
         pos = mol.named_attribute("position", evaluate=True)
         assert snapshot_custom == pos.shape
         assert snapshot_custom == pos
-        inp.default_value = False
+        inp.default_value = False  # ty: ignore[missing-attribute]  # nodebpy sockets don't declare default_value
 
 
 @pytest.mark.parametrize("code", codes)
@@ -151,18 +173,18 @@ def test_iswitch_creation():
     items = [str(x) for x in range(10)]
     tree_boolean = custom_boolean_iswitch("newboolean", items).tree
     # ensure there isn't an item called 'Color' in the created interface
-    assert not tree_boolean.interface.items_tree.get("Color")
-    assert tree_boolean.interface.items_tree["Selection"].in_out == "OUTPUT"
-    assert tree_boolean.interface.items_tree["Inverted"].in_out == "OUTPUT"
+    assert not interface_items(tree_boolean).get("Color")
+    assert interface_socket(tree_boolean, "Selection").in_out == "OUTPUT"
+    assert interface_socket(tree_boolean, "Inverted").in_out == "OUTPUT"
     for i in items:
-        assert tree_boolean.interface.items_tree[str(i)].in_out == "INPUT"
+        assert interface_socket(tree_boolean, str(i)).in_out == "INPUT"
 
     tree_rgba = custom_color_iswitch("newcolor", items).tree
     # ensure there isn't an item called 'selection'
-    assert not tree_rgba.interface.items_tree.get("Selection")
-    assert tree_rgba.interface.items_tree["Color"].in_out == "OUTPUT"
+    assert not interface_items(tree_rgba).get("Selection")
+    assert interface_socket(tree_rgba, "Color").in_out == "OUTPUT"
     for i in items:
-        assert tree_rgba.interface.items_tree[str(i)].in_out == "INPUT"
+        assert interface_socket(tree_rgba, str(i)).in_out == "INPUT"
 
 
 def test_op_custom_color():
@@ -173,9 +195,9 @@ def test_op_custom_color():
     ).tree
 
     assert group
-    assert group.interface.items_tree["G"].name == "G"
-    assert group.interface.items_tree[-1].name == "G"
-    assert group.interface.items_tree[0].name == "Color"
+    assert interface_socket(group, "G").name == "G"
+    assert interface_socket(group, -1).name == "G"
+    assert interface_socket(group, 0).name == "Color"
 
 
 def test_color_lookup_supplied():
@@ -228,6 +250,7 @@ def test_topo_bonds(fetch):
         atoms >> BreakBonds(cutoff=0.0) >> FindBonds() >> join
 
     gs_new = GeometrySet(mol.object)
+    assert gs_new.mesh is not None
     assert len(mol.object.data.edges) == len(gs_new.mesh.edges)
 
 
@@ -235,6 +258,7 @@ def test_is_modifier(fetch):
     bpy.ops.wm.open_mainfile(filepath=str(mn.assets.MN_DATA_FILE))
     for tree in bpy.data.node_groups:
         if tree.name.startswith("Style") and "Preset" not in tree.name:
+            assert isinstance(tree, bpy.types.GeometryNodeTree)
             assert tree.is_modifier
     mol = fetch("4ozs").add_style("spheres")
     assert mol.modifier_node_tree.is_modifier
@@ -243,7 +267,7 @@ def test_is_modifier(fetch):
 def test_node_setup(fetch):
     fetch("4ozs").add_style("spheres")
     tree = bpy.data.node_groups["MN_4ozs"]
-    assert tree.interface.items_tree["Atoms"].name == "Atoms"
+    assert interface_socket(tree, "Atoms").name == "Atoms"
     assert list(get_input(tree).outputs.keys()) == ["Atoms", ""]
     assert list(get_output(tree).inputs.keys()) == ["Geometry", ""]
 
@@ -287,8 +311,11 @@ def test_periodic_array(snapshot, tmp_path):
     dim_idx = slice(1, 7)
     assert not all([x == y for x, y in zip(defaults_0[dim_idx], defaults_10[dim_idx])])
     # the unit cell dimensions ar currently inputs 1..7 for the node as it is setup so
-    # we just subset those and check it matches the universe
-    assert np.allclose(defaults_10[dim_idx], traj.universe.trajectory.ts.dimensions)
+    # we just subset those and check it matches the universe, with the lengths in
+    # world units. The defaults are rounded to 3 decimals
+    dimensions = traj.universe.trajectory.ts.dimensions
+    expected = np.concatenate([dimensions[:3] * traj.world_scale, dimensions[3:]])
+    assert np.allclose(defaults_10[dim_idx], expected, atol=1e-3)
 
     # for some reason we need to trigger a proper re-evaluation of the GN node tree
     # by saving to a temp file #TODO: look into and try to fix this
@@ -312,6 +339,35 @@ def test_periodic_array_no_dimensions():
 
     assert defaults_0 == defaults_10
     assert defaults_0[1:7] == [0] * 6
+
+
+def test_periodic_box_update_off():
+    # a node with Update turned off keeps the values it was given
+    traj = mn.Molecule.load(GRO, XTC)
+    with traj.tree.reset() as (atoms, join):
+        node = PeriodicArray(update=False, a=1.0)
+        atoms >> node >> join
+    traj.set_frame(5)
+    assert cast(bpy.types.NodeSocketFloat, node.node.inputs["a"]).default_value == 1.0
+
+
+def test_updater():
+    # any node group can be updated from the entity on frame changes
+    traj = mn.Molecule.load(GRO, XTC)
+    with traj.tree.reset() as (atoms, join):
+        node = PeriodicArray(update=False)
+        atoms >> node >> join
+    seen = []
+
+    def update(node, entity):
+        seen.append((node.name, entity.universe.trajectory.frame))
+
+    mn.nodes.frame_updates.updater([PeriodicArray])(update)
+    try:
+        traj.set_frame(3)
+    finally:
+        mn.nodes.frame_updates._registry[PeriodicArray._name].remove(update)
+    assert seen == [(node.node.name, traj.universe.trajectory.frame)]
 
 
 # Generated symmetry that reproduces each entry's deposited biological assembly:
@@ -367,7 +423,7 @@ SYMMETRY_EXAMPLES = {
     "code", ["1STP", "6ZPA", "8QUK", "4PNO", "2C2U", "1H05", "6B8F", "2BUK"]
 )
 def test_symmetry_matches_deposited_assembly(fetch, code):
-    from scipy.spatial import cKDTree
+    from scipy.spatial import KDTree
 
     mol = fetch(code)
     positions = mol.named_attribute("position")
@@ -384,7 +440,7 @@ def test_symmetry_matches_deposited_assembly(fetch, code):
     generated = mol.named_attribute("position", evaluate=True)
 
     assert len(generated) == len(deposited)
-    distance, _ = cKDTree(deposited).query(generated)
+    distance, _ = KDTree(deposited).query(generated)
     assert distance.max() < 1e-3
 
 
@@ -614,7 +670,7 @@ def test_symmetry_helical_axial_symmetry(fetch):
 
 
 def test_symmetry_helical_matches_deposited_filament(fetch):
-    from scipy.spatial import cKDTree
+    from scipy.spatial import KDTree
 
     # 8AZT deposits layers k = -1..1 and the node builds k = 0..2. Both sets are
     # closed under the helix, so the node's copies are the deposit stepped up
@@ -641,7 +697,7 @@ def test_symmetry_helical_matches_deposited_filament(fetch):
     generated = mol.named_attribute("position", evaluate=True)
 
     assert len(generated) == len(expected)
-    distance, _ = cKDTree(expected).query(generated)
+    distance, _ = KDTree(expected).query(generated)
     assert distance.max() < 1e-3
 
 
@@ -917,7 +973,7 @@ def test_animate_ease_penner(fetch):
     mol = fetch("4ozs")
     grid = np.linspace(0.0, 1.0, 9)
     t = grid[np.arange(len(mol)) % len(grid)]
-    mol.store_named_attribute(t, "t")
+    mol["t"] = t
     combos = [(curve, ease) for curve in EASE_CURVES for ease in EASE_TYPES]
 
     with mol.tree.reset() as (atoms, join):
@@ -950,7 +1006,7 @@ def test_animate_ease_penner(fetch):
 def test_animate_ease_range_and_clamp(fetch):
     mol = fetch("4ozs")
     raw = np.linspace(-1.0, 2.0, 7)[np.arange(len(mol)) % 7]
-    mol.store_named_attribute(raw, "raw")
+    mol["raw"] = raw
 
     def ease(clamp: bool):
         return EaseValue(
@@ -989,10 +1045,10 @@ def test_stagger_value(fetch):
     mol = fetch("4ozs")
     index = np.arange(len(mol))
     rank = index % 4
-    mol.store_named_attribute(rank, "rank")
+    mol["rank"] = rank
     # ids 0..7 split into two groups of 0..3 and 4..7
-    mol.store_named_attribute(index % 8, "grouped")
-    mol.store_named_attribute(index % 8 // 4, "group")
+    mol["grouped"] = index % 8
+    mol["group"] = index % 8 // 4
     values = [0.0, 0.2, 0.5, 0.75, 1.0]
     widths = [0.0, 1.0, 3.0]
 
@@ -1030,7 +1086,7 @@ def test_stagger_value(fetch):
 def test_animate_action(fetch):
     mol = fetch("4ozs")
     rank = np.arange(len(mol)) % 4
-    mol.store_named_attribute(rank, "rank")
+    mol["rank"] = rank
     times = [0.0, 12.0, 17.0, 20.0, 30.0]
 
     def action(time, **kwargs):
@@ -1095,6 +1151,8 @@ def test_animate_action(fetch):
     assert np.allclose(mol.named_attribute("end", evaluate=True), 20.0)
 
     scene = bpy.context.scene
+
+    assert scene is not None
     frame = scene.frame_current
     try:
         scene.frame_set(15)
@@ -1152,6 +1210,7 @@ def _simulate_two_point_network(mol, frames: int):
             >> join
         )
     scene = bpy.context.scene
+    assert scene is not None
     start = scene.frame_current
     try:
         for f in range(start, start + frames + 1):
@@ -1223,7 +1282,7 @@ def _evaluate_colormap(fetch, x: np.ndarray, param: str, name: str, reverse=Fals
     mol = fetch("4ozs")
     values = np.zeros(len(mol.atoms), dtype=np.float32)
     values[: len(x)] = x
-    mol.store_named_attribute(values, "cmap_x")
+    mol["cmap_x"] = values
     with mol.tree.reset() as (atoms, join):
         colormap = ColorMatplotlib(
             value=NamedAttribute.float("cmap_x"),
@@ -1261,6 +1320,49 @@ def test_color_matplotlib_matches_matplotlib(fetch, param, name):
     assert np.abs(srgb - cmap(x)[:, :3]).max() * 255 <= tolerance
 
 
+@pytest.mark.parametrize(
+    "node_class, prefix", [(ColorPyMOL, "pymol:"), (ColorVMD, "vmd:"), (ColorCSS, "")]
+)
+def test_named_color_nodes_match_parse_color(fetch, node_class, prefix):
+    """Every colour on the named colour nodes is the one `parse_color` gives."""
+    import inspect
+    from typing import Literal, get_args, get_origin
+
+    params = inspect.signature(node_class.__init__).parameters
+    menus = {
+        param.replace("_", " ").title(): [
+            name
+            for arg in get_args(p.annotation)
+            if get_origin(arg) is Literal
+            for name in get_args(arg)
+        ]
+        for param, p in params.items()
+        if param != "self"
+    }
+    mol = fetch("1BNA")
+    with mol.tree.reset() as (atoms, join):
+        node = node_class()
+        (
+            atoms
+            >> StoreNamedAttribute.point.color(name="named", value=node.o.color)
+            >> join
+        )
+    inputs = node.node.inputs
+    n_checked = 0
+    for menu, names in menus.items():
+        if menu == "Category":
+            continue
+        if "Category" in menus:
+            inputs["Category"].default_value = menu
+        for name in names:
+            inputs[menu].default_value = name
+            color = mol.named_attribute("named", evaluate=True)[0, :3]
+            expected = mn.color.parse_color(prefix + name)
+            assert np.allclose(color, expected, atol=1e-5), f"{menu}: {name}"
+            n_checked += 1
+    assert n_checked >= {ColorPyMOL: 190, ColorVMD: 33, ColorCSS: 148}[node_class]
+
+
 @pytest.mark.parametrize("mode", ["LINEAR", "B_SPLINE"])
 def test_colormap_generator_ramp_model(mode):
     """The generator fits ramps against a numpy model of Blender's Color Ramp;
@@ -1270,11 +1372,16 @@ def test_colormap_generator_ramp_model(mode):
 
     path = Path(__file__).parents[1] / "docs/dev/colormap_node.py"
     spec = importlib.util.spec_from_file_location("colormap_node", path)
+    assert spec is not None and spec.loader is not None
     generator = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(generator)
 
     tree = bpy.data.node_groups.new("ramp_model", "GeometryNodeTree")
-    ramp = tree.nodes.new("ShaderNodeValToRGB").color_ramp
+    assert tree is not None
+    ramp_node = tree.nodes.new("ShaderNodeValToRGB")
+    assert isinstance(ramp_node, bpy.types.ShaderNodeValToRGB)
+    ramp = ramp_node.color_ramp
+    assert ramp is not None
     ramp.interpolation = mode
     rng = np.random.default_rng(0)
     x = np.concatenate([np.linspace(0, 1, 101), rng.random(100)])
@@ -1285,7 +1392,7 @@ def test_colormap_generator_ramp_model(mode):
             ramp.elements.remove(ramp.elements[-1])
         ramp.elements[0].position = 0.0
         ramp.elements[0].color = (*colors[0], 1.0)
-        for p, c in zip(pos[1:], colors[1:]):
+        for p, c in zip(pos[1:], colors[1:].tolist()):
             ramp.elements.new(p).color = (*c, 1.0)
         blender = np.array([ramp.evaluate(v)[:3] for v in x])
         model = np.clip(generator.ramp_basis(pos, x, mode) @ colors, 0, 1)
@@ -1326,7 +1433,7 @@ def test_fade_geometry_zero_removes_geometry(fetch):
 def _flag_ligand(mol, resname="REA"):
     ligand = np.zeros(len(mol), dtype=bool)
     ligand[mol.universe.select_atoms(f"resname {resname}").indices] = True
-    mol.store_named_attribute(ligand, "is_ligand")
+    mol["is_ligand"] = ligand
     return ligand
 
 
@@ -1375,10 +1482,10 @@ def test_orient_to_best_view_faces_the_camera(fetch, factor):
     ligand = _flag_ligand(mol)
     positions = mol.named_attribute("position")
     camera = bpy.data.objects.new("best_view", bpy.data.cameras.new("best_view"))
-    bpy.context.scene.collection.objects.link(camera)
+    scene().collection.objects.link(camera)
     camera.rotation_euler = (1.2, 0.3, 2.5)
-    bpy.context.view_layer.update()
-    forward = -np.array(camera.matrix_world.col[2][:3])
+    view_layer().update()
+    forward = -np.array(camera.matrix_world)[:3, 2]
 
     with mol.tree.reset() as (atoms, join):
         orient = OrientToBestView(
@@ -1425,6 +1532,7 @@ def test_orient_to_best_view_smooths_with_half_life(fetch):
     mol = fetch("1cbs")
     _flag_ligand(mol)
     scene = bpy.context.scene
+    assert scene is not None
     camera = bpy.data.objects.new("best_view", bpy.data.cameras.new("best_view"))
     scene.collection.objects.link(camera)
     camera.rotation_euler = (1.2, 0.3, 2.5)
@@ -1491,6 +1599,7 @@ def test_orient_to_best_view_moves_a_camera_instead(fetch):
     mol = fetch("1cbs")
     ligand = _flag_ligand(mol)
     scene = bpy.context.scene
+    assert scene is not None
 
     def camera(name):
         obj = bpy.data.objects.new(name, bpy.data.cameras.new(name))
@@ -1527,7 +1636,7 @@ def test_orient_to_best_view_moves_a_camera_instead(fetch):
             )
         )
         JoinGeometry([marker, orient.o.geometry]) >> join
-    bpy.context.view_layer.update()
+    view_layer().update()
 
     depsgraph = bpy.context.evaluated_depsgraph_get()
     mesh = mol.object.evaluated_get(depsgraph).data
@@ -1544,7 +1653,7 @@ def test_orient_to_best_view_moves_a_camera_instead(fetch):
     # the same tree without Orient, to compare the geometry against
     with mol.tree.reset() as (atoms, join):
         JoinGeometry([MeshLine(count=1), StyleCartoon(atoms)]) >> join
-    bpy.context.view_layer.update()
+    view_layer().update()
     depsgraph = bpy.context.evaluated_depsgraph_get()
     vertices = mol.object.evaluated_get(depsgraph).data.vertices
     unmoved = np.array([v.co for v in vertices][1:])
@@ -1607,3 +1716,146 @@ def test_best_view_hysteresis_holds_the_previous_direction(fetch):
     assert np.degrees(np.arccos(np.clip(moved @ best, -1, 1))) < 1.0
     assert np.allclose(held, previous, atol=1e-5)
     assert held_visible == previous_visible
+
+
+def _within(groups: np.ndarray) -> dict[str, np.ndarray]:
+    "Factor, Index, Count, Is First/Last and Index of First/Last of each item in its group"
+    index = np.zeros(len(groups), dtype=int)
+    count = np.zeros(len(groups), dtype=int)
+    for group in np.unique(groups):
+        mask = groups == group
+        index[mask] = np.arange(mask.sum())
+        count[mask] = mask.sum()
+    with np.errstate(divide="ignore", invalid="ignore"):
+        factor = np.where(count > 1, index / (count - 1), 0.0)
+    return {
+        "factor": factor,
+        "index": index,
+        "count": count,
+        "is_first": index == 0,
+        "is_last": index == count - 1,
+    }
+
+
+def _parameter_truth(code: str) -> dict[str, np.ndarray]:
+    "Expected outputs of the * Parameter nodes, from biotite residues and chains"
+    from biotite.structure import AtomArrayStack, get_residue_starts
+    from molecularnodes.entities.molecule.reader import read_structure
+
+    array = read_structure(data_dir / f"{code}.bcif").array
+    if isinstance(array, AtomArrayStack):
+        array = array[0]
+    n = array.array_length()
+    # biotite splits residues on insertion codes, unlike res_id alone
+    residue = np.zeros(n, dtype=int)
+    residue[get_residue_starts(array)[1:]] = 1
+    residue = np.cumsum(residue)
+    _, chain = np.unique(array.chain_id, return_inverse=True)
+    atoms = np.arange(n)
+
+    def first_last(groups):
+        first = {g: atoms[groups == g][0] for g in np.unique(groups)}
+        last = {g: atoms[groups == g][-1] for g in np.unique(groups)}
+        return (
+            np.array([first[g] for g in groups]),
+            np.array([last[g] for g in groups]),
+        )
+
+    in_residue = _within(residue)
+    # residues within each chain: number the residues of the chain, per atom
+    chain_residue = np.zeros(n, dtype=int)
+    chain_count = np.zeros(n, dtype=int)
+    for c in np.unique(chain):
+        mask = chain == c
+        residues = np.unique(residue[mask])
+        chain_residue[mask] = np.searchsorted(residues, residue[mask])
+        chain_count[mask] = len(residues)
+    in_chain = {
+        "factor": np.where(
+            chain_count > 1, chain_residue / np.maximum(chain_count - 1, 1), 0.0
+        ),
+        "index": chain_residue,
+        "count": chain_count,
+        "is_first": chain_residue == 0,
+        "is_last": chain_residue == chain_count - 1,
+    }
+    in_group = _within(chain)
+    n_residues = residue[-1] + 1
+
+    expected = {}
+    first, last = first_last(residue)
+    for key, name in [
+        ("factor", "factor"),
+        ("index", "atom_index"),
+        ("count", "atom_count"),
+        ("is_first", "is_first"),
+        ("is_last", "is_last"),
+    ]:
+        expected[f"residue|{name}"] = in_residue[key]
+    expected["residue|index_of_first"] = first
+    expected["residue|index_of_last"] = last
+    first, last = first_last(chain)
+    for key, name in [
+        ("factor", "factor"),
+        ("index", "residue_index"),
+        ("count", "residue_count"),
+        ("is_first", "is_first"),
+        ("is_last", "is_last"),
+    ]:
+        expected[f"chain|{name}"] = in_chain[key]
+    expected["chain|index_of_first"] = first
+    expected["chain|index_of_last"] = last
+    expected["structure|factor"] = atoms / (n - 1)
+    expected["structure|atom_index"] = atoms
+    expected["structure|atom_count"] = np.full(n, n)
+    expected["structure|residue_factor"] = residue / (n_residues - 1)
+    expected["structure|residue_index"] = residue
+    expected["structure|residue_count"] = np.full(n, n_residues)
+    for key in in_group:
+        expected[f"group|{key}"] = in_group[key]
+    expected["group|index_of_first"] = first
+    expected["group|index_of_last"] = last
+    return expected
+
+
+# 8FAT has insertion codes (52, 52A, 52B, ...), 1BNA has waters after the other chain
+@pytest.mark.parametrize("code", ["4ozs", "1BNA", "8FAT"])
+def test_parameter_nodes(fetch, code):
+    mol = fetch(code)
+    expected = _parameter_truth(code)
+    with mol.tree.reset() as (atoms, join):
+        nodes = {
+            "residue": ResidueParameter(),
+            "chain": ChainParameter(),
+            "structure": StructureParameter(),
+            "group": GroupParameter(group_id=ChainID()),
+        }
+        geometry = atoms
+        for name in expected:
+            node, output = name.split("|")
+            store = (
+                StoreNamedAttribute.point.float
+                if "factor" in output
+                else StoreNamedAttribute.point.integer
+            )
+            geometry = geometry >> store(
+                name=name, value=getattr(nodes[node].o, output)
+            )
+        geometry >> join
+
+    for name, values in expected.items():
+        got = mol.named_attribute(name, evaluate=True)
+        assert np.allclose(got, values, atol=1e-5), name
+    assert np.array_equal(
+        mol.named_attribute("ures_id"), expected["structure|residue_index"]
+    )
+
+
+def test_ures_id_without_chains():
+    mol = mn.Molecule.load(
+        data_dir / "md_ppr/box.gro", data_dir / "md_ppr/first_5_frames.xtc"
+    )
+    assert mol.universe is not None
+    atoms = mol.universe.atoms
+    assert atoms is not None
+    assert np.array_equal(mol.named_attribute("ures_id"), atoms.resindices)

@@ -8,6 +8,7 @@ from nodebpy import geometry as g
 import molecularnodes as mn
 from molecularnodes.nodes.geometry import FindHBonds, StyleHBonds
 from .constants import data_dir
+from .utils import mn_ops
 
 pytestmark = [
     pytest.mark.filterwarnings("ignore:.*Empty string to select atoms.*:UserWarning"),
@@ -26,9 +27,12 @@ def universe():
     )
 
 
-def edges(obj: bpy.types.Object) -> np.ndarray:
-    pairs = np.zeros(len(obj.data.edges) * 2, dtype=int)
-    obj.data.edges.foreach_get("vertices", pairs)
+def edges(obj: bpy.types.Object | None) -> np.ndarray:
+    assert obj is not None
+    mesh = obj.data
+    assert isinstance(mesh, bpy.types.Mesh)
+    pairs = np.zeros(len(mesh.edges) * 2, dtype=int)
+    mesh.edges.foreach_get("vertices", pairs)
     return pairs.reshape(-1, 2)
 
 
@@ -40,14 +44,18 @@ def expected_pairs(universe: mda.Universe, frame: int, **kwargs) -> np.ndarray:
 
 def evaluated_vertex_count(obj: bpy.types.Object) -> int:
     depsgraph = bpy.context.evaluated_depsgraph_get()
-    return len(obj.evaluated_get(depsgraph).data.vertices)
+    mesh = obj.evaluated_get(depsgraph).data
+    assert isinstance(mesh, bpy.types.Mesh)
+    return len(mesh.vertices)
 
 
 def test_hbonds_trajectory(universe):
     mol = mn.Molecule(universe)
     obj = mol.calculations.hbonds().object
+    assert obj is not None
+    assert isinstance(obj.data, bpy.types.Mesh)
     assert mol.frame_attributes["hbonds"] == "CALCULATION"
-    assert mol.object.mn.calculations["hbonds"].object == obj
+    assert mol.props.calculations["hbonds"].object == obj
     assert obj.name == f".data_{mol.name}_hbonds"
     assert len(obj.data.vertices) == len(universe.atoms)
     # an independent universe so running the analysis doesn't move the other
@@ -152,13 +160,17 @@ def test_hbonds_cutoff_properties(fetch):
 
 
 def test_hbonds_after_session_save(universe, tmp_path):
-    # saving the session replaces the universe's trajectory reader, and the
-    # analysis reads frames through the new one
+    # reopening the file rebuilds the molecule with a new universe, and the
+    # analysis reads frames through its trajectory reader
     mol = mn.Molecule(universe)
+    mol.calculations.hbonds()
+    uuid = mol.uuid
+    blend_path = tmp_path / "test.blend"
+    bpy.ops.wm.save_as_mainfile(filepath=str(blend_path))
+    bpy.ops.wm.open_mainfile(filepath=str(blend_path))
+    mol = mn.session.get_session().get(uuid)
+    assert isinstance(mol, mn.Molecule)
     obj = mol.calculations.hbonds().object
-    reader = mol.universe.trajectory
-    mn.session.get_session().pickle(tmp_path / "test.blend")
-    assert mol.universe.trajectory is not reader
     u = mda.Universe(
         data_dir / "md_ppr/box.gro", data_dir / "md_ppr/first_5_frames.xtc"
     )
@@ -327,11 +339,11 @@ def test_hbonds_init_operator(fetch):
     mol = fetch("2M6Q")
     hbonds = mol.calculations._hbonds
     assert not hbonds.is_setup
-    bpy.ops.mn.hbonds_init(uuid=mol.uuid, selection="protein")
+    mn_ops.hbonds_init(uuid=mol.uuid, selection="protein")
     assert hbonds.is_setup
     assert mol.props.hbonds.selection == "protein"
     n = len(hbonds.object.data.edges)
     # a second run updates the selection
-    bpy.ops.mn.hbonds_init(uuid=mol.uuid, selection="resid 1-20")
+    mn_ops.hbonds_init(uuid=mol.uuid, selection="resid 1-20")
     assert mol.props.hbonds.selection == "resid 1-20"
     assert len(hbonds.object.data.edges) < n

@@ -21,6 +21,13 @@ from nodebpy.nodes.geometry import RandomValue, StoreNamedAttribute
 import molecularnodes as mn
 import molecularnodes.nodes.compositor as mc
 import molecularnodes.nodes.geometry as mg
+from molecularnodes.material import (
+    AmbientOcclusion,
+    Default,
+    Flat,
+    Squishy,
+    Transparent,
+)
 from .constants import data_dir
 from .test_nodes import SYMMETRY_EXAMPLES
 from .utils import ImageSnapshotExtension
@@ -186,8 +193,7 @@ def _illustrate_fog(canvas):
             depth=render.o.depth,
             shadow=mc.ConeShadow(
                 depth=render.o.depth,
-                pixel_size=mn.scene.compositor._pixel_size_angstrom(canvas.scene)
-                * mn.scene.compositor.WORLD_SCALE,
+                pixel_size=canvas.pixel_size,
             ),
         )
         _fog(canvas, node, render.o.depth, output)
@@ -394,3 +400,88 @@ def test_render_viewpoint(fetch, golden_canvas, tmp_path, image_snapshot, viewpo
         mol.get_view("resname REA or (protein and around 6 resname REA)")
     )
     assert image_snapshot == _render(golden_canvas, tmp_path)
+
+
+def _style_surface(m):
+    return lambda: mn.nodes.geometry.StyleSurface(quality=4, scale=1.0, material=m)
+
+
+def _material_flat():
+    return mn.material.Flat(outline=True)
+
+
+@pytest.mark.parametrize(
+    "name,style,material",
+    list(
+        product(
+            ["caffeine"],
+            [
+                "spheres",
+                "sticks",
+                _style_surface,
+                "ball_and_stick",
+            ],
+            [
+                mn.material.Default,
+                _material_flat,
+                mn.material.AmbientOcclusion,
+            ],
+        )
+    ),
+)
+def test_render_small_molecule(
+    fetch, golden_canvas, tmp_path, image_snapshot, name, style, material
+):
+    mol = fetch(name, format="sdf", database="pubchem")
+    if isinstance(style, str):
+        mol.add_style(style, material=material().material)
+    else:
+        mol.add_style(style(material().material))
+    golden_canvas.look_at(mol, viewpoint="top")
+    assert image_snapshot == _render(golden_canvas, tmp_path)
+
+
+@pytest.fixture
+def eevee_canvas():
+    # EEVEE needs a GPU, so tests using this are marked `eevee` and skipped on
+    # machines without one (most CI runners). A fixed sample count keeps the
+    # renders deterministic on a given GPU.
+    canvas = mn.Canvas(resolution=(128, 128))
+    canvas.engine = mn.scene.EEVEE(samples=64)
+    canvas.compositor.device = "CPU"
+    return canvas
+
+
+@pytest.mark.eevee
+@pytest.mark.parametrize(
+    "style", ["spheres", "cartoon", "ball_and_stick", "ribbon", "sticks", "surface"]
+)
+def test_render_eevee_style(fetch, style, eevee_canvas, tmp_path, image_snapshot):
+    # spheres are instanced meshes under EEVEE rather than a point cloud
+    mol = _fetch_molecule(fetch)
+    mol.add_style(style)
+    eevee_canvas.look_at(mol, viewpoint="front")
+    assert image_snapshot == _render(eevee_canvas, tmp_path)
+
+
+@pytest.mark.eevee
+@pytest.mark.parametrize(
+    "material",
+    [Default, AmbientOcclusion, Flat, Squishy, Transparent],
+)
+def test_render_eevee_material(fetch, material, eevee_canvas, tmp_path, image_snapshot):
+    mol = _fetch_molecule(fetch)
+    mol.add_style("surface", material=material())
+    eevee_canvas.look_at(mol, viewpoint="front")
+    assert image_snapshot == _render(eevee_canvas, tmp_path)
+
+
+@pytest.mark.eevee
+def test_render_eevee_illustrate_shadow(fetch, eevee_canvas, tmp_path, image_snapshot):
+    # the shadow pass only exists under EEVEE, Cycles can't cover this
+    eevee_canvas.transparent = True
+    mol = _fetch_molecule(fetch)
+    mol.add_style("cartoon", material=mn.material.Flat())
+    eevee_canvas.look_at(mol, viewpoint="front")
+    eevee_canvas.compositor.illustrate(shading="shadow")
+    assert image_snapshot == _render(eevee_canvas, tmp_path)

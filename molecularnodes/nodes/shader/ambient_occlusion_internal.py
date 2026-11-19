@@ -50,8 +50,10 @@ class AmbientOcclusionInternal(AssetShaderGroup):
 
     Outputs
     -------
-    o.shader : ShaderSocket
+    o.cycles : ShaderSocket
         Emission of the occluded color. Always opaque: ambient occlusion does not work alongside a Transparent BSDF, so the alpha of `Color` is ignored
+    o.eevee : ShaderSocket
+        EEVEE
     """
 
     _name = "Ambient Occlusion Internal"
@@ -72,8 +74,10 @@ class AmbientOcclusionInternal(AssetShaderGroup):
         """Exponent to apply to AO calculations"""
 
     class _Outputs(SocketAccessor):
-        shader: ShaderSocket
+        cycles: ShaderSocket
         """Emission of the occluded color. Always opaque: ambient occlusion does not work alongside a Transparent BSDF, so the alpha of `Color` is ignored"""
+        eevee: ShaderSocket
+        """EEVEE"""
 
     if TYPE_CHECKING:
 
@@ -88,7 +92,7 @@ class AmbientOcclusionInternal(AssetShaderGroup):
         menu: InputMenu | Literal["AO", "None"] = "AO",
         ao_space: InputMenu | Literal["Global", "Local"] = "Global",
         distance: InputFloat = 1.0,
-        exponent: InputFloat = 2.0,
+        exponent: InputFloat = 1.5,
     ):
         super().__init__(
             **{
@@ -125,15 +129,16 @@ class AmbientOcclusionInternal(AssetShaderGroup):
         )
         exponent = tree.inputs.float(
             "Exponent",
-            2.0,
+            1.5,
             description="Exponent to apply to AO calculations",
             min_value=0.0,
             max_value=10_000.0,
         )
-        shader = tree.outputs.shader(
-            "Shader",
+        cycles = tree.outputs.shader(
+            "Cycles",
             description="Emission of the occluded color. Always opaque: ambient occlusion does not work alongside a Transparent BSDF, so the alpha of `Color` is ignored",
         )
+        eevee = tree.outputs.shader("EEVEE")
 
         emission = s.Emission(
             ColorAO(
@@ -144,8 +149,17 @@ class AmbientOcclusionInternal(AssetShaderGroup):
                 exponent=exponent,
             )
         )
+        color_ao = ColorAO(
+            color=color,
+            menu=menu,
+            ao_space=ao_space,
+            distance=distance,
+            exponent=exponent * 10.0,
+        )
+        emission_1 = s.Emission(color_ao)
 
-        emission >> shader
+        emission >> cycles
+        emission_1 >> eevee
 
 
 ASSET = AmbientOcclusionInternal

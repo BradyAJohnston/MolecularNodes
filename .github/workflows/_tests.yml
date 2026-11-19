@@ -56,19 +56,37 @@ jobs:
             - name: Build node assets
               timeout-minutes: 10
               run: |
-                  uv run --no-sync -m nodebpy.assets build
+                  uv run --no-sync nodebpy build
             - name: Run Tests
               # windows runners need ~17 minutes for the full suite
               timeout-minutes: 30
               run: |
                   uv run --no-sync pytest -n auto -m "not network"
+            # the EMDB maps are large and rarely change, so keep pooch's downloads
+            # between runs; the key changes with the maps the tests fetch
+            - name: Restore network test downloads
+              id: network-cache
+              if: inputs.network && matrix.os == 'ubuntu-latest'
+              uses: actions/cache/restore@v4
+              with:
+                  path: ~/.cache/molecularnodes-tests
+                  key: network-downloads-${{ hashFiles('tests/emdb_pooch.py', 'tests/test_density_emdb_api.py') }}
             # tests that download from RCSB / EMDB run in one job only: every job downloading
             # at once gets rate limited and fails
             - name: Run network tests
+              id: network-tests
               if: inputs.network && matrix.os == 'ubuntu-latest'
               timeout-minutes: 10
               run: |
                   uv run --no-sync pytest -m network
+            # only once the downloads succeeded, or a failed run would cache nothing
+            # under the key and stop it ever being saved
+            - name: Save network test downloads
+              if: always() && steps.network-tests.outcome == 'success' && steps.network-cache.outputs.cache-hit != 'true'
+              uses: actions/cache/save@v4
+              with:
+                  path: ~/.cache/molecularnodes-tests
+                  key: ${{ steps.network-cache.outputs.cache-primary-key }}
             - name: Upload image comparison failures
               if: failure()
               uses: actions/upload-artifact@v4

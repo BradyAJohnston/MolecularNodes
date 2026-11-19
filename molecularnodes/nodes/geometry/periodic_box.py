@@ -9,12 +9,12 @@ from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
     FloatSocket,
+    MatrixSocket,
     PackageLibrary,
     SocketAccessor,
     VectorSocket,
 )
 from nodebpy.types import InputBoolean, InputFloat
-from .angstrom_to_world import AngstromToWorld
 
 
 class PeriodicBox(AssetGeometryGroup):
@@ -24,45 +24,47 @@ class PeriodicBox(AssetGeometryGroup):
     Parameters
     ----------
     update : InputBoolean
-        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node. As a modifier input, reads the "True" attribute by default.
+        Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand. As a modifier input, reads the "True" attribute by default.
     a : InputFloat
-        a
+        Length of box vector A in world units, where 1 m is 1 nm
     b : InputFloat
-        b
+        Length of box vector B in world units, where 1 m is 1 nm
     c : InputFloat
-        c
+        Length of box vector C in world units, where 1 m is 1 nm
     alpha : InputFloat
-        alpha
+        Angle between box vectors B and C, in degrees
     beta : InputFloat
-        beta
+        Angle between box vectors A and C, in degrees
     gamma : InputFloat
-        gamma
+        Angle between box vectors A and B, in degrees
 
     Inputs
     ------
     i.update : BooleanSocket
-        Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node.
+        Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand
     i.a : FloatSocket
-        a
+        Length of box vector A in world units, where 1 m is 1 nm
     i.b : FloatSocket
-        b
+        Length of box vector B in world units, where 1 m is 1 nm
     i.c : FloatSocket
-        c
+        Length of box vector C in world units, where 1 m is 1 nm
     i.alpha : FloatSocket
-        alpha
+        Angle between box vectors B and C, in degrees
     i.beta : FloatSocket
-        beta
+        Angle between box vectors A and C, in degrees
     i.gamma : FloatSocket
-        gamma
+        Angle between box vectors A and B, in degrees
 
     Outputs
     -------
     o.a : VectorSocket
-        A
+        Box vector A in world units, along the X axis
     o.b : VectorSocket
-        B
+        Box vector B in world units, in the XY plane
     o.c : VectorSocket
-        C
+        Box vector C in world units
+    o.matrix : MatrixSocket
+        The box vectors A, B and C as columns, which transforms fractional coordinates of the box into world coordinates
     """
 
     _name = "Periodic Box"
@@ -72,21 +74,29 @@ class PeriodicBox(AssetGeometryGroup):
 
     class _Inputs(SocketAccessor):
         update: BooleanSocket
-        """Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node."""
+        """Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand"""
         a: FloatSocket
+        """Length of box vector A in world units, where 1 m is 1 nm"""
         b: FloatSocket
+        """Length of box vector B in world units, where 1 m is 1 nm"""
         c: FloatSocket
+        """Length of box vector C in world units, where 1 m is 1 nm"""
         alpha: FloatSocket
+        """Angle between box vectors B and C, in degrees"""
         beta: FloatSocket
+        """Angle between box vectors A and C, in degrees"""
         gamma: FloatSocket
+        """Angle between box vectors A and B, in degrees"""
 
     class _Outputs(SocketAccessor):
         a: VectorSocket
-        """A"""
+        """Box vector A in world units, along the X axis"""
         b: VectorSocket
-        """B"""
+        """Box vector B in world units, in the XY plane"""
         c: VectorSocket
-        """C"""
+        """Box vector C in world units"""
+        matrix: MatrixSocket
+        """The box vectors A, B and C as columns, which transforms fractional coordinates of the box into world coordinates"""
 
     if TYPE_CHECKING:
 
@@ -121,23 +131,56 @@ class PeriodicBox(AssetGeometryGroup):
         _update = tree.inputs.boolean(
             "Update",
             True,
-            description="Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node.",
+            description="Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand",
             default_attribute="True",
         )
         with tree.inputs.panel("Lengths"):
-            a = tree.inputs.float("a", 0.0)
-            b = tree.inputs.float("b", 0.0)
-            c_ = tree.inputs.float("c", 0.0)
+            a = tree.inputs.float(
+                "a",
+                0.0,
+                description="Length of box vector A in world units, where 1 m is 1 nm",
+                subtype="DISTANCE",
+            )
+            b = tree.inputs.float(
+                "b",
+                0.0,
+                description="Length of box vector B in world units, where 1 m is 1 nm",
+                subtype="DISTANCE",
+            )
+            c_ = tree.inputs.float(
+                "c",
+                0.0,
+                description="Length of box vector C in world units, where 1 m is 1 nm",
+                subtype="DISTANCE",
+            )
         with tree.inputs.panel("Angles"):
-            alpha = tree.inputs.float("alpha", 0.0)
-            beta = tree.inputs.float("beta", 0.0)
-            gamma = tree.inputs.float("gamma", 0.0)
-        a_1 = tree.outputs.vector("A")
-        b_1 = tree.outputs.vector("B")
-        c__1 = tree.outputs.vector("C")
+            alpha = tree.inputs.float(
+                "alpha",
+                0.0,
+                description="Angle between box vectors B and C, in degrees",
+            )
+            beta = tree.inputs.float(
+                "beta", 0.0, description="Angle between box vectors A and C, in degrees"
+            )
+            gamma = tree.inputs.float(
+                "gamma",
+                0.0,
+                description="Angle between box vectors A and B, in degrees",
+            )
+        a_1 = tree.outputs.vector(
+            "A", description="Box vector A in world units, along the X axis"
+        )
+        b_1 = tree.outputs.vector(
+            "B", description="Box vector B in world units, in the XY plane"
+        )
+        c__1 = tree.outputs.vector("C", description="Box vector C in world units")
+        matrix = tree.outputs.matrix(
+            "Matrix",
+            description="The box vectors A, B and C as columns, which transforms fractional coordinates of the box into world coordinates",
+        )
 
         with g.Frame("A Vector"):
-            combine_xyz = g.CombineXYZ(AngstromToWorld(angstrom=a))
+            combine_xyz = g.CombineXYZ(a)
         with g.Frame("Angles To Radians"):
             math_1 = alpha.to_radians()
             math_2 = beta.to_radians()
@@ -148,29 +191,32 @@ class PeriodicBox(AssetGeometryGroup):
             math_6 = math_3.cos()
             math_7 = math_3.sin()
         with g.Frame("B Vector"):
-            angstrom_to_world = AngstromToWorld(angstrom=b)
             with g.Frame("B Y Component"):
-                math_8 = angstrom_to_world.o.world * math_7
+                math_8 = b * math_7
             with g.Frame("B X Component"):
-                math_9 = angstrom_to_world.o.world * math_6
+                math_9 = b * math_6
             combine_xyz_1 = g.CombineXYZ(x=math_9, y=math_8)
         with g.Frame("C Vector"):
-            angstrom_to_world_1 = AngstromToWorld(angstrom=c_)
             with g.Frame("C X Component"):
-                math_10 = angstrom_to_world_1.o.world * math_5
+                math_10 = c_ * math_5
             with g.Frame("C Y Component"):
-                math_11 = angstrom_to_world_1.o.world * (
-                    (math_4 - math_5 * math_6) / math_7
-                )
+                math_11 = c_ * ((math_4 - math_5 * math_6) / math_7)
             with g.Frame("C Z Component"):
-                math_12 = (
-                    angstrom_to_world_1.o.world**2.0 - math_10**2.0 - math_11**2.0
-                ).sqrt()
+                math_12 = (c_**2.0 - math_10**2.0 - math_11**2.0).sqrt()
             combine_xyz_2 = g.CombineXYZ(x=math_10, y=math_11, z=math_12)
+        combine_matrix = g.CombineMatrix(
+            column_1_row_1=a,
+            column_2_row_1=math_9,
+            column_2_row_2=math_8,
+            column_3_row_1=math_10,
+            column_3_row_2=math_11,
+            column_3_row_3=math_12,
+        )
 
         combine_xyz >> a_1
         combine_xyz_1 >> b_1
         combine_xyz_2 >> c__1
+        combine_matrix >> matrix
 
 
 ASSET = PeriodicBox

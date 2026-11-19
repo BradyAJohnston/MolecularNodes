@@ -10,6 +10,7 @@ import itertools
 from pathlib import Path
 import bpy
 import pytest
+from nodebpy.nodes.geometry import SetPosition
 import molecularnodes as mn
 from molecularnodes.converters import universe_from_atoms
 from molecularnodes.entities.molecule.reader import read_structure
@@ -85,6 +86,48 @@ def test_trajectory_frame_change(benchmark):
     benchmark(lambda: bpy.context.scene.frame_set(next(frames)))
 
 
+# selections ------------------------------------------------------------------
+
+SELECTIONS = {
+    "static": "protein and name CA",
+    "distance": "around 5.0 resid 1-20",
+}
+
+
+@pytest.mark.benchmark(group="selection")
+@pytest.mark.parametrize("string", SELECTIONS.values(), ids=SELECTIONS.keys())
+def test_selection_create(benchmark, string):
+    mol = mn.Molecule.load(DATA_DIR / f"{STRUCTURE}.bcif")
+
+    # remove the previous round's selection, as otherwise selections pile up and
+    # every new one also updates the previous ones
+    def setup():
+        while len(mol.selections):
+            mol.selections.remove(0)
+
+    benchmark.pedantic(
+        lambda: mol.selections.from_string(string, updating=False),
+        setup=setup,
+        rounds=5,
+    )
+    assert len(mol.selections) == 1
+
+
+@pytest.mark.benchmark(group="trajectory-frame")
+@pytest.mark.parametrize("updating", [False, True], ids=["static", "updating"])
+def test_trajectory_frame_change_with_selections(benchmark, updating):
+    mol = mn.Molecule.load(
+        DATA_DIR / "md_ppr/box.gro", DATA_DIR / "md_ppr/first_5_frames.xtc"
+    )
+    # static selections are only written when created, updating ones are
+    # re-evaluated and written on every frame change
+    mol.selections.from_string("protein", updating=updating)
+    mol.selections.from_string("nucleic and name P", updating=updating)
+    mol.selections.from_string("protein and around 5.0 nucleic", updating=updating)
+    frames = itertools.cycle(range(5))
+    benchmark(lambda: bpy.context.scene.frame_set(next(frames)))
+
+
 # node evaluation -------------------------------------------------------------
 
 
@@ -118,5 +161,30 @@ def test_evaluate_color(benchmark, color):
     mol = mn.Molecule.load(DATA_DIR / f"{STRUCTURE}.bcif").add_style(
         "spheres", color=color
     )
+    _evaluate(mol.object)
+    benchmark(_evaluate, mol.object)
+
+
+PERIODIC = {
+    "offset-box": lambda box: mg.PeriodicOffset(offset_factor=(0.5, 0.5, 0.5), **box),
+    "offset-compact": lambda box: mg.PeriodicOffset(
+        offset_factor=(0.5, 0.5, 0.5), wrap="Compact", **box
+    ),
+    "unwrap": lambda box: mg.PeriodicUnwrap(group_id=mg.FragmentID(), **box),
+}
+
+
+@pytest.mark.benchmark(group="evaluate-periodic")
+@pytest.mark.parametrize("node", PERIODIC.values(), ids=PERIODIC.keys())
+def test_evaluate_periodic(benchmark, node):
+    # ~40,000 atoms in a triclinic box (rhombic dodecahedron), with bonds. A
+    # single frame doesn't update the box, so it is given to the node
+    mol = mn.Molecule.load(DATA_DIR / "md_ppr/md.tpr", DATA_DIR / "md_ppr/md.gro")
+    names = ["a", "b", "c", "alpha", "beta", "gamma"]
+    dimensions = mol.universe.dimensions.astype(float)
+    dimensions[:3] *= mol.world_scale
+    box = {"update": False, **dict(zip(names, map(float, dimensions)))}
+    with mol.tree.reset() as (atoms, join):
+        atoms >> SetPosition(position=node(box)) >> join
     _evaluate(mol.object)
     benchmark(_evaluate, mol.object)

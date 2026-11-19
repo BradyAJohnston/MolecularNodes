@@ -1,4 +1,5 @@
 import typing
+from typing import TYPE_CHECKING
 import bpy
 from bpy.props import (
     BoolProperty,
@@ -8,10 +9,14 @@ from bpy.props import (
     IntProperty,
     StringProperty,
 )
+from ..blender.registered import object_annotations
 from ..blender.utils import viewport_tag_redraw
-from ..entities.base import MolecularEntity
 from .base import BaseAnnotation
 from .utils import get_all_class_annotations, get_blender_supported_type
+
+if TYPE_CHECKING:
+    from ..entities.density.base import Density
+    from ..entities.molecule.base import Molecule
 
 
 def _create_update_callback(func, prop_name):
@@ -22,9 +27,9 @@ def _create_update_callback(func, prop_name):
 
 
 def create_annotation_type_inputs(
-    annotation_class: BaseAnnotation,
+    annotation_class: type[BaseAnnotation],
     update_callback=None,
-) -> bpy.types.PropertyGroup:
+) -> type[bpy.types.PropertyGroup]:
     """Create a dynamic PropertyGroup with annotation type inputs"""
     attributes = {"__annotations__": {}}
     py_annotations = get_all_class_annotations(annotation_class)
@@ -104,12 +109,12 @@ def create_annotation_type_inputs(
 
 
 def create_property_interface(
-    entity: MolecularEntity,
+    entity: "Molecule | Density",
     instance: BaseAnnotation,
     uuid: str,
     attr: str,
     atype: typing.Any = None,
-    annotation_type: str = None,
+    annotation_type: str | None = None,
 ) -> property:
     """Create a property() interface for a blender property"""
 
@@ -121,9 +126,9 @@ def create_property_interface(
         # during reallocs and undos. Use indices as recommended by Blender here:
         # https://docs.blender.org/api/current/info_gotchas_crashes.html
         if annotation_type is not None:
-            return getattr(entity.object.mn_annotations[uuid], annotation_type)
+            return getattr(object_annotations(entity.object)[uuid], annotation_type)
         else:
-            return entity.object.mn_annotations[uuid]
+            return object_annotations(entity.object)[uuid]
 
     def getter(self):
         # return the non blender property if set

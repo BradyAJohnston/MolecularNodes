@@ -30,6 +30,7 @@ from nodebpy.types import (
 )
 from ._shared.cleanup import Cleanup
 from ._shared.curve_split_splines import CurveSplitSplines
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_units import MNUnits
 from ._shared.mn_utils_style_ribbon_nucleic import MN_utils_style_ribbon_nucleic
 from ._shared.vector_in_angstroms import VectorInAngstroms
@@ -1290,7 +1291,7 @@ class StyleCartoon(AssetGeometryGroup):
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
         capture_1 = g.CaptureAttribute.point(
-            geometry=atoms_1.output, selection=selection
+            geometry=atoms_1.output, selection=DeselectHidden(selection=selection)
         )
         math_1 = quality * 3.0
         math_2 = quality * 5.0

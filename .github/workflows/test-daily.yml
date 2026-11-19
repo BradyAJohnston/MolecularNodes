@@ -33,7 +33,7 @@ jobs:
             - name: Build node assets
               run: |
                   uv sync --all-extras
-                  uv run -m nodebpy.assets build
+                  uv run nodebpy build
             - name: Build extension
               run: |
                   uvx extbpy build

@@ -2,8 +2,10 @@ import bpy
 import MDAnalysis as mda
 import numpy as np
 import pytest
+from PIL import Image as PILImage
 import molecularnodes as mn
 from .constants import data_dir
+from .utils import scene, view_layer
 
 
 @pytest.fixture
@@ -63,6 +65,39 @@ def test_init_view_transform_background():
     assert canvas.view_transform == "AgX"
 
 
+def test_standard_view_transform_clears_look():
+    canvas = mn.Canvas(template="Molecular Nodes")
+    assert canvas.look != "None"
+    canvas.view_transform = "Standard"
+    assert canvas.look == "None"
+
+    # a look chosen afterwards is kept, and other view transforms leave it alone
+    canvas.look = "Medium High Contrast"
+    assert canvas.look == "Medium High Contrast"
+    canvas.view_transform = "Filmic"
+    assert canvas.look == "Medium High Contrast"
+
+
+def test_pixel_size_uses_longer_edge():
+    canvas = mn.Canvas(resolution=(100, 200))
+    canvas.camera.orthographic = True
+    canvas.camera.ortho_scale = 40
+    assert canvas.camera.ortho_scale == pytest.approx(40)
+    assert canvas.pixel_size == pytest.approx(0.2)
+
+    canvas.render_scale = 50
+    assert canvas.pixel_size == pytest.approx(0.4)
+
+
+def test_camera_orthographic():
+    canvas = mn.Canvas()
+    assert canvas.camera.orthographic is False
+    canvas.camera.orthographic = True
+    assert canvas.camera.camera_data.type == "ORTHO"
+    canvas.camera.orthographic = False
+    assert canvas.camera.camera_data.type == "PERSP"
+
+
 def test_load_blend():
     # Test loading a .blend file
     file = data_dir / "blendfiles/suzanne.blend"
@@ -94,6 +129,7 @@ def test_look_at_object(canvas):
     # Create test object
     bpy.ops.mesh.primitive_cube_add()
     test_obj = bpy.context.active_object
+    assert test_obj is not None
 
     # Test looking at a plain Blender object
     canvas.look_at(test_obj)
@@ -115,7 +151,8 @@ def test_look_at_views(canvas, universe):
     # view of whole trajectory
     v0 = t1.get_view()
 
-    camera = bpy.context.scene.camera
+    camera = scene().camera
+    assert camera is not None
     initial_location = camera.location.copy()
 
     # frame v1 (resid 1 of trajectory)
@@ -214,6 +251,16 @@ def render_canvas():
     return canvas
 
 
+def test_standard_renders_specified_colors(render_canvas, tmp_path):
+    render_canvas.view_transform = "Standard"
+    render_canvas.background = (0.5, 0.25, 0.1, 1.0)
+    out = tmp_path / "color.png"
+    render_canvas.snapshot(out)
+    pixel = np.asarray(PILImage.open(out).convert("RGB"))[16, 16]
+    # the sRGB encoding of the linear background
+    assert pixel == pytest.approx((188, 137, 89), abs=2)
+
+
 def test_snapshot(render_canvas, tmp_path):
     out = tmp_path / "snapshot.png"
     render_canvas.frame = 3
@@ -227,6 +274,28 @@ def test_snapshot(render_canvas, tmp_path):
     # returns a displayable image when IPython is available
     if mn.scene.base.Image is not None:
         assert isinstance(image, mn.scene.base.Image)
+
+
+def test_max_render_samples(render_canvas, tmp_path, monkeypatch):
+    # MN_MAX_RENDER_SAMPLES caps the samples of each render, restoring the
+    # engine's own settings afterwards
+    render_canvas.engine.samples = 64
+    render_canvas.scene.eevee.taa_render_samples = 64
+    seen = []
+
+    def _on_render(scene, *args):
+        seen.append((scene.cycles.samples, scene.eevee.taa_render_samples))
+
+    monkeypatch.setenv("MN_MAX_RENDER_SAMPLES", "2")
+    bpy.app.handlers.render_pre.append(_on_render)
+    try:
+        render_canvas.snapshot(tmp_path / "snapshot.png")
+        render_canvas.animation(tmp_path / "anim.gif", frame_start=1, frame_end=2)
+    finally:
+        bpy.app.handlers.render_pre.remove(_on_render)
+    assert seen and all(samples == (2, 2) for samples in seen)
+    assert render_canvas.engine.samples == 64
+    assert render_canvas.scene.eevee.taa_render_samples == 64
 
 
 def test_snapshot_non_displayable_format(render_canvas, tmp_path):
@@ -433,7 +502,9 @@ def test_compositor_reset_and_annotations(canvas):
 def test_clear_removes_content_but_keeps_lighting(fetch, canvas):
     "clear() removes content objects, not just the Molecular Nodes entities."
     cube = bpy.data.objects.new("UserCube", bpy.data.meshes.new("UserCubeMesh"))
-    bpy.context.collection.objects.link(cube)
+    collection = bpy.context.collection
+    assert collection is not None
+    collection.objects.link(cube)
     fetch("4ozs").add_style("cartoon")
 
     canvas.clear()
@@ -631,7 +702,7 @@ def test_get_view_is_not_stale_after_adding_a_style(fetch, canvas):
     mol.add_style("cartoon", selection="chainID A")
 
     before = np.asarray(mol.get_view())
-    bpy.context.view_layer.update()
+    view_layer().update()
     after = np.asarray(mol.get_view())
     assert np.allclose(before.min(axis=0), after.min(axis=0))
     assert np.allclose(before.max(axis=0), after.max(axis=0))

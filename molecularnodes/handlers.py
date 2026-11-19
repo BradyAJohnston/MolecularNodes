@@ -1,13 +1,12 @@
-from typing import TYPE_CHECKING
 import bpy
 import numpy as np
 from bpy.app.handlers import persistent
+from bpy_extras import anim_utils
 from PIL import Image
 from .annotations.utils import render_annotations
-from .scene.compositor import annotations_image
-
-if TYPE_CHECKING:
-    from .session import MNSession
+from .blender.registered import scene_session
+from .entities import Molecule
+from .scene.compositor import annotations_image, update_cone_shadows
 
 
 # this update function requires a self and context input, as funcitons with these inputs
@@ -28,9 +27,35 @@ def _update_selections(self, context: bpy.types.Context) -> None:
     selections on the owning entity directly, rather than going through the frame
     update machinery which skips single-frame entities entirely
     """
-    entity = context.scene.MNSession.match(self.id_data)
-    if entity is not None and hasattr(entity, "selections"):
+    assert context.scene is not None
+    entity = scene_session(context.scene).match(self.id_data)
+    if isinstance(entity, Molecule):
         entity.selections.update_attributes()
+
+
+def _update_selection_name(self, context: bpy.types.Context) -> None:
+    """
+    Update callback for the name of a `TrajectorySelectionItem`. Moves a selection
+    off the reserved name `hidden`, which it would overwrite on every frame
+    """
+    if self.name != "hidden":
+        return
+    assert context.scene is not None
+    entity = scene_session(context.scene).match(self.id_data)
+    if isinstance(entity, Molecule):
+        self.name = entity.selections._unique_selection_name()
+        self.message = "'hidden' is reserved for the Hidden field. Use another name."
+
+
+def _update_hidden_selection(self, context: bpy.types.Context) -> None:
+    """
+    Update callback for the hidden selection text of a molecule, which replaces
+    the atoms left out of every style
+    """
+    assert context.scene is not None
+    entity = scene_session(context.scene).match(self.id_data)
+    if isinstance(entity, Molecule):
+        entity._apply_hidden_selection()
 
 
 # this is the 'perisisent' function which can be appended onto the
@@ -58,6 +83,27 @@ def update_entities(scene):
 
 
 @persistent
+def update_frame_fcurves(filepath: str) -> None:
+    """Let F-curves on the manual frame evaluate to fractional frames.
+
+    The manual frame was an integer property, and an F-curve keeps the rounding of
+    the property it was keyed on, so those from older files are updated on load.
+    """
+    for obj in bpy.data.objects:
+        animation = obj.animation_data
+        if animation is None or animation.action is None:
+            continue
+        channelbag = anim_utils.action_get_channelbag_for_slot(
+            animation.action, animation.action_slot
+        )
+        if channelbag is None:
+            continue
+        fcurve = channelbag.fcurves.find("mn.frame")
+        if fcurve is not None:
+            fcurve.update_autoflags(obj)
+
+
+@persistent
 def render_pre_handler(scene: bpy.types.Scene) -> None:
     """
     Blender's on render (before) handler
@@ -66,10 +112,12 @@ def render_pre_handler(scene: bpy.types.Scene) -> None:
     """
     if not hasattr(scene, "MNSession"):
         return
-    session: MNSession = scene.MNSession  # type: ignore
+    update_cone_shadows(scene)
+    session = scene_session(scene)
     if len(session.entities) == 0:
         return
-    if not any([len(e.annotations) for e in session.entities.values()]):
+    # ensembles have no annotations
+    if not any(len(getattr(e, "annotations", ())) for e in session.entities.values()):
         return
 
     # frame_change_pre is supposed to be called before render_pre
@@ -77,6 +125,7 @@ def render_pre_handler(scene: bpy.types.Scene) -> None:
     # update entities here to ensure annotations match entity frame
     update_entities(scene)
     # Render annotations to an image
+    assert bpy.context.view_layer is not None
     bpy.context.view_layer.update()
     render_scale = scene.render.resolution_percentage / 100
     width = int(scene.render.resolution_x * render_scale)

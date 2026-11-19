@@ -13,12 +13,16 @@ class CubeReader(ReaderBase):
     def read(self, file_path):
         return read_cube(file_path)
 
-    def get_structure(self):
+    def get_structure(self, model: int | None = None) -> AtomArray:
         cube = self.file
-        elements = [
-            data.elements_by_atomic_number.get(int(z), {}).get("element_symbol", "X")
-            for z in cube.atomic_numbers
-        ]
+        elements = np.array(
+            [
+                data.elements_by_atomic_number.get(int(z), {}).get(
+                    "element_symbol", "X"
+                )
+                for z in cube.atomic_numbers
+            ]
+        )
         array = AtomArray(len(elements))
         array.coord = cube.positions
         array.element = np.char.upper(elements)

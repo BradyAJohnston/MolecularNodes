@@ -2,6 +2,7 @@ import gzip
 import io
 import os
 from pathlib import Path
+from typing import Literal, cast
 from urllib.parse import quote
 import requests
 from biotite.database import afdb
@@ -105,14 +106,21 @@ class StructureDownloader:
 
         # Use biotite's afdb.fetch for AlphaFold database
         if database == "alphafold":
+            # checked against `supported_formats` above
+            afdb_format = cast(Literal["cif", "pdb", "bcif"], format)
             try:
-                result = afdb.fetch(
-                    code, format=format, target_path=self.cache, overwrite=False
+                # biotite returns StringIO/BytesIO without a cache, or the file path
+                # as a string with one
+                if self.cache is None:
+                    return afdb.fetch(code, format=afdb_format, overwrite=False)
+                return Path(
+                    afdb.fetch(
+                        code,
+                        format=afdb_format,
+                        target_path=self.cache,
+                        overwrite=False,
+                    )
                 )
-                # biotite returns file path as string if cache is used, or StringIO/BytesIO if not
-                if isinstance(result, str):
-                    return Path(result)
-                return result
             except Exception as e:
                 raise FileDownloadPDBError(
                     f"Error downloading from AlphaFold database: {str(e)}"
@@ -163,15 +171,13 @@ class StructureDownloader:
                     raise ValueError(
                         "Binary content is not bytes, please check your format."
                     )
-                file = io.BytesIO(content)
+                return io.BytesIO(content)
             else:
                 if not isinstance(content, str):
                     raise ValueError(
                         "Text content is not str, please check your format."
                     )
-                file = io.StringIO(content)
-
-        return file
+                return io.StringIO(content)
 
     def _download_pubchem(self, code: str) -> Path | io.StringIO:
         """Download the 3D conformer of a PubChem compound as SDF.
@@ -220,7 +226,8 @@ class StructureDownloader:
         except requests.HTTPError as e:
             raise FileDownloadPDBError(f"Error downloading from PubChem: {e}")
 
-        return self._store(r.text, file, _is_binary=False)
+        # text content is stored as a file or wrapped in StringIO, never BytesIO
+        return cast(Path | io.StringIO, self._store(r.text, file, _is_binary=False))
 
     def _url(self, code: str, format: str, database: str = "rcsb") -> str:
         """Get the URL for downloading the given file from a particular database.

@@ -40,9 +40,9 @@ def test_preset_parameters_map_to_sockets():
 def test_flat_outline_toggle():
     flat = material.Flat(outline=False, threshold=0.5, thickness=0.3)
     assert flat.outline is False
-    assert flat.node.i.outline.default_value == "None"
+    assert flat.internal_node.i.outline.default_value == "None"
     flat.outline = True
-    assert flat.node.i.outline.default_value == "Outline"
+    assert flat.internal_node.i.outline.default_value == "Outline"
     assert flat.threshold == pytest.approx(0.5)
     assert flat.thickness == pytest.approx(0.3)
 
@@ -51,9 +51,9 @@ def test_transparent_fresnel_toggle():
     mat = material.Transparent(transparency=0.5, fresnel=False)
     assert mat.transparency == pytest.approx(0.5)
     assert mat.fresnel is False
-    assert mat.node.i.menu.default_value == "Transparent"
+    assert mat.internal_node.i.menu.default_value == "Transparent"
     mat.fresnel = True
-    assert mat.node.i.menu.default_value == "Fresnel"
+    assert mat.internal_node.i.menu.default_value == "Fresnel"
     assert mat.material.surface_render_method == "BLENDED"
     assert mat.material.name.startswith("Transparent")
 
