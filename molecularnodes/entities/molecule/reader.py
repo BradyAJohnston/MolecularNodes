@@ -26,8 +26,9 @@ def read_structure(
     """Open a structure file and return the appropriate reader for its format.
 
     Dispatches on ``format``, or the file suffix, to the biotite-backed reader that
-    can parse it (mmCIF/BinaryCIF, PDB, or SDF/MOL). An in-memory ``BytesIO`` buffer
-    without a ``format`` is treated as BinaryCIF.
+    can parse it (mmCIF/BinaryCIF, PDB, SDF/MOL, or the atoms of a Gaussian cube
+    file). An in-memory ``BytesIO`` buffer without a ``format`` is treated as
+    BinaryCIF.
 
     Parameters
     ----------
@@ -51,8 +52,9 @@ def read_structure(
         If the file format is not supported, or (as ``MultipleStructuresError``)
         the file holds several structures and no ``data_block`` was given.
     """
-    # imported lazily: pdb/pdbx/sdf import ReaderBase from this module
-    from . import pdb, pdbx, sdf
+    # imported lazily: pdb/pdbx/sdf/cube import ReaderBase from this module
+    from ..density.cube import is_cube
+    from . import cube, pdb, pdbx, sdf
 
     if format is None:
         if isinstance(file_path, BytesIO):
@@ -60,9 +62,14 @@ def read_structure(
         elif isinstance(file_path, StringIO):
             raise ValueError("A `format` is needed to read a StringIO buffer.")
         else:
-            format = Path(file_path).suffix
+            # `.suffix` would only see the `.gz` of a gzipped cube file
+            format = ".cube" if is_cube(file_path) else Path(file_path).suffix
 
-    match "." + format.strip("."):
+    format = "." + format.strip(".")
+    if is_cube(format):
+        return cube.CubeReader(file_path)
+
+    match format:
         case ".cif" | ".bcif":
             return pdbx.PDBXReader(file_path, data_block=data_block)
         case ".pdb":

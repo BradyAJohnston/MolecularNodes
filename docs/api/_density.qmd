@@ -8,6 +8,8 @@ execute:
 
 The Density entity can be used to load density grids into Blender. It uses MDAnalysis [`GridDataFormats`](https://www.mdanalysis.org/GridDataFormats/) library and supports a wide variety of [formats](https://www.mdanalysis.org/GridDataFormats/gridData/formats.html).
 
+Gaussian cube files (`.cube`, `.cub`, optionally gzipped) are read as well (tested with PySCF output), with Bohr converted to Å and sheared voxel axes kept. A file with several orbitals loads each as a numbered grid, picked by the `Index` of the `Import Volume` node. `mn.Molecule.load()` reads the atoms of the same file, with bonds guessed from distances.
+
 ## Setup Molecular Nodes
 
 ```{python}

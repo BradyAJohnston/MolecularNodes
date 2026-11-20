@@ -315,7 +315,7 @@ Import Volume:
   description: >-
     Import a volume from a `.vdb` file at `Path::String`. Density trees have no input geometry: each branch starts
     with this node, followed by a style. `{index}` in the path is replaced by an index, to pick one of `Count::Int`
-    numbered files, such as the frames of an animation. The index is
+    numbered files, such as the frames of an animation or the orbitals of one cube file. The index is
     `Index::Int`, or with `Follow Frame::Bool` the scene frame counted from `Frame Start::Int`; it is clamped to the
     files, so frames past the last file hold it. The `density` grid is also kept in the bundle of the output as
     `MN Grid <Name>`, and density styles pass it on to the mesh they make, so `Color Sample Grid::Node` can sample
