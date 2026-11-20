@@ -720,7 +720,7 @@ def test_density_linked_import_volume_resolves_relative_path(density_file, tmp_p
         ImportVolume._library.path(), link=True, pack=True, assets_only=True
     ) as (_, dst):
         dst.node_groups = [ImportVolume._asset_name]
-    (linked,) = dst.node_groups
+    (linked,) = cast(list[bpy.types.GeometryNodeTree], dst.node_groups)
     assert linked.library is not None
     node.node_tree = linked
     obj = bpy.data.objects[density.name]
