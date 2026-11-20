@@ -769,6 +769,10 @@ class Molecule(MolecularEntity):
                     data = item()
                 else:
                     raise ValueError("Unable to convert to attribute for storage")
+                # a missing boolean attribute already reads as False in nodes
+                if data.dtype == bool and not data.any():
+                    logger.debug(f"Skipping attribute '{name}': all False")
+                    continue
                 # "Color" is an (n, 4) RGBA array which would otherwise be guessed as a
                 # generic 4-vector; store it as a colour attribute explicitly.
                 self[name] = db.color(data) if name == "Color" else data
@@ -1778,13 +1782,12 @@ class Molecule(MolecularEntity):
     def _warn_if_trace_only(self, style: str) -> None:
         """Warn when the polymers are only a CA or P trace, such as a low resolution
         model, because an all-atom style draws them as disconnected beads."""
-        # topologies without residue or atom names (e.g. LAMMPS data files) have no
-        # polymer attributes, so there is nothing to check
-        if not {"is_peptide", "is_nucleic"}.issubset(self.list_attributes()):
-            return
-        polymer = self.named_attribute("is_peptide") | self.named_attribute(
-            "is_nucleic"
-        )
+        # boolean attributes are not stored when all False, and topologies without
+        # residue or atom names (e.g. LAMMPS data files) have none of them
+        polymer = np.zeros(len(self), dtype=bool)
+        for name in ("is_peptide", "is_nucleic"):
+            if name in self.list_attributes():
+                polymer |= self.named_attribute(name).astype(bool)
         n_polymer = np.count_nonzero(polymer)
         if n_polymer == 0:
             return

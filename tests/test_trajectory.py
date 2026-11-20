@@ -213,12 +213,14 @@ class TestTrajectory:
             "position",
             "is_backbone",
             "is_alpha_carbon",
-            "is_solvent",
             "is_nucleic",
             "is_peptide",
         ]
         for att in attribute_added:
             assert att in attributes
+        # the structure has no solvent, and boolean attributes that are all False
+        # are not stored (#1305)
+        assert "is_solvent" not in attributes
 
     def test_trajectory_update(self, snapshot, universe):
         traj = mn.entities.Molecule(universe, name="TestTrajectoryUpdate")
