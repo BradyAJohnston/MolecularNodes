@@ -57,6 +57,7 @@ from molecularnodes.nodes.geometry import (
     PeptideChi,
     PeptideDihedral,
     PeriodicArray,
+    ResidueID,
     ResidueParameter,
     SegmentID,
     SelectResidueClass,
@@ -713,6 +714,25 @@ def _store_charge_node(mol):
             >> join
         )
     return mol.named_attribute("charge_node", evaluate=True)
+
+
+def test_attribute_node_reads_in_evaluated_domain(fetch):
+    # attribute nodes read in the domain they are evaluated in, so on edges a bond
+    # gets the res_id of its atoms rather than of the atom sharing its index (#1292)
+    mol = fetch("4ozs")
+    with mol.tree.reset() as (atoms, join):
+        (
+            atoms
+            >> StoreNamedAttribute.edge.integer(name="edge_res_id", value=ResidueID())
+            >> join
+        )
+
+    edges = np.array([e.vertices[:] for e in mol.object.data.edges])
+    res_id = mol.named_attribute("res_id")
+    same = res_id[edges[:, 0]] == res_id[edges[:, 1]]
+    assert same.any()
+    edge_res_id = mol.named_attribute("edge_res_id", evaluate=True)
+    assert np.array_equal(edge_res_id[same], res_id[edges[same, 0]])
 
 
 def test_charge_node(fetch):

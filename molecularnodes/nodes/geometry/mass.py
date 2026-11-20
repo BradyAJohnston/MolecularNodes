@@ -7,27 +7,15 @@ from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     FloatSocket,
-    IntegerSocket,
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import Default, InputInteger
 from .fallback_float import FallbackFloat
 
 
 class Mass(AssetGeometryGroup):
     """
     Mass
-
-    Parameters
-    ----------
-    index : InputInteger
-        Index. When unconnected: The index from the context.
-
-    Inputs
-    ------
-    i.index : IntegerSocket
-        Index
 
     Outputs
     -------
@@ -42,8 +30,7 @@ class Mass(AssetGeometryGroup):
     _tree_properties = {"node_tool_idname": "geometry.mass"}
 
     class _Inputs(SocketAccessor):
-        index: IntegerSocket
-        """Index"""
+        pass
 
     class _Outputs(SocketAccessor):
         mass: FloatSocket
@@ -56,19 +43,15 @@ class Mass(AssetGeometryGroup):
         @property
         def o(self) -> _Outputs: ...
 
-    def __init__(
-        self,
-        index: InputInteger = Default.INDEX,
-    ):
-        super().__init__(**{"Index": index})
+    def __init__(self) -> None:
+        super().__init__()
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        index = tree.inputs.integer("Index", 0, min_value=0, default_input="INDEX")
         mass = tree.outputs.float(
             "mass", description="Read the `mass` attribute from the geometry"
         )
 
-        FallbackFloat(name="mass", fallback=1.0).o.value.point.at(index) >> mass
+        FallbackFloat(name="mass", fallback=1.0) >> mass
 
 
 ASSET = Mass

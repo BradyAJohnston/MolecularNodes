@@ -93,7 +93,7 @@ class SampleNucleicBaseValues(CustomGeometryGroup):
 
         with g.Frame("Sample relevant base positions for orientations"):
             residue_mask = ResidueMask(atom_name=61)
-            Color(index=ResidueMask(atom_name=67).o.index) >> base_color
+            Color().o.color.point.at(ResidueMask(atom_name=67).o.index) >> base_color
             mix = g.Mix.vector(
                 a=ResidueMask(atom_name=55).o.position,
                 b=ResidueMask(atom_name=57).o.position,
