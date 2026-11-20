@@ -78,7 +78,7 @@ class DensityTree(MolecularTree):
             scene = bpy.context.scene
             assert scene is not None
             frame_start = scene.frame_start
-        return ImportVolume(
+        node = ImportVolume(
             path=density.vdb_path,
             index=index,
             follow_frame=follow_frame,
@@ -86,6 +86,12 @@ class DensityTree(MolecularTree):
             count=len(density.files_vdb),
             name=name,
         )
+        # saving makes the Path relative (`//`), which Import VDB inside a linked
+        # group doesn't resolve (Blender 5.2, 5.3), so the group is kept local
+        group = node.node.node_tree
+        if group is not None and group.library is not None:
+            node.node.node_tree = group.make_local()
+        return node
 
     @contextmanager
     def reset(self, output: str = "Geometry") -> Generator[ResetSockets]:
