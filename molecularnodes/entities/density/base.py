@@ -1,61 +1,115 @@
 import os
 from abc import ABCMeta
+from contextlib import contextmanager
 from pathlib import Path
-from typing import Union, overload
+from typing import Generator, Union, overload
+import bpy
 import databpy
 import numpy as np
-from nodebpy import geometry as g
 from nodebpy.builder import GeometrySocket
 from ... import blender as bl
-from ...nodes.geometry import SetGeometryVolume
-from ..base import EntityType, MolecularEntity, MolecularTree
+from ...nodes.geometry import ImportVolume
+from ..base import EntityType, MolecularEntity, MolecularTree, ResetSockets
 from .annotations import DensityAnnotationManager
-
-
-def _is_set_geometry_volume(node) -> bool:
-    tree = getattr(node, "node_tree", None)
-    return tree is not None and tree.name.startswith(SetGeometryVolume._name)
 
 
 class DensityTree(MolecularTree):
     """
-    Node tree of a density, which keeps the source volume with its styles.
+    Node tree of a density.
 
-    Branches end in the join as usual, but the join feeds the output through a
-    `Set Geometry Volume` node, which stores the tree's input volume in the
-    `MN/Volume` bundle of the output. Density styles turn the volume into a mesh;
-    the bundle keeps the grid available to `Color Sample Grid` without rendering it.
+    The density's object is an empty mesh, so the tree has no input geometry:
+    each branch starts with an `Import Volume` node that reads the density's
+    ``.vdb`` files, and ends in the join.
+
+    >>> with density.tree.reset() as (volume, join):
+    ...     volume >> DensityStyleSurface() >> join
     """
 
     @property
-    def join(self) -> GeometrySocket:
-        output = self.geometry
-        links = output.socket.links
-        from_socket = links[0].from_socket if links else None
-        keep = from_socket.node if from_socket is not None else None
-        if keep is not None and _is_set_geometry_volume(keep):
-            upstream = keep.inputs[0].links
-            upstream_socket = upstream[0].from_socket if upstream else None
-            upstream_node = (
-                upstream_socket.node if upstream_socket is not None else None
-            )
-            if (
-                upstream_node is not None
-                and upstream_node.bl_idname == "GeometryNodeJoinGeometry"
-            ):
-                return self._wrap(upstream_node.inputs[0])
-            join = g.JoinGeometry()
-            if upstream_socket is not None:
-                self._wrap(upstream_socket) >> join
-            join >> self._wrap(keep.inputs[0])
-            return join.i.geometry
+    def atoms(self) -> GeometrySocket:
+        raise AttributeError(
+            "Density trees have no input geometry; start each branch with "
+            "`tree.import_volume()`"
+        )
 
-        join_input = super().join
-        join_node = join_input.socket.node
-        assert join_node is not None
-        join_output = self._wrap(join_node.outputs[0])
-        SetGeometryVolume(geometry=join_output, volume=self.atoms) >> output
-        return join_input
+    def import_volume(
+        self,
+        name: str = "density",
+        index: int = 0,
+        follow_frame: bool | None = None,
+        frame_start: int | None = None,
+    ) -> ImportVolume:
+        """
+        An `Import Volume` node that reads the density's ``.vdb`` files.
+
+        Start a branch of the tree with one, inside the tree:
+
+        >>> with density.tree as tree:
+        ...     tree.import_volume() >> DensityStyleWire() >> tree.join
+
+        Parameters
+        ----------
+        name : str, optional
+            Name the grid is kept under for `Color Sample Grid`, by default "density".
+            Give each branch that imports a different grid its own name.
+        index : int, optional
+            Which of several files to import, when not following the frame.
+        follow_frame : bool | None, optional
+            Whether the scene frame picks the file, to play the files as an
+            animation. Defaults to how the density was loaded.
+        frame_start : int | None, optional
+            Scene frame that shows the first file when following the frame. Defaults
+            to how the density was loaded, or the scene's start frame.
+
+        Returns
+        -------
+        ImportVolume
+            The node, added to the tree being built.
+        """
+        from .grids import Grids
+
+        density = self._entity
+        assert isinstance(density, Grids), "importing a volume needs its density"
+        if follow_frame is None:
+            follow_frame = density._follow_frame
+        if frame_start is None:
+            frame_start = density._frame_start
+        if frame_start is None:
+            scene = bpy.context.scene
+            assert scene is not None
+            frame_start = scene.frame_start
+        node = ImportVolume(
+            path=density.vdb_path,
+            index=index,
+            follow_frame=follow_frame,
+            frame_start=frame_start,
+            count=len(density.files_vdb),
+            name=name,
+        )
+        # saving makes the Path relative (`//`), which Import VDB inside a linked
+        # group doesn't resolve (Blender 5.2, 5.3), so the group is kept local
+        group = node.node.node_tree
+        if group is not None and group.library is not None:
+            node.node.node_tree = group.make_local()
+        return node
+
+    @contextmanager
+    def reset(self, output: str = "Geometry") -> Generator[ResetSockets]:
+        """
+        Clear the tree and build within it.
+
+        Yields ``(volume, join)``: the volume is the output of an `Import Volume`
+        node reading the density's files as they were loaded, removed again if
+        nothing is built from it. More branches can start with
+        `import_volume()`.
+        """
+        with self:
+            self.clear()
+            self.outputs.geometry(output)
+            volume = self.import_volume()
+            yield ResetSockets(volume.o.volume, self.join)
+            if not volume.node.outputs[0].links:
+                self.tree.nodes.remove(volume.node)
 
 
 class Density(MolecularEntity, metaclass=ABCMeta):
@@ -66,6 +120,16 @@ class Density(MolecularEntity, metaclass=ABCMeta):
 
     _tree_class = DensityTree
     _entity_type = EntityType.DENSITY
+
+    @property
+    def tree(self) -> DensityTree:
+        tree = super().tree
+        assert isinstance(tree, DensityTree)
+        return tree
+
+    @tree.setter
+    def tree(self, value) -> None:
+        MolecularEntity.tree.fset(self, value)
 
     def __init__(self, file_path: Union[str, Path]):
         super().__init__()

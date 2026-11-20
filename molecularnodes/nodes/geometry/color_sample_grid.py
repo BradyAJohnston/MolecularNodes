@@ -26,7 +26,7 @@ class ColorSampleGrid(AssetGeometryGroup):
     object : InputObject
         Object holding the grid to sample: a density loaded with Molecular Nodes, styled or not, or any volume object
     grid_name : InputString
-        Name of the float grid inside the volume. Densities loaded with Molecular Nodes store theirs as `density`
+        Name of the grid to sample: the Name of the density's Import Volume node (`density` by default), or a grid of the object's own volume
     min : InputFloat
         Grid value mapped to color A, in the grid's own units (kT/e for an APBS potential)
     max : InputFloat
@@ -43,7 +43,7 @@ class ColorSampleGrid(AssetGeometryGroup):
     i.object : ObjectSocket
         Object holding the grid to sample: a density loaded with Molecular Nodes, styled or not, or any volume object
     i.grid_name : StringSocket
-        Name of the float grid inside the volume. Densities loaded with Molecular Nodes store theirs as `density`
+        Name of the grid to sample: the Name of the density's Import Volume node (`density` by default), or a grid of the object's own volume
     i.min : FloatSocket
         Grid value mapped to color A, in the grid's own units (kT/e for an APBS potential)
     i.max : FloatSocket
@@ -72,7 +72,7 @@ class ColorSampleGrid(AssetGeometryGroup):
         object: ObjectSocket
         """Object holding the grid to sample: a density loaded with Molecular Nodes, styled or not, or any volume object"""
         grid_name: StringSocket
-        """Name of the float grid inside the volume. Densities loaded with Molecular Nodes store theirs as `density`"""
+        """Name of the grid to sample: the Name of the density's Import Volume node (`density` by default), or a grid of the object's own volume"""
         min: FloatSocket
         """Grid value mapped to color A, in the grid's own units (kT/e for an APBS potential)"""
         max: FloatSocket
@@ -127,7 +127,7 @@ class ColorSampleGrid(AssetGeometryGroup):
         grid_name = tree.inputs.string(
             "Grid Name",
             "density",
-            description="Name of the float grid inside the volume. Densities loaded with Molecular Nodes store theirs as `density`",
+            description="Name of the grid to sample: the Name of the density's Import Volume node (`density` by default), or a grid of the object's own volume",
         )
         min = tree.inputs.float(
             "Min",
@@ -166,20 +166,21 @@ class ColorSampleGrid(AssetGeometryGroup):
         )
 
         object_info = g.ObjectInfo(object=object, transform_space="RELATIVE")
-        with g.Frame("A styled density keeps its volume in the 'MN/Volume' bundle"):
-            get_bundle_item = g.GetBundleItem.geometry(
-                object_info.o.geometry.bundle(), "MN/Volume"
+        with g.Frame("A density keeps its grids in its bundle as 'MN Grid <name>'"):
+            get_bundle_item = g.GetBundleItem.float(
+                object_info.o.geometry.bundle(),
+                g.FormatString("MN Grid {name}", items={"name": grid_name}),
+                structure_type="GRID",
             )
             _string = g.String(
-                "Density styles turn the volume into a mesh and keep the source volume in the 'MN/Volume' bundle of their output. Sample that volume if it is there, otherwise the object's own geometry (an unstyled density)."
+                "Import Volume stores its grid in the bundle of its output as 'MN Grid <name>', and density styles pass it on to the mesh they make. Sample that grid if it is there, otherwise the grid of that name in the object's own volume."
             )
-            switch = get_bundle_item.o.exists.switch.geometry(
-                object_info.o.geometry, get_bundle_item.o.item
+            switch = get_bundle_item.o.exists.switch.float(
+                g.GetNamedGrid.float(object_info.o.geometry, grid_name).o.grid,
+                get_bundle_item.o.item,
             )
-        sample_grid = (
-            switch >> g.GetNamedGrid.float(name=grid_name, remove=False)
-        ).o.grid.sample(g.Position())
-        map_range = sample_grid.map_range(min, max)
+        sample_grid = g.SampleGrid.float(switch, g.Position())
+        map_range = sample_grid.o.value.map_range(min, max)
         (
             (map_range * 2.0 - 1.0).mix.color(
                 (map_range * 2.0).mix.color(a, intermediate), b
