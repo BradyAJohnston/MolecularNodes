@@ -406,7 +406,13 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.CurveOffsetDot
         children: embedded
+      - name: nodes.geometry.CurveBridge
+        children: embedded
+      - name: nodes.geometry.CurveExtend
+        children: embedded
       - name: nodes.geometry.CurveRotation
+        children: embedded
+      - name: nodes.geometry.CurveSplineC2
         children: embedded
       - name: nodes.geometry.CurveTransform
         children: embedded

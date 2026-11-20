@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 from databpy.nodes import get_input, get_output
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
+from nodebpy import TreeBuilder
 from nodebpy.nodes.geometry import (
     Compare,
     GetBundleItem,
@@ -42,6 +43,9 @@ from molecularnodes.nodes.geometry import (
     ColorPyMOL,
     ColorToOKLab,
     ColorVMD,
+    CurveBridge,
+    CurveExtend,
+    CurveSplineC2,
     EaseValue,
     FadeGeometry,
     FindBonds,
@@ -1859,3 +1863,311 @@ def test_ures_id_without_chains():
     atoms = mol.universe.atoms
     assert atoms is not None
     assert np.array_equal(mol.named_attribute("ures_id"), atoms.resindices)
+
+
+def _cubic_c2_handles(knots: np.ndarray, cyclic: bool) -> tuple[np.ndarray, np.ndarray]:
+    """Dense-solve port of SolveCubicC2 from aurimasg/splines as Bezier handles."""
+    n = len(knots)
+    m = n if cyclic else n - 1
+    a = np.zeros((m, m))
+    rhs = np.zeros((m, 3))
+    for i in range(m):
+        if cyclic or 0 < i < m - 1:
+            a[i, i - 1] += 1.0
+            a[i, i] += 4.0
+            a[i, (i + 1) % n] += 1.0
+            rhs[i] = 4.0 * knots[i] + 2.0 * knots[(i + 1) % n]
+        elif i == 0:
+            a[0, 0], a[0, 1] = 2.0, 1.0
+            rhs[0] = knots[0] + 2.0 * knots[1]
+        else:
+            a[i, i - 1], a[i, i] = 2.0, 7.0
+            rhs[i] = 8.0 * knots[i] + knots[n - 1]
+    right = np.linalg.solve(a, rhs)
+    if cyclic:
+        return 2.0 * knots - right, right
+    last_left = (knots[-1] + right[-1]) / 2.0
+    right = np.vstack([right, 2.0 * knots[-1] - last_left])
+    left = 2.0 * knots - right
+    left[-1] = last_left
+    return left, right
+
+
+def _curve_spline_c2(knots: np.ndarray, cyclic: bool, **inputs) -> dict:
+    """Run Curve Spline C2 on one poly curve and return its point attributes."""
+    curves = bpy.data.hair_curves.new("c2_knots")
+    curves.add_curves([len(knots)])
+    curves.set_types(type="POLY")
+    curves.position_data.foreach_set("vector", knots.astype(np.float32).ravel())
+    curves.attributes.new("cyclic", "BOOLEAN", "CURVE").data[0].value = cyclic
+    obj = bpy.data.objects.new("c2_knots", curves)
+    bpy.context.scene.collection.objects.link(obj)
+
+    tree = bpy.data.node_groups.new("c2_test", "GeometryNodeTree")
+    with TreeBuilder(tree) as t:
+        (
+            t.inputs.geometry("Geometry")
+            >> CurveSplineC2(**inputs)
+            >> t.outputs.geometry("Geometry")
+        )
+    obj.modifiers.new("c2", "NODES").node_group = tree
+
+    evaluated = obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    geometry_set = bpy.types.GeometrySet.from_evaluated_object(evaluated)
+    attributes = geometry_set.curves.attributes
+    out = {
+        name: np.array([v.vector[:] for v in attributes[name].data])
+        for name in ("position", "handle_left", "handle_right")
+    }
+    out["handle_types"] = {
+        v.value
+        for name in ("handle_type_left", "handle_type_right")
+        for v in attributes[name].data
+    }
+    return out
+
+
+@pytest.mark.parametrize("cyclic", [False, True])
+@pytest.mark.parametrize("n", [3, 4, 50])
+def test_curve_spline_c2_matches_reference(n, cyclic):
+    knots = np.random.default_rng(n).normal(size=(n, 3)).cumsum(axis=0)
+    result = _curve_spline_c2(knots, cyclic, chord_length=False)
+
+    left, right = _cubic_c2_handles(knots, cyclic)
+    assert np.allclose(result["position"], knots, atol=1e-5)
+    assert np.allclose(result["handle_left"], left, atol=1e-4)
+    assert np.allclose(result["handle_right"], right, atol=1e-4)
+    assert result["handle_types"] == {0}
+
+
+@pytest.mark.parametrize("cyclic", [False, True])
+@pytest.mark.parametrize("n", [3, 5, 50])
+def test_curve_spline_c2_chord_length_is_c2(n, cyclic):
+    rng = np.random.default_rng(n)
+    steps = rng.normal(size=(n, 3)) * rng.uniform(0.05, 3.0, size=(n, 1))
+    knots = steps.cumsum(axis=0)
+    result = _curve_spline_c2(knots, cyclic, chord_length=True)
+    k, left, right = result["position"], result["handle_left"], result["handle_right"]
+    assert np.allclose(k, knots, atol=1e-5)
+
+    # Chord-length parameter of each segment, and its Bezier derivatives in it.
+    n_segments = n if cyclic else n - 1
+    i = np.arange(n_segments)
+    j = (i + 1) % n
+    h = np.linalg.norm(k[j] - k[i], axis=1)[:, None]
+    d_start = 3 * (right[i] - k[i]) / h
+    d_end = 3 * (k[j] - left[j]) / h
+    dd_start = 6 * (k[i] - 2 * right[i] + left[j]) / h**2
+    dd_end = 6 * (right[i] - 2 * left[j] + k[j]) / h**2
+
+    # Each segment's start meets the end of the one before it.
+    after = np.arange(1, n_segments) if not cyclic else np.roll(i, -1)
+    before = after - 1 if not cyclic else i
+    scale = np.abs(dd_start).max()
+    assert np.allclose(d_start[after], d_end[before], atol=1e-4)
+    assert np.allclose(dd_start[after], dd_end[before], atol=1e-4 * scale)
+    if not cyclic:
+        assert np.allclose(dd_start[0], 0, atol=1e-4 * scale)
+        assert np.allclose(dd_end[-1], 0, atol=1e-4 * scale)
+
+
+def test_curve_spline_c2_iterations():
+    knots = np.random.default_rng(0).normal(size=(6, 3)).cumsum(axis=0)
+    unsolved = _curve_spline_c2(knots, False, iterations=0)
+    assert np.allclose(unsolved["handle_left"], knots, atol=1e-5)
+    assert np.allclose(unsolved["handle_right"], knots, atol=1e-5)
+
+    left, right = _cubic_c2_handles(knots, False)
+    solved = _curve_spline_c2(knots, False, chord_length=False, iterations=40)
+    assert np.allclose(solved["handle_left"], left, atol=1e-4)
+    assert np.allclose(solved["handle_right"], right, atol=1e-4)
+
+
+def test_curve_spline_c2_leaves_two_point_curves_straight():
+    knots = np.array([[0.0, 0.0, 0.0], [1.0, 2.0, 3.0]])
+    result = _curve_spline_c2(knots, False)
+    direction = knots[1] - knots[0]
+    for handle in np.vstack([result["handle_left"], result["handle_right"]]):
+        offset = handle - knots[0]
+        assert np.allclose(np.cross(offset, direction), 0, atol=1e-5)
+
+
+def _run_curve_node(
+    curve_points: list[np.ndarray],
+    node_factory,
+    flag: str,
+    handles: tuple[np.ndarray, np.ndarray] | None = None,
+    cyclic: list[bool] | None = None,
+) -> dict:
+    """Evaluate a curve node on poly (or Bezier, given handles) curves.
+
+    Each point carries a float `tag` equal to its input index, and the node's
+    boolean field output named `flag` is stored as `flag`.
+    """
+    positions = np.vstack(curve_points)
+    curves = bpy.data.hair_curves.new("curves")
+    curves.add_curves([len(points) for points in curve_points])
+    curves.set_types(type="POLY" if handles is None else "BEZIER")
+    curves.position_data.foreach_set("vector", positions.astype(np.float32).ravel())
+    if handles is not None:
+        for name, values in zip(("handle_left", "handle_right"), handles):
+            curves.attributes.new(name, "FLOAT_VECTOR", "POINT").data.foreach_set(
+                "vector", values.astype(np.float32).ravel()
+            )
+        for name in ("handle_type_left", "handle_type_right"):
+            curves.attributes.new(name, "INT8", "POINT")
+    if cyclic is not None:
+        attribute = curves.attributes.new("cyclic", "BOOLEAN", "CURVE")
+        attribute.data.foreach_set("value", cyclic)
+    curves.attributes.new("tag", "FLOAT", "POINT").data.foreach_set(
+        "value", np.arange(len(positions), dtype=np.float32)
+    )
+    obj = bpy.data.objects.new("curves", curves)
+    bpy.context.scene.collection.objects.link(obj)
+
+    tree = bpy.data.node_groups.new("curve_test", "GeometryNodeTree")
+    with TreeBuilder(tree) as t:
+        node = node_factory()
+        (
+            t.inputs.geometry("Geometry")
+            >> node
+            >> StoreNamedAttribute.point.boolean(name="flag", value=node.o[flag])
+            >> t.outputs.geometry("Geometry")
+        )
+    obj.modifiers.new("node", "NODES").node_group = tree
+
+    evaluated = obj.evaluated_get(bpy.context.evaluated_depsgraph_get())
+    geometry_set = bpy.types.GeometrySet.from_evaluated_object(evaluated)
+    result = geometry_set.curves
+    attributes = result.attributes
+
+    def read(name, key="vector"):
+        return np.array([getattr(v, key) for v in attributes[name].data])
+
+    return {
+        "position": read("position"),
+        "handle_left": read("handle_left"),
+        "handle_right": read("handle_right"),
+        "tag": read("tag", "value"),
+        "flag": read("flag", "value"),
+        "sizes": [c.points_length for c in result.curves],
+    }
+
+
+_BRIDGE_CURVES = [
+    np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [2.0, 0.0, 0.0]]),
+    np.array([[3.0, 1.0, 0.0], [3.0, 2.0, 0.0], [3.0, 3.0, 0.0]]),
+    np.array([[5.0, 0.0, 0.0], [6.0, 0.0, 0.0], [6.0, 1.0, 0.0]]),
+]
+
+
+@pytest.mark.parametrize("tension", [0.0, 1.0, 2.5])
+def test_curve_bridge_joins_along_tangents(tension):
+    result = _run_curve_node(
+        _BRIDGE_CURVES, lambda: CurveBridge(tension=tension), "bridge"
+    )
+    knots = np.vstack(_BRIDGE_CURVES)
+    assert result["sizes"] == [9]
+    assert np.allclose(result["position"], knots)
+    assert np.array_equal(result["tag"], np.arange(9))
+    assert np.array_equal(np.flatnonzero(result["flag"]), [2, 3, 5, 6])
+
+    # Poly ends leave along their last segment, arrive along their first.
+    for end, start, out_dir, in_dir in [
+        (2, 3, [1.0, 0.0, 0.0], [0.0, 1.0, 0.0]),
+        (5, 6, [0.0, 1.0, 0.0], [1.0, 0.0, 0.0]),
+    ]:
+        gap = np.linalg.norm(knots[start] - knots[end])
+        length = tension * gap / 3.0
+        assert np.allclose(
+            result["handle_right"][end], knots[end] + np.array(out_dir) * length
+        )
+        assert np.allclose(
+            result["handle_left"][start], knots[start] - np.array(in_dir) * length
+        )
+
+
+def test_curve_bridge_selection_and_cyclic():
+    result = _run_curve_node(
+        _BRIDGE_CURVES,
+        lambda: CurveBridge(selection=Compare.integer.equal(Index(), 0).o.result),
+        "bridge",
+    )
+    assert result["sizes"] == [6, 3]
+
+    result = _run_curve_node(
+        _BRIDGE_CURVES, CurveBridge, "bridge", cyclic=[False, True, False]
+    )
+    assert result["sizes"] == [3, 3, 3]
+    assert not result["flag"].any()
+
+
+def test_curve_extend_straight():
+    line = np.array([[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [2.0, 0.0, 0.0]])
+    result = _run_curve_node(
+        [line], lambda: CurveExtend(start=0.8, end=0.4), "extension"
+    )
+    x = [-0.8, -0.6, -0.4, -0.2, 0.0, 1.0, 2.0, 2.1, 2.2, 2.3, 2.4]
+    assert result["sizes"] == [11]
+    assert np.allclose(result["position"], np.c_[x, np.zeros((11, 2))], atol=1e-6)
+    assert np.array_equal(result["tag"], [0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2])
+    assert np.array_equal(result["flag"], [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1])
+
+
+def _bezier_end_arc(p0, p1, p2, p3, length, steps=4):
+    """Points of a circular arc continuing a cubic past p3 with its end curvature."""
+    d1 = 3 * (p3 - p2)
+    d2 = 6 * (p3 - 2 * p2 + p1)
+    tangent = d1 / np.linalg.norm(d1)
+    bend = (d2 - tangent * d2.dot(tangent)) / d1.dot(d1)
+    curvature = np.linalg.norm(bend)
+    normal = bend / curvature
+    s = np.arange(1, steps + 1) * min(length, 2 * np.pi / curvature) / steps
+    angle = curvature * s
+    return (
+        p3
+        + np.outer(np.sin(angle) / curvature, tangent)
+        + np.outer((1 - np.cos(angle)) / curvature, normal)
+    )
+
+
+@pytest.mark.parametrize("follow", [True, False])
+def test_curve_extend_follows_curvature(follow):
+    # Half circle of radius 2 from two cubic quarter circles, tilted out of XY.
+    radius = 2.0
+    angle = np.array([0.0, np.pi / 2, np.pi])
+    knots = np.c_[radius * np.cos(angle), radius * np.sin(angle), np.zeros(3)]
+    tangent = np.c_[-np.sin(angle), np.cos(angle), np.zeros(3)]
+    length = 4 / 3 * np.tan(np.pi / 8) * radius
+    tilt = np.array([[1.0, 0.0, 0.0], [0.0, 0.8, -0.6], [0.0, 0.6, 0.8]])
+    knots, tangent = knots @ tilt.T, tangent @ tilt.T
+    left, right = knots - tangent * length, knots + tangent * length
+
+    result = _run_curve_node(
+        [knots],
+        lambda: CurveExtend(start=1.0, end=3.0, follow_curvature=follow),
+        "extension",
+        handles=(left, right),
+    )
+    if follow:
+        before = _bezier_end_arc(knots[1], left[1], right[0], knots[0], 1.0)[::-1]
+        after = _bezier_end_arc(knots[1], right[1], left[2], knots[2], 3.0)
+    else:
+        before = knots[0] + np.outer(np.arange(4, 0, -1) * 0.25, tangent[0] * -1.0)
+        after = knots[2] + np.outer(np.arange(1, 5) * 0.75, tangent[2])
+    assert result["sizes"] == [11]
+    assert np.allclose(result["position"], np.vstack([before, knots, after]), atol=1e-4)
+    # Handles facing into the original curve are unchanged; the outward ones
+    # start the extensions.
+    assert np.allclose(result["handle_right"][4:6], right[:2], atol=1e-5)
+    assert np.allclose(result["handle_left"][5:7], left[1:], atol=1e-5)
+
+
+def test_curve_extend_skips_cyclic():
+    square = np.array(
+        [[0.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 1.0, 0.0], [0.0, 1.0, 0.0]]
+    )
+    result = _run_curve_node([square], CurveExtend, "extension", cyclic=[True])
+    assert result["sizes"] == [4]
+    assert np.allclose(result["position"], square)
+    assert not result["flag"].any()
