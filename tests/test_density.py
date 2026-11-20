@@ -697,6 +697,36 @@ def test_density_relative_path_survives_save(density_file, tmp_path):
     assert len(databpy.named_attribute(obj, "position", evaluate=True)) == n_verts
 
 
+# Blender bug (5.2, 5.3): Import VDB inside a linked node group doesn't resolve a
+# blend-relative `//` path, though it does in a local group. `DensityTree.import_volume`
+# works around it with `make_local()`. When this starts passing (strict XPASS fails
+# the suite), Blender has fixed it: drop the `make_local()` workaround and this test.
+@pytest.mark.xfail(
+    strict=True, reason="Blender: Import VDB in a linked group ignores `//` paths"
+)
+def test_density_linked_import_volume_resolves_relative_path(density_file, tmp_path):
+    from molecularnodes.nodes.geometry import ImportVolume
+
+    density = mn.entities.density.Grids.load(density_file)
+    n_verts = len(density.named_attribute("position", evaluate=True))
+    assert n_verts > 0
+    filepath = tmp_path / "density.blend"
+    bpy.ops.wm.save_as_mainfile(filepath=str(filepath))
+    (node,) = _import_volume_nodes(density)
+    assert node.inputs["Path"].default_value.startswith("//")
+
+    # swap in the asset linked and packed, as every other node group is
+    with bpy.data.libraries.load(  # ty: ignore[invalid-context-manager]
+        ImportVolume._library.path(), link=True, pack=True, assets_only=True
+    ) as (_, dst):
+        dst.node_groups = [ImportVolume._asset_name]
+    (linked,) = dst.node_groups
+    assert linked.library is not None
+    node.node_tree = linked
+    obj = bpy.data.objects[density.name]
+    assert len(databpy.named_attribute(obj, "position", evaluate=True)) == n_verts
+
+
 def test_density_path_with_braces(tmp_path):
     folder = tmp_path / "{index} dir"
     folder.mkdir()
