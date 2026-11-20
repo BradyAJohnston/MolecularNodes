@@ -49,6 +49,7 @@ from molecularnodes.nodes.geometry import (
     FindBonds,
     GetGeometryAtoms,
     GroupParameter,
+    MenuResidueName,
     NucleicChi,
     NucleicDihedral,
     OKLabToColor,
@@ -765,6 +766,26 @@ def test_select_residue_class(fetch):
         assert np.array_equal(
             mol.named_attribute(f"sel_{name}", evaluate=True), selection
         )
+
+
+def test_menu_residue_name_sec(fetch):
+    mol = fetch("4ozs")
+    res_name = mol.named_attribute("res_name")
+    res_name[:20] = data.residues["SEC"]["res_name_num"]
+    mol["res_name"] = res_name
+
+    with mol.tree.reset() as (atoms, join):
+        selection = MenuResidueName(residue_name="SEC").o.selection
+        (
+            atoms
+            >> StoreNamedAttribute.point.boolean(name="is_sec", value=selection)
+            >> join
+        )
+
+    assert np.array_equal(
+        mol.named_attribute("is_sec", evaluate=True),
+        res_name == data.residues["SEC"]["res_name_num"],
+    )
 
 
 def test_color_residue_class(fetch):
