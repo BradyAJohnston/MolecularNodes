@@ -140,6 +140,15 @@ Select Res ID Range:
     - https://imgur.com/NdoQcdE
 Select Nucleic Type:
   description: Select either purines or pyrimidines
+Select Residue Class:
+  description: >-
+    Select amino acids by residue class, following the side chain chart on Wikipedia's
+    [Amino acid](https://en.wikipedia.org/wiki/Amino_acid) page: _Positively Charged_ (ARG, HIS, LYS),
+    _Negatively Charged_ (ASP, GLU), _Polar Uncharged_ (SER, THR, ASN, GLN), _Special Case_ (CYS, SEC, GLY, PRO) and
+    _Hydrophobic_ (ALA, VAL, ILE, LEU, MET, PHE, TYR, TRP). Classes are read from the `res_name` attribute, so
+    modified residues follow their parent residue (MSE as MET) and residues without a `res_name` are in no class.
+    HIS is classed as positively charged, although with a side chain pKa near 6 it is mostly neutral at
+    physiological pH.
 Select Attribute:
   description: Select atoms that have true for the given attribute name.
 Is Peptide:
@@ -275,6 +284,10 @@ Color Res Name:
   description: Choose colors for the individual amino acid and nucleic acid residues
   videos:
     - https://imgur.com/7bEmJGU
+Color Residue Class:
+  description: >-
+    Color amino acids by residue class, with the same classes as `Select Residue Class::Node`.
+    Anything that is not an amino acid keeps its current color.
 Color Common:
   description: For convenience, choose colors for the common 6 elements found protein structures
   videos:

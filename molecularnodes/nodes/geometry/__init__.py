@@ -63,6 +63,7 @@ from .color_plddt import ColorPLDDT
 from .color_pymol import ColorPyMOL
 from .color_rainbow import ColorRainbow
 from .color_res_name import ColorResName
+from .color_residue_class import ColorResidueClass
 from .color_sample_grid import ColorSampleGrid
 from .color_secondary_structure import ColorSecondaryStructure
 from .color_to_lch import ColorToLCh
@@ -231,6 +232,7 @@ from .select_res_id_range import SelectResIDRange
 from .select_res_id_string import SelectResIDString
 from .select_res_name import SelectResName
 from .select_res_whole import SelectResWhole
+from .select_residue_class import SelectResidueClass
 from .select_sphere import SelectSphere
 from .selected_instances import SelectedInstances
 from .separate_atoms import SeparateAtoms
@@ -350,6 +352,7 @@ __all__ = (
     "ColorPyMOL",
     "ColorRainbow",
     "ColorResName",
+    "ColorResidueClass",
     "ColorSampleGrid",
     "ColorSecondaryStructure",
     "ColorToLCh",
@@ -518,6 +521,7 @@ __all__ = (
     "SelectResIDString",
     "SelectResName",
     "SelectResWhole",
+    "SelectResidueClass",
     "SelectSphere",
     "SelectedInstances",
     "SeparateAtoms",

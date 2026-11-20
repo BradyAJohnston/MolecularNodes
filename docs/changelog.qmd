@@ -7,6 +7,8 @@ title: "Changelog"
 
 
 ## Added
+- `Select Residue Class` and `Color Residue Class` nodes select and color amino acids as positively charged, negatively charged, polar uncharged, special case or hydrophobic. [#1193](https://github.com/BradyAJohnston/MolecularNodes/issues/1193)
+- Selenocysteine (`SEC`) has a `res_name` value of 20, so it is no longer read as an unknown residue.
 - `Canvas.pixel_size` gives the size of one rendered pixel in nanometres for scale bars, and `canvas.camera.orthographic` and `canvas.camera.ortho_scale` set up an orthographic camera with an exact scale.
 - `compositor.illustrate(id_pass=...)` and an `ID Outline` panel on the `Illustrate` node draw lines between the regions of an ID pass, such as chains, which depth outlines cannot do on all-atom styles.
 - `mol.hide()`, `mol.show()` and `mol.hidden` leave atoms out of every style, while calculations still see them. `Molecule.load()` and `fetch()` take `hide=`, such as `hide="element H"`, and the same option is the `Hidden` field in the Attributes panel and the import dialog, where it starts as `water`. `hidden` is reserved as a selection name.
