@@ -682,6 +682,21 @@ def test_density_import_volume_follows_load_settings(tmp_path):
     assert explicit[0].inputs["Frame Start"].default_value == 2
 
 
+def test_density_relative_path_survives_save(density_file, tmp_path):
+    "Saving makes the Path relative, which Import VDB in a linked group can't resolve"
+    density = mn.entities.density.Grids.load(density_file)
+    n_verts = len(density.named_attribute("position", evaluate=True))
+    assert n_verts > 0
+    name = density.name
+    filepath = tmp_path / "density.blend"
+    bpy.ops.wm.save_as_mainfile(filepath=str(filepath))
+    bpy.ops.wm.open_mainfile(filepath=str(filepath))
+    (node,) = _import_volume_nodes(density)
+    assert node.inputs["Path"].default_value.startswith("//")
+    obj = bpy.data.objects[name]
+    assert len(databpy.named_attribute(obj, "position", evaluate=True)) == n_verts
+
+
 def test_density_path_with_braces(tmp_path):
     folder = tmp_path / "{index} dir"
     folder.mkdir()
