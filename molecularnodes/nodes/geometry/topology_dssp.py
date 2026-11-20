@@ -106,8 +106,8 @@ class CheckHBond(CustomGeometryGroup):
             H=BackboneNH(menu="Read").o.nh.point.at(nh_index),
         )
         integer_distance = IntegerDistance(
-            a=UResID(index=co_index).o.ures_id,
-            b=UResID(index=nh_index).o.ures_id,
+            a=UResID().o.ures_id.point.at(co_index),
+            b=UResID().o.ures_id.point.at(nh_index),
             distance=distance,
         )
         (hbond_energy.o.is_bonded & integer_distance.o.cutoff) >> is_bonded

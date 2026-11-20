@@ -7,11 +7,9 @@ from nodebpy import TreeBuilder
 from nodebpy.builder import (
     AssetGeometryGroup,
     FloatSocket,
-    IntegerSocket,
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import Default, InputInteger
 from ._shared.mn_world_scale import MN_world_scale
 from .fallback_float import FallbackFloat
 
@@ -19,16 +17,6 @@ from .fallback_float import FallbackFloat
 class VDWRadii(AssetGeometryGroup):
     """
     VDW Radii
-
-    Parameters
-    ----------
-    index : InputInteger
-        Index. When unconnected: The index from the context.
-
-    Inputs
-    ------
-    i.index : IntegerSocket
-        Index
 
     Outputs
     -------
@@ -43,8 +31,7 @@ class VDWRadii(AssetGeometryGroup):
     _tree_properties = {"node_tool_idname": "geometry.vdw_radii"}
 
     class _Inputs(SocketAccessor):
-        index: IntegerSocket
-        """Index"""
+        pass
 
     class _Outputs(SocketAccessor):
         vdw_radii: FloatSocket
@@ -57,24 +44,15 @@ class VDWRadii(AssetGeometryGroup):
         @property
         def o(self) -> _Outputs: ...
 
-    def __init__(
-        self,
-        index: InputInteger = Default.INDEX,
-    ):
-        super().__init__(**{"Index": index})
+    def __init__(self) -> None:
+        super().__init__()
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        index = tree.inputs.integer("Index", 0, min_value=0, default_input="INDEX")
         vdw_radii = tree.outputs.float(
             "vdw_radii", description="Read the `vdw_radii` attribute from the geometry"
         )
 
-        (
-            FallbackFloat(name="vdw_radii", fallback=MN_world_scale()).o.value.point.at(
-                index
-            )
-            >> vdw_radii
-        )
+        FallbackFloat(name="vdw_radii", fallback=MN_world_scale()) >> vdw_radii
 
 
 ASSET = VDWRadii

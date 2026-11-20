@@ -150,6 +150,9 @@ class EaseValue(AssetGeometryGroup):
             "Value",
             0.0,
             description="Linear progress to ease, from 0 to 1. Link `Animate Value` or `Stagger Value` to animate it",
+            min_value=0.0,
+            max_value=1.0,
+            subtype="FACTOR",
         )
         interpolation = tree.inputs.menu(
             "Interpolation",

@@ -88,7 +88,7 @@ class OffsetColorAttribute(AssetGeometryGroup):
             description="The field evaluated at the offset `Index` value",
         )
 
-        Color(index=OffsetIndex(index=index, offset=offset)) >> color
+        Color().o.color.point.at(OffsetIndex(index=index, offset=offset)) >> color
 
 
 ASSET = OffsetColorAttribute

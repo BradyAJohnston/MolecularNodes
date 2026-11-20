@@ -4,29 +4,18 @@
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
 from nodebpy import TreeBuilder
+from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
     IntegerSocket,
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import Default, InputInteger
-from ._shared.attribute_at_index import AttributeAtIndex
 
 
 class AtomName(AssetGeometryGroup):
     """
     Geometry Nodes doesn't currently support text attributes, so strings like atom names have to be first converted to integers and mapping to atom names back and forth. Definitions for the atom names are available on the GitHub page
-
-    Parameters
-    ----------
-    index : InputInteger
-        Index. When unconnected: The index from the context.
-
-    Inputs
-    ------
-    i.index : IntegerSocket
-        Index
 
     Outputs
     -------
@@ -44,8 +33,7 @@ class AtomName(AssetGeometryGroup):
     }
 
     class _Inputs(SocketAccessor):
-        index: IntegerSocket
-        """Index"""
+        pass
 
     class _Outputs(SocketAccessor):
         atom_name: IntegerSocket
@@ -58,22 +46,18 @@ class AtomName(AssetGeometryGroup):
         @property
         def o(self) -> _Outputs: ...
 
-    def __init__(
-        self,
-        index: InputInteger = Default.INDEX,
-    ):
-        super().__init__(**{"Index": index})
+    def __init__(self) -> None:
+        super().__init__()
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        index = tree.inputs.integer(
-            "Index", 0, min_value=0, hide_value=True, default_input="INDEX"
-        )
         atom_name = tree.outputs.integer(
             "atom_name",
             description="The `atom_name` attribute read from the points, an integer representation of the atom names. Corresponds to `CA` and `O` in the file etc. ",
         )
 
-        AttributeAtIndex(index=index, name="atom_name") >> atom_name
+        named_attribute = g.NamedAttribute.integer("atom_name")
+
+        named_attribute >> atom_name
 
 
 ASSET = AtomName
