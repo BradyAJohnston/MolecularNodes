@@ -114,7 +114,6 @@ class ImportVolume(AssetGeometryGroup):
             description="Path of the .vdb file to import. `{index}` is replaced by the index, to pick one of several numbered files",
             optional_label=True,
             subtype="FILE_PATH",
-            
         )
         index = tree.inputs.integer(
             "Index",
