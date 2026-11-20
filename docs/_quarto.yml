@@ -357,6 +357,8 @@ quartodoc:
         children: embedded
       - name: nodes.geometry.ColorSecondaryStructure
         children: embedded
+      - name: nodes.geometry.ColorResidueClass
+        children: embedded
       - name: nodes.geometry.ColorToLCh
         children: embedded
       - name: nodes.geometry.LChToColor
@@ -603,6 +605,8 @@ quartodoc:
       - name: nodes.geometry.SelectResName
         children: embedded
       - name: nodes.geometry.SelectResWhole
+        children: embedded
+      - name: nodes.geometry.SelectResidueClass
         children: embedded
       - name: nodes.geometry.SelectSphere
         children: embedded

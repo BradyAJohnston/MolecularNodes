@@ -25,6 +25,7 @@ from nodebpy.nodes.geometry import (
     TransformPoint,
 )
 import molecularnodes as mn
+from molecularnodes.assets import data
 from molecularnodes.nodes._utils import (
     custom_boolean_iswitch,
     custom_color_iswitch,
@@ -40,6 +41,7 @@ from molecularnodes.nodes.geometry import (
     Charge,
     ColorCSS,
     ColorPyMOL,
+    ColorResidueClass,
     ColorToOKLab,
     ColorVMD,
     EaseValue,
@@ -47,6 +49,7 @@ from molecularnodes.nodes.geometry import (
     FindBonds,
     GetGeometryAtoms,
     GroupParameter,
+    MenuResidueName,
     NucleicChi,
     NucleicDihedral,
     OKLabToColor,
@@ -56,6 +59,7 @@ from molecularnodes.nodes.geometry import (
     PeriodicArray,
     ResidueParameter,
     SegmentID,
+    SelectResidueClass,
     SetColor,
     SimulateElasticNetwork,
     StaggerValue,
@@ -722,6 +726,88 @@ def test_charge_node(fetch):
     expected = mol.named_attribute("charge")
     assert np.any(expected != 0)
     assert np.allclose(_store_charge_node(mol), expected)
+
+
+RESIDUE_CLASSES = {
+    "positively_charged": ("ARG", "HIS", "LYS"),
+    "negatively_charged": ("ASP", "GLU"),
+    "polar_uncharged": ("SER", "THR", "ASN", "GLN"),
+    "special_case": ("CYS", "SEC", "GLY", "PRO"),
+    "hydrophobic": ("ALA", "VAL", "ILE", "LEU", "MET", "PHE", "TYR", "TRP"),
+}
+
+
+def _residue_class_expected(res_name):
+    return {
+        name: np.isin(res_name, [data.residues[r]["res_name_num"] for r in residues])
+        for name, residues in RESIDUE_CLASSES.items()
+    }
+
+
+def test_select_residue_class(fetch):
+    mol = fetch("4ozs")
+    # 4ozs has no selenocysteine, so mark some atoms as SEC to check its class
+    res_name = mol.named_attribute("res_name")
+    res_name[:20] = data.residues["SEC"]["res_name_num"]
+    mol["res_name"] = res_name
+    expected = _residue_class_expected(res_name)
+
+    with mol.tree.reset() as (atoms, join):
+        select = SelectResidueClass()
+        geometry = atoms
+        for name in RESIDUE_CLASSES:
+            geometry = geometry >> StoreNamedAttribute.point.boolean(
+                name=f"sel_{name}", value=getattr(select.o, name)
+            )
+        geometry >> join
+
+    for name, selection in expected.items():
+        assert selection.any()
+        assert np.array_equal(
+            mol.named_attribute(f"sel_{name}", evaluate=True), selection
+        )
+
+
+def test_menu_residue_name_sec(fetch):
+    mol = fetch("4ozs")
+    res_name = mol.named_attribute("res_name")
+    res_name[:20] = data.residues["SEC"]["res_name_num"]
+    mol["res_name"] = res_name
+
+    with mol.tree.reset() as (atoms, join):
+        selection = MenuResidueName(residue_name="SEC").o.selection
+        (
+            atoms
+            >> StoreNamedAttribute.point.boolean(name="is_sec", value=selection)
+            >> join
+        )
+
+    assert np.array_equal(
+        mol.named_attribute("is_sec", evaluate=True),
+        res_name == data.residues["SEC"]["res_name_num"],
+    )
+
+
+def test_color_residue_class(fetch):
+    mol = fetch("4ozs")
+    res_name = mol.named_attribute("res_name")
+    expected = mol.named_attribute("Color")
+    colors = {
+        "positively_charged": (1.0, 0.0, 0.0, 1.0),
+        "negatively_charged": (0.0, 1.0, 0.0, 1.0),
+        "polar_uncharged": (0.0, 0.0, 1.0, 1.0),
+        "special_case": (1.0, 1.0, 0.0, 1.0),
+        "hydrophobic": (0.0, 1.0, 1.0, 1.0),
+    }
+    for name, selection in _residue_class_expected(res_name).items():
+        expected[selection] = colors[name]
+
+    with mol.tree.reset() as (atoms, join):
+        atoms >> SetColor(color=ColorResidueClass(**colors)) >> join
+
+    # anything that is not an amino acid keeps its color
+    assert (res_name == -1).any()
+    assert np.allclose(mol.named_attribute("Color", evaluate=True), expected)
 
 
 @pytest.mark.parametrize(

@@ -23,7 +23,7 @@ class MenuResidueName(AssetGeometryGroup):
 
     Parameters
     ----------
-    residue_name : InputMenu | Literal["UNK", "ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY", "HIS", "ILE", "LEU", "LYS", "MET", "PHE", "PRO", "SER", "THR", "TRP", "TYR", "VAL", "SNC", "MSE", "ASH", "CYM", "CYX", "GLH", "HID", "HIE", "HIP", "HYP", "LYN", "DA", "DC", "DG", "DT", "PST", "rA", "rC", "rG", "rU"]
+    residue_name : InputMenu | Literal["UNK", "ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY", "HIS", "ILE", "LEU", "LYS", "MET", "PHE", "PRO", "SER", "THR", "TRP", "TYR", "VAL", "SEC", "SNC", "MSE", "ASH", "CYM", "CYX", "GLH", "HID", "HIE", "HIP", "HYP", "LYN", "DA", "DC", "DG", "DT", "PST", "rA", "rC", "rG", "rU"]
         Residue Name
 
     Inputs
@@ -85,6 +85,7 @@ class MenuResidueName(AssetGeometryGroup):
             "TRP",
             "TYR",
             "VAL",
+            "SEC",
             "SNC",
             "MSE",
             "ASH",
@@ -138,6 +139,7 @@ class MenuResidueName(AssetGeometryGroup):
                 "TRP": 17,
                 "TYR": 18,
                 "VAL": 19,
+                "SEC": 20,
                 "SNC": 15,
                 "MSE": 12,
                 "ASH": 3,
