@@ -355,3 +355,13 @@ def test_add_style_full_model_does_not_warn():
     with warnings.catch_warnings():
         warnings.filterwarnings("error", message=".*mostly CA or P atoms.*")
         mol.add_style("spheres")
+
+
+def test_add_style_without_names():
+    # LAMMPS data files have atom types but no atom or residue names (#144)
+    universe = mda.Universe.empty(10, trajectory=True)
+    universe.add_TopologyAttr("types", ["1"] * 5 + ["2"] * 5)
+    universe.add_bonds([(i, i + 1) for i in range(9)])
+    mol = mn.Molecule(universe)
+    mol.add_style("spheres")
+    assert "is_peptide" not in mol.list_attributes()

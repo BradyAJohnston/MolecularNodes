@@ -1778,6 +1778,10 @@ class Molecule(MolecularEntity):
     def _warn_if_trace_only(self, style: str) -> None:
         """Warn when the polymers are only a CA or P trace, such as a low resolution
         model, because an all-atom style draws them as disconnected beads."""
+        # topologies without residue or atom names (e.g. LAMMPS data files) have no
+        # polymer attributes, so there is nothing to check
+        if not {"is_peptide", "is_nucleic"}.issubset(self.list_attributes()):
+            return
         polymer = self.named_attribute("is_peptide") | self.named_attribute(
             "is_nucleic"
         )
