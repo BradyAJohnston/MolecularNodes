@@ -217,10 +217,10 @@ def opacity(canvas):
     with canvas.timeline() as t:
         t.wait(0.5)
         t.play(
-            t.tween(context.node.i.transparency, 0.9), run_time=2
+            t.tween(context.internal_node.i.transparency, 0.9), run_time=2
         )  # SetOpacity(helix, 0.1)
         t.wait(0.7)
-        t.play(t.tween(context.node.i.transparency, 0.0), run_time=1.5)
+        t.play(t.tween(context.internal_node.i.transparency, 0.0), run_time=1.5)
         t.wait(0.5)
     return t
 

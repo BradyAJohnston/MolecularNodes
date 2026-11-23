@@ -154,7 +154,7 @@ with canvas.timeline() as t:
     t.wait(0.6)
     show(t, *network, count, visible=False)
     t.play(
-        t.tween(context.node.i.transparency, 0.94),  # SetOpacity(other, 0.06)
+        t.tween(context.internal_node.i.transparency, 0.94),  # SetOpacity(other, 0.06)
         canvas.camera.look_at(turn, margin=0.3),
         run_time=1.6,
     )
@@ -163,7 +163,7 @@ with canvas.timeline() as t:
     t.wait(1.2)
     show(t, bond, o_label, nh_label, visible=False)
     t.play(
-        t.tween(context.node.i.transparency, 0.0),
+        t.tween(context.internal_node.i.transparency, 0.0),
         canvas.camera.look_at(helix, margin=0.15),
         run_time=1.6,
     )

@@ -62,7 +62,7 @@ with canvas.timeline() as t:
     show(t, heading)
     t.play(canvas.camera.orbit(20), run_time=3)
     # PM: Colorize(loop, gold, residue_delay=0.08), SetOpacity(context, 0.18)
-    t.play(t.tween(context.node.i.transparency, 0.82), run_time=1.5)
+    t.play(t.tween(context.internal_node.i.transparency, 0.82), run_time=1.5)
     show(t, note)
     t.play(canvas.camera.orbit(9), run_time=1.5)
     # PM: BaseStyle(rna, "slabs") -> here a cut to base rings, showing every
@@ -70,7 +70,7 @@ with canvas.timeline() as t:
     t.set(visibility(rings), True)
     t.play(canvas.camera.orbit(9), run_time=1.5)
     show(t, note, visible=False)
-    t.play(t.tween(context.node.i.transparency, 0.0), run_time=1)
+    t.play(t.tween(context.internal_node.i.transparency, 0.0), run_time=1)
     show_only(t, [slabs, faint, rings, by_bfactor, surface], [by_bfactor])
     t.wait(1.5)
     show_only(t, [slabs, faint, rings, by_bfactor, surface], [surface])

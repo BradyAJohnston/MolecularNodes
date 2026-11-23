@@ -40,18 +40,18 @@ with canvas.timeline() as t:
     show(t, label, note)  # PM: Write(label) - no write-on yet
     # PM: SetOpacity(context, 0.06) - the context is its own style with a
     # Transparent material whose transparency socket is tweened
-    t.play(t.tween(context.node.i.transparency, 0.94), run_time=1)
+    t.play(t.tween(context.internal_node.i.transparency, 0.94), run_time=1)
     t.play(canvas.camera.orbit(16), run_time=2)
     t.wait(0.4)
     t.play(
         canvas.camera.focus(far_region, fstop=1.2),
-        t.tween(context.node.i.transparency, 0.65),
+        t.tween(context.internal_node.i.transparency, 0.65),
         run_time=1.4,
     )
     t.wait(0.4)
     t.play(
         canvas.camera.focus(protein.get_view(f"{helix} and name CA"), fstop=1.8),
-        t.tween(context.node.i.transparency, 0.94),
+        t.tween(context.internal_node.i.transparency, 0.94),
         run_time=1.2,
     )
     t.wait(0.8)

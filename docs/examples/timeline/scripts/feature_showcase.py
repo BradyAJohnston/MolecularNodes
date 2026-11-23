@@ -136,17 +136,21 @@ with canvas.timeline() as t:
     paint(p, lobe, GOLD)
     t.play(canvas.camera.orbit(7), run_time=2.5)
     t.play(
-        t.tween(context.node.i.transparency, 0.8), canvas.camera.orbit(6), run_time=2
+        t.tween(context.internal_node.i.transparency, 0.8),
+        canvas.camera.orbit(6),
+        run_time=2,
     )
     t.play(
-        t.tween(context.node.i.transparency, 0.0), canvas.camera.orbit(5), run_time=1.5
+        t.tween(context.internal_node.i.transparency, 0.0),
+        canvas.camera.orbit(5),
+        run_time=1.5,
     )
 
     heading(t, "Focus + annotation")
     # PM: helix.highlight(style="sphere"), highlight(style="box") - no highlight style yet
     t.play(
         canvas.camera.look_at(p.get_view(helix), margin=0.3),
-        t.tween(context.node.i.transparency, 0.95),
+        t.tween(context.internal_node.i.transparency, 0.95),
         run_time=2.8,
     )
     show(t, note)
@@ -154,7 +158,7 @@ with canvas.timeline() as t:
     show(t, note, visible=False)
     t.play(
         canvas.camera.look_at(p, margin=0.35),
-        t.tween(context.node.i.transparency, 0.0),
+        t.tween(context.internal_node.i.transparency, 0.0),
         run_time=2.5,
     )
 

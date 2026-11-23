@@ -108,7 +108,7 @@ with canvas.timeline() as t:
     t.play(
         canvas.camera.look_at(p.get_view(helix), margin=0.3),
         canvas.camera.focus(ca(helix), fstop=3.5),
-        t.tween(context.node.i.transparency, 0.9),
+        t.tween(context.internal_node.i.transparency, 0.9),
         run_time=3,
     )
     show(t, note)
@@ -121,7 +121,7 @@ with canvas.timeline() as t:
     t.play(
         canvas.camera.focus(ca(backbone), fstop=12),
         canvas.camera.look_at(p.get_view(backbone), margin=0.05),
-        t.tween(context.node.i.transparency, 0.965),
+        t.tween(context.internal_node.i.transparency, 0.965),
         run_time=3,
     )
     # PM: HydrogenBonds(...).highlight(mode="3d") - planned Hydrogen Bonds node
@@ -137,11 +137,13 @@ with canvas.timeline() as t:
     t.play(
         canvas.camera.look_at(p, margin=0.12),
         canvas.camera.focus(ca(helix), fstop=3.2),
-        t.tween(context.node.i.transparency, 0.0),
+        t.tween(context.internal_node.i.transparency, 0.0),
         run_time=4,
     )
     t.play(
-        t.tween(context.node.i.transparency, 0.76), canvas.camera.orbit(17), run_time=4
+        t.tween(context.internal_node.i.transparency, 0.76),
+        canvas.camera.orbit(17),
+        run_time=4,
     )
     # 35-45: hold the framing so the focus transfer is visible
     caption(t, "focus_a")
@@ -160,7 +162,7 @@ with canvas.timeline() as t:
     t.play(
         canvas.camera.look_at(p, margin=0.15),
         canvas.camera.focus(ca(far_helix), fstop=5.6),
-        t.tween(context.node.i.transparency, 0.0),
+        t.tween(context.internal_node.i.transparency, 0.0),
         run_time=3,
     )
     # PM: ColorLegend(scale, title="Cα B factor") - no legend annotation yet

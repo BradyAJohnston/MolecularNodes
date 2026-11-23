@@ -84,10 +84,10 @@ with canvas.timeline() as t:
     show(t, helix_note, strand_note)
     t.wait(1.2)
     t.play(
-        t.tween(context.node.i.transparency, 0.88), run_time=1.3
+        t.tween(context.internal_node.i.transparency, 0.88), run_time=1.3
     )  # SetOpacity(rest, 0.12)
     t.play(canvas.camera.orbit(20), run_time=2)
-    t.play(t.tween(context.node.i.transparency, 0.0), run_time=1)
+    t.play(t.tween(context.internal_node.i.transparency, 0.0), run_time=1)
     show(t, helix_note, strand_note, visible=False)
     show_only(t, [cartoon, faint, sticks, surface], [sticks])
     show(t, ruler)
