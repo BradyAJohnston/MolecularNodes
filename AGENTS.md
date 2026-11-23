@@ -55,9 +55,9 @@ Key facts:
 
 ```bash
 uv sync --all-extras                      # dev environment (bpy, test and docs extras)
-uv run -m nodebpy.assets build            # nodes/*.py -> assets/nodes.blend (~1 min)
-uv run -m nodebpy.assets dump             # assets/nodes.blend -> nodes/*.py
-uv run -m nodebpy.assets check            # CI check: build -> dump reproduces sources
+uv run nodebpy build                      # nodes/*.py -> assets/nodes.blend (~1 min)
+uv run nodebpy dump                       # assets/nodes.blend -> nodes/*.py
+uv run nodebpy check                      # CI check: build -> dump reproduces sources
 uv run pytest tests/test_nodes.py -k name # run only what you changed; the suite runs `ensure` itself
 uv run pytest -n auto                     # full suite (slow; renders happen on CPU)
 uv run ruff format && uv run ruff check   # formatting and lint (pre-commit runs these)

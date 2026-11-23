@@ -1,11 +1,10 @@
 # Node group ".MN_mask_transparent" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import ShaderNodeTree
 from nodebpy import TreeBuilder
-from nodebpy import geometry as g
 from nodebpy import shader as s
 from nodebpy.builder import CustomShaderGroup, FloatSocket, SocketAccessor
 from nodebpy.types import InputFloat
@@ -59,6 +58,6 @@ class MN_mask_transparent(CustomShaderGroup):
         value_1 = tree.outputs.float("Value")
 
         (
-            g.Math.less_than(s.LightPath().o.transparent_depth, 1.0).o.value * value
+            s.Math.less_than(s.LightPath().o.transparent_depth, 1.0).o.value * value
             >> value_1
         )

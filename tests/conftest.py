@@ -11,7 +11,9 @@ os.environ.setdefault(
     "BLENDER_USER_EXTENSIONS", tempfile.mkdtemp(prefix="mn-test-extensions-")
 )
 
+import ipaddress  # noqa: E402
 import shutil  # noqa: E402
+import socket  # noqa: E402
 import sys  # noqa: E402
 from os.path import dirname, join, realpath  # noqa: E402
 from pathlib import Path  # noqa: E402
@@ -37,7 +39,7 @@ if os.environ.get("PYTEST_XDIST_WORKER") is None:
     ):
         _env = os.environ.copy()
         if bpy.app.binary_path:  # inside a full Blender: spawn another
-            import nodebpy.assets.__main__ as _assets_main
+            import nodebpy.__main__ as _nodebpy_main
 
             # an isolated extensions dir so the spawn can't pick up stale wheels
             _env["BLENDER_USER_EXTENSIONS"] = tempfile.mkdtemp(prefix="mn-assets-ext-")
@@ -46,16 +48,17 @@ if os.environ.get("PYTEST_XDIST_WORKER") is None:
                 "-b",
                 "--factory-startup",
                 "-P",
-                _assets_main.__file__,
+                _nodebpy_main.__file__,
                 "--",
                 "ensure",
             ]
         else:
-            _cmd = [sys.executable, "-m", "nodebpy.assets", "ensure"]
+            _cmd = [sys.executable, "-m", "nodebpy", "ensure"]
         subprocess.run(_cmd, check=True, env=_env, cwd=Path(__file__).parent.parent)
 import numpy as np  # noqa: E402
 import pytest  # noqa: E402
 import molecularnodes as mn  # noqa: E402
+from molecularnodes.blender.registered import object_uuid  # noqa: E402
 from .utils import NumpySnapshotExtension  # noqa: E402
 
 # Pin numpy print format so snapshots are consistent across numpy 1.x and 2.x
@@ -110,7 +113,7 @@ def run_around_tests(request):
     print(f"{bpy.app.handlers.frame_change_pre=}")
     print(f"{mn.session.get_session().entities.keys()=}")
     print(f"{list(bpy.data.objects)=}")
-    print(f"{list(o.uuid for o in bpy.data.objects)=}")
+    print(f"{list(object_uuid(o) for o in bpy.data.objects)=}")
     # save the scene before it is reset, so a failing test can be opened and inspected
     save_blend_file(request)
     bpy.ops.wm.read_homefile(app_template="")
@@ -118,6 +121,143 @@ def run_around_tests(request):
     # Code that will run after your test, for example:
     # files_after = # ... do something to check the existing files
     # assert files_before == files_after
+
+
+def pytest_configure(config):
+    config.addinivalue_line(
+        "markers",
+        "network: downloads from a remote server; CI runs these in a single job, "
+        "deselect with -m 'not network'",
+    )
+    config.addinivalue_line(
+        "markers",
+        "eevee: renders with EEVEE; skipped when this machine can't render with it "
+        "(no GPU), force with MN_TEST_EEVEE=1 or MN_TEST_EEVEE=0",
+    )
+    # pytest-xdist workers collect the tests themselves: check in the controller
+    # before they spawn, so the workers inherit the answer instead of all checking
+    if os.environ.get("PYTEST_XDIST_WORKER") is None and getattr(
+        config.option, "numprocesses", None
+    ):
+        eevee_available()
+
+
+# a minimal EEVEE render: without a GPU (most CI runners) EEVEE crashes the whole
+# process rather than raising, so it is only ever attempted in a subprocess
+_EEVEE_PROBE = """
+import bpy, tempfile
+scene = bpy.context.scene
+scene.render.engine = "BLENDER_EEVEE"
+scene.render.resolution_x = scene.render.resolution_y = 8
+scene.render.filepath = tempfile.mktemp(suffix=".png")
+bpy.ops.render.render(write_still=True)
+"""
+
+
+def eevee_available() -> bool:
+    """
+    Whether EEVEE can render on this machine.
+
+    `MN_TEST_EEVEE=1` or `=0` skips the check. Otherwise the answer is found by
+    rendering in a subprocess, only when tests marked `eevee` are collected (or
+    up front when running under pytest-xdist). The result is stored in
+    `MN_TEST_EEVEE` so it is only checked once.
+    """
+    value = os.environ.get("MN_TEST_EEVEE")
+    if value is None:
+        import subprocess
+
+        if bpy.app.binary_path:  # inside a full Blender
+            cmd = [bpy.app.binary_path, "-b", "--factory-startup", "--python-expr"]
+        else:
+            cmd = [sys.executable, "-c"]
+        try:
+            result = subprocess.run(
+                [*cmd, _EEVEE_PROBE], capture_output=True, timeout=120
+            )
+            value = "1" if result.returncode == 0 else "0"
+        except subprocess.TimeoutExpired:
+            value = "0"
+        os.environ["MN_TEST_EEVEE"] = value
+    return value not in ("0", "", "false", "False")
+
+
+def pytest_collection_modifyitems(config, items):
+    eevee = [item for item in items if item.get_closest_marker("eevee")]
+    if not eevee or eevee_available():
+        return
+    skip = pytest.mark.skip(reason="EEVEE can't render on this machine (no GPU)")
+    for item in eevee:
+        item.add_marker(skip)
+
+
+def _is_local(address) -> bool:
+    "Whether a socket address is a Unix socket or a loopback address (e.g. IMD tests)."
+    if not isinstance(address, tuple):
+        return True
+    host = address[0]
+    if host == "localhost":
+        return True
+    try:
+        return ipaddress.ip_address(host).is_loopback
+    except ValueError:
+        return False
+
+
+# Whether the running test may open remote connections; see `no_network`.
+_network_allowed = False
+_connect = socket.socket.connect
+
+
+def _guarded_connect(sock, address):
+    if not _network_allowed and not _is_local(address):
+        raise RuntimeError(
+            f"Tried to connect to {address[0]}. Load structures with the `fetch` "
+            "fixture (add missing files to tests/data), or mark the test with "
+            "@pytest.mark.network."
+        )
+    return _connect(sock, address)
+
+
+# patched for the whole session, so module and session scoped fixtures, which are set
+# up before any function scoped fixture, can't download either
+socket.socket.connect = _guarded_connect
+
+
+@pytest.fixture(autouse=True)
+def no_network(request):
+    """
+    Refuse remote connections unless the test is marked `network`.
+
+    Structures come from tests/data through the `fetch` fixture, so a test that tries to
+    download has a missing data file. Many CI jobs downloading at once get rate limited
+    by RCSB and EMDB and fail.
+    """
+    global _network_allowed
+    _network_allowed = request.node.get_closest_marker("network") is not None
+    yield
+    _network_allowed = False
+
+
+@pytest.fixture
+def fetch():
+    """
+    Fetch a structure from tests/data, never from the network.
+
+    Takes the same arguments as `mn.Molecule.fetch`. The file must already be in
+    tests/data under the code as spelled in the test; download it there once and commit it.
+    """
+
+    def _fetch(code: str, format: str = "bcif", **kwargs) -> mn.Molecule:
+        format = format.strip(".")
+        if not Path(DATA_DIR, f"{code}.{format}").exists():
+            raise FileNotFoundError(
+                f"{code}.{format} is not in tests/data. Download it there once and "
+                "commit it, so tests don't download it on every CI job."
+            )
+        return mn.Molecule.fetch(code, format=format, cache=DATA_DIR, **kwargs)
+
+    return _fetch
 
 
 def pytest_sessionstart(session):

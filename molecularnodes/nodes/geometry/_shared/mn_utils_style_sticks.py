@@ -1,5 +1,5 @@
 # Node group ".MN_utils_style_sticks" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 import math
@@ -185,7 +185,7 @@ class MN_utils_style_sticks(CustomGeometryGroup):
         extra_bond_rotate = tree.inputs.float(
             "Extra Bond Rotate", 0.0, min_value=-10_000.0, max_value=10_000.0
         )
-        menu = tree.inputs.menu("Menu", optional_label=True)
+        menu = tree.inputs.menu("Menu", "Single", optional_label=True)
         with tree.inputs.panel("Material"):
             shade_smooth = tree.inputs.boolean(
                 "Shade Smooth",
@@ -205,22 +205,18 @@ class MN_utils_style_sticks(CustomGeometryGroup):
                 vector_math = edge_vertices.o.position_1 - edge_vertices.o.position_2
                 evaluate_at_index = vector_math.edge.at(
                     g.EdgesOfVertex(
-                        vertex_index=edge_vertices_1.o.vertex_index_1
-                    ).o.edge_index
-                )
-                evaluate_at_index_1 = vector_math.edge.at(
-                    g.EdgesOfVertex(
                         vertex_index=edge_vertices_1.o.vertex_index_2, sort_index=2
                     ).o.edge_index
                 )
-                vector_math_1 = (
-                    evaluate_at_index.normalize()
-                    .cross(evaluate_at_index_1.normalize())
-                    .normalize()
+                vector_math_1 = vector_math.edge.at(
+                    g.EdgesOfVertex(edge_vertices_1.o.vertex_index_1).o.edge_index
+                ).normalize()
+                vector_math_2 = (
+                    vector_math_1.cross(evaluate_at_index.normalize()).normalize()
                     * MNUnits(value=extra_bond_offset).o.angstrom
                 )
             capture = g.CaptureAttribute.edge(geometry=separate_geometry.o.selection)
-            vector = capture.items.vector("Vector", vector_math_1)
+            vector = capture.items.vector(vector_math_2, "Vector")
         split_edges = capture.o.geometry >> g.SplitEdges()
         with g.Frame("Rotate and offset Extra Bonds"):
             map_bond_type = Map_bond_type()
@@ -252,7 +248,7 @@ class MN_utils_style_sticks(CustomGeometryGroup):
                 menu_switch.o.double & IsExtraBonds().o.is_extra_bonds
             ).switch.float(1.0, scale_extra_bond_radius)
             capture_2 = g.CaptureAttribute.edge(geometry=menu_switch)
-            output = capture_2.items.float("Output", switch)
+            output = capture_2.items.float(switch, "Output")
         set_curve_radius = (
             capture_2.o.geometry
             >> g.MeshToCurve()
@@ -261,31 +257,31 @@ class MN_utils_style_sticks(CustomGeometryGroup):
         with g.Frame("Get correct index to sample from"):
             capture_3 = g.CaptureAttribute.curve(geometry=set_curve_radius)
             first_point = capture_3.items.integer(
-                "First Point", g.PointsOfCurve().o.point_index
+                g.PointsOfCurve().o.point_index, "First Point"
             )
             last_point = capture_3.items.integer(
-                "Last Point", g.PointsOfCurve(sort_index=1).o.point_index
+                g.PointsOfCurve(sort_index=1).o.point_index, "Last Point"
             )
-            curve_index = capture_3.items.integer("Curve Index", g.Index())
+            curve_index = capture_3.items.integer(g.Index(), "Curve Index")
             switch_1 = (
                 resolution
-                < g.AccumulateField.face.integer(
-                    group_index=curve_index.output
-                ).o.leading
+                < g.AccumulateField.face.integer(group_id=curve_index.output).o.leading
             ).switch.integer(first_point.output, last_point.output)
         with g.Frame("curve to mesh"):
             curve_to_mesh = g.CurveToMesh(
-                curve=g.SubdivideCurve(curve=capture_3.o.geometry),
+                curve=g.SubdivideCurve(capture_3.o.geometry),
                 profile_curve=g.CurveCircle(
                     resolution=resolution, radius=MNUnits(value=1.0).o.angstrom
                 ),
                 scale=g.Radius().o.radius * radius,
             )
+            capture_4 = g.CaptureAttribute.face(geometry=curve_to_mesh)
+            index = capture_4.items.integer(switch_1, "Index")
             sample_atomic_attributes_to_face_corner = (
                 SampleAtomicAttributesToFaceCorner(
-                    geometry=curve_to_mesh,
+                    geometry=capture_4.o.geometry,
                     sample_atoms=capture_3.o.geometry,
-                    index=switch_1,
+                    index=index.output,
                 )
             )
         with g.Frame("Set up materials"):
@@ -295,5 +291,3 @@ class MN_utils_style_sticks(CustomGeometryGroup):
                 >> g.SetShadeSmooth.face(shade_smooth=shade_smooth)
                 >> geometry
             )
-
-        menu.default_value = "Single"

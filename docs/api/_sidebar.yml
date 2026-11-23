@@ -7,6 +7,7 @@ website:
     - text: '---'
     - contents:
       - api/styles.qmd
+      - api/pubchem.qmd
       - api/trajectories.qmd
       - api/mdanalysis.qmd
       - api/nodebpy.qmd
@@ -14,6 +15,7 @@ website:
       - api/materials.qmd
       - api/annotations.qmd
       - api/solvent.qmd
+      - api/electrostatics.qmd
       - api/canvas.qmd
       - api/blender.qmd
       section: Guides
@@ -23,7 +25,9 @@ website:
       - contents:
         - api/reference/Molecule.qmd
         - api/reference/entities.molecule.SelectionManager.qmd
-        - api/reference/entities.molecule.DSSPManager.qmd
+        - api/reference/entities.molecule.CalculationManager.qmd
+        - api/reference/entities.molecule.DSSPCalculation.qmd
+        - api/reference/entities.molecule.HBondCalculation.qmd
         - api/reference/entities.StreamingTrajectory.qmd
         section: Molecule
       - contents:
@@ -57,16 +61,17 @@ website:
         - api/reference/scene.world.WorldTree.qmd
         section: Scene
       - contents:
-        - api/reference/nodes.materials.qmd
         - api/reference/nodes.general.qmd
         - api/reference/nodes.animate.qmd
         - api/reference/nodes.attributes.qmd
         - api/reference/nodes.color.qmd
+        - api/reference/nodes.compositor.qmd
         - api/reference/nodes.curves.qmd
         - api/reference/nodes.dna.qmd
         - api/reference/nodes.density.qmd
         - api/reference/nodes.ensemble.qmd
         - api/reference/nodes.geometry.qmd
+        - api/reference/nodes.materials.qmd
         - api/reference/nodes.select.qmd
         - api/reference/nodes.simulation.qmd
         - api/reference/nodes.style.qmd

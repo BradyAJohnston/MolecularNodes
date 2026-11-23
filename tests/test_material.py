@@ -1,8 +1,6 @@
 import bpy
 import pytest
-import molecularnodes as mn
 from molecularnodes import material
-from .constants import data_dir
 
 PRESETS = [
     material.Default,
@@ -42,9 +40,9 @@ def test_preset_parameters_map_to_sockets():
 def test_flat_outline_toggle():
     flat = material.Flat(outline=False, threshold=0.5, thickness=0.3)
     assert flat.outline is False
-    assert flat.node.i.outline.default_value == "None"
+    assert flat.internal_node.i.outline.default_value == "None"
     flat.outline = True
-    assert flat.node.i.outline.default_value == "Outline"
+    assert flat.internal_node.i.outline.default_value == "Outline"
     assert flat.threshold == pytest.approx(0.5)
     assert flat.thickness == pytest.approx(0.3)
 
@@ -53,9 +51,9 @@ def test_transparent_fresnel_toggle():
     mat = material.Transparent(transparency=0.5, fresnel=False)
     assert mat.transparency == pytest.approx(0.5)
     assert mat.fresnel is False
-    assert mat.node.i.menu.default_value == "Transparent"
+    assert mat.internal_node.i.menu.default_value == "Transparent"
     mat.fresnel = True
-    assert mat.node.i.menu.default_value == "Fresnel"
+    assert mat.internal_node.i.menu.default_value == "Fresnel"
     assert mat.material.surface_render_method == "BLENDED"
     assert mat.material.name.startswith("Transparent")
 
@@ -73,8 +71,8 @@ def test_squishy_material_parameters():
     assert mat.bsdf.i.subsurface_weight.default_value == pytest.approx(1.0)
 
 
-def test_add_style_with_preset():
-    mol = mn.Molecule.fetch("1BNA", cache=data_dir)
+def test_add_style_with_preset(fetch):
+    mol = fetch("1BNA")
     mat = material.AmbientOcclusion(distance=0.5)
     mol.add_style("spheres", material=mat)
     socket = mol.tree.tree.nodes["Style Spheres"].inputs["Material"]
@@ -84,8 +82,8 @@ def test_add_style_with_preset():
     assert mat.ao.i.distance.default_value == pytest.approx(3.0)
 
 
-def test_add_style_with_material_string():
-    mol = mn.Molecule.fetch("1BNA", cache=data_dir)
+def test_add_style_with_material_string(fetch):
+    mol = fetch("1BNA")
     mol.add_style("cartoon", material="Flat")
     socket = mol.tree.tree.nodes["Style Cartoon"].inputs["Material"]
     assert socket.default_value.name.startswith("Flat")

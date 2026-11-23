@@ -1,5 +1,5 @@
 # Node-group asset "Sample Mixed Vector" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -13,7 +13,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputFloat, InputGeometry, InputVector
+from nodebpy.types import Default, InputFloat, InputGeometry, InputVector
 from .index_mix_vector import IndexMixVector
 
 
@@ -26,7 +26,7 @@ class SampleMixedVector(AssetGeometryGroup):
     geometry : InputGeometry
         The geometry to sample the values from
     vector : InputVector
-        The field to mix and evaluate on the sample geometry
+        The field to mix and evaluate on the sample geometry. When unconnected: The position from the context.
     index : InputFloat
         The index to sample the value from. The fractional component of the index is used to mix between values using `Index Mix ...` nodes
 
@@ -73,7 +73,7 @@ class SampleMixedVector(AssetGeometryGroup):
     def __init__(
         self,
         geometry: InputGeometry = None,
-        vector: InputVector = None,
+        vector: InputVector = Default.POSITION,
         index: InputFloat = 0.0,
     ):
         super().__init__(**{"Geometry": geometry, "Vector": vector, "Index": index})
@@ -102,10 +102,9 @@ class SampleMixedVector(AssetGeometryGroup):
         index_mix_vector = IndexMixVector(value=vector, index=index)
         (
             geometry
-            >> g.SampleIndex(
+            >> g.SampleIndex.point.vector(
                 value=index_mix_vector.o.value,
                 index=index_mix_vector.o.from_,
-                data_type="FLOAT_VECTOR",
                 clamp=True,
             )
             >> vector_1

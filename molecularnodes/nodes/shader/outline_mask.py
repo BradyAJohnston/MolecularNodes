@@ -1,10 +1,9 @@
 # Node-group asset "Outline Mask" (ShaderNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import ShaderNodeTree
 from nodebpy import TreeBuilder
-from nodebpy import geometry as g
 from nodebpy import shader as s
 from nodebpy.builder import (
     AssetShaderGroup,
@@ -78,24 +77,24 @@ class OutlineMask(AssetShaderGroup):
         )
         outline = tree.outputs.float("Outline")
 
+        attribute = s.Attribute(
+            attribute_type="VIEW_LAYER", attribute_name="camera.data.angle"
+        )
         camera_data = s.CameraData()
+        mix = s.Math.greater_than(attribute.o.factor, 0.0).o.value.mix.float(
+            1.0, (attribute.o.factor * 0.5).tan() / 0.36
+        )
         edge_detection = EdgeDetection(
-            offset=camera_data.o.view_distance * (thickness / 100.0)
+            offset=camera_data.o.view_distance * mix * (thickness / 100.0)
         )
-        math_1 = g.Math.less_than(
+        math_1 = s.Math.less_than(
             edge_detection.o.co_planar_delta,
-            camera_data.o.view_distance * (threshold / 100.0),
+            camera_data.o.view_distance * mix * (threshold / 100.0),
         )
-        math_2 = g.Math(
-            value_001=edge_detection.o.object_edge,
-            value=1.0,
-            operation="SUBTRACT",
-            use_clamp=True,
-        )
-        math_3 = 1.0 - math_1.o.value.min(
-            g.Math.less_than(edge_detection.o.normal_delta, 0.55)
-        ).min(math_2)
-        math_3 - s.Geometry().o.backfacing >> outline
+        math_2 = math_1.o.value.min(
+            s.Math.less_than(edge_detection.o.normal_delta, 0.55)
+        ).min(s.Math.subtract(1.0, edge_detection.o.object_edge, use_clamp=True))
+        1.0 - math_2 - s.Geometry().o.backfacing >> outline
 
 
 ASSET = OutlineMask

@@ -1,5 +1,5 @@
 # Node group ".Sample Atomic Attributes" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -12,7 +12,7 @@ from nodebpy.builder import (
     IntegerSocket,
     SocketAccessor,
 )
-from nodebpy.types import InputGeometry, InputInteger
+from nodebpy.types import Default, InputGeometry, InputInteger
 
 
 class SampleAtomicAttributes(CustomGeometryGroup):
@@ -26,7 +26,7 @@ class SampleAtomicAttributes(CustomGeometryGroup):
     sample_atoms : InputGeometry
         Sample Atoms
     index : InputInteger
-        Index
+        Index. When unconnected: The index from the context.
 
     Inputs
     ------
@@ -69,7 +69,7 @@ class SampleAtomicAttributes(CustomGeometryGroup):
         self,
         atoms: InputGeometry = None,
         sample_atoms: InputGeometry = None,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
     ):
         super().__init__(
             **{"Atoms": atoms, "Sample Atoms": sample_atoms, "Index": index}

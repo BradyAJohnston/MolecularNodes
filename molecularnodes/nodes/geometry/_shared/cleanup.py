@@ -1,5 +1,5 @@
 # Node group ".Cleanup" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
@@ -103,11 +103,8 @@ class Cleanup(CustomGeometryGroup):
         )
         geometry_1 = tree.outputs.geometry("Geometry")
 
-        sample_index = g.SampleIndex(
-            geometry=color_source,
-            value=Color(),
-            index=g.NamedAttribute.integer("tmp_idx").o.attribute,
-            data_type="FLOAT_COLOR",
+        sample_index = g.SampleIndex.point.color(
+            color_source, Color(), g.NamedAttribute.integer("tmp_idx").o.attribute
         )
         (
             SetColor(atoms=geometry, color=sample_index)

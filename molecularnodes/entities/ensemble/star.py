@@ -1,15 +1,17 @@
 import json
 from pathlib import Path
+from typing import cast
 import bpy
-import databpy
+import databpy as db
 import mrcfile
 import numpy as np
 import starfile
-from databpy import AttributeTypes, BlenderObject
+from databpy import BlenderObject
 from pandas import CategoricalDtype, DataFrame
 from PIL import Image
 from scipy.spatial.transform import Rotation
 from ... import blender as bl
+from ...blender.registered import object_props
 from ...nodes import geometry
 from ...nodes._utils import get_star_node
 from .base import Ensemble, EntityType
@@ -78,23 +80,17 @@ class EnsembleDataFrame:
 
     def store_data_on_object(self, obj: bpy.types.Object) -> None:
         bob = BlenderObject(obj)
-
-        bob.store_named_attribute(
-            self.image_id_values(),
-            name="image_id",
-            atype=AttributeTypes.INT,
-        )
+        bob.point["image_id"] = db.int32(self.image_id_values())
 
         categories: dict[str, list] = {}
         for col in self.data.columns:
             if isinstance(self.data[col].dtype, CategoricalDtype):
                 categories[col] = self.data[col].cat.categories.tolist()
-                data = self.data[col].cat.codes.to_numpy()
-                bob.store_named_attribute(data, name=col, atype=AttributeTypes.INT)
+                bob[col] = db.int32(self.data[col].cat.codes.to_numpy())
             else:
-                bob.store_named_attribute(self.data[col].to_numpy(), name=col)
+                bob[col] = self.data[col].to_numpy()
 
-        bob.object.mn.categories = categories
+        object_props(bob.object).categories = categories
 
 
 class RelionDataFrame(EnsembleDataFrame):
@@ -181,42 +177,30 @@ class NDJSONDataFrame(EnsembleDataFrame):
 
     def store_data_on_object(self, obj: bpy.types.Object) -> None:
         bob = BlenderObject(obj)
+        bob.point["image_id"] = db.int32(self.image_id_values())
+        bob.point["transform"] = db.mat4(self.transforms())
 
-        bob.store_named_attribute(
-            self.image_id_values(),
-            name="image_id",
-            atype=AttributeTypes.INT,
-        )
-        # Blender stores float4x4 attributes column-major, so the row-major
-        # numpy matrices must be transposed or GN sees the inverse rotation
-        bob.store_named_attribute(
-            self.transforms().transpose(0, 2, 1),
-            name="transform",
-            atype=AttributeTypes.FLOAT4X4,
-        )
         if "instance_id" in self.data:
-            bob.store_named_attribute(
-                self.data["instance_id"].to_numpy(dtype=int),
-                name="instance_id",
-                atype=AttributeTypes.INT,
+            bob.point["instance_id"] = db.int32(
+                self.data["instance_id"].to_numpy(dtype=int)
             )
 
 
 class StarFile(Ensemble):
     data_reader: DataFrame | None
     data_frame: RelionDataFrame | CistemDataFrame | NDJSONDataFrame | None
+    _entity_type = EntityType.ENSEMBLE_STAR
 
     def __init__(self, file_path: str | Path) -> None:
         super().__init__(file_path)
         self.type: str = "starfile"
         self.current_image: int = -1
-        self._entity_type = EntityType.ENSEMBLE_STAR
         self.data_reader = self._read()
         self.data_frame = self._assign_df()
 
     @classmethod
     def from_blender_object(cls, blender_object: bpy.types.Object) -> "StarFile":
-        self = cls(blender_object.mn.filepath)
+        self = cls(object_props(blender_object).filepath)
         self.object = blender_object
         return self
 
@@ -312,7 +296,8 @@ class StarFile(Ensemble):
             raise ValueError("Object not set. Call from_blender_object() first.")
 
         categories = self.props.categories
-        image_index = self.star_node.inputs["Image"].default_value - 1
+        image_socket = cast(bpy.types.NodeSocketInt, self.star_node.inputs["Image"])
+        image_index = image_socket.default_value - 1
         if self._is_relion():
             micrograph_path = categories["rlnMicrographName"][image_index]
         elif self._is_cistem():
@@ -367,7 +352,7 @@ class StarFile(Ensemble):
         if self.data_frame is None:
             raise ValueError("DataFrame not assigned. Call StarFile.load() first.")
 
-        self.object = databpy.create_object(
+        self.object = db.create_object(
             self.data_frame.coordinates_scaled,
             collection=bl.coll.mn(),
             name=name,

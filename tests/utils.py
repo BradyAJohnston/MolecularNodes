@@ -1,6 +1,8 @@
 import io
 import os
 from pathlib import Path
+from typing import Any
+import bpy
 import databpy as db
 import numpy as np
 from syrupy.extensions.amber import AmberSnapshotExtension
@@ -18,6 +20,66 @@ FLOAT_SIG_DIGITS = 3
 COUNT_SIG_DIGITS = 3
 
 
+#: the operators Molecular Nodes registers under `bpy.ops.mn`, which the bpy stubs
+#: can't know about
+mn_ops: Any = bpy.ops.mn  # ty: ignore[missing-attribute]
+
+
+def scene() -> bpy.types.Scene:
+    """The current scene, which the bpy stubs type as optional."""
+    assert bpy.context.scene is not None
+    return bpy.context.scene
+
+
+def view_layer() -> bpy.types.ViewLayer:
+    """The current view layer, which the bpy stubs type as optional."""
+    assert bpy.context.view_layer is not None
+    return bpy.context.view_layer
+
+
+def node_input(node: bpy.types.Node, key: str | int) -> bpy.types.NodeSocket:
+    """An input socket of a node, whose inputs the stubs type as optional."""
+    assert node.inputs is not None
+    return node.inputs[key]
+
+
+def socket_links(socket: bpy.types.NodeSocket) -> "list[bpy.types.NodeLink]":
+    """The links of a node socket, which the stubs type as optional."""
+    assert socket.links is not None
+    return list(socket.links)
+
+
+def object_mesh(obj: bpy.types.Object) -> bpy.types.Mesh:
+    """The data of an object that must be a mesh."""
+    assert isinstance(obj.data, bpy.types.Mesh)
+    return obj.data
+
+
+def interface_items(
+    tree: bpy.types.NodeTree,
+) -> "bpy.types.bpy_prop_collection[bpy.types.NodeTreeInterfaceItem]":
+    """The interface items of a node tree, whose interface the stubs type as optional."""
+    assert tree.interface is not None
+    return tree.interface.items_tree
+
+
+def interface_socket(
+    tree: bpy.types.NodeTree, key: str | int
+) -> bpy.types.NodeTreeInterfaceSocket:
+    """An interface item of a node tree that must be a socket."""
+    item = interface_items(tree)[key]
+    assert isinstance(item, bpy.types.NodeTreeInterfaceSocket)
+    return item
+
+
+def modifier_node_group(obj: bpy.types.Object) -> bpy.types.NodeTree:
+    """The node group of an object's first modifier, which must be a nodes modifier."""
+    modifier = obj.modifiers[0]
+    assert isinstance(modifier, bpy.types.NodesModifier)
+    assert modifier.node_group is not None
+    return modifier.node_group
+
+
 class NumpySnapshotExtension(AmberSnapshotExtension):
     def __init__(self):
         super().__init__()
@@ -33,7 +95,7 @@ class NumpySnapshotExtension(AmberSnapshotExtension):
                     data = data[: int(cutoff / 10),]
 
             return np.array2string(
-                data, precision=1, threshold=2e3, floatmode="maxprec_equal"
+                data, precision=1, threshold=2000, floatmode="maxprec_equal"
             )
         return super().serialize(data, **kwargs)
 
@@ -147,7 +209,7 @@ class ImageSnapshotExtension(SingleFileSnapshotExtension):
             self._failure_files.append(diff_file)
         return False
 
-    def diff_lines(self, received, stored):
+    def diff_lines(self, serialized_data, snapshot_data):
         # a byte-level diff of two PNGs is noise - report the stats and where
         # the images for inspection were written instead
         yield getattr(self, "_failure_stats", "images differ")
@@ -228,7 +290,14 @@ class GeometrySet(db.GeometrySet):
 
         parts = [f"shape={self._shape(arr.shape)}, atype={attr.atype.value}"]
 
-        if n_unique == 1:
+        if dtype_kind == "b":
+            # counts rather than the unique values, so a change in how many points
+            # are flagged shows up in the snapshot
+            n_true = int(np.count_nonzero(arr))
+            parts.append(
+                f"true={self._count(n_true)}, false={self._count(arr.size - n_true)}"
+            )
+        elif n_unique == 1:
             parts.append(f"constant={self._format_value(unique[0], dtype_kind)}")
         elif n_unique <= max_display:
             values = [self._format_value(v, dtype_kind) for v in unique]

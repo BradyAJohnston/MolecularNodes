@@ -1,5 +1,5 @@
 # Node-group asset "Separate Atoms" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -100,12 +100,12 @@ class SeparateAtoms(AssetGeometryGroup):
         closure_zone = g.ClosureZone()
         atoms_2 = closure_zone.inputs.geometry("Atoms")
         geometry = closure_zone.outputs.geometry("Geometry")
-        capture = g.CaptureAttribute.point(geometry=atoms_2)
-        capture.items.integer("Value")
-        capture.o.geometry >> geometry
+        capture = g.CaptureAttribute.point(geometry=atoms_2.output)
+        capture.items.integer(name="Value")
+        capture.o.geometry >> geometry.input
         _evaluate_on_atoms = EvaluateOnAtoms()
         capture_1 = g.CaptureAttribute.point(geometry=atoms)
-        value = capture_1.items.integer("Value", g.Index())
+        value = capture_1.items.integer(g.Index(), "Value")
         separate_geometry = capture_1.o.geometry >> g.SeparateGeometry.point(
             selection=selection
         )

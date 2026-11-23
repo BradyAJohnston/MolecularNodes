@@ -1,5 +1,5 @@
 # Node-group asset "Style Ribbon" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -28,6 +28,7 @@ from nodebpy.types import (
     InputVector,
 )
 from ._shared.cleanup import Cleanup
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_utils_style_ribbon_nucleic import MN_utils_style_ribbon_nucleic
 from .atoms_to_ca_curves import AtomsToCACurves
 from .check_geometry import CheckGeometry
@@ -68,7 +69,7 @@ class MN_utils_style_ribbon_peptide(CustomGeometryGroup):
             "Material", description="Material to apply to the resulting geometry"
         )
         uv_map = tree.inputs.boolean("UV Map", False)
-        u_component = tree.inputs.menu("U Component", optional_label=True)
+        u_component = tree.inputs.menu("U Component", "Factor", optional_label=True)
         threshold = tree.inputs.float(
             "Threshold", 4.5, min_value=0.0, max_value=10_000.0
         )
@@ -85,18 +86,18 @@ class MN_utils_style_ribbon_peptide(CustomGeometryGroup):
             index_a=OffsetIndex(offset=-1), index_c=OffsetIndex(offset=1)
         ).o.angle.map_range(1.6899998, 2.861593, to_max=0.25)
         set_curve_radius = g.SetCurveRadius(
-            curve=g.SetCurveNormal(curve=atoms_to_ca_curves), radius=radius
+            curve=g.SetCurveNormal(atoms_to_ca_curves), radius=radius
         )
         fillet_curve = g.FilletCurve(curve=set_curve_radius, radius=map_range)
         fillet_curve.node.mute = True
         curve_custom_profile = CurveCustomProfile(
-            curve=g.SetHandleType(curve=g.SetSplineType.bezier(fillet_curve)),
-            subdivisions=quality * g.Integer(integer=2),
+            curve=g.SetHandleType(g.SetSplineType.bezier(fillet_curve)),
+            subdivisions=quality * g.Integer(2),
             profile_type="Default Profile",
             uv_map=uv_map,
             u_component=u_component,
             socket_6=CurveRotation(),
-            profile_resolution=quality * g.Integer(integer=3),
+            profile_resolution=quality * g.Integer(3),
             socket_11=0.0,
         )
         (
@@ -110,8 +111,6 @@ class MN_utils_style_ribbon_peptide(CustomGeometryGroup):
         )
 
         set_curve_radius >> curve
-
-        u_component.default_value = "Factor"
 
 
 class StyleRibbon(AssetGeometryGroup):
@@ -354,6 +353,7 @@ class StyleRibbon(AssetGeometryGroup):
                 )
                 u_component = tree.inputs.menu(
                     "U Component",
+                    "Factor",
                     description="Store either the 'Length' or the 'Factor' of the curve as the U component.",
                     expanded=True,
                     optional_label=True,
@@ -361,7 +361,10 @@ class StyleRibbon(AssetGeometryGroup):
         with tree.inputs.panel("Nucleic", default_closed=True):
             with tree.inputs.panel("Nucleic Backbone"):
                 nucleic_backbone_shape = tree.inputs.menu(
-                    "Nucleic Backbone Shape", expanded=True, optional_label=True
+                    "Nucleic Backbone Shape",
+                    "Cicular",
+                    expanded=True,
+                    optional_label=True,
                 )
                 nucleic_backbone_radius = tree.inputs.float(
                     "Nucleic Backbone Radius", 2.0, min_value=0.0
@@ -399,6 +402,7 @@ class StyleRibbon(AssetGeometryGroup):
             "Geometry", description="The generated geometry for the style node group"
         )
 
+        deselect_hidden = DeselectHidden(selection=selection)
         closure_zone = g.ClosureZone()
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
@@ -414,10 +418,12 @@ class StyleRibbon(AssetGeometryGroup):
                 ),
             ),
         )
-        separate_polymers = SeparatePolymers(atoms=CheckGeometry(geometry=atoms_1))
+        separate_polymers = SeparatePolymers(
+            atoms=CheckGeometry(geometry=atoms_1.output)
+        )
         mn_utils_style_ribbon_nucleic = MN_utils_style_ribbon_nucleic(
             atoms=separate_polymers.o.nucleic,
-            selection=selection,
+            selection=deselect_hidden,
             material=material,
             switch=g.IndexSwitch.boolean(menu_switch.o.output, (True, False)),
             backbone_subdivisions=quality * 2,
@@ -433,7 +439,7 @@ class StyleRibbon(AssetGeometryGroup):
         )
         mn_utils_style_ribbon_peptide = MN_utils_style_ribbon_peptide(
             Atoms=separate_polymers.o.peptide,
-            Selection=selection,
+            Selection=deselect_hidden,
             Quality=quality,
             **{"BS Smoothing": backbone_smoothing},
             Radius=peptide_radius,
@@ -443,22 +449,24 @@ class StyleRibbon(AssetGeometryGroup):
             Threshold=backbone_threshold,
         )
         join_geometry = g.JoinGeometry(
-            geometry=(
+            (
                 mn_utils_style_ribbon_peptide.o.geometry,
                 mn_utils_style_ribbon_nucleic.o.geometry,
             )
         )
-        join_geometry >> geometry_1
-        EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
+        join_geometry >> geometry_1.input
+        (
+            EvaluateOnAtoms(
+                geometry=atoms, closure=closure_zone.closure, result="Representation"
+            )
+            >> geometry
+        )
         _join_geometry_1 = g.JoinGeometry(
-            geometry=(
+            (
                 mn_utils_style_ribbon_peptide.o.curve,
                 mn_utils_style_ribbon_nucleic.o.curve,
             )
         )
-
-        u_component.default_value = "Factor"
-        nucleic_backbone_shape.default_value = "Cicular"
 
 
 ASSET = StyleRibbon

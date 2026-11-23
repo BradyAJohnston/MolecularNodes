@@ -1,5 +1,5 @@
 # Node-group asset "Dihedral Psi" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -81,7 +81,9 @@ class DihedralPsi(AssetGeometryGroup):
         super().__init__(**{"Method": method})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        method = tree.inputs.menu("Method", expanded=True, optional_label=True)
+        method = tree.inputs.menu(
+            "Method", "Compute", expanded=True, optional_label=True
+        )
         psi = tree.outputs.float(
             "Psi",
             description="The calculated `Psi` angle for the residue, in the range of `(-pi, pi)`",
@@ -120,8 +122,6 @@ class DihedralPsi(AssetGeometryGroup):
             * -1.0
             >> psi
         )
-
-        method.default_value = "Compute"
 
 
 ASSET = DihedralPsi

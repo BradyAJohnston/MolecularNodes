@@ -1,5 +1,5 @@
 # Node-group asset "Boolean Run Trim" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -114,7 +114,7 @@ class BooleanRunTrim(AssetGeometryGroup):
         )
 
         accumulate_field = g.AccumulateField.point.integer(
-            group_index=g.AccumulateField.point.integer(~boolean).o.trailing
+            group_id=g.AccumulateField.point.integer(~boolean).o.trailing
         )
         (
             (

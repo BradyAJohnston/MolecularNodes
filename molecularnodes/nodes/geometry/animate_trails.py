@@ -1,5 +1,5 @@
 # Node-group asset "Animate Trails" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -172,10 +172,10 @@ class AnimateTrails(AssetGeometryGroup):
         )
         with tree.inputs.panel("Trail"):
             trail_threshold = tree.inputs.menu(
-                "Trail Threshold", expanded=True, optional_label=True
+                "Trail Threshold", "Unlimited", expanded=True, optional_label=True
             )
             trail_curve_type = tree.inputs.menu(
-                "Trail Curve Type", expanded=True, optional_label=True
+                "Trail Curve Type", "Poly", expanded=True, optional_label=True
             )
             trail_frames = tree.inputs.integer(
                 "Trail Frames",
@@ -228,7 +228,7 @@ class AnimateTrails(AssetGeometryGroup):
             >> g.ReverseCurve()
         )
         capture = g.CaptureAttribute.point(geometry=reverse_curve)
-        factor = capture.items.float("Factor", g.SplineParameter().o.factor)
+        factor = capture.items.float(g.SplineParameter().o.factor, "Factor")
         menu_switch = g.MenuSwitch.geometry(
             trail_threshold,
             {
@@ -239,14 +239,14 @@ class AnimateTrails(AssetGeometryGroup):
             },
         )
         set_spline_resolution = g.SetHandleType(
-            curve=g.SetSplineType.bezier(menu_switch)
+            g.SetSplineType.bezier(menu_switch)
         ) >> g.SetSplineResolution(resolution=trail_subdivisions)
         (
             g.MenuSwitch.geometry(
                 trail_curve_type, {"Poly": menu_switch, "Bezier": set_spline_resolution}
             )
             >> g.CurveToMesh(
-                profile_curve=g.CurveCircle(resolution=trail_resolution),
+                profile_curve=g.CurveCircle(trail_resolution),
                 scale=factor.output * (VDWRadii().o.vdw_radii * trail_radius),
                 fill_caps=True,
             )
@@ -254,9 +254,6 @@ class AnimateTrails(AssetGeometryGroup):
             >> g.SetMaterial(material=material)
             >> geometry
         )
-
-        trail_threshold.default_value = "Unlimited"
-        trail_curve_type.default_value = "Poly"
 
 
 ASSET = AnimateTrails

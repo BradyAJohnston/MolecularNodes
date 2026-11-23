@@ -1,15 +1,14 @@
 import numpy as np
 from nodebpy.nodes.geometry import CurveToMesh, SetHandleType, SetSplineType
-import molecularnodes as mn
 from molecularnodes.nodes.geometry import AtomsToCACurves
 
 
-def test_atoms_to_ca_splines():
+def test_atoms_to_ca_splines(fetch):
     """
     This test is for if the chains are still connected as continuous, even though they are
     separate by a larger distance
     """
-    mol = mn.Molecule.fetch("1HQM")
+    mol = fetch("1HQM")
     with mol.tree.reset() as (atoms, join):
         atca = AtomsToCACurves()
         (

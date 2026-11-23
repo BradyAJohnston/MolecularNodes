@@ -1,5 +1,5 @@
 # Node-group asset "Group Pick Index" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -90,10 +90,12 @@ class GroupPickIndex(AssetGeometryGroup):
             min_value=0,
         )
 
-        compare = g.Compare.integer.equal(
-            relative_index, GroupParameter(group_id=group_id).o.relative_index
+        group_pick = GroupPick(
+            pick=g.Compare.integer.equal(
+                relative_index, GroupParameter(group_id=group_id).o.index
+            ),
+            group_id=group_id,
         )
-        group_pick = GroupPick(pick=compare, group_id=group_id)
 
         group_pick >> is_valid
         group_pick.o.index >> index

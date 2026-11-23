@@ -1,9 +1,10 @@
 # Node-group asset "Is Even" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
 from nodebpy import TreeBuilder
+from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
     BooleanSocket,
@@ -11,7 +12,7 @@ from nodebpy.builder import (
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputInteger
+from nodebpy.types import Default, InputInteger
 
 
 class IsEven(AssetGeometryGroup):
@@ -21,7 +22,7 @@ class IsEven(AssetGeometryGroup):
     Parameters
     ----------
     value : InputInteger
-        Value
+        Value. When unconnected: The index from the context.
 
     Inputs
     ------
@@ -60,7 +61,7 @@ class IsEven(AssetGeometryGroup):
 
     def __init__(
         self,
-        value: InputInteger = 0,
+        value: InputInteger = Default.INDEX,
     ):
         super().__init__(**{"Value": value})
 
@@ -69,9 +70,10 @@ class IsEven(AssetGeometryGroup):
         even = tree.outputs.boolean("Even")
         odd = tree.outputs.boolean("Odd")
 
-        integer_math = value.modulo(2)
-        ~integer_math >> even
+        integer_math = g.IntegerMath.modulo(value, 2)
+        boolean_math = g.BooleanMath.l_not(integer_math)
 
+        boolean_math >> even
         integer_math >> odd
 
 

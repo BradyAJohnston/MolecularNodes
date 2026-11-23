@@ -1,5 +1,5 @@
 # Node-group asset "Offset Point Along Curve" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -13,7 +13,7 @@ from nodebpy.builder import (
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputFloat, InputInteger
+from nodebpy.types import Default, InputFloat, InputInteger
 from ._shared.index_mixed import IndexMixed
 from .between_float import BetweenFloat
 from .index_mix_float import IndexMixFloat
@@ -26,7 +26,7 @@ class OffsetPointAlongCurve(AssetGeometryGroup):
     Parameters
     ----------
     point_index : InputInteger
-        The field to evaluate at the given `Index` + `Offset` on the point domain
+        The field to evaluate at the given `Index` + `Offset` on the point domain. When unconnected: The index from the context.
     offset : InputFloat
         The offset to apply to the `Index` before evaluating the input field
 
@@ -87,7 +87,7 @@ class OffsetPointAlongCurve(AssetGeometryGroup):
 
     def __init__(
         self,
-        point_index: InputInteger = 0,
+        point_index: InputInteger = Default.INDEX,
         offset: InputFloat = 0.0,
     ):
         super().__init__(**{"Point Index": point_index, "Offset": offset})
@@ -125,10 +125,10 @@ class OffsetPointAlongCurve(AssetGeometryGroup):
         )
 
         with g.Frame("Clamp the offset to not exceed the points in the spline"):
-            curve_of_point = g.CurveOfPoint(point_index=point_index)
+            curve_of_point = g.CurveOfPoint(point_index)
             integer_math = -curve_of_point.o.index_in_curve
             integer_math_1 = (
-                g.PointsOfCurve(curve_index=curve_of_point.o.curve_index).o.total
+                g.PointsOfCurve(curve_of_point.o.curve_index).o.total
                 - 1
                 - curve_of_point.o.index_in_curve
             )

@@ -1,5 +1,5 @@
 # Node-group asset "Centroid" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -13,7 +13,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputBoolean, InputInteger, InputVector
+from nodebpy.types import Default, InputBoolean, InputInteger, InputVector
 
 
 class Centroid(AssetGeometryGroup):
@@ -23,7 +23,7 @@ class Centroid(AssetGeometryGroup):
     Parameters
     ----------
     position : InputVector
-        The `Position` vector to use for the centroid calculation
+        The `Position` vector to use for the centroid calculation. When unconnected: The position from the context.
     selection : InputBoolean
         Selected points contribute to the computation of the centroid, unselected points do not contribute but still return the centroid for their `Group ID`
     group_id : InputInteger
@@ -71,7 +71,7 @@ class Centroid(AssetGeometryGroup):
 
     def __init__(
         self,
-        position: InputVector = None,
+        position: InputVector = Default.POSITION,
         selection: InputBoolean = True,
         group_id: InputInteger = 0,
     ):

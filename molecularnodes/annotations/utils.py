@@ -4,10 +4,10 @@ import typing
 from typing import TYPE_CHECKING
 import bpy
 from PIL import Image
+from ..blender.registered import scene_session
 
 if TYPE_CHECKING:
-    from ..entities.molecule import MoleculeAnnotationManager
-    from ..session import MNSession
+    from .manager import BaseAnnotationManager
 
 
 def get_all_class_annotations(cls) -> dict:
@@ -57,15 +57,15 @@ def is_perspective_projection(obj):
 
 
 def render_annotations(
-    scene: bpy.types.Scene, render_scale: float, image: Image, image_scale: float
+    scene: bpy.types.Scene, render_scale: float, image: Image.Image, image_scale: float
 ) -> None:
     """Render annotations of all entities to an image"""
-    session: MNSession = scene.MNSession  # type: ignore
+    session = scene_session(scene)
     session.prune()  # remove any invalid session entities
     for entity in session.entities.values():
         if not hasattr(entity, "annotations"):
             continue
-        manager: MoleculeAnnotationManager = entity.annotations
+        manager: BaseAnnotationManager = getattr(entity, "annotations")
         manager._enable_render_mode(scene, render_scale, image, image_scale)
         manager._draw_annotations()
         manager._disable_render_mode()

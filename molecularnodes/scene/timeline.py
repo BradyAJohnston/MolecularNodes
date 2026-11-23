@@ -516,9 +516,9 @@ class Frames(Clip):
 
     Detaches the entity from the scene frame and keys its own ``frame``
     property instead, so a trajectory can be played at any speed, paused, or
-    scrubbed backwards from a script. Universe frames are given; subframes on
-    the entity are honoured (the property steps through them like the scene
-    frame does).
+    scrubbed backwards from a script. Frames are trajectory frames, so
+    ``Subframes`` does not apply; with ``Interpolate`` on, the fractional
+    frames between keys interpolate positions.
     """
 
     label = "frames"
@@ -527,22 +527,21 @@ class Frames(Clip):
     def __init__(
         self,
         entity: MolecularEntity,
-        start: int,
-        end: int,
+        start: float,
+        end: float,
         run_time: float | None = None,
         easing: str | None = None,
     ):
         super().__init__(run_time, easing)
         self._entity = entity
-        self._start, self._end = int(start), int(end)
+        self._start, self._end = float(start), float(end)
 
     def keys(self, timeline, frame_start, frame_end, easing) -> list[Key]:
-        step = int(getattr(self._entity, "subframes", 0)) + 1
         channel = Channel(self._entity.object.mn, "frame")
         interpolation = Easing.blender(easing)
         return [
-            Key(channel, frame_start, self._start * step, interpolation),
-            Key(channel, frame_end, self._end * step, interpolation),
+            Key(channel, frame_start, self._start, interpolation),
+            Key(channel, frame_end, self._end, interpolation),
         ]
 
     def commit(self, timeline) -> None:
@@ -550,7 +549,7 @@ class Frames(Clip):
 
     def __repr__(self) -> str:
         return (
-            f"<frames {self._entity.name} {self._start}->{self._end} "
+            f"<frames {self._entity.name} {self._start:g}->{self._end:g} "
             f"{self.run_time:g}s {self.easing}>"
         )
 

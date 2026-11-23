@@ -1,5 +1,5 @@
 # Node-group asset "Structure Parameter" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -15,7 +15,7 @@ from nodebpy.builder import (
 from ._shared.index_to_factor import IndexToFactor
 from .group_info import GroupInfo
 from .sub_group_info import SubGroupInfo
-from .unique_residue_id import UniqueResidueID
+from .ures_id import UResID
 
 
 class StructureParameter(AssetGeometryGroup):
@@ -24,22 +24,18 @@ class StructureParameter(AssetGeometryGroup):
 
     Outputs
     -------
-    o.atom_factor : FloatSocket
-        Factor of the atom within the structure, which is the relative position of the `Index` within the overall structure between 0 and 1
-    o.index : IntegerSocket
-        `Index` of the point within the structure. Equal to the `Index` input node
+    o.factor : FloatSocket
+        An atom's relative position in the structure, 0 for the first atom and 1 for the last
+    o.atom_index : IntegerSocket
+        Index of the atom within the structure, equal to the `Index` input node
     o.atom_count : IntegerSocket
-        Number of atoms in the structure, equal to the size of the Point Domain
-    o.index_of_first : IntegerSocket
-        `Index` of first atom in the entire structure, which will always be 0
-    o.index_of_last : IntegerSocket
-        Index of last atom in the entire structure. Equal to `Atom Count` - 1
+        Number of atoms in the structure
     o.residue_factor : FloatSocket
-        Residue Factor
+        A residue's relative position in the structure, 0 for the first residue and 1 for the last
     o.residue_index : IntegerSocket
-        A unique `Group ID` that increases whenever `Sub Group ID` or `Group ID` change
+        Index of the residue within the structure, starting at 0 for the first residue
     o.residue_count : IntegerSocket
-        Residue Count
+        Number of residues in the structure
     """
 
     _name = "Structure Parameter"
@@ -51,22 +47,18 @@ class StructureParameter(AssetGeometryGroup):
         pass
 
     class _Outputs(SocketAccessor):
-        atom_factor: FloatSocket
-        """Factor of the atom within the structure, which is the relative position of the `Index` within the overall structure between 0 and 1"""
-        index: IntegerSocket
-        """`Index` of the point within the structure. Equal to the `Index` input node"""
+        factor: FloatSocket
+        """An atom's relative position in the structure, 0 for the first atom and 1 for the last"""
+        atom_index: IntegerSocket
+        """Index of the atom within the structure, equal to the `Index` input node"""
         atom_count: IntegerSocket
-        """Number of atoms in the structure, equal to the size of the Point Domain"""
-        index_of_first: IntegerSocket
-        """`Index` of first atom in the entire structure, which will always be 0"""
-        index_of_last: IntegerSocket
-        """Index of last atom in the entire structure. Equal to `Atom Count` - 1"""
+        """Number of atoms in the structure"""
         residue_factor: FloatSocket
-        """Residue Factor"""
+        """A residue's relative position in the structure, 0 for the first residue and 1 for the last"""
         residue_index: IntegerSocket
-        """A unique `Group ID` that increases whenever `Sub Group ID` or `Group ID` change"""
+        """Index of the residue within the structure, starting at 0 for the first residue"""
         residue_count: IntegerSocket
-        """Residue Count"""
+        """Number of residues in the structure"""
 
     if TYPE_CHECKING:
 
@@ -75,42 +67,43 @@ class StructureParameter(AssetGeometryGroup):
         @property
         def o(self) -> _Outputs: ...
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        atom_factor = tree.outputs.float(
-            "Atom Factor",
-            description="Factor of the atom within the structure, which is the relative position of the `Index` within the overall structure between 0 and 1",
+        factor = tree.outputs.float(
+            "Factor",
+            description="An atom's relative position in the structure, 0 for the first atom and 1 for the last",
+            min_value=0.0,
+            max_value=1.0,
             subtype="FACTOR",
         )
-        index = tree.outputs.integer(
-            "Index",
-            description="`Index` of the point within the structure. Equal to the `Index` input node",
+        atom_index = tree.outputs.integer(
+            "Atom Index",
+            description="Index of the atom within the structure, equal to the `Index` input node",
         )
         atom_count = tree.outputs.integer(
-            "Atom Count",
-            description="Number of atoms in the structure, equal to the size of the Point Domain",
+            "Atom Count", description="Number of atoms in the structure"
         )
-        index_of_first = tree.outputs.integer(
-            "Index of First",
-            description="`Index` of first atom in the entire structure, which will always be 0",
+        residue_factor = tree.outputs.float(
+            "Residue Factor",
+            description="A residue's relative position in the structure, 0 for the first residue and 1 for the last",
+            min_value=0.0,
+            max_value=1.0,
+            subtype="FACTOR",
         )
-        index_of_last = tree.outputs.integer(
-            "Index of Last",
-            description="Index of last atom in the entire structure. Equal to `Atom Count` - 1",
-        )
-        residue_factor = tree.outputs.float("Residue Factor", subtype="FACTOR")
         residue_index = tree.outputs.integer(
             "Residue Index",
-            description="A unique `Group ID` that increases whenever `Sub Group ID` or `Group ID` change",
+            description="Index of the residue within the structure, starting at 0 for the first residue",
         )
-        residue_count = tree.outputs.integer("Residue Count")
+        residue_count = tree.outputs.integer(
+            "Residue Count", description="Number of residues in the structure"
+        )
 
         group_info = GroupInfo()
-        index_1 = g.Index()
-        IndexToFactor(index=index_1, size=group_info.o.size) >> atom_factor
-        sub_group_info = SubGroupInfo(sub_group_id=UniqueResidueID())
+        index = g.Index()
+        IndexToFactor(index=index, size=group_info.o.size) >> factor
+        sub_group_info = SubGroupInfo(sub_group_id=UResID().o.ures_id)
         (
             IndexToFactor(
                 index=sub_group_info.o.group_id, size=sub_group_info.o.sub_group_total
@@ -118,10 +111,8 @@ class StructureParameter(AssetGeometryGroup):
             >> residue_factor
         )
 
-        index_1 >> index
+        index >> atom_index
         group_info >> atom_count
-        group_info.o.index_of_first >> index_of_first
-        group_info.o.index_of_last >> index_of_last
         sub_group_info.o.group_id >> residue_index
         sub_group_info.o.sub_group_total >> residue_count
 

@@ -44,7 +44,7 @@ Unfortunately `.blend` files are binary files to git, so the full repo size can 
 For writing code, I highly recommend using VSCode and the [Blender VS Code](https://github.com/JacquesLucke/blender_vscode) addon which streamlines the development process. It provides a range of commands for building and quickly refreshing the add-on during development, greatly speeding up the process.
 
 > [!IMPORTANT]
-> Before the first build, create the node asset library with `uv run -m nodebpy.assets build` (see "Node assets" below).
+> Before the first build, create the node asset library with `uv run nodebpy build` (see "Node assets" below).
 
 The extension is built with [extbpy](https://github.com/bradyajohnston/extbpy). Everything Blender needs to know lives in `pyproject.toml`: `[project]` supplies the version, description, license and maintainer, and `[tool.extbpy]` supplies the Blender version, platforms, tags and permissions. `blender_manifest.toml` is generated at build time, so it is not committed. Dependencies are resolved from `uv.lock`, downloaded into `.extbpy/wheels/` (cached between builds) and packed into one `.zip` per platform. If a `blender` executable is on your `PATH` the zips are also validated with `blender --command extension validate`.
 
@@ -72,10 +72,10 @@ every invocation of the `nodebpy` CLI uses the same configuration with no
 arguments:
 
 ```bash
-uv run -m nodebpy.assets build   # nodes/*.py -> assets/nodes.blend
-uv run -m nodebpy.assets dump    # assets/nodes.blend -> nodes/*.py
-uv run -m nodebpy.assets ensure  # build only if missing or stale
-uv run -m nodebpy.assets check   # verify build -> dump reproduces the sources
+uv run nodebpy build             # nodes/*.py -> assets/nodes.blend
+uv run nodebpy dump              # assets/nodes.blend -> nodes/*.py
+uv run nodebpy ensure            # build only if missing or stale
+uv run nodebpy check             # verify build -> dump reproduces the sources
 ```
 
 To edit nodes by hand: `build`, open `nodes.blend` in Blender, edit and save,
@@ -330,6 +330,8 @@ pytest -v tests/test_load.py # run a single tests file
 pytest -v -k centre # pattern match to 'centre' and only run tests with that in the name
 ```
 
+Tests load structures with the `fetch` fixture (`def test_x(fetch): mol = fetch("4ozs")`), which reads from `tests/data` and never downloads. If a test needs a new structure, download it into `tests/data` once and commit it. Tests that have to reach a server are marked `@pytest.mark.network`; any other test that opens a remote connection fails. CI runs the network tests in a single job, because many jobs downloading at once get rate limited. Run them locally with `pytest -m network`, or skip them with `pytest -m "not network"`.
+
 Look over other tests to see how we are structuring them. Most of the tests will involve importing data, generating a 3D model and then creating a `snapshot` of the attributes for some subset of vertices from that 3D model.
 We could snapshot _all_ of the vertices, but the snapshots are just `.txt` files so the diffs would become very large.
 When changing something that _should_ change the output of the snapshots, we end up with _very_ large number of files changed.
@@ -356,9 +358,9 @@ The long-form written documentation is all inside of `docs/`. Documentation is w
 
 ### Node Documentation
 
-The nodes are ultimatley defined inside of `molecularnodes/nodes/*/*.py` files. These are the ultimate source of truth for the project. The command `uv run -m nodebpy.assets build` turns these `.py` files into a `.blend` asset file (`molecularnodes/assets/nodes.blend`).
+The nodes are ultimatley defined inside of `molecularnodes/nodes/*/*.py` files. These are the ultimate source of truth for the project. The command `uv run nodebpy build` turns these `.py` files into a `.blend` asset file (`molecularnodes/assets/nodes.blend`).
 
-Changes can be made to nodes inside of the `.blend` - to keep these changes you must `uv run -m nodebpy.assets dump` to write those changes back out to the `.py` files. Changes can also be made directly to the `.py` files.
+Changes can be made to nodes inside of the `.blend` - to keep these changes you must `uv run nodebpy dump` to write those changes back out to the `.py` files. Changes can also be made directly to the `.py` files.
 
 To generate node documentation pages, run `uv run docs/generate.py`.
 

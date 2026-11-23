@@ -1,5 +1,5 @@
 # Node-group asset "Menu Residue Name" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -23,7 +23,7 @@ class MenuResidueName(AssetGeometryGroup):
 
     Parameters
     ----------
-    residue_name : InputMenu | Literal["UNK", "ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY", "HIS", "ILE", "LEU", "LYS", "MET", "PHE", "PRO", "SER", "THR", "TRP", "TYR", "VAL", "SNC", "MSE", "ASH", "CYM", "CYX", "GLH", "HID", "HIE", "HIP", "HYP", "LYN", "DA", "DC", "DG", "DT", "PST", "rA", "rC", "rG", "rU"]
+    residue_name : InputMenu | Literal["UNK", "ALA", "ARG", "ASN", "ASP", "CYS", "GLU", "GLN", "GLY", "HIS", "ILE", "LEU", "LYS", "MET", "PHE", "PRO", "SER", "THR", "TRP", "TYR", "VAL", "SEC", "SNC", "MSE", "ASH", "CYM", "CYX", "GLH", "HID", "HIE", "HIP", "HYP", "LYN", "DA", "DC", "DG", "DT", "PST", "rA", "rC", "rG", "rU"]
         Residue Name
 
     Inputs
@@ -85,6 +85,7 @@ class MenuResidueName(AssetGeometryGroup):
             "TRP",
             "TYR",
             "VAL",
+            "SEC",
             "SNC",
             "MSE",
             "ASH",
@@ -110,7 +111,7 @@ class MenuResidueName(AssetGeometryGroup):
         super().__init__(**{"Residue Name": residue_name})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        residue_name = tree.inputs.menu("Residue Name", optional_label=True)
+        residue_name = tree.inputs.menu("Residue Name", "ALA", optional_label=True)
         res_name = tree.outputs.integer("res_name")
         selection = tree.outputs.boolean("Selection")
 
@@ -138,6 +139,7 @@ class MenuResidueName(AssetGeometryGroup):
                 "TRP": 17,
                 "TYR": 18,
                 "VAL": 19,
+                "SEC": 20,
                 "SNC": 15,
                 "MSE": 12,
                 "ASH": 3,
@@ -163,8 +165,6 @@ class MenuResidueName(AssetGeometryGroup):
         g.Compare.integer.equal(menu_switch.o.output, ResidueName()) >> selection
 
         menu_switch >> res_name
-
-        residue_name.default_value = "ALA"
 
 
 ASSET = MenuResidueName

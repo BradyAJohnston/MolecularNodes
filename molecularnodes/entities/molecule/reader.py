@@ -1,26 +1,45 @@
-import json
+import logging
 from abc import ABCMeta
-from io import BytesIO
+from io import BytesIO, StringIO
 from pathlib import Path
+from typing import Any, Callable, cast
 import numpy as np
 from biotite.file import File, InvalidFileError
-from biotite.structure import AtomArray, AtomArrayStack, BondType, filter
+from biotite.structure import (
+    AtomArray,
+    AtomArrayStack,
+    BondType,
+    filter,
+    get_residue_starts,
+)
 from ... import color
 from ...assets import data
-from ...utils import count_value_changes
+
+logger = logging.getLogger(__name__)
 
 
-def read_structure(file_path: str | Path | BytesIO) -> "ReaderBase":
+def read_structure(
+    file_path: str | Path | BytesIO | StringIO,
+    data_block: str | None = None,
+    format: str | None = None,
+) -> "ReaderBase":
     """Open a structure file and return the appropriate reader for its format.
 
-    Dispatches on the file suffix to the biotite-backed reader that can parse it
-    (mmCIF/BinaryCIF, PDB, or SDF/MOL). An in-memory ``BytesIO`` buffer is treated
-    as BinaryCIF.
+    Dispatches on ``format``, or the file suffix, to the biotite-backed reader that
+    can parse it (mmCIF/BinaryCIF, PDB, SDF/MOL, or the atoms of a Gaussian cube
+    file). An in-memory ``BytesIO`` buffer without a ``format`` is treated as
+    BinaryCIF.
 
     Parameters
     ----------
-    file_path : str | Path | BytesIO
-        Path to the structure file, or an in-memory ``bcif`` buffer.
+    file_path : str | Path | BytesIO | StringIO
+        Path to the structure file, or an in-memory buffer of its contents.
+    data_block : str | None, optional
+        For mmCIF/BinaryCIF files with several structures in separate data
+        blocks, the name of the block to read.
+    format : str | None, optional
+        The file format (e.g. ``"cif"`` or ``".pdb"``). Needed for a ``StringIO``
+        buffer, otherwise taken from the file suffix.
 
     Returns
     -------
@@ -30,20 +49,29 @@ def read_structure(file_path: str | Path | BytesIO) -> "ReaderBase":
     Raises
     ------
     InvalidFileError
-        If the file format is not supported.
+        If the file format is not supported, or (as ``MultipleStructuresError``)
+        the file holds several structures and no ``data_block`` was given.
     """
-    # imported lazily: pdb/pdbx/sdf import ReaderBase from this module
-    from . import pdb, pdbx, sdf
+    # imported lazily: pdb/pdbx/sdf/cube import ReaderBase from this module
+    from ..density.cube import is_cube
+    from . import cube, pdb, pdbx, sdf
 
-    if isinstance(file_path, BytesIO):
-        return pdbx.PDBXReader(file_path)
+    if format is None:
+        if isinstance(file_path, BytesIO):
+            format = "bcif"
+        elif isinstance(file_path, StringIO):
+            raise ValueError("A `format` is needed to read a StringIO buffer.")
+        else:
+            # `.suffix` would only see the `.gz` of a gzipped cube file
+            format = ".cube" if is_cube(file_path) else Path(file_path).suffix
 
-    if isinstance(file_path, str):
-        file_path = Path(file_path)
+    format = "." + format.strip(".")
+    if is_cube(format):
+        return cube.CubeReader(file_path)
 
-    match file_path.suffix:
+    match format:
         case ".cif" | ".bcif":
-            return pdbx.PDBXReader(file_path)
+            return pdbx.PDBXReader(file_path, data_block=data_block)
         case ".pdb":
             return pdb.PDBReader(file_path)
         case ".sdf" | ".mol":
@@ -52,15 +80,15 @@ def read_structure(file_path: str | Path | BytesIO) -> "ReaderBase":
             raise InvalidFileError("The file format is not supported.")
 
 
-class ReaderBase(metaclass=ABCMeta):
+class ReaderBase[F: File](metaclass=ABCMeta):
     """
     Abstract base class for reading molecular data from a file.
     """
 
-    def __init__(self, file_path: str | Path | BytesIO):
+    def __init__(self, file_path: str | Path | BytesIO | StringIO):
         self._extra_annotations: dict
         self.file_path = file_path
-        self.file = self.read(file_path)
+        self.file: F = self.read(file_path)
         self.array: AtomArray | AtomArrayStack = self.get_structure()
         self.array = self._connect_cyclic_peptides(self.array)
         self.array = self.set_extra_annotations(
@@ -70,16 +98,15 @@ class ReaderBase(metaclass=ABCMeta):
 
     @property
     def n_models(self) -> int:
+        assert isinstance(self.array, AtomArrayStack)
         return self.array.stack_depth()
 
-    def read(self, file_path: str | Path | BytesIO) -> File:
+    def read(self, file_path: str | Path | BytesIO | StringIO) -> F:
         raise NotImplementedError("Subclasses must implement this method.")
 
     @classmethod
-    def set_standard_annotations(
-        cls, array: AtomArray | AtomArrayStack
-    ) -> AtomArray | AtomArrayStack:
-        annotations = {
+    def set_standard_annotations[A: AtomArray | AtomArrayStack](cls, array: A) -> A:
+        annotations: dict[str, Callable[[Any], Any]] = {
             "mass": cls._compute_mass,
             "atomic_number": cls._compute_atomic_number,
             "res_name_int": cls._compute_res_name_int,
@@ -168,21 +195,64 @@ class ReaderBase(metaclass=ABCMeta):
     def chain_ids(self) -> list[str] | None:
         return np.unique(self.array.get_annotation("chain_id")).tolist()
 
-    def assemblies(self, as_json_string: bool = False) -> dict | str:
+    def assemblies(self) -> dict | str:
         try:
-            if as_json_string:
-                return json.dumps(self._assemblies())
             return self._assemblies()
-        except InvalidFileError:
+        except InvalidFileError as e:
+            logger.warning(f"Failed to parse biological assemblies: {e}")
             return ""
 
     def _assemblies(self):
         return {}
 
+    def model_data(self) -> dict[str, np.ndarray]:
+        """Occupancies and B-factors of each model, where they differ between models.
+
+        A stack takes its annotations from the first model, so the values of the
+        other models are read separately. They are keyed like the per-atom
+        `ts.data` arrays of the MDAnalysis PDBReader (``occupancy``,
+        ``tempfactor``), so each frame of the universe can carry its model's
+        values.
+
+        Returns
+        -------
+        dict[str, np.ndarray]
+            ``(n_models, n_atoms)`` arrays by `ts.data` key. Empty for a single
+            model, and without the values that are the same in every model.
+        """
+        if not isinstance(self.array, AtomArrayStack) or self.array.stack_depth() < 2:
+            return {}
+        try:
+            values = self._model_values()
+        except Exception as e:
+            logger.warning(f"Failed to read per-model B-factors and occupancies: {e}")
+            return {}
+        data = {}
+        for key, name in (("occupancy", "occupancy"), ("tempfactor", "b_factor")):
+            array = values.get(name)
+            if array is None or array.shape != self.array.coord.shape[:2]:
+                continue
+            if not np.all(array == array[0]):
+                data[key] = array
+        return data
+
+    def _model_values(self) -> dict[str, np.ndarray]:
+        """``b_factor`` and ``occupancy`` of each model, as ``(n_models, n_atoms)``."""
+        return {}
+
     @staticmethod
-    def set_extra_annotations(
-        annotations: dict, array, file
-    ) -> AtomArray | AtomArrayStack:
+    def _stack_model_values(models: list[AtomArray]) -> dict[str, np.ndarray]:
+        """Stack the ``b_factor`` and ``occupancy`` annotations of each model."""
+        return {
+            name: np.stack([model.get_annotation(name) for model in models])
+            for name in ("b_factor", "occupancy")
+            if name in models[0].get_annotation_categories()
+        }
+
+    @staticmethod
+    def set_extra_annotations[A: AtomArray | AtomArrayStack](
+        annotations: dict, array: A, file
+    ) -> A:
         for name, func in annotations.items():
             try:
                 # for the getting of some custom attributes, we get it for the full atom_site
@@ -243,7 +313,7 @@ class ReaderBase(metaclass=ABCMeta):
     def _compute_vdw_radii(array):
         return np.array(
             [
-                data.elements.get(x, {}).get("vdw_radii", 100.0) / 100
+                cast(float, data.elements.get(x, {}).get("vdw_radii", 100.0)) / 100
                 for x in np.char.title(array.element)
             ],
             dtype=float,
@@ -281,7 +351,10 @@ class ReaderBase(metaclass=ABCMeta):
 
     @staticmethod
     def _compute_is_alpha_carbon(array: AtomArray):
-        return array.get_annotation("atom_name") == "CA"
+        return np.logical_and(
+            array.get_annotation("atom_name") == "CA",
+            ReaderBase._compute_is_polymer(array),
+        )
 
     @staticmethod
     def _compute_is_hetero(array):
@@ -326,9 +399,8 @@ class ReaderBase(metaclass=ABCMeta):
         is_backbone_atom = np.isin(
             array.get_annotation("atom_name"), backbone_atom_names
         )
-        is_not_solvent = np.logical_not(filter.filter_solvent(array))
 
-        return np.logical_and(is_backbone_atom, is_not_solvent)
+        return np.logical_and(is_backbone_atom, ReaderBase._compute_is_polymer(array))
 
     @staticmethod
     def _compute_is_peptide(array):
@@ -337,11 +409,23 @@ class ReaderBase(metaclass=ABCMeta):
         )
 
     @staticmethod
+    def _compute_is_polymer(array):
+        # amino acid and nucleotide residues, so that ligands and ions such as
+        # calcium (atom name CA) are not flagged as alpha carbon or backbone. The
+        # N-terminal ACE cap is not an amino acid in the CCD but is part of the chain,
+        # and MDAnalysis counts it as protein
+        return np.logical_or.reduce(
+            [
+                ReaderBase._compute_is_peptide(array),
+                filter.filter_nucleotides(array),
+                array.get_annotation("res_name") == "ACE",
+            ]
+        )
+
+    @staticmethod
     def _compute_is_side_chain(array):
         backbone = ReaderBase._compute_is_backbone(array)
-        is_polymer = np.logical_or(
-            ReaderBase._compute_is_peptide(array), filter.filter_nucleotides(array)
-        )
+        is_polymer = ReaderBase._compute_is_polymer(array)
 
         return np.logical_and(
             np.logical_or(~backbone, ReaderBase._compute_is_alpha_carbon(array)),
@@ -350,4 +434,8 @@ class ReaderBase(metaclass=ABCMeta):
 
     @staticmethod
     def _compute_ures_id(array):
-        return count_value_changes(array.res_id, array.chain_id_int)
+        # a new residue starts wherever the chain, res_id, ins_code or res_name
+        # changes, so residues that share a res_id (52, 52A) stay apart
+        starts = np.zeros(array.array_length(), dtype=int)
+        starts[get_residue_starts(array)[1:]] = 1
+        return np.cumsum(starts)

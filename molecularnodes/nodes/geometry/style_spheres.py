@@ -1,5 +1,5 @@
 # Node-group asset "Style Spheres" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -24,6 +24,7 @@ from nodebpy.types import (
     InputMaterial,
     InputMenu,
 )
+from ._shared.deselect_hidden import DeselectHidden
 from ._shared.mn_utils_style_spheres_icosphere import MN_utils_style_spheres_icosphere
 from ._shared.mn_utils_style_spheres_points import MN_utils_style_spheres_points
 from .evaluate_on_atoms import EvaluateOnAtoms
@@ -144,6 +145,7 @@ class StyleSpheres(AssetGeometryGroup):
         )
         sphere = tree.inputs.menu(
             "Sphere",
+            "Point",
             description="Show spheres as a _Point Cloud_, _Instances_ of a mesh Icosphere, or realised _Mesh_ instances of an Icosphere. Point cloud is best for performance and should definitely be used if rendering in Cycles.",
             expanded=True,
             optional_label=True,
@@ -177,19 +179,23 @@ class StyleSpheres(AssetGeometryGroup):
             "Geometry", description="The generated geometry for the style node group"
         )
 
+        deselect_hidden = DeselectHidden(selection=selection)
         closure_zone = g.ClosureZone()
         atoms_1 = closure_zone.inputs.geometry("Atoms")
         geometry_1 = closure_zone.outputs.geometry("Geometry")
         mn_utils_style_spheres_icosphere = MN_utils_style_spheres_icosphere(
-            atoms=atoms_1,
-            selection=selection,
+            atoms=atoms_1.output,
+            selection=deselect_hidden,
             scale=scale,
             subdivisions=quality,
             shade_smooth=shade_smooth,
             material=material,
         )
         mn_utils_style_spheres_points = MN_utils_style_spheres_points(
-            atoms=atoms_1, selection=selection, scale=scale, material=material
+            atoms=atoms_1.output,
+            selection=deselect_hidden,
+            scale=scale,
+            material=material,
         )
         realize_instances = g.RealizeInstances(
             geometry=mn_utils_style_spheres_icosphere, realize_to_point_domain=True
@@ -202,10 +208,13 @@ class StyleSpheres(AssetGeometryGroup):
                 "Mesh": realize_instances,
             },
         )
-        menu_switch >> geometry_1
-        EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> geometry
-
-        sphere.default_value = "Point"
+        menu_switch >> geometry_1.input
+        (
+            EvaluateOnAtoms(
+                geometry=atoms, closure=closure_zone.closure, result="Representation"
+            )
+            >> geometry
+        )
 
 
 ASSET = StyleSpheres

@@ -1,5 +1,6 @@
 from pathlib import Path
 import bpy
+from ..ui.utils import menu_draw_func
 
 _folder_map = {
     "API": "api",
@@ -12,7 +13,7 @@ class MN_MT_templates(bpy.types.Menu):
     bl_label = "Molecular Nodes"
 
     def draw(self, context):
-        layout: bpy.types.UILayout = self.layout
+        layout = self.layout
         assert layout is not None
 
         for i, (label, folder) in enumerate(_folder_map.items()):
@@ -23,12 +24,13 @@ class MN_MT_templates(bpy.types.Menu):
                 layout.separator()
             layout.label(text=label)
             self.path_menu(
-                searchpaths=[path],
+                searchpaths=[str(path)],
                 operator="text.open",
                 props_default={"internal": True},
             )
 
 
+@menu_draw_func
 def _draw_templates_menu(self, context):
     """Draw method for the main menu item"""
     self.layout.menu("MN_MT_templates")

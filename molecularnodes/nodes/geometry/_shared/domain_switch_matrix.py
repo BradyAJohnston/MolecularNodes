@@ -1,5 +1,5 @@
 # Node group "Domain Switch Matrix" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
@@ -116,7 +116,7 @@ class DomainSwitchMatrix(CustomGeometryGroup):
         )
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        menu = tree.inputs.menu("Menu", optional_label=True)
+        menu = tree.inputs.menu("Menu", "Point", optional_label=True)
         point = tree.inputs.matrix("Point")
         edge = tree.inputs.matrix("Edge")
         face = tree.inputs.matrix("Face")
@@ -139,5 +139,3 @@ class DomainSwitchMatrix(CustomGeometryGroup):
             )
             >> output
         )
-
-        menu.default_value = "Point"

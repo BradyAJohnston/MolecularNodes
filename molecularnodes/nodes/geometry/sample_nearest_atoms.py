@@ -1,5 +1,5 @@
 # Node-group asset "Sample Nearest Atoms" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -98,7 +98,7 @@ class SampleNearestAtoms(AssetGeometryGroup):
         sample_nearest = g.SampleNearest.point(atoms)
         (
             atoms
-            >> g.SampleIndex(
+            >> g.SampleIndex.point.float(
                 value=g.NamedAttribute.float("b_factor").o.attribute,
                 index=sample_nearest,
             )
@@ -106,33 +106,25 @@ class SampleNearestAtoms(AssetGeometryGroup):
         )
         (
             atoms
-            >> g.SampleIndex(
-                value=AtomicNumber(), index=sample_nearest, data_type="INT"
-            )
+            >> g.SampleIndex.point.integer(value=AtomicNumber(), index=sample_nearest)
             >> atomic_number
         )
         (
             atoms
-            >> g.SampleIndex(value=ChainID(), index=sample_nearest, data_type="INT")
+            >> g.SampleIndex.point.integer(value=ChainID(), index=sample_nearest)
             >> chain_id
         )
         (
             atoms
-            >> g.SampleIndex(value=ResidueID(), index=sample_nearest, data_type="INT")
+            >> g.SampleIndex.point.integer(value=ResidueID(), index=sample_nearest)
             >> res_id
         )
         (
             atoms
-            >> g.SampleIndex(value=ResidueName(), index=sample_nearest, data_type="INT")
+            >> g.SampleIndex.point.integer(value=ResidueName(), index=sample_nearest)
             >> res_name
         )
-        (
-            atoms
-            >> g.SampleIndex(
-                value=Color(), index=sample_nearest, data_type="FLOAT_COLOR"
-            )
-            >> color
-        )
+        atoms >> g.SampleIndex.point.color(value=Color(), index=sample_nearest) >> color
 
 
 ASSET = SampleNearestAtoms

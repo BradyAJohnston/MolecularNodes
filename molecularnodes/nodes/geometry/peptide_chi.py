@@ -1,5 +1,5 @@
 # Node-group asset "Peptide Chi" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -12,7 +12,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputBoolean, InputFloat, InputVector
+from nodebpy.types import Default, InputBoolean, InputFloat, InputVector
 from ._shared.hydrogen_bonding_partner import HydrogenBondingPartner
 from ._shared.mn_peptide_chi_values import MN_peptide_chi_values
 from ._shared.mn_pivot_peptide import MN_pivot_peptide
@@ -31,7 +31,7 @@ class PeptideChi(AssetGeometryGroup):
     Parameters
     ----------
     position : InputVector
-        Position
+        Position. When unconnected: The position from the context.
     selection : InputBoolean
         Selection
     x1 : InputFloat
@@ -102,7 +102,7 @@ class PeptideChi(AssetGeometryGroup):
 
     def __init__(
         self,
-        position: InputVector = None,
+        position: InputVector = Default.POSITION,
         selection: InputBoolean = True,
         x1: InputFloat = 0.0,
         x2: InputFloat = 0.0,

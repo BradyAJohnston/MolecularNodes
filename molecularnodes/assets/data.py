@@ -745,6 +745,7 @@ residues = {
     "TRP": {"res_name_num": 17, "res_type": "aromatic", "res_type_no": 1},
     "TYR": {"res_name_num": 18, "res_type": "aromatic", "res_type_no": 1},
     "VAL": {"res_name_num": 19, "res_type": "apolar", "res_type_no": 1},
+    "SEC": {"res_name_num": 20, "res_type": "polar", "res_type_no": 1},
     # modified amino acids, unsure how to deal with but currently will label as the
     # same res_name number
     # S-nitrosylation of cysteine

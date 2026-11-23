@@ -1,5 +1,5 @@
 # Node-group asset "Accumulate Axis Rotation" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -14,7 +14,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputBoolean, InputFloat, InputInteger, InputVector
+from nodebpy.types import Default, InputBoolean, InputFloat, InputInteger, InputVector
 from .boolean_last import BooleanLast
 from .transform_accumulate import TransformAccumulate
 from .transform_local_axis import TransformLocalAxis
@@ -27,7 +27,7 @@ class AccumulateAxisRotation(AssetGeometryGroup):
     Parameters
     ----------
     position : InputVector
-        Position vector to transform
+        Position vector to transform. When unconnected: The position from the context.
     selection : InputBoolean
         Selection
     pivot : InputBoolean
@@ -37,7 +37,7 @@ class AccumulateAxisRotation(AssetGeometryGroup):
     group_id : InputInteger
         Transform field is accumulated individually for each `Group ID`
     transform_index : InputInteger
-        Index at which to evaluate the final transform for the positon. For most cases this will be `Index`, but it might be that some points need to use the accumulated transform from another point instead
+        Index at which to evaluate the final transform for the positon. For most cases this will be `Index`, but it might be that some points need to use the accumulated transform from another point instead. When unconnected: The index from the context.
 
     Inputs
     ------
@@ -96,12 +96,12 @@ class AccumulateAxisRotation(AssetGeometryGroup):
 
     def __init__(
         self,
-        position: InputVector = None,
+        position: InputVector = Default.POSITION,
         selection: InputBoolean = True,
         pivot: InputBoolean = False,
         angle: InputFloat = 0.0,
         group_id: InputInteger = 0,
-        transform_index: InputInteger = 0,
+        transform_index: InputInteger = Default.INDEX,
     ):
         super().__init__(
             **{

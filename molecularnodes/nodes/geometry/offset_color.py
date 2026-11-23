@@ -1,5 +1,5 @@
 # Node-group asset "Offset Color" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -11,7 +11,7 @@ from nodebpy.builder import (
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputColor, InputInteger
+from nodebpy.types import Default, InputColor, InputInteger
 from .offset_index import OffsetIndex
 
 
@@ -24,7 +24,7 @@ class OffsetColor(AssetGeometryGroup):
     color : InputColor
         Color
     index : InputInteger
-        The `Index` at which to evaluate this offset from
+        The `Index` at which to evaluate this offset from. When unconnected: The index from the context.
     offset : InputInteger
         The offset to apply to the `Index` before evaluating the input field
 
@@ -71,7 +71,7 @@ class OffsetColor(AssetGeometryGroup):
     def __init__(
         self,
         color: InputColor = None,
-        index: InputInteger = 0,
+        index: InputInteger = Default.INDEX,
         offset: InputInteger = 0,
     ):
         super().__init__(**{"Color": color, "Index": index, "Offset": offset})

@@ -1,19 +1,19 @@
 [project]
 name = "molecularnodes"
-version = "520.2.1"
+version = "520.3.0"
 description = "Toolbox for molecular animations with Blender and Geometry Nodes."
 readme = "README.md"
 license = "GPL-3.0-or-later"
 dependencies = [
-    "databpy>=0.9.0",
-    "mdanalysis>=2.10",
-    "biotite>=1.7.1",
+    "databpy>=0.13.0",
+    "mdanalysis>=2.11",
+    "biotite>=1.7.1,<3",
     "mrcfile",
     "starfile",
     "imdclient>=0.2.3",
     "pandas<3.0.0",
     "griddataformats>=1.2.0",
-    "nodebpy>=520.27.0",
+    "nodebpy>=520.41.0",
 ]
 maintainers = [{ name = "Brady Johnston", email = "brady.johnston@me.com" }]
 requires-python = "~=3.13.0"
@@ -50,10 +50,12 @@ dev = [
     "pre-commit",
     "pytest",
     "pytest-cov",
+    "pytest-codspeed",
     "pytest-xdist",
     "rdkit",
     "ruff",
     "syrupy",
+    "ty==0.0.107",
 ]
 
 [tool.extbpy]
@@ -69,7 +71,7 @@ copyright = ["2022 Brady Johnston"]
 exclude_packages = ["pyarrow"]
 # Added to the default excludes (__pycache__/, .*, /*.zip).
 paths_exclude_pattern = ["*.blend[1-9]", "*.stamp", "*.MNSession"]
-# The node asset library is built, not committed: `uv run -m nodebpy.assets build`.
+# The node asset library is built, not committed: `uv run nodebpy build`.
 required_files = ["molecularnodes/assets/nodes.blend"]
 
 [tool.extbpy.permissions]
@@ -96,6 +98,10 @@ molecularnodes = ["assets/*",
                   "**/*.py",
                   "annotations/fonts/*"]
 
+
+[tool.pytest.ini_options]
+# benchmarks are run separately with `pytest benchmarks --codspeed`
+testpaths = ["tests"]
 
 [tool.ruff.lint]
 # pyflakes, pycodestyle isort and varibale naming
@@ -138,7 +144,28 @@ order-by-type = true
 [tool.ruff.format]
 exclude = ["molecularnodes/assets/data.py"]
 
-# The node-asset pipeline (python -m nodebpy.assets build|dump|ensure|check):
+[tool.ty.src]
+include = ["molecularnodes", "tests"]
+
+# Node groups under these directories are written by `nodebpy dump`, so a
+# fix made by hand doesn't survive the round trip. These rules flag gaps in
+# nodebpy's socket and node typing there, to be fixed in nodebpy itself.
+[[tool.ty.overrides]]
+include = [
+    "molecularnodes/nodes/geometry",
+    "molecularnodes/nodes/shader",
+    "molecularnodes/nodes/materials",
+    "molecularnodes/nodes/compositor",
+]
+
+[tool.ty.overrides.rules]
+invalid-argument-type = "ignore"
+invalid-assignment = "ignore"
+not-subscriptable = "ignore"
+missing-attribute = "ignore"
+missing-union-attribute = "ignore"
+
+# The node-asset pipeline (nodebpy build|dump|ensure|check):
 # molecularnodes/nodes/ is the source of truth, nodes.blend the built,
 # untracked asset library, resources.blend the data-only datablocks the
 # build pulls in. See CONTRIBUTING.md "Node assets".
@@ -150,3 +177,5 @@ typed-api = true
 add-reroutes = true
 split-inputs = true
 iterations = 100
+# uncompressed, so each read of the library (one per style added) is ~40% faster
+no-compress = true

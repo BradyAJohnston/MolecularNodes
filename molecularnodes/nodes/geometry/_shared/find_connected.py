@@ -1,5 +1,5 @@
 # Node group "Find Connected" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
@@ -94,14 +94,12 @@ class FindConnected(CustomGeometryGroup):
         value = tree.inputs.integer("Value", 0, hide_value=True)
         match = tree.inputs.integer("Match", 2)
         distance = tree.inputs.integer("Distance", 2, min_value=1, max_value=3)
-        method = tree.inputs.menu("Method", optional_label=True)
+        method = tree.inputs.menu("Method", "Any", optional_label=True)
         is_valid = tree.outputs.boolean("Is Valid")
         length = tree.outputs.integer("Length")
         index = tree.outputs.integer("Index")
 
-        shortest_edge_paths = g.ShortestEdgePaths(
-            end_vertex=g.Compare.integer.equal(value, match)
-        )
+        shortest_edge_paths = g.ShortestEdgePaths(g.Compare.integer.equal(value, match))
         compare = g.Compare.integer.equal(shortest_edge_paths.o.total_cost, 2)
         compare_1 = g.Compare.integer.equal(shortest_edge_paths.o.total_cost, 3)
         evaluate_at_index = shortest_edge_paths.o.next_vertex_index.point.at(
@@ -110,7 +108,7 @@ class FindConnected(CustomGeometryGroup):
         evaluate_at_index_1 = shortest_edge_paths.o.next_vertex_index.point.at(
             evaluate_at_index
         )
-        float_to_integer = g.FloatToInteger(float=shortest_edge_paths.o.total_cost)
+        float_to_integer = g.FloatToInteger(shortest_edge_paths.o.total_cost)
         switch = g.Compare.integer.equal(
             shortest_edge_paths.o.total_cost, 1
         ).o.result.switch.integer(-1, shortest_edge_paths.o.next_vertex_index)
@@ -140,5 +138,3 @@ class FindConnected(CustomGeometryGroup):
 
         float_to_integer >> length
         menu_switch >> index
-
-        method.default_value = "Any"

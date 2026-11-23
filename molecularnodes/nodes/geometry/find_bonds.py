@@ -1,5 +1,5 @@
 # Node-group asset "Find Bonds" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -103,7 +103,9 @@ class FindBonds(AssetGeometryGroup):
         closure_zone = g.ClosureZone()
         atoms_2 = closure_zone.inputs.geometry("Atoms")
         geometry = closure_zone.outputs.geometry("Geometry")
-        separate_geometry = atoms_2 >> g.SeparateGeometry.point(selection=selection)
+        separate_geometry = atoms_2.output >> g.SeparateGeometry.point(
+            selection=selection
+        )
         plexus = Plexus(
             points=separate_geometry.o.selection,
             distance=scale,
@@ -113,7 +115,7 @@ class FindBonds(AssetGeometryGroup):
             SampleAtomicAttributes(
                 atoms=plexus, sample_atoms=separate_geometry.o.selection
             )
-            >> geometry
+            >> geometry.input
         )
         EvaluateOnAtoms(geometry=atoms, closure=closure_zone.closure) >> atoms_1
 

@@ -8,7 +8,11 @@ import numpy as np
 import pytest
 from MDAnalysis.transformations import boxdimensions
 import molecularnodes as mn
+from molecularnodes.blender.registered import object_props
+from molecularnodes.entities.density.annotations import DensityAnnotationManager
+from molecularnodes.entities.molecule.annotations import MoleculeAnnotation
 from .constants import data_dir
+from .utils import mn_ops, object_mesh, scene
 
 bpy.utils.expose_bundled_modules()
 
@@ -29,7 +33,7 @@ class TestAnnotations:
         )
         # Make all densities are removed
         for o in bpy.data.objects:
-            if o.mn.entity_type == "density":
+            if object_props(o).entity_type == "density":
                 bpy.data.objects.remove(o, do_unlink=True)
         return file
 
@@ -83,7 +87,7 @@ class TestAnnotations:
 
     def test_registered_density_annotations(self):
         # test if density annotations are correctly auto registered
-        manager = mn.entities.density.annotations.DensityAnnotationManager
+        manager = DensityAnnotationManager
         # density_info
         assert "density_info" in manager._classes
         assert hasattr(manager, "add_density_info")
@@ -203,6 +207,7 @@ class TestAnnotations:
         # test annotation common params in interface
         assert hasattr(a1, "visible")
         # test annotation instance having trajectory entity
+        assert isinstance(a1._instance, MoleculeAnnotation)
         assert a1._instance.trajectory == t1
         # test annotation instance interface
         assert a1 == a1._instance.interface
@@ -226,7 +231,7 @@ class TestAnnotations:
             t1.annotations.remove("InvalidAnnotation")
         # test invalid remove by instance
         with pytest.raises(ValueError):
-            t1.annotations.remove(int)
+            t1.annotations.remove(int)  # ty: ignore[invalid-argument-type]  # checks the error for a wrong type
         # test invalid remove by instance uuid
         orig_uuid = a1._uuid
         a1._uuid = "InvalidUUID"
@@ -246,13 +251,11 @@ class TestAnnotations:
         assert len(t1.annotations) == 0
         # add annotation operator
         # first annotation type due to no invoke - must have no required inputs
-        bpy.ops.mn.add_annotation("EXEC_DEFAULT", uuid=t1.uuid)
+        mn_ops.add_annotation("EXEC_DEFAULT", uuid=t1.uuid)
         assert len(t1.annotations) == 1
         a1 = t1.annotations[0]
         # remove annotation operator
-        bpy.ops.mn.remove_annotation(
-            "EXEC_DEFAULT", uuid=t1.uuid, annotation_uuid=a1._uuid
-        )
+        mn_ops.remove_annotation("EXEC_DEFAULT", uuid=t1.uuid, annotation_uuid=a1._uuid)
         assert len(t1.annotations) == 0
 
     def test_annotation_ops_molecule(self):
@@ -260,11 +263,11 @@ class TestAnnotations:
         assert len(mol.annotations) == 0
         # add annotation operator
         # first annotation type due to no invoke - must have no required inputs
-        bpy.ops.mn.add_annotation("EXEC_DEFAULT", uuid=mol.uuid)
+        mn_ops.add_annotation("EXEC_DEFAULT", uuid=mol.uuid)
         assert len(mol.annotations) == 1
         a1 = mol.annotations[0]
         # remove annotation operator
-        bpy.ops.mn.remove_annotation(
+        mn_ops.remove_annotation(
             "EXEC_DEFAULT", uuid=mol.uuid, annotation_uuid=a1._uuid
         )
         assert len(mol.annotations) == 0
@@ -274,13 +277,11 @@ class TestAnnotations:
         assert len(d1.annotations) == 0
         # add annotation operator
         # first annotation type due to no invoke - must have no required inputs
-        bpy.ops.mn.add_annotation("EXEC_DEFAULT", uuid=d1.uuid)
+        mn_ops.add_annotation("EXEC_DEFAULT", uuid=d1.uuid)
         assert len(d1.annotations) == 1
         a1 = d1.annotations[0]
         # remove annotation operator
-        bpy.ops.mn.remove_annotation(
-            "EXEC_DEFAULT", uuid=d1.uuid, annotation_uuid=a1._uuid
-        )
+        mn_ops.remove_annotation("EXEC_DEFAULT", uuid=d1.uuid, annotation_uuid=a1._uuid)
         assert len(d1.annotations) == 0
 
     def test_trajectory_annotation_atom_info(self, universe):
@@ -387,7 +388,7 @@ class TestAnnotations:
         assert len(t1.annotations) == 1
         obj_name = "MN_an_TestUniverse"
         assert obj_name in bpy.data.objects
-        obj_data = bpy.data.objects[obj_name].data
+        obj_data = object_mesh(bpy.data.objects[obj_name])
         # verify default triclinic cell in wireframe mode
         vef = [len(obj_data.vertices), len(obj_data.edges), len(obj_data.polygons)]
         assert vef == [8, 12, 0]
@@ -420,13 +421,13 @@ class TestAnnotations:
         ]
         # iterate through frames and verify # of vertices, edges and faces
         for f in range(5):
-            bpy.context.scene.frame_set(f)
+            scene().frame_set(f)
             vef = [len(obj_data.vertices), len(obj_data.edges), len(obj_data.polygons)]
             assert vef == expected_vef[f]
         # verify 3x3x3 lattice
         box.show_lattice = True
         for f in range(5):
-            bpy.context.scene.frame_set(f)
+            scene().frame_set(f)
             vef = [len(obj_data.vertices), len(obj_data.edges), len(obj_data.polygons)]
             np.testing.assert_allclose(vef, np.array(expected_vef[f]) * 27)
 
@@ -505,13 +506,15 @@ class TestAnnotations:
         # test line mesh enable / disable
         a.line_mode = "overlay"
         # test no vertices when disabled
-        assert not bpy.data.objects[name].data.vertices
+        assert not object_mesh(bpy.data.objects[name]).vertices
         # test vertices present when enabled
         a.line_mode = "mesh"
-        assert bpy.data.objects[name].data.vertices
+        assert object_mesh(bpy.data.objects[name]).vertices
         # test attributes (defaults)
-        thickness = t.annotations.bob.named_attribute("thickness")
-        color = t.annotations.bob.named_attribute("Color")
+        bob = t.annotations.bob
+        assert bob is not None
+        thickness = bob.named_attribute("thickness")
+        color = bob.named_attribute("Color")
         # verify single line with arrows at both ends - 5 edges
         assert len(thickness) == 5
         assert len(color) == 5
@@ -522,8 +525,10 @@ class TestAnnotations:
         # test attribute updates
         a.mesh_thickness = 0.5
         a.mesh_color = (0.0, 1.0, 0.0, 1.0)
-        thickness = t.annotations.bob.named_attribute("thickness")
-        color = t.annotations.bob.named_attribute("Color")
+        bob = t.annotations.bob
+        assert bob is not None
+        thickness = bob.named_attribute("thickness")
+        color = bob.named_attribute("Color")
         np.testing.assert_allclose(thickness, 0.5, rtol=0, atol=0)
         np.testing.assert_allclose(
             color, np.array([(0.0, 1.0, 0.0, 1.0)] * len(color)), rtol=0, atol=0

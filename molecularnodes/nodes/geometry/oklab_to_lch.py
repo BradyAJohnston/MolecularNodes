@@ -1,5 +1,5 @@
 # Node-group asset "OKLab to LCh" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -77,7 +77,7 @@ class OKLabToLCh(AssetGeometryGroup):
         h = tree.outputs.float("h", subtype="ANGLE")
 
         with g.Frame("C"):
-            integer = g.Integer(integer=2)
+            integer = g.Integer(2)
             (oklab.y**integer + oklab.z**integer).sqrt() >> c_
         oklab.z.atan2(oklab.y) >> h
 

@@ -1,5 +1,5 @@
 # Node-group asset "Transform Accumulate" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
 from bpy.types import GeometryNodeTree
@@ -98,6 +98,7 @@ class TransformAccumulate(AssetGeometryGroup):
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
         domain = tree.inputs.menu(
             "Domain",
+            "Point",
             description="Domain on which to accumulate transforms",
             optional_label=True,
         )
@@ -128,8 +129,6 @@ class TransformAccumulate(AssetGeometryGroup):
             )
             >> transform_1
         )
-
-        domain.default_value = "Point"
 
 
 ASSET = TransformAccumulate

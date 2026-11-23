@@ -1,7 +1,6 @@
 import bpy
+import databpy as db
 import numpy as np
-from databpy.attribute import AttributeTypes
-from databpy.object import create_bob
 from . import coll
 
 
@@ -11,21 +10,21 @@ def create_data_object(
     collection: bpy.types.Collection | None = None,
     world_scale: float = 0.1,
 ) -> bpy.types.Object:
-    bob = create_bob(
+    bob = db.create_bob(
         array["transform"][:, :3, 3] * world_scale,
         collection=collection if collection is not None else coll.data(),
         name=name,
     )
 
     attributes = [
-        ("transform", AttributeTypes.FLOAT4X4),
-        ("assembly_id", AttributeTypes.INT),
-        ("sym_id", AttributeTypes.INT),
-        ("chain_id", AttributeTypes.INT),
-        ("pdb_model_num", AttributeTypes.INT),
+        ("transform", db.mat4),
+        ("assembly_id", db.int32),
+        ("sym_id", db.int32),
+        ("chain_id", db.int32),
+        ("pdb_model_num", db.int32),
     ]
 
-    for column, type in attributes:
+    for column, atype in attributes:
         try:
             data = array[column]
             if column == "transform":
@@ -37,11 +36,6 @@ def create_data_object(
         if np.issubdtype(data.dtype, str):
             data = np.unique(data, return_inverse=True)[1]
 
-        # Blender stores float4x4 attributes column-major, so the row-major
-        # numpy matrices must be transposed or GN sees the inverse rotation
-        if type == AttributeTypes.FLOAT4X4:
-            data = data.transpose(0, 2, 1)
-
-        bob.store_named_attribute(data=data, name=column, atype=type)
+        bob[column] = atype(data)
 
     return bob.object

@@ -10,6 +10,7 @@ def emdb_density_map(isolated_density_file):
     return isolated_density_file(fetch_emdb_map("EMD-48397"))
 
 
+@pytest.mark.network
 def test_emdb_api_density_load(emdb_density_map):
     density = mn.entities.density.Grids.load(emdb_density_map)
     pos = density.named_attribute("position")

@@ -586,23 +586,24 @@ def test_frames_clip_plays_the_trajectory(canvas, traj):
         t.play(traj.play(0, 4), run_time=2)
     assert not traj.update_with_scene
     canvas.frame = 1
-    assert traj.uframe == 0
+    assert traj.universe.trajectory.frame == 0
     canvas.frame = 11
-    assert traj.uframe == 2
+    assert traj.universe.trajectory.frame == 2
     canvas.frame = 21
-    assert traj.uframe == 4
+    assert traj.universe.trajectory.frame == 4
     # held on the last frame afterwards
     canvas.frame = 40
-    assert traj.uframe == 4
+    assert traj.universe.trajectory.frame == 4
 
 
-def test_frames_clip_honours_subframes(canvas, traj):
+def test_frames_clip_ignores_subframes(canvas, traj):
+    # the manual frame is a trajectory frame, so subframes do not scale it
     traj.subframes = 1
     with canvas.timeline(fps=10) as t:
         t.play(traj.play(0, 4), run_time=1)
     canvas.frame = 11
-    assert traj.frame == 8
-    assert traj.uframe == 4
+    assert traj.frame == 4
+    assert traj.universe.trajectory.frame == 4
 
 
 # -- storyboard ------------------------------------------------------------------

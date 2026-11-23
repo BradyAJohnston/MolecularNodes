@@ -1,32 +1,21 @@
 # Node-group asset "Residue Name" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
 from nodebpy import TreeBuilder
+from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
     IntegerSocket,
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputInteger
-from ._shared.attribute_at_index import AttributeAtIndex
 
 
 class ResidueName(AssetGeometryGroup):
     """
     Residue Name
-
-    Parameters
-    ----------
-    index : InputInteger
-        Index
-
-    Inputs
-    ------
-    i.index : IntegerSocket
-        Index
 
     Outputs
     -------
@@ -41,8 +30,7 @@ class ResidueName(AssetGeometryGroup):
     _tree_properties = {"node_tool_idname": "geometry.residue_name"}
 
     class _Inputs(SocketAccessor):
-        index: IntegerSocket
-        """Index"""
+        pass
 
     class _Outputs(SocketAccessor):
         res_name: IntegerSocket
@@ -55,21 +43,17 @@ class ResidueName(AssetGeometryGroup):
         @property
         def o(self) -> _Outputs: ...
 
-    def __init__(
-        self,
-        index: InputInteger = 0,
-    ):
-        super().__init__(**{"Index": index})
+    def __init__(self) -> None:
+        super().__init__()
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        index = tree.inputs.integer(
-            "Index", 0, min_value=0, hide_value=True, default_input="INDEX"
-        )
         res_name = tree.outputs.integer(
             "res_name", description="Read the `res_name` attribute from the geometry"
         )
 
-        AttributeAtIndex(index=index, name="res_name") >> res_name
+        named_attribute = g.NamedAttribute.integer("res_name")
+
+        named_attribute >> res_name
 
 
 ASSET = ResidueName

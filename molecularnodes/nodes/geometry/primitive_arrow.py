@@ -1,5 +1,5 @@
 # Node-group asset "Primitive Arrow" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -126,7 +126,7 @@ class PrimitiveArrow(AssetGeometryGroup):
             translation=g.CombineXYZ(z=math_1 / 2.0),
         )
         (
-            g.JoinGeometry(geometry=(transform_geometry, transform_geometry_1))
+            g.JoinGeometry((transform_geometry, transform_geometry_1))
             >> g.StoreNamedAttribute.point.color(name="Color", value=value)
             >> g.SetMaterial(material=material)
             >> geometry

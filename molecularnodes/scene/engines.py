@@ -1,6 +1,6 @@
 import warnings
 from abc import ABC
-from typing import Literal
+from typing import Literal, cast
 import bpy
 from .render import enable_optimal_gpu
 
@@ -43,7 +43,7 @@ class EEVEE(RenderEngine):
 
     @property
     def engine(self) -> bpy.types.SceneEEVEE:
-        return bpy.context.scene.eevee  # ty: ignore[invalid-return-type, unresolved-attribute]
+        return bpy.context.scene.eevee  # ty: ignore[invalid-explicit-return, missing-union-attribute]
 
     @property
     def samples(self) -> int:
@@ -101,7 +101,7 @@ class Cycles(RenderEngine):
 
     @device.setter
     def device(self, value: _CyclesDeviceTypes):
-        value = value.upper()
+        value = cast(_CyclesDeviceTypes, value.upper())
         self.engine.device = value
         if value == "GPU":
             try:

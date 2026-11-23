@@ -1,5 +1,5 @@
 # Node-group asset "OKLab to Color" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -68,7 +68,7 @@ class OKLabToColor(AssetGeometryGroup):
 
         (
             g.VectorMath.power(
-                oklab.transform(OKLabMatrices().o.m2.invert()), g.Integer(integer=3)
+                oklab.transform(OKLabMatrices().o.m2.invert()), g.Integer(3)
             ).o.vector.transform(OKLabMatrices().o.m1.invert())
             >> color
         )

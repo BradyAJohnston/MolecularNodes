@@ -1,5 +1,5 @@
 # Node-group asset "Animate Frames" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -195,13 +195,12 @@ class AnimateFrames(AssetGeometryGroup):
                     geometry=collection_info, component="INSTANCES"
                 ).o.instance_count
             )
-            sample_index = g.SampleIndex(
-                geometry=g.RealizeInstances(
+            sample_index = g.SampleIndex.point.vector(
+                g.RealizeInstances(
                     geometry=collection_info, realize_to_point_domain=True
                 ),
-                value=g.Position(),
-                index=g.Index(),
-                data_type="FLOAT_VECTOR",
+                g.Position(),
+                g.Index(),
             )
             set_position = (
                 duplicate_elements
@@ -214,7 +213,7 @@ class AnimateFrames(AssetGeometryGroup):
             set_ures_id = SetUResID(geometry=set_position)
         _sample_position = SamplePosition()
         with g.Frame("Set Transform to align with structure"):
-            object_info = g.ObjectInfo(object=g.SelfObject())
+            object_info = g.ObjectInfo(g.SelfObject())
             (
                 set_ures_id
                 >> g.TransformGeometry(transform=object_info.o.transform, mode="Matrix")

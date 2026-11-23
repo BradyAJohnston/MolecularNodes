@@ -1,5 +1,5 @@
 # Node-group asset "Color" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -8,26 +8,14 @@ from nodebpy import geometry as g
 from nodebpy.builder import (
     AssetGeometryGroup,
     ColorSocket,
-    IntegerSocket,
     PackageLibrary,
     SocketAccessor,
 )
-from nodebpy.types import InputInteger
 
 
 class Color(AssetGeometryGroup):
     """
     Color
-
-    Parameters
-    ----------
-    index : InputInteger
-        Index
-
-    Inputs
-    ------
-    i.index : IntegerSocket
-        Index
 
     Outputs
     -------
@@ -42,8 +30,7 @@ class Color(AssetGeometryGroup):
     _tree_properties = {"node_tool_idname": "geometry.color"}
 
     class _Inputs(SocketAccessor):
-        index: IntegerSocket
-        """Index"""
+        pass
 
     class _Outputs(SocketAccessor):
         color: ColorSocket
@@ -56,21 +43,19 @@ class Color(AssetGeometryGroup):
         @property
         def o(self) -> _Outputs: ...
 
-    def __init__(
-        self,
-        index: InputInteger = 0,
-    ):
-        super().__init__(**{"Index": index})
+    def __init__(self) -> None:
+        super().__init__()
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        index = tree.inputs.integer("Index", 0, min_value=0, default_input="INDEX")
         color = tree.outputs.color(
             "Color",
             (0.0, 0.0, 0.0, 1.0),
             description="Read the `Color` attribute from the geometry",
         )
 
-        g.NamedAttribute.color("Color").o.attribute.point.at(index) >> color
+        named_attribute = g.NamedAttribute.color("Color")
+
+        named_attribute >> color
 
 
 ASSET = Color

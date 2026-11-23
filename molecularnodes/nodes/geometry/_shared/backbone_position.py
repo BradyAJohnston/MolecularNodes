@@ -1,5 +1,5 @@
 # Node group ".Backbone Position" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # Shared by several assets, which import it; not an asset itself.
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING, Literal
@@ -73,9 +73,10 @@ class BackbonePosition(CustomGeometryGroup):
         super().__init__(**{"Method": method, "Menu": menu})
 
     def _build_group(self, tree: TreeBuilder[GeometryNodeTree]) -> None:
-        method = tree.inputs.menu("Method", expanded=True, optional_label=True)
+        method = tree.inputs.menu("Method", "Read", expanded=True, optional_label=True)
         menu = tree.inputs.menu(
             "Menu",
+            "backbone_N",
             description="the particular backbone residue to read the value from",
             optional_label=True,
         )
@@ -104,6 +105,3 @@ class BackbonePosition(CustomGeometryGroup):
             )
             >> position
         )
-
-        method.default_value = "Read"
-        menu.default_value = "backbone_N"

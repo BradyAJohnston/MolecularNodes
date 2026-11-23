@@ -1,5 +1,5 @@
 # Node-group asset "Visualize Angle" (GeometryNodeTree), dumped by nodebpy.assets.dump_library.
-# Rebuild the library with nodebpy.assets.build_library (python -m nodebpy.assets build).
+# Rebuild the library with nodebpy.assets.build_library (nodebpy build).
 # _build_group() is the source of truth: the docstring, __init__ and accessors are regenerated from it on the next dump.
 from typing import TYPE_CHECKING
 from bpy.types import GeometryNodeTree
@@ -14,7 +14,7 @@ from nodebpy.builder import (
     SocketAccessor,
     VectorSocket,
 )
-from nodebpy.types import InputBoolean, InputFloat, InputGeometry, InputVector
+from nodebpy.types import Default, InputBoolean, InputFloat, InputGeometry, InputVector
 
 
 class VisualizeAngle(AssetGeometryGroup):
@@ -28,7 +28,7 @@ class VisualizeAngle(AssetGeometryGroup):
     selection : InputBoolean
         Selection
     position : InputVector
-        Position
+        Position. When unconnected: The position from the context.
     angle : InputFloat
         Angle
     length : InputFloat
@@ -107,7 +107,7 @@ class VisualizeAngle(AssetGeometryGroup):
         self,
         points: InputGeometry = None,
         selection: InputBoolean = True,
-        position: InputVector = None,
+        position: InputVector = Default.POSITION,
         angle: InputFloat = 0.5,
         length: InputFloat = 0.005,
         up: InputVector = None,
@@ -150,9 +150,7 @@ class VisualizeAngle(AssetGeometryGroup):
             points
             >> g.InstanceOnPoints(
                 selection=selection,
-                instance=g.ResampleCurve(
-                    curve=g.CurveLine(end=(0.0, 0.0, 0.0)), keep_last_segment=True
-                ),
+                instance=g.ResampleCurve(g.CurveLine(end=(0.0, 0.0, 0.0))),
             )
             >> g.RealizeInstances(realize_to_point_domain=True)
             >> g.StoreNamedAttribute.point.float(
@@ -165,7 +163,7 @@ class VisualizeAngle(AssetGeometryGroup):
             )
         )
         capture = g.CaptureAttribute.point(geometry=store_named_attribute)
-        vector = capture.items.vector("Vector", rotate_vector)
+        vector = capture.items.vector(rotate_vector, "Vector")
         set_curve_radius = (
             capture.o.geometry
             >> g.SetCurveNormal(normal=vector.output, mode="Free")

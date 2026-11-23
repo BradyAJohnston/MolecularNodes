@@ -1,0 +1,20 @@
+name: Blender 5.2
+
+on:
+    push:
+        branches: ["main"]
+    pull_request:
+        branches: ["*"]
+    workflow_dispatch:
+
+# Cancel in-progress runs when a new workflow with the same group is triggered
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    tests:
+        uses: ./.github/workflows/_tests.yml
+        with:
+            version: "5.2"
+            network: true

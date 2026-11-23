@@ -1,6 +1,6 @@
 from enum import StrEnum
 from math import degrees, radians
-from typing import Sequence
+from typing import Literal, Sequence, cast
 import bpy
 import numpy as np
 import numpy.typing as npt
@@ -86,12 +86,14 @@ class Camera:
     @property
     def camera(self) -> bpy.types.Object:
         """Get Camera object"""
-        return bpy.context.scene.camera
+        scene = bpy.context.scene
+        assert scene is not None and scene.camera is not None
+        return scene.camera
 
     @property
     def camera_data(self) -> bpy.types.Camera:
         """Get Camera data"""
-        return self.camera.data
+        return cast(bpy.types.Camera, self.camera.data)
 
     # -- rig ------------------------------------------------------------------
 
@@ -308,6 +310,27 @@ class Camera:
         self.camera_data.clip_end = value
 
     @property
+    def orthographic(self) -> bool:
+        """Whether the camera is orthographic, which gives figures one exact
+        scale. ``look_at`` fits an orthographic camera by changing its
+        ``ortho_scale``."""
+        return self.camera_data.type == "ORTHO"
+
+    @orthographic.setter
+    def orthographic(self, value: bool) -> None:
+        self.camera_data.type = "ORTHO" if value else "PERSP"
+
+    @property
+    def ortho_scale(self) -> float:
+        """Length in nanometres covered by the longer edge of the frame, for an
+        orthographic camera."""
+        return self.camera_data.ortho_scale
+
+    @ortho_scale.setter
+    def ortho_scale(self, value: float) -> None:
+        self.camera_data.ortho_scale = value
+
+    @property
     def rotation(self) -> tuple[float, float, float]:
         """Get the camera's world rotation in degrees (XYZ)"""
         if not self.is_rigged:
@@ -316,7 +339,7 @@ class Camera:
         return tuple(degrees(angle) for angle in euler)
 
     @rotation.setter
-    def rotation(self, angles: tuple[float, float, float]) -> None:
+    def rotation(self, angles: Sequence[float]) -> None:
         """
         Set the camera's world rotation in degrees (XYZ).
 
@@ -405,6 +428,9 @@ class Camera:
         if scene is None:
             scene = bpy.context.scene
         points = framing.as_points(points)
+        # matrix_world lags a rotation just written until the depsgraph updates
+        assert bpy.context.view_layer is not None
+        bpy.context.view_layer.update()
         bounds = self.frame_bounds(scene)
         basis = self.basis
 
@@ -422,12 +448,33 @@ class Camera:
             rotation = self.matrix_world.to_euler("XYZ", self.pivot.rotation_euler)
             self._place(location, rotation, max(depth, self.clip_start))
         else:
-            self.camera.location = location
+            self.camera.location = Vector(location.tolist())
         # a subject sitting beyond the far clip renders as nothing at all, so
         # make room for it rather than silently dropping it
         furthest = float(np.max((points - location) @ basis[2]))
         if furthest > self.clip_end:
             self.clip_end = furthest * 1.05
+
+    def set_basis(self, basis: npt.ArrayLike) -> None:
+        """
+        Point the camera along a basis given as rows ``(right, up, forward)``.
+
+        The inverse of [](`~molecularnodes.scene.camera.Camera.basis`), and the
+        form [](`molecularnodes.viewpoint`) returns its views in.
+        """
+        right, up, forward = np.asarray(basis, dtype=np.float64)
+        matrix = Matrix(np.column_stack([right, up, -forward]).tolist())
+        if self.is_rigged:
+            # turn the rig in place, as setting `rotation` does
+            rotation = matrix.to_euler("XYZ", self.pivot.rotation_euler)
+            self._place(self.location, rotation, self._distance)
+            return
+        # to_euler() takes only Euler orders, so a camera in QUATERNION or
+        # AXIS_ANGLE mode raises here
+        mode = cast(
+            Literal["XYZ", "XZY", "YXZ", "YZX", "ZXY", "ZYX"], self.camera.rotation_mode
+        )
+        self.camera.rotation_euler = matrix.to_euler(mode)
 
     # -- timeline clips -----------------------------------------------------
     # each returns a clip describing a camera move for `Canvas.timeline`; the

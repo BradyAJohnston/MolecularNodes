@@ -1,3 +1,4 @@
+import warnings
 from io import StringIO
 import biotite.structure as struc
 import numpy as np
@@ -13,7 +14,7 @@ from .assembly import AssemblyParser
 from .reader import ReaderBase
 
 
-class PDBReader(ReaderBase):
+class PDBReader(ReaderBase[pdb.PDBFile]):
     extra_fields = ["b_factor", "occupancy", "charge", "atom_id"]
     _extra_annotations = {}
 
@@ -21,7 +22,7 @@ class PDBReader(ReaderBase):
     def set_extra_annotations(annotations, array, file):
         return array
 
-    def read(self, file_path):
+    def read(self, file_path) -> pdb.PDBFile:
         return pdb.PDBFile.read(file_path)
 
     def get_structure(self, model: int | None = None):
@@ -76,6 +77,20 @@ class PDBReader(ReaderBase):
                 print("Not able to find bonds via residue: {e}")
 
         return array
+
+    def _model_values(self):
+        # biotite indexes the models of a PDB file, so reading each one on its
+        # own only parses that model's lines
+        with warnings.catch_warnings():
+            # the elements guessed from atom names, already warned about
+            warnings.simplefilter("ignore", UserWarning)
+            models = [
+                pdb.get_structure(
+                    self.file, model=i, extra_fields=["b_factor", "occupancy"]
+                )
+                for i in range(1, self.n_models + 1)
+            ]
+        return self._stack_model_values(models)
 
     def _fill_blank_res_ids(self) -> None:
         """Fill blank res_id columns (23-26) of ATOM / HETATM records with 1"""
@@ -160,6 +175,9 @@ def _comp_secondary_structure(array):
     conv_sse_char_int = {"a": 1, "b": 2, "c": 3, "": 0}
 
     char_sse = annotate_sse(array)
+    if char_sse.dtype.kind != "U":
+        # biotite >= 2 returns PSeaElement codes instead of characters
+        char_sse = struc.PSeaElement.to_symbols(char_sse)
     int_sse = np.array([conv_sse_char_int[char] for char in char_sse], dtype=int)
     atom_sse = spread_residue_wise(array, int_sse)
 
@@ -233,15 +251,31 @@ class PDBAssemblyParser(AssemblyParser):
             if transform_start is None:
                 raise InvalidFileError("No 'BIOMT' records found for chosen assembly")
 
-            matrices = _parse_transformations(assembly_lines[transform_start:stop])
+            # only the BIOMT lines, as the final chain set of an assembly also
+            # includes the blank line separating it from the next BIOMOLECULE
+            biomt_lines = [
+                line
+                for line in assembly_lines[transform_start:stop]
+                if line.lstrip().startswith("BIOMT")
+            ]
+            matrices = _parse_transformations(biomt_lines)
 
             for matrix in matrices:
-                transformations.append((affected_chain_ids, matrix.tolist()))
+                transformations.append(
+                    {
+                        "chain_ids": affected_chain_ids,
+                        "matrix": matrix.tolist(),
+                        "pdb_model_num": i,
+                    }
+                )
 
         return transformations
 
     def get_assemblies(self):
         assembly_dict = {}
+        # no assembly records is not an error, just a structure without assemblies
+        if self._file.get_remark(300) is None and self._file.get_remark(350) is None:
+            return assembly_dict
         for assembly_id in self.list_assemblies():
             assembly_dict[assembly_id] = self.get_transformations(assembly_id)
 
