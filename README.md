@@ -7,8 +7,9 @@
 [![Docs](https://github.com/BradyAJohnston/MolecularNodes/actions/workflows/docs.yml/badge.svg?branch=main)](https://github.com/BradyAJohnston/MolecularNodes/actions/workflows/docs.yml)
 [![CodSpeed](https://img.shields.io/endpoint?url=https://codspeed.io/badge.json)](https://app.codspeed.io/BradyAJohnston/MolecularNodes)
 
-[![Blender Extensions downloads](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fextensions.blender.org%2Fadd-ons%2Fmolecularnodes%2F&search=Downloads%5Cs%2A%3C%2Fdt%3E%5Cs%2A%3Cdd%3E%28%5Cd%2B%29%3C%2Fdd%3E&replace=%241&label=Blender%20Extensions%20downloads&logo=blender&color=orange)](https://extensions.blender.org/add-ons/molecularnodes/)
 [![GitHub release](https://img.shields.io/github/v/release/BradyAJohnston/MolecularNodes?logo=github&label=release)](https://github.com/BradyAJohnston/MolecularNodes/releases)
+
+[![Blender Extensions downloads](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fextensions.blender.org%2Fadd-ons%2Fmolecularnodes%2F&search=Downloads%5Cs%2A%3C%2Fdt%3E%5Cs%2A%3Cdd%3E%28%5Cd%2B%29%3C%2Fdd%3E&replace=%241&label=Blender%20Extensions%20downloads&logo=blender&color=orange)](https://extensions.blender.org/add-ons/molecularnodes/)
 [![GitHub downloads](https://img.shields.io/github/downloads/BradyAJohnston/MolecularNodes/total?logo=github&label=GitHub%20downloads)](https://github.com/BradyAJohnston/MolecularNodes/releases)
 [![PyPI](https://img.shields.io/pypi/v/molecularnodes?logo=pypi&logoColor=white&label=PyPI)](https://pypi.org/project/molecularnodes/)
 [![PyPI downloads](https://img.shields.io/pepy/dt/molecularnodes?logo=pypi&logoColor=white&label=PyPI%20downloads)](https://pepy.tech/project/molecularnodes)
@@ -52,7 +53,7 @@ The version number follows Blender: Molecular Nodes `520.x` is built for Blender
 | Blender     | Molecular Nodes  | Tests                                                                                                                                                                                                      |
 | ----------- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 5.2         | `520.x`          | [![Blender 5.2](https://github.com/BradyAJohnston/MolecularNodes/actions/workflows/tests-5.2.yml/badge.svg?branch=main)](https://github.com/BradyAJohnston/MolecularNodes/actions/workflows/tests-5.2.yml) |
-| 5.3 (beta)  | tested on `main` | [![Blender 5.3](https://github.com/BradyAJohnston/MolecularNodes/actions/workflows/tests-5.3.yml/badge.svg?branch=main)](https://github.com/BradyAJohnston/MolecularNodes/actions/workflows/tests-5.3.yml) |
+| 5.3         | tested on `main` | [![Blender 5.3](https://github.com/BradyAJohnston/MolecularNodes/actions/workflows/tests-5.3.yml/badge.svg?branch=main)](https://github.com/BradyAJohnston/MolecularNodes/actions/workflows/tests-5.3.yml) |
 | 5.4 (alpha) | tested on `main` | [![Blender 5.4](https://github.com/BradyAJohnston/MolecularNodes/actions/workflows/tests-5.4.yml/badge.svg?branch=main)](https://github.com/BradyAJohnston/MolecularNodes/actions/workflows/tests-5.4.yml) |
 
 Each night, [![Test Daily Build](https://github.com/BradyAJohnston/MolecularNodes/actions/workflows/test-daily.yml/badge.svg)](https://github.com/BradyAJohnston/MolecularNodes/actions/workflows/test-daily.yml) installs the built extension into the latest Blender daily build and runs the tests there.

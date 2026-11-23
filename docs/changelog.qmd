@@ -2,9 +2,7 @@
 title: "Changelog"
 ---
 
-# v520.3.0 - UNRELEASED
-
-
+# v520.3.0 - 2026-11-23
 
 ## Added
 - `Select Residue Class` and `Color Residue Class` nodes select and color amino acids as positively charged, negatively charged, polar uncharged, special case or hydrophobic. [#1193](https://github.com/BradyAJohnston/MolecularNodes/issues/1193)
