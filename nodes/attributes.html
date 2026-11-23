@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -215,12 +215,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -241,6 +235,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -271,6 +271,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -343,18 +349,25 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#atom-id" id="toc-atom-id" class="nav-link active" data-scroll-target="#atom-id">Atom ID</a></li>
+  <li><a href="#assembly-id" id="toc-assembly-id" class="nav-link active" data-scroll-target="#assembly-id">Assembly ID</a></li>
+  <li><a href="#atom-id" id="toc-atom-id" class="nav-link" data-scroll-target="#atom-id">Atom ID</a></li>
   <li><a href="#atom-name" id="toc-atom-name" class="nav-link" data-scroll-target="#atom-name">Atom Name</a></li>
   <li><a href="#atomic-number" id="toc-atomic-number" class="nav-link" data-scroll-target="#atomic-number">Atomic Number</a></li>
   <li><a href="#b-factor" id="toc-b-factor" class="nav-link" data-scroll-target="#b-factor">B Factor</a></li>
   <li><a href="#chain-id" id="toc-chain-id" class="nav-link" data-scroll-target="#chain-id">Chain ID</a></li>
+  <li><a href="#charge" id="toc-charge" class="nav-link" data-scroll-target="#charge">Charge</a></li>
   <li><a href="#color" id="toc-color" class="nav-link" data-scroll-target="#color">Color</a></li>
   <li><a href="#entity-id" id="toc-entity-id" class="nav-link" data-scroll-target="#entity-id">Entity ID</a></li>
+  <li><a href="#force" id="toc-force" class="nav-link" data-scroll-target="#force">Force</a></li>
+  <li><a href="#fragment-id" id="toc-fragment-id" class="nav-link" data-scroll-target="#fragment-id">Fragment ID</a></li>
   <li><a href="#frame-id" id="toc-frame-id" class="nav-link" data-scroll-target="#frame-id">Frame ID</a></li>
+  <li><a href="#image-id" id="toc-image-id" class="nav-link" data-scroll-target="#image-id">Image ID</a></li>
   <li><a href="#mass" id="toc-mass" class="nav-link" data-scroll-target="#mass">Mass</a></li>
   <li><a href="#residue-id" id="toc-residue-id" class="nav-link" data-scroll-target="#residue-id">Residue ID</a></li>
   <li><a href="#residue-name" id="toc-residue-name" class="nav-link" data-scroll-target="#residue-name">Residue Name</a></li>
   <li><a href="#secondary-structure" id="toc-secondary-structure" class="nav-link" data-scroll-target="#secondary-structure">Secondary Structure</a></li>
+  <li><a href="#segment-id" id="toc-segment-id" class="nav-link" data-scroll-target="#segment-id">Segment ID</a></li>
+  <li><a href="#symmetry-id" id="toc-symmetry-id" class="nav-link" data-scroll-target="#symmetry-id">Symmetry ID</a></li>
   <li><a href="#ures-id" id="toc-ures-id" class="nav-link" data-scroll-target="#ures-id">URes ID</a></li>
   <li><a href="#vdw-radii" id="toc-vdw-radii" class="nav-link" data-scroll-target="#vdw-radii">VDW Radii</a></li>
   </ul>
@@ -383,11 +396,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 
 
 <p>Read attributes from structures</p>
-<section id="atom-id" class="level2">
-<h2 class="anchored" data-anchor-id="atom-id">Atom ID</h2>
-<p>The <code class="custom-attribute">atom_id</code> attribute which is read from the file. Will be increasing linearly for each subsequent atom</p>
-<p><strong>Inputs</strong></p>
+<section id="assembly-id" class="level2">
+<h2 class="anchored" data-anchor-id="assembly-id">Assembly ID</h2>
+<p>Read the <code>frame_id</code> attribute, created when multiple frames from a trajectory are merged into a single structure</p>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -397,12 +415,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Index</td>
+<td style="text-align: left;">assembly_id</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Read the <code>frame_id</code> attribute from the geometry</td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.attributes.html#molecularnodes.nodes.geometry.AssemblyID"><code>nodes.geometry.AssemblyID</code></a></p>
+</section>
+<section id="atom-id" class="level2">
+<h2 class="anchored" data-anchor-id="atom-id">Atom ID</h2>
+<p>The <code class="custom-attribute">atom_id</code> attribute which is read from the file. Will be increasing linearly for each subsequent atom</p>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>
@@ -431,23 +454,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="atom-name">Atom Name</h2>
 <p>Geometry Nodes doesn’t currently support text attributes, so strings like atom names have to be first converted to integers and mapping to atom names back and forth. Definitions for the atom names are available on the GitHub page</p>
 <p>The <code class="custom-attribute">atom_name</code> attribute, an integer representation of the atom names such as C for carbon, CA for alpha carbon</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>
@@ -475,23 +481,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="atomic-number" class="level2">
 <h2 class="anchored" data-anchor-id="atomic-number">Atomic Number</h2>
 <p>The <code class="custom-attribute">atomic_number</code> attribute, ascending from <code>1</code> for each element on the periodic table</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>
@@ -519,23 +508,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="b-factor" class="level2">
 <h2 class="anchored" data-anchor-id="b-factor">B Factor</h2>
 <p>The <code class="custom-attribute">b_factor</code> attribute of the point, how well resolved the individual atoms are</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <thead>
@@ -559,23 +531,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="chain-id">Chain ID</h2>
 <p>Integer representation of the Chain IDs that were present in the structure</p>
 <p>The ‘chain_id’ attribute, an integer representation of the Chain IDs from the structure. Chains are sorted alphabetically then assigned an ID startin at <code>0</code> and increasing.</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>
@@ -600,11 +555,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 <p>API Reference: <a href="../api/reference/nodes.attributes.html#molecularnodes.nodes.geometry.ChainID"><code>nodes.geometry.ChainID</code></a></p>
 </section>
-<section id="color" class="level2">
-<h2 class="anchored" data-anchor-id="color">Color</h2>
-<p>The <code class="custom-attribute">Color</code> attribute of the point, used for coloring the final generated geometry inside of the materials</p>
-<p><strong>Inputs</strong></p>
+<section id="charge" class="level2">
+<h2 class="anchored" data-anchor-id="charge">Charge</h2>
+<p>Read the <code class="custom-attribute">charge</code> attribute from the geometry. The attribute is only present when the file or topology provided charges (partial charges from a simulation topology, formal charges from a structure file’s charge column or <code>pdbx_formal_charge</code>). Outputs 0.0 when the geometry has no <code class="custom-attribute">charge</code> attribute.</p>
+<p>The <code class="custom-attribute">charge</code> attribute of the point, which is only present when the file or topology provided charges (partial charges from a simulation topology, formal charges from a PDB charge column or mmCIF <code>pdbx_formal_charge</code>). <code>0.0</code> if the geometry has no <code class="custom-attribute">charge</code> attribute</p>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -614,12 +575,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">charge</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Read the <code class="custom-attribute">charge</code> attribute from the geometry, only present when the file or topology provided charges. 0.0 if the geometry has no <code class="custom-attribute">charge</code> attribute</td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.attributes.html#molecularnodes.nodes.geometry.Charge"><code>nodes.geometry.Charge</code></a></p>
+</section>
+<section id="color" class="level2">
+<h2 class="anchored" data-anchor-id="color">Color</h2>
+<p>The <code class="custom-attribute">Color</code> attribute of the point, used for coloring the final generated geometry inside of the materials</p>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>
@@ -648,23 +614,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="entity-id">Entity ID</h2>
 <p>The <code class="custom-attribute">entity_id</code> attribute read from the points, corresponding to the unique entities in the structure (that may appear several times as different chains)</p>
 <p>The <code class="custom-attribute">entity_id</code> attribute of the point</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>
@@ -689,10 +638,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 <p>API Reference: <a href="../api/reference/nodes.attributes.html#molecularnodes.nodes.geometry.EntityID"><code>nodes.geometry.EntityID</code></a></p>
 </section>
-<section id="frame-id" class="level2">
-<h2 class="anchored" data-anchor-id="frame-id">Frame ID</h2>
-<p>Read the <code>frame_id</code> attribute, created when multiple frames from a trajectory are merged into a single structure</p>
-<p><strong>Inputs</strong></p>
+<section id="force" class="level2">
+<h2 class="anchored" data-anchor-id="force">Force</h2>
+<p>The <code>force</code> attribute of the point, the force on each atom from a trajectory with forces (such as frames of <code>.trr</code> files), in MDAnalysis units of kJ/(mol·Å) and not scaled by the world scale. Interpolated and averaged between frames like positions. Not related to the <a href="../nodes/simulation.html#force-gravity"><code class="custom-node">Force Gravity</code></a> and other simulation forces. <code>(0, 0, 0)</code> if the geometry has no <code>force</code> attribute</p>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -703,12 +652,45 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">force</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
 <td style="text-align: left;"></td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.attributes.html#molecularnodes.nodes.geometry.Force"><code>nodes.geometry.Force</code></a></p>
+</section>
+<section id="fragment-id" class="level2">
+<h2 class="anchored" data-anchor-id="fragment-id">Fragment ID</h2>
+<p>Integer ID of the bonded molecule (MDAnalysis fragment) each atom belongs to, for structures with bonds</p>
+<p>The <code>fragment_id</code> attribute: which bonded molecule (MDAnalysis fragment) each atom belongs to, numbered from <code>0</code>. Created for structures with bonds. Link it into the <code class="custom-int">Group ID</code> of <a href="../nodes/ensemble.html#periodic-unwrap"><code class="custom-node">Periodic Unwrap</code></a> to keep molecules whole across the periodic box.</p>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">fragment_id</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The <code>fragment_id</code> attribute read from the points, numbering the bonded molecules from 0</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.attributes.html#molecularnodes.nodes.geometry.FragmentID"><code>nodes.geometry.FragmentID</code></a></p>
+</section>
+<section id="frame-id" class="level2">
+<h2 class="anchored" data-anchor-id="frame-id">Frame ID</h2>
+<p>Read the <code>frame_id</code> attribute, created when multiple frames from a trajectory are merged into a single structure</p>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>
@@ -733,11 +715,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 <p>API Reference: <a href="../api/reference/nodes.attributes.html#molecularnodes.nodes.geometry.FrameID"><code>nodes.geometry.FrameID</code></a></p>
 </section>
-<section id="mass" class="level2">
-<h2 class="anchored" data-anchor-id="mass">Mass</h2>
-<p>The <code class="custom-attribute">mass</code> attribute of the point, used for centre of mass calculations</p>
-<p><strong>Inputs</strong></p>
+<section id="image-id" class="level2">
+<h2 class="anchored" data-anchor-id="image-id">Image ID</h2>
+<p>Read the <code>frame_id</code> attribute, created when multiple frames from a trajectory are merged into a single structure</p>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -747,12 +734,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Index</td>
+<td style="text-align: left;">image_id</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Read the <code>image_id</code> attribute from the geometry</td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.attributes.html#molecularnodes.nodes.geometry.ImageID"><code>nodes.geometry.ImageID</code></a></p>
+</section>
+<section id="mass" class="level2">
+<h2 class="anchored" data-anchor-id="mass">Mass</h2>
+<p>The <code class="custom-attribute">mass</code> attribute of the point, used for centre of mass calculations</p>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <thead>
@@ -775,23 +767,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="residue-id" class="level2">
 <h2 class="anchored" data-anchor-id="residue-id">Residue ID</h2>
 <p>The <code>residue_id</code> attribute of the point, which is the assigned number of the residue inside the chain of the structure</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <thead>
@@ -814,23 +789,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="residue-name" class="level2">
 <h2 class="anchored" data-anchor-id="residue-name">Residue Name</h2>
 <p>The <code class="custom-attribute">res_name</code> attribute, an integer representation of the residue names. Amino acids are sorted alphabetically and assigned a value starting at <code>0</code>. DNA starts at 30 and RNA starts at 40. Check the <a href="../attributes.html">attributes</a> for a full listing.</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>
@@ -858,23 +816,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="secondary-structure" class="level2">
 <h2 class="anchored" data-anchor-id="secondary-structure">Secondary Structure</h2>
 <p>The <code class="custom-attribute">sec_struct</code> attribute of the point. <code>0</code> is non-peptide, 1 is helix, 2 is sheet and 3 is loop</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <thead>
@@ -894,11 +835,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 <p>API Reference: <a href="../api/reference/nodes.attributes.html#molecularnodes.nodes.geometry.SecondaryStructure"><code>nodes.geometry.SecondaryStructure</code></a></p>
 </section>
-<section id="ures-id" class="level2">
-<h2 class="anchored" data-anchor-id="ures-id">URes ID</h2>
-<p>The <code class="custom-attribute">ures_id</code> attribute of the point, a unique identifier for each residue across the whole structure that is computed when the structure is loaded.</p>
-<p><strong>Inputs</strong></p>
+<section id="segment-id" class="level2">
+<h2 class="anchored" data-anchor-id="segment-id">Segment ID</h2>
+<p>Integer representation of the segment IDs present in the structure (MDAnalysis <code class="custom-attribute">segid</code>), assigned in order of the segments read from the topology</p>
+<p>The <code class="custom-attribute">segid</code> attribute, an integer representation of the segment IDs present in the structure (the MDAnalysis <code class="custom-attribute">segid</code>). Segments are assigned an ID starting at <code>0</code> in the order they were read from the topology.</p>
+<p><strong>Outputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -908,12 +855,44 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Index</td>
+<td style="text-align: left;">segid</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">The <code class="custom-attribute">segid</code> attribute read from the points, an integer index into the segments read from the topology</td>
 </tr>
 </tbody>
 </table>
+<p>API Reference: <a href="../api/reference/nodes.attributes.html#molecularnodes.nodes.geometry.SegmentID"><code>nodes.geometry.SegmentID</code></a></p>
+</section>
+<section id="symmetry-id" class="level2">
+<h2 class="anchored" data-anchor-id="symmetry-id">Symmetry ID</h2>
+<p>Read the <code>frame_id</code> attribute, created when multiple frames from a trajectory are merged into a single structure</p>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">sym_id</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Read the <code>frame_id</code> attribute from the geometry</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.attributes.html#molecularnodes.nodes.geometry.SymmetryID"><code>nodes.geometry.SymmetryID</code></a></p>
+</section>
+<section id="ures-id" class="level2">
+<h2 class="anchored" data-anchor-id="ures-id">URes ID</h2>
+<p>The <code class="custom-attribute">ures_id</code> attribute of the point, a unique identifier for each residue across the whole structure that is computed when the structure is loaded.</p>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>
@@ -946,23 +925,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="vdw-radii" class="level2">
 <h2 class="anchored" data-anchor-id="vdw-radii">VDW Radii</h2>
 <p>The <code class="custom-attribute">vdw_radii</code> attribute of the point, corresponding the radius of the element as defined in the data dictionary. Used for scaling sphers for <a href="../nodes/style.html#style-spheres"><code class="custom-node">Style Spheres</code></a> and <a href="../nodes/style.html#style-ball-and-stick"><code class="custom-node">Style Ball and Stick</code></a> nodes, and for calculating the surface of the molecule in <a href="../nodes/style.html#style-surface"><code class="custom-node">Style Surface</code></a></p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
 <colgroup>

@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -218,12 +218,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -244,6 +238,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -274,6 +274,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -348,6 +354,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <ul class="collapse">
   <li><a href="#style-ball-and-stick" id="toc-style-ball-and-stick" class="nav-link active" data-scroll-target="#style-ball-and-stick">Style Ball and Stick</a></li>
   <li><a href="#style-cartoon" id="toc-style-cartoon" class="nav-link" data-scroll-target="#style-cartoon">Style Cartoon</a></li>
+  <li><a href="#style-hbonds" id="toc-style-hbonds" class="nav-link" data-scroll-target="#style-hbonds">Style HBonds</a></li>
   <li><a href="#style-ribbon" id="toc-style-ribbon" class="nav-link" data-scroll-target="#style-ribbon">Style Ribbon</a></li>
   <li><a href="#style-spheres" id="toc-style-spheres" class="nav-link" data-scroll-target="#style-spheres">Style Spheres</a></li>
   <li><a href="#style-sticks" id="toc-style-sticks" class="nav-link" data-scroll-target="#style-sticks">Style Sticks</a></li>
@@ -632,6 +639,111 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 <p>API Reference: <a href="../api/reference/nodes.style.html#molecularnodes.nodes.geometry.StyleCartoon"><code>nodes.geometry.StyleCartoon</code></a></p>
+</section>
+<section id="style-hbonds" class="level2">
+<h2 class="anchored" data-anchor-id="style-hbonds">Style HBonds</h2>
+<p>Draw hydrogen bonds stored as edges on a data object, with positions sampled from the atoms</p>
+<p>Draws hydrogen bonds as dashed cylinders between each hydrogen and its acceptor. With <code class="custom-menu">Source</code> set to <code>Data Object</code>, the bonds are computed by <code>MDAnalysis.analysis.hydrogenbonds</code> with <code>mol.calculations.hbonds()</code> (or Hydrogen Bonds in the add menu of the Attributes panel) and stored as edges on a data object that is passed in as <code class="custom-object">Data Object</code>. Adding the node in the GUI sets up the calculation and fills in the data object. The data object holds only which atoms are bonded, with positions sampled from the <code class="custom-geometry">Atoms</code> by index, so the bonds follow any movement of the atoms upstream of the node. The atoms must be in their original order, so use the <code class="custom-bool">Selection</code> rather than deleting atoms before this node. With <code class="custom-menu">Source</code> set to <code>Find HBonds</code>, the bonds are found in the node tree with <a href="../nodes/topology.html#find-hbonds"><code class="custom-node">Find HBonds</code></a> instead, using the <code class="custom-float">Distance</code> and <code class="custom-float">Angle</code> cutoffs, with no calculation in Python. A bond is shown when both of its atoms are selected. Structures need explicit hydrogens.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Atomic geometry that the hydrogen bond positions are sampled from</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Selection of atoms, a hydrogen bond is shown only when both of its atoms are selected</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Source</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Where the hydrogen bonds come from: a data object calculated with MDAnalysis, or found by the Find HBonds node</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Data Object</td>
+<td style="text-align: left;"><code class="custom-object">Object</code></td>
+<td style="text-align: left;">Object holding the hydrogen bonds as edges, with one vertex per atom</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Quality</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">A lower value results in less geometry, with a higher value meaning better looking but more dense geometry</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Radius</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Radius of the hydrogen bonds in Angstroms</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Dashes</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Number of dashes along each hydrogen bond, 1 draws a solid cylinder</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Color</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Color of the hydrogen bonds</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Distance</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Maximum distance between the donor and acceptor in Angstroms, when found by nodes</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Angle</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Minimum donor-hydrogen-acceptor angle, when found by nodes</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Shade Smooth</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Apply smooth shading to the created geometry</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Material</td>
+<td style="text-align: left;"><code class="custom-material">Material</code></td>
+<td style="text-align: left;">Material to apply to the resulting geometry</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">The generated geometry for the style node group</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.style.html#molecularnodes.nodes.geometry.StyleHBonds"><code>nodes.geometry.StyleHBonds</code></a></p>
 </section>
 <section id="style-ribbon" class="level2">
 <h2 class="anchored" data-anchor-id="style-ribbon">Style Ribbon</h2>

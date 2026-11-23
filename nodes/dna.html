@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -215,12 +215,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -241,6 +235,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -271,6 +271,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -346,7 +352,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#dna-from-curve" id="toc-dna-from-curve" class="nav-link active" data-scroll-target="#dna-from-curve">DNA From Curve</a></li>
   <li><a href="#oxdna-realize-vectors" id="toc-oxdna-realize-vectors" class="nav-link" data-scroll-target="#oxdna-realize-vectors">oxDNA Realize Vectors</a></li>
   <li><a href="#oxdna-recover-vectors" id="toc-oxdna-recover-vectors" class="nav-link" data-scroll-target="#oxdna-recover-vectors">oxDNA Recover Vectors</a></li>
-  <li><a href="#oxdna-style-ribbon" id="toc-oxdna-style-ribbon" class="nav-link" data-scroll-target="#oxdna-style-ribbon">oxDNA Style Ribbon</a></li>
+  <li><a href="#oxdna-style-classic" id="toc-oxdna-style-classic" class="nav-link" data-scroll-target="#oxdna-style-classic">oxDNA Style Classic</a></li>
   <li><a href="#oxdna-vectors" id="toc-oxdna-vectors" class="nav-link" data-scroll-target="#oxdna-vectors">oxDNA Vectors</a></li>
   </ul>
 </nav>
@@ -436,6 +442,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="oxdna-realize-vectors">oxDNA Realize Vectors</h2>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -447,12 +458,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Atoms</td>
 <td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;">Geometry to duplicate elements of</td>
+<td style="text-align: left;">Vertices and edges representing nucleotides and phosphodiester bonds, respectively</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -464,7 +480,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Geometry</td>
 <td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Original geometry with added edges pointing along the base and normal vectors</td>
 </tr>
 </tbody>
 </table>
@@ -474,6 +490,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="oxdna-recover-vectors">oxDNA Recover Vectors</h2>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -485,12 +506,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Geometry</td>
 <td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Vertices and edges generated by <code>oxDNA Realize Vectors</code> node</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -502,14 +528,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Atoms</td>
 <td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Vertices and edges representing nucleotides and phosphodiester bonds, respectively</td>
 </tr>
 </tbody>
 </table>
 <p>API Reference: <a href="../api/reference/nodes.dna.html#molecularnodes.nodes.geometry.OxDNARecoverVectors"><code>nodes.geometry.OxDNARecoverVectors</code></a></p>
 </section>
-<section id="oxdna-style-ribbon" class="level2">
-<h2 class="anchored" data-anchor-id="oxdna-style-ribbon">oxDNA Style Ribbon</h2>
+<section id="oxdna-style-classic" class="level2">
+<h2 class="anchored" data-anchor-id="oxdna-style-classic">oxDNA Style Classic</h2>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <colgroup>
@@ -528,7 +554,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Atoms</td>
 <td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Vertices and edges representing nucleotides and phosphodiester bonds, respectively</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Selection</td>
@@ -538,112 +564,122 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Quality</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">A lower value results in less geometry, while a higher value means better-looking but more dense geometry</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Backbone Shape</td>
 <td style="text-align: left;"><code class="custom-menu">Menu</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">The visual style of the backbone</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Backbone Radius</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Radius of the backbone sticks or ribbons</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Ball Radius</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Radius of the backbone spheres</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Arrow Taper</td>
+<td style="text-align: left;">Backbone Taper</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Taper the backbone sticks so they point in the 5’→3’ direction</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">End Overhang</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Extend the backbone ribbon past the final nucleotides on each strand</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">Base Shape</td>
 <td style="text-align: left;"><code class="custom-menu">Menu</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Base Geometry</td>
-<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Visual style of the bases</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">Base Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Render the bases using custom geometry</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">Base Scale</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Scale the bases along each axis</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Stem Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Render the base stems using custom geometry</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Stem Scale</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Scale the base stems along each axis</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Base Colors</td>
 <td style="text-align: left;"><code class="custom-menu">Menu</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Method used to determine base colors</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Bases</td>
 <td style="text-align: left;"><code class="custom-color">Color</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Color all bases uniformly</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">A</td>
 <td style="text-align: left;"><code class="custom-color">Color</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Color adenines</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">C</td>
 <td style="text-align: left;"><code class="custom-color">Color</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Color cytosines</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">G</td>
 <td style="text-align: left;"><code class="custom-color">Color</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Color guanines</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">T / U</td>
 <td style="text-align: left;"><code class="custom-color">Color</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Color thymines/uracils</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Strand Color</td>
+<td style="text-align: left;">Strand Colors</td>
 <td style="text-align: left;"><code class="custom-menu">Menu</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Method used to determine strand colors. <code>Auto</code> will color strands using a finite palette of distinct pastel hues.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Strands</td>
 <td style="text-align: left;"><code class="custom-color">Color</code></td>
-<td style="text-align: left;">Becomes the output value if it is chosen by the menu input</td>
+<td style="text-align: left;">Color all strands uniformly</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Strand 1</td>
 <td style="text-align: left;"><code class="custom-color">Color</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Color the first strand, and every 4th strand after that</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Strand 2</td>
 <td style="text-align: left;"><code class="custom-color">Color</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Color the second strand, and every 4th strand after that</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Strand 3</td>
 <td style="text-align: left;"><code class="custom-color">Color</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Color the third strand, and every 4th strand after that</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Strand 4</td>
 <td style="text-align: left;"><code class="custom-color">Color</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Color the fourth strand, and every 4th strand after that</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Shade Smooth</td>
 <td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Apply smooth shading to the created geometry</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Material</td>
@@ -654,6 +690,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -665,16 +706,21 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Geometry</td>
 <td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">The generated geometry for the style node group</td>
 </tr>
 </tbody>
 </table>
-<p>API Reference: <a href="../api/reference/nodes.dna.html#molecularnodes.nodes.geometry.OxDNAStyleRibbon"><code>nodes.geometry.OxDNAStyleRibbon</code></a></p>
+<p>API Reference: <a href="../api/reference/nodes.dna.html#molecularnodes.nodes.geometry.OxDNAStyleClassic"><code>nodes.geometry.OxDNAStyleClassic</code></a></p>
 </section>
 <section id="oxdna-vectors" class="level2">
 <h2 class="anchored" data-anchor-id="oxdna-vectors">oxDNA Vectors</h2>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -686,12 +732,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Index</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Index of nucleotide at which to evaluate vectors</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -703,27 +754,32 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">base_vector</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Also known as <code>a1</code>, the vector which points through the stacking and H-bond interaction sites</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">base_normal</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Also known as <code>a3</code>, the vector which is orthogonal to base_vector and captures tilt</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Backbone Offset</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">The backbone repulsion site relative to the nucleotide center of mass</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Base Offset</td>
+<td style="text-align: left;">Stacking Offset</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">The stacking interaction site relative to the nucleotide center of mass</td>
 </tr>
 <tr class="odd">
+<td style="text-align: left;">H-Bond Offset</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The hydrogen bonding site relative to the nucleotide center of mass</td>
+</tr>
+<tr class="even">
 <td style="text-align: left;">Rotation</td>
 <td style="text-align: left;"><code class="custom-rotation">Rotation</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">A rotation of the frame created by base_vector and base_normal</td>
 </tr>
 </tbody>
 </table>

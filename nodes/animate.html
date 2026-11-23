@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -218,12 +218,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -244,6 +238,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -274,6 +274,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -352,6 +358,9 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#animate-trails" id="toc-animate-trails" class="nav-link" data-scroll-target="#animate-trails">Animate Trails</a></li>
   <li><a href="#animate-value" id="toc-animate-value" class="nav-link" data-scroll-target="#animate-value">Animate Value</a></li>
   <li><a href="#animate-wiggle" id="toc-animate-wiggle" class="nav-link" data-scroll-target="#animate-wiggle">Animate Wiggle</a></li>
+  <li><a href="#decay" id="toc-decay" class="nav-link" data-scroll-target="#decay">Decay</a></li>
+  <li><a href="#ease-value" id="toc-ease-value" class="nav-link" data-scroll-target="#ease-value">Ease Value</a></li>
+  <li><a href="#stagger-value" id="toc-stagger-value" class="nav-link" data-scroll-target="#stagger-value">Stagger Value</a></li>
   </ul>
 </nav>
     </div>
@@ -380,8 +389,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>Animate values and geometry over frames</p>
 <section id="animate-action" class="level2">
 <h2 class="anchored" data-anchor-id="animate-action">Animate Action</h2>
+<p>A 0..1 <code class="custom-float">Value</code> that rises from <code class="custom-float">Start</code> over <code class="custom-float">Length</code>, for timing one step of an animation. <code>Time</code> picks the clock: the scene’s <code>Seconds</code> or <code>Frames</code>, or any linked <code>Value</code>. Turn on <code>Stagger::Boolean</code> to offset each <code>ID::Integer</code> as in <a href="../nodes/animate.html#stagger-value"><code class="custom-node">Stagger Value</code></a>, and pick an <code>Interpolation</code> and <code>Ease</code> to shape the transition as in <a href="../nodes/animate.html#ease-value"><code class="custom-node">Ease Value</code></a>. <code>Active::Boolean</code> is true while the time is between <code>Start</code> and <code class="custom-float">End</code>, which is <code>Start</code> plus <code>Length</code>.</p>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -392,13 +407,68 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Start</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
 <td style="text-align: left;"></td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Length</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
 <td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Time</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Which source to use as time for animating the action</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Becomes the output value if it is chosen by the menu input</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Stagger</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Width</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">How many <code class="custom-attribute">ID</code>s are staggered at the same time during the animation.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ID</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The <code class="custom-attribute">ID</code> over which we stagger the animation.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Group ID</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Compute the staggered animation individually for each <code>Group ID</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Interpolation</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Shape of the easing curve, following Robert Penner’s easing functions (easings.net)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ease</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Apply the curve at the start (In), the end (Out) or both ends (In Out) of the transition</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Overshoot</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">How far the <code>Back</code> curve overshoots before settling</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Period</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Period of the <code>Elastic</code> oscillation as a fraction of the transition</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Amplitude</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Amplitude of the <code>Elastic</code> oscillation. Values below 1 behave as 1</td>
 </tr>
 </tbody>
 </table>
@@ -418,7 +488,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Factor</td>
+<td style="text-align: left;">Value</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
 <td style="text-align: left;"></td>
 </tr>
@@ -428,8 +498,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td style="text-align: left;">Whether the input <code>Value</code> is between (and including) the lower and upper bounds</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Stop</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">End</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
 <td style="text-align: left;"></td>
 </tr>
 </tbody>
@@ -839,6 +909,198 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 <p>API Reference: <a href="../api/reference/nodes.animate.html#molecularnodes.nodes.geometry.AnimateWiggle"><code>nodes.geometry.AnimateWiggle</code></a></p>
+</section>
+<section id="decay" class="level2">
+<h2 class="anchored" data-anchor-id="decay">Decay</h2>
+<p>The share of the remaining gap to close in a step of <code class="custom-float">Delta Time</code> seconds, <code>1 - 2^(-dt / Half Life)</code>, so that easing by it halves the gap every <code class="custom-float">Half Life</code> seconds at any frame rate</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Delta Time</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Half Life</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Seconds for the remaining gap to the best view to halve</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Decay</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.animate.html#molecularnodes.nodes.geometry.Decay"><code>nodes.geometry.Decay</code></a></p>
+</section>
+<section id="ease-value" class="level2">
+<h2 class="anchored" data-anchor-id="ease-value">Ease Value</h2>
+<p>Reshape a linear <code class="custom-float">Value</code> between 0 and 1 with one of Robert Penner’s easing curves (<code>Linear</code>, <code>Sinusoidal</code>, <code>Quadratic</code>, <code>Cubic</code>, <code>Quartic</code>, <code>Quintic</code>, <code>Exponential</code>, <code>Circular</code>, <code>Back</code>, <code>Bounce</code> or <code>Elastic</code>, as listed on easings.net) applied at the start (<code>In</code>), the end (<code>Out</code>) or both ends (<code>In Out</code>) of the transition, then map the result to <code class="custom-float">From</code>..<code class="custom-float">To</code>. Works per point, so it can ease a field as well as a single value. Chain it after <a href="../nodes/animate.html#animate-value"><code class="custom-node">Animate Value</code></a> or <a href="../nodes/animate.html#stagger-value"><code class="custom-node">Stagger Value</code></a>, or set the same menus on <a href="../nodes/animate.html#animate-action"><code class="custom-node">Animate Action</code></a>. <code class="custom-float">Overshoot</code> shapes <code>Back</code>, and <code class="custom-float">Period</code> and <code class="custom-float">Amplitude</code> shape <code>Elastic</code>. With <code>Clamp::Boolean</code> off the curve is evaluated outside 0..1 and the output can leave the <code>From</code>..<code>To</code> range.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Linear progress to ease, from 0 to 1. Link <code>Animate Value</code> or <code>Stagger Value</code> to animate it</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Interpolation</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Shape of the easing curve, following Robert Penner’s easing functions (easings.net)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Ease</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Apply the curve at the start (In), the end (Out) or both ends (In Out) of the transition</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Clamp</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Clamp the input value to 0..1 before easing so the output never leaves the From..To range</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">From</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Output value when the input is 0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">To</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Output value when the input is 1</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Overshoot</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">How far the <code>Back</code> curve overshoots before settling</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Period</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Period of the <code>Elastic</code> oscillation as a fraction of the transition</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Amplitude</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Amplitude of the <code>Elastic</code> oscillation. Values below 1 behave as 1</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Eased value between <code>From</code> and <code>To</code></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.animate.html#molecularnodes.nodes.geometry.EaseValue"><code>nodes.geometry.EaseValue</code></a></p>
+</section>
+<section id="stagger-value" class="level2">
+<h2 class="anchored" data-anchor-id="stagger-value">Stagger Value</h2>
+<p>Spread a 0..1 <code class="custom-float">Value</code> across points so that each <code>ID::Integer</code> makes its own 0..1 transition, starting later than the ID before it. Every ID takes the same share of the input range, so all IDs move at the same speed. <code class="custom-float">Width</code> sets how many IDs are moving at once: small widths animate one ID after another, and larger widths overlap them more. A <code>Width</code> of 0 switches each ID straight from 0 to 1. <code class="custom-attribute">ID</code> defaults to the <code>id</code> attribute, or the index if there is none; link <a href="../nodes/attributes.html#ures-id"><code class="custom-node">URes ID</code></a> to stagger by residue. <code>Group ID::Integer</code> staggers each group over its own range of IDs. Chain it into <a href="../nodes/animate.html#ease-value"><code class="custom-node">Ease Value</code></a> to ease each ID’s transition.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Animated value that interpolates from min to max over frames</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Width</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">How many <code class="custom-attribute">ID</code>s are staggered at the same time during the animation.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ID</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The <code class="custom-attribute">ID</code> over which we stagger the animation.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Group ID</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Compute the staggered animation individually for each <code>Group ID</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.animate.html#molecularnodes.nodes.geometry.StaggerValue"><code>nodes.geometry.StaggerValue</code></a></p>
 
 
 </section>

@@ -71,7 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../api/reference/entities.molecule.DSSPManager.html" rel="next">
+<link href="../../api/reference/entities.molecule.CalculationManager.html" rel="next">
 <link href="../../api/reference/Molecule.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -82,7 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script src="../../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -277,6 +277,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../api/pubchem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Small Molecules from PubChem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../api/trajectories.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Trajectories</span></a>
   </div>
@@ -315,6 +321,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/solvent.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Solvent Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/electrostatics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Electrostatics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -370,8 +382,20 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.molecule.DSSPManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.molecule.DSSPManager</span></a>
+  <a href="../../api/reference/entities.molecule.CalculationManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.CalculationManager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.DSSPCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.DSSPCalculation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.HBondCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.HBondCalculation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -568,12 +592,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -594,6 +612,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -624,6 +648,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -781,8 +811,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>ui_index</td>
-<td><code>IntObjectMNProperty</code></td>
-<td>Property descriptor for current UI selection index.</td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
+<td>Index of the current UI selection.</td>
 </tr>
 </tbody>
 </table>
@@ -1002,7 +1032,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="examples" class="level4 doc-section doc-section-examples">
 <h4 class="doc-section doc-section-examples anchored" data-anchor-id="examples">Examples</h4>
-<div id="8b3b3cb4" class="cell" data-execution_count="1">
+<div id="c0f65c79" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas()</span>
@@ -1011,14 +1041,18 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mol.selections.find(<span class="st">"protein"</span>))</span>
 <span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>item <span class="op">=</span> mol.selections.from_string(<span class="st">"protein"</span>)</span>
 <span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mol.selections.find(<span class="st">"protein"</span>).name)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/home/brady/actions-runner/_work/MolecularNodes/MolecularNodes/molecularnodes/nodes/_utils.py:4: FutureWarning: `databpy.nodes` is deprecated and will be removed in databpy 0.14.0. Node groups are handled by nodebpy (https://pypi.org/project/nodebpy/).
+  from databpy.nodes import append_from_blend, get_output, swap_tree</code></pre>
+</div>
 <div class="cell-output cell-output-stdout">
 <pre><code>None
 selection_0</code></pre>
 </div>
 </div>
 <p>Selections made in the Blender UI are found too, and the flags are part of the match:</p>
-<div id="9992fb90" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mol.selections.find(<span class="st">"protein"</span>, updating<span class="op">=</span><span class="va">False</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="3c0cec22" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(mol.selections.find(<span class="st">"protein"</span>, updating<span class="op">=</span><span class="va">False</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>None</code></pre>
 </div>
@@ -1031,7 +1065,7 @@ selection_0</code></pre>
 </section>
 <section id="molecularnodes.entities.molecule.SelectionManager.from_atomgroup" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.entities.molecule.SelectionManager.from_atomgroup">from_atomgroup</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>entities.molecule.SelectionManager.from_atomgroup(atomgroup, <span class="op">*</span>, name<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>entities.molecule.SelectionManager.from_atomgroup(atomgroup, <span class="op">*</span>, name<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Create a selection from an existing MDAnalysis AtomGroup.</p>
 <p>Create a selection on the Molecule from an already created <code>AtomGroup</code> rather than just using a string selection input. The selection string displayed is non-editable in the GUI.</p>
 <section id="parameters-4" class="level4 doc-section doc-section-parameters">
@@ -1096,13 +1130,13 @@ selection_0</code></pre>
 </section>
 <section id="molecularnodes.entities.molecule.SelectionManager.from_string" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.entities.molecule.SelectionManager.from_string">from_string</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>entities.molecule.SelectionManager.from_string(</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    string,</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    updating<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    periodic<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>entities.molecule.SelectionManager.from_string(</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    string,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    updating<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    periodic<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Create a selection from an MDAnalysis selection string.</p>
 <p>This uses the MDAnalysis selection language to create an <code>AtomGroup</code> and stores the selection of which atoms are in the <code>AtomGroup</code> as a boolean attribute on the mesh inside of Blender.</p>
 <section id="parameters-5" class="level4 doc-section doc-section-parameters">
@@ -1175,7 +1209,7 @@ selection_0</code></pre>
 </section>
 <section id="molecularnodes.entities.molecule.SelectionManager.get" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.entities.molecule.SelectionManager.get">get</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>entities.molecule.SelectionManager.get(name)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>entities.molecule.SelectionManager.get(name)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Try and get a selection UI Item by name.</p>
 <section id="parameters-6" class="level4 doc-section doc-section-parameters">
 <h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-6">Parameters</h4>
@@ -1225,13 +1259,13 @@ selection_0</code></pre>
 </section>
 <section id="molecularnodes.entities.molecule.SelectionManager.node" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.entities.molecule.SelectionManager.node">node</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>entities.molecule.SelectionManager.node(</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    selection,</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>,</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    updating<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    periodic<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>entities.molecule.SelectionManager.node(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    selection,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">*</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    updating<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    periodic<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Get a <code>Named Attribute</code> node for a selection, creating it if needed.</p>
 <p>This is the bridge between the selection API and the node tree API. It resolves <code>selection</code> to a managed selection - reusing an existing one where possible - and returns a node whose boolean output can be plugged straight into a style node’s <code>Selection</code> input.</p>
 <p>Existing selections are reused so that repeated calls (a style rebuilt in a loop, say) do not pile up duplicate selections and mesh attributes. Reuse is matched on the selection string together with the <code>updating</code> and <code>periodic</code> flags, or on <code>name</code> when one is given. An <code>AtomGroup</code> is always stored as a new selection, since two groups cannot be compared cheaply.</p>
@@ -1305,21 +1339,21 @@ selection_0</code></pre>
 <section id="examples-1" class="level4 doc-section doc-section-examples">
 <h4 class="doc-section doc-section-examples anchored" data-anchor-id="examples-1">Examples</h4>
 <p>The main use is inside a callable passed to <a href="../../api/reference/Molecule.html#molecularnodes.Molecule.add_style"><code>add_style</code></a>, which is evaluated inside the tree context:</p>
-<div id="364d6469" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> molecularnodes.nodes <span class="im">import</span> geometry <span class="im">as</span> g</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas()</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"8H1B"</span>)</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>mol.add_style(<span class="st">"cartoon"</span>)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>mol.add_style(</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">lambda</span>: g.StyleSpheres(</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>        selection<span class="op">=</span>mol.selections.node(<span class="st">"not protein"</span>),</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        sphere<span class="op">=</span><span class="st">"Instance"</span>,</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol)</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="337b342c" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> molecularnodes.nodes <span class="im">import</span> geometry <span class="im">as</span> g</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas()</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"8H1B"</span>)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>mol.add_style(<span class="st">"cartoon"</span>)</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>mol.add_style(</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">lambda</span>: g.StyleSpheres(</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        selection<span class="op">=</span>mol.selections.node(<span class="st">"not protein"</span>),</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        sphere<span class="op">=</span><span class="st">"Instance"</span>,</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol)</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
 <div>
 <figure class="figure">
@@ -1329,13 +1363,13 @@ selection_0</code></pre>
 </div>
 </div>
 <p>It works the same inside an explicit tree context:</p>
-<div id="2cdd4e69" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree.reset() <span class="im">as</span> (atoms, join):</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    atoms <span class="op">&gt;&gt;</span> g.StyleCartoon(selection<span class="op">=</span>mol.selections.node(<span class="st">"protein"</span>)) <span class="op">&gt;&gt;</span> join</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    atoms <span class="op">&gt;&gt;</span> g.StyleSticks(selection<span class="op">=</span>mol.selections.node(<span class="st">"not protein"</span>)) <span class="op">&gt;&gt;</span> join</span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol)</span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="939a4fdb" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree.reset() <span class="im">as</span> (atoms, join):</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    atoms <span class="op">&gt;&gt;</span> g.StyleCartoon(selection<span class="op">=</span>mol.selections.node(<span class="st">"protein"</span>)) <span class="op">&gt;&gt;</span> join</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    atoms <span class="op">&gt;&gt;</span> g.StyleSticks(selection<span class="op">=</span>mol.selections.node(<span class="st">"not protein"</span>)) <span class="op">&gt;&gt;</span> join</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <div>
 <figure class="figure">
@@ -1345,31 +1379,31 @@ selection_0</code></pre>
 </div>
 </div>
 <p>Selections are reused rather than duplicated, so calling it in a loop is safe:</p>
-<div id="e16d1e27" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>before <span class="op">=</span> <span class="bu">len</span>(mol.selections)</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree:</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">5</span>):</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>        mol.selections.node(<span class="st">"protein"</span>)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>before<span class="sc">}</span><span class="ss"> selections before, </span><span class="sc">{</span><span class="bu">len</span>(mol.selections)<span class="sc">}</span><span class="ss"> after"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="69c5467b" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>before <span class="op">=</span> <span class="bu">len</span>(mol.selections)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree:</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">5</span>):</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>        mol.selections.node(<span class="st">"protein"</span>)</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"</span><span class="sc">{</span>before<span class="sc">}</span><span class="ss"> selections before, </span><span class="sc">{</span><span class="bu">len</span>(mol.selections)<span class="sc">}</span><span class="ss"> after"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>2 selections before, 2 after</code></pre>
 </div>
 </div>
 <p>A static selection is a different selection to an updating one, and gets its own attribute:</p>
-<div id="0e77d00c" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree:</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    mol.selections.node(<span class="st">"around 5 resname LYS"</span>)</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    mol.selections.node(<span class="st">"around 5 resname LYS"</span>, updating<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>([item.name <span class="cf">for</span> item <span class="kw">in</span> mol.selections.ui_items])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="1e657e24" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree:</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    mol.selections.node(<span class="st">"around 5 resname LYS"</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    mol.selections.node(<span class="st">"around 5 resname LYS"</span>, updating<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>([item.name <span class="cf">for</span> item <span class="kw">in</span> mol.selections.ui_items])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>['selection_0', 'selection_1', 'selection_2', 'selection_3']</code></pre>
 </div>
 </div>
 <p>An <code>AtomGroup</code> can be used instead of a selection string:</p>
-<div id="5d71609e" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree:</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    node <span class="op">=</span> mol.selections.node(mol.universe.select_atoms(<span class="st">"resid 1:20"</span>))</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(node.node.inputs[<span class="st">"Name"</span>].default_value)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="ae1218c8" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree:</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    node <span class="op">=</span> mol.selections.node(mol.universe.select_atoms(<span class="st">"resid 1:20"</span>))</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(node.node.inputs[<span class="st">"Name"</span>].default_value)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>selection_4</code></pre>
 </div>
@@ -1382,7 +1416,7 @@ selection_0</code></pre>
 </section>
 <section id="molecularnodes.entities.molecule.SelectionManager.remove" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.entities.molecule.SelectionManager.remove">remove</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>entities.molecule.SelectionManager.remove(value)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>entities.molecule.SelectionManager.remove(value)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Remove a selection by name or index.</p>
 <p>Cleans up the UI item, cached <code>AtomGroup</code>, and geometry attribute. Silently handles cases where attribute or <code>AtomGroup</code> don’t exist.</p>
 <section id="parameters-8" class="level4 doc-section doc-section-parameters">
@@ -1432,7 +1466,7 @@ selection_0</code></pre>
 </section>
 <section id="molecularnodes.entities.molecule.SelectionManager.ui_item_to_ag" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.entities.molecule.SelectionManager.ui_item_to_ag">ui_item_to_ag</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>entities.molecule.SelectionManager.ui_item_to_ag(item)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>entities.molecule.SelectionManager.ui_item_to_ag(item)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Generate an <code>AtomGroup</code> from a <code>TrajectorySelectionItem</code>.</p>
 <p>Uses the item’s <code>string</code>, <code>updating</code>, and <code>periodic</code> properties to create the corresponding <code>AtomGroup</code> from the trajectory’s <code>Universe</code>.</p>
 <section id="parameters-9" class="level4 doc-section doc-section-parameters">
@@ -1493,7 +1527,7 @@ selection_0</code></pre>
 </section>
 <section id="molecularnodes.entities.molecule.SelectionManager.update_attributes" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.entities.molecule.SelectionManager.update_attributes">update_attributes</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>entities.molecule.SelectionManager.update_attributes()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>entities.molecule.SelectionManager.update_attributes()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Synchronize UI items, AtomGroups, and named attributes.</p>
 <p>This is the core update method called when selections change. The following steps are carried out:</p>
 <ol type="1">
@@ -1505,7 +1539,7 @@ selection_0</code></pre>
 <p>Any errors in creation are stored as <code>item.message</code> which will be reflected in the UI with a warning and the error message.</p>
 <section id="notes-3" class="level4 doc-section doc-section-notes">
 <h4 class="doc-section doc-section-notes anchored" data-anchor-id="notes-3">Notes</h4>
-<p>Skipped when manager is frozen via :class:<code>FrozenUpdates</code> context when creating new UI items.</p>
+<p>Skipped when manager is frozen via :class:<code>FrozenUpdates</code> context when creating new UI items. On frame changes the molecule stores these values along with those of its other attribute sources, see <code>Molecule._update_attributes</code>.</p>
 </section>
 <section id="see-also-7" class="level4 doc-section doc-section-see-also">
 <h4 class="doc-section doc-section-see-also anchored" data-anchor-id="see-also-7">See Also</h4>
@@ -1924,8 +1958,8 @@ selection_0</code></pre>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../api/reference/entities.molecule.DSSPManager.html" class="pagination-link" aria-label="entities.molecule.DSSPManager">
-        <span class="nav-page-text">entities.molecule.DSSPManager</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../../api/reference/entities.molecule.CalculationManager.html" class="pagination-link" aria-label="entities.molecule.CalculationManager">
+        <span class="nav-page-text">entities.molecule.CalculationManager</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

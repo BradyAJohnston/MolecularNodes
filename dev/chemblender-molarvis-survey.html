@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>chemblender-molarvis-survey – Molecular Nodes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-W3K8TDXSCF"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
+</script>
+<script type="module">
+    // Re-highlight code blocks with Shiki (the TextMate-grammar engine VS Code
+    // uses) for richer tokens than Pandoc's skylighting: function calls,
+    // attribute access, keyword arguments, etc. Pandoc's highlighting is kept
+    // in the HTML as a no-JS fallback and replaced here on load.
+    //
+    // To change colors, swap "dracula" for any theme from
+    // https://shiki.style/themes, or add/edit `tokenColors` rules below
+    // (scope reference: https://macromates.com/manual/en/language_grammars).
+    import { codeToHtml, bundledThemes } from "https://esm.sh/shiki@3";
+
+    const dracula = (await bundledThemes["dracula-soft"]()).default;
+    const theme = {
+        ...dracula,
+        name: "dracula-nodebpy",
+        tokenColors: [
+            ...dracula.tokenColors,
+            // Dracula ships no rule for Python call expressions; color them like
+            // function definitions so g.Cube() / tree.inputs.integer() pop.
+            {
+                scope: "meta.function-call.generic.python",
+                settings: { foreground: "#50FA7B" },
+            },
+        ],
+    };
+
+    async function rehighlight(pre) {
+        const code = pre.querySelector("code");
+        const lang = [...pre.classList].find(
+            (c) => !["sourceCode", "code-with-copy"].includes(c),
+        );
+        if (!code || !lang) return;
+        try {
+            const html = await codeToHtml(code.textContent.replace(/\n$/, ""), {
+                lang,
+                theme,
+            });
+            const shikiPre = new DOMParser()
+                .parseFromString(html, "text/html")
+                .querySelector("pre");
+            code.innerHTML = shikiPre.querySelector("code").innerHTML;
+            pre.style.backgroundColor = shikiPre.style.backgroundColor;
+            pre.style.color = shikiPre.style.color;
+        } catch {
+            // Unknown language for Shiki — keep Pandoc's highlighting.
+        }
+    }
+
+    await Promise.all(
+        [...document.querySelectorAll("pre.sourceCode")].map(rehighlight),
+    );
+</script>
+
+
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Molecular Nodes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../tutorials/index.html"> 
+<span class="menu-text">Documentation</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../nodes/index.html"> 
+<span class="menu-text">Nodes</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../api/"> 
+<span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../changelog.html"> 
+<span class="menu-text">Changelog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../examples/"> 
+<span class="menu-text">Examples</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../citations/"> 
+<span class="menu-text">Citations</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools tools-wide">
+    <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+    <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
+    <a href="https://youtube.com/c/bradyjohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#chemblender-and-molar_vis-features-worth-borrowing-2026-10-17" id="toc-chemblender-and-molar_vis-features-worth-borrowing-2026-10-17" class="nav-link active" data-scroll-target="#chemblender-and-molar_vis-features-worth-borrowing-2026-10-17">ChemBlender and molar_vis: features worth borrowing (2026-10-17)</a>
+  <ul class="collapse">
+  <li><a href="#chemblender" id="toc-chemblender" class="nav-link" data-scroll-target="#chemblender">ChemBlender</a>
+  <ul class="collapse">
+  <li><a href="#worth-doing" id="toc-worth-doing" class="nav-link" data-scroll-target="#worth-doing">Worth doing</a></li>
+  <li><a href="#maybe" id="toc-maybe" class="nav-link" data-scroll-target="#maybe">Maybe</a></li>
+  <li><a href="#skip" id="toc-skip" class="nav-link" data-scroll-target="#skip">Skip</a></li>
+  </ul></li>
+  <li><a href="#molar_vis-framing-and-camera-animation" id="toc-molar_vis-framing-and-camera-animation" class="nav-link" data-scroll-target="#molar_vis-framing-and-camera-animation">molar_vis: framing and camera animation</a>
+  <ul class="collapse">
+  <li><a href="#unobstructed-view-cratesmolar_vis_coresrcunobstructed.rs" id="toc-unobstructed-view-cratesmolar_vis_coresrcunobstructed.rs" class="nav-link" data-scroll-target="#unobstructed-view-cratesmolar_vis_coresrcunobstructed.rs">Unobstructed view (<code>crates/molar_vis_core/src/unobstructed.rs</code>)</a></li>
+  <li><a href="#animation-animation.rs-docsanimation.md" id="toc-animation-animation.rs-docsanimation.md" class="nav-link" data-scroll-target="#animation-animation.rs-docsanimation.md">Animation (<code>animation.rs</code>, <code>docs/ANIMATION.md</code>)</a></li>
+  <li><a href="#other-methods-1171" id="toc-other-methods-1171" class="nav-link" data-scroll-target="#other-methods-1171">Other methods (#1171)</a></li>
+  </ul></li>
+  <li><a href="#prototype-molecularnodesviewpoint.py-branch-unobstructed-view" id="toc-prototype-molecularnodesviewpoint.py-branch-unobstructed-view" class="nav-link" data-scroll-target="#prototype-molecularnodesviewpoint.py-branch-unobstructed-view">Prototype: <code>molecularnodes/viewpoint.py</code> (branch <code>unobstructed-view</code>)</a>
+  <ul class="collapse">
+  <li><a href="#results-cartoon-protein-ball-and-stick-ligand-cycles-16-samples-480360-margin-0.1" id="toc-results-cartoon-protein-ball-and-stick-ligand-cycles-16-samples-480360-margin-0.1" class="nav-link" data-scroll-target="#results-cartoon-protein-ball-and-stick-ligand-cycles-16-samples-480360-margin-0.1">Results (cartoon protein + ball-and-stick ligand, Cycles 16 samples, 480×360, margin 0.1)</a></li>
+  <li><a href="#gallery-six-structures-docsdevviewpoint_gallery.py" id="toc-gallery-six-structures-docsdevviewpoint_gallery.py" class="nav-link" data-scroll-target="#gallery-six-structures-docsdevviewpoint_gallery.py">Gallery: six structures (<code>docs/dev/viewpoint_gallery.py</code>)</a></li>
+  <li><a href="#open-questions" id="toc-open-questions" class="nav-link" data-scroll-target="#open-questions">Open questions</a></li>
+  </ul></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+
+
+
+
+<section id="chemblender-and-molar_vis-features-worth-borrowing-2026-10-17" class="level1">
+<h1>ChemBlender and molar_vis: features worth borrowing (2026-10-17)</h1>
+<p>A survey of two neighbouring projects for features Molecular Nodes lacks.</p>
+<ul>
+<li><strong>ChemBlender.</strong> The original is <a href="https://github.com/sphereman/ChemBlender_2_0">sphereman/ChemBlender_2_0</a> (HEAD 9077096, about 5.9k lines of Python plus about 85 <code>CH_*</code> node groups). The fork is <a href="https://github.com/psiQAQ/ChemBlender_2_x">psiQAQ/ChemBlender_2_x</a> (v2.4.0, HEAD 54ecf4c, about 195k lines). Both are GPL-3.0.</li>
+<li><strong>molar_vis.</strong> <a href="https://github.com/yesint/molar_vis">yesint/molar_vis</a> (HEAD 6e81433) is a standalone Rust/wgpu viewer built on MolAR, licensed Artistic-2.0. Only its algorithms are relevant here.</li>
+</ul>
+<p>Everything below comes from reading the source. No code from either project was run. Gaps marked † were checked against MN <code>main</code> at 5f759d40.</p>
+<section id="chemblender" class="level2">
+<h2 class="anchored" data-anchor-id="chemblender">ChemBlender</h2>
+<p>The fork carries MN as a git submodule, but only as reference: no Python file imports <code>molecularnodes</code>. Its docs say it borrowed ideas from <code>entities/density/grids.py</code>, <code>nodes/geometry.py</code> and <code>session.py</code>, and rejected the pickle-based <code>.MNSession</code> storage. One fork doc (<code>docs/quantum-visualization/2.3.0/references.md</code>) wrongly lists MN as MIT-licensed.</p>
+<p>Most of the fork is process scaffolding: 43 architecture decision records (ADRs), a <code>.cbq/</code> sidecar project folder of NPY arrays and a JSON manifest, provenance, and quality badges. The parts worth borrowing are a few readers and its volume and vector visualisation.</p>
+<section id="worth-doing" class="level3">
+<h3 class="anchored" data-anchor-id="worth-doing">Worth doing</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Feature</th>
+<th>Where in ChemBlender</th>
+<th>MN today</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Coordination polyhedra</td>
+<td><code>CH_Coord Polyhedra</code> + <code>CH_Remove Coplanar Edges</code> (original, <code>Chem_Nodes_En.blend</code>); <code>AddCoordPolyhedraButton</code></td>
+<td>none</td>
+<td>For each centre, Proximity ligands within an RMin–RMax shell, then a ConvexHull, inside a For-Each zone. About 25 nodes. Suits metalloprotein sites (Fe-S, Zn) as well as crystals.</td>
+</tr>
+<tr class="even">
+<td>Colour a style by a second volume</td>
+<td>fork <code>surface_view.py::ensure_property_surface_cache</code>: GridToMesh(density) → SampleGrid(property) → StoreNamedAttribute</td>
+<td>†no <code>SampleGrid</code> anywhere in <code>molecularnodes/nodes</code></td>
+<td>The MN form is APBS <code>.dx</code> electrostatics on <code>Style Surface</code>; we already read <code>.dx</code>. The NCI variant colours an RDG isosurface by sign(λ2)ρ.</td>
+</tr>
+<tr class="odd">
+<td>Isosurface fixes</td>
+<td>fork <code>create_signed_isosurfaces</code> negates the grid to get the negative lobe</td>
+<td>†<code>density_style_iso_surface.py:181</code> clamps <code>Threshold</code> to 0–1; line 256 meshes the same grid at <code>-threshold</code></td>
+<td>Lift the clamp for orbital and ESP values. Check the normals on the negative lobe; this is untested. Add a default isovalue as a fraction of max|v| (<code>grid_semantics.py::default_grid_isovalue</code>).</td>
+</tr>
+<tr class="even">
+<td>Gaussian Cube reader + full affine grid transform</td>
+<td>fork <code>core/cube.py</code> (~150 lines, no dependencies); <code>grid_cache_service.py::_transform_matrix</code> → <code>openvdb.createLinearTransform</code></td>
+<td>†<code>grids.py:286</code> only <code>preScale</code> + <code>postTranslate</code></td>
+<td>Non-orthogonal grids come out wrong today.</td>
+</tr>
+<tr class="odd">
+<td>Structure export</td>
+<td>fork <code>core/exporters/</code> (xyz, pdb, pqr, mol2, cif, poscar, cube, MOL/SDF) with loss previews</td>
+<td>†no structure writer anywhere</td>
+<td><code>Molecule.write(path, selection=)</code> via biotite or MDAnalysis writers, using current positions.</td>
+</tr>
+<tr class="even">
+<td>Normal-mode animation</td>
+<td>fork <code>vibration_view.py</code> (Python frame handler, <code>co = ref + d·A·sin φ</code>); <code>phonon_frames.py</code></td>
+<td>none</td>
+<td>Do it in geometry nodes instead: a stored displacement attribute plus <code>Position + d·A·sin(2π·frame/period)</code>, with no handler. ProDy/MDAnalysis ANM modes are the biology source.</td>
+</tr>
+<tr class="odd">
+<td>Per-atom vector arrows</td>
+<td>fork <code>dataset_view.py::_ensure_vector_arrow_group</code> (AlignEulerToVector + cone instances)</td>
+<td>†<code>ts.forces</code> / <code>ts.velocities</code> not exposed</td>
+<td>Expose them as optional per-frame attributes and add a vector style built on <code>primitive_arrow</code>.</td>
+</tr>
+<tr class="even">
+<td>Colour-bar legend</td>
+<td>fork <code>render_annotations.py::create_render_annotations</code></td>
+<td>†none; only the Rg chart template</td>
+<td>A legend annotation for attribute-coloured figures.</td>
+</tr>
+<tr class="odd">
+<td>PubChem / SMILES import</td>
+<td>original <code>read.py::download_sdf_from_pubchem</code>, <code>scaffold.py</code> (RDKit ETKDGv3 + UFF); fork <code>core/derivations/smiles_3d.py</code></td>
+<td>†no RDKit or PubChem</td>
+<td>PubChem fetches SDF, which our existing reader handles. SMILES → 3D needs RDKit as an optional dependency.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="maybe" class="level3">
+<h3 class="anchored" data-anchor-id="maybe">Maybe</h3>
+<ul>
+<li><strong>Readers.</strong> extXYZ cell and per-atom properties, which the MDAnalysis XYZ reader drops (fork <code>core/formats/extxyz.py</code>). A POSCAR reader. MOL2/PQR/GRO in <code>read_structure</code> and the FileHandler (<code>ui/ops.py:42</code>).</li>
+<li><strong>Bond drawing.</strong> Dashed aromatic bonds offset towards each ring’s centre (a precomputed <code>ring_center</code> attribute), plus a per-bond <code>dashed</code> flag for H-bond or coordination bonds in Ball &amp; Stick and Sticks.</li>
+<li><strong>Periodic Array.</strong> Clipping to fractional bounds and keeping molecules whole across the boundary (original <code>CH_Supercell</code>, <code>CH_Cell Expand</code>).</li>
+<li><strong>Lattice-direction framing</strong> along a, b, c, [uvw] or (hkl). The original’s (hkl) uses the direct lattice vectors where it needs the reciprocal ones, so it is wrong for non-orthogonal cells; don’t copy it.</li>
+<li><strong>Volume rendering.</strong> A two-colour Principled Volume material for signed fields (fork <code>scientific_materials.py::volume_material</code>) and a colour-mapped slice plane (<code>grid_sampling.py</code>).</li>
+<li><strong>Thermal ellipsoids,</strong> which need ADPs parsed in <code>corecif</code>.</li>
+<li><strong>Import tooling.</strong> A pre-import info popup showing atoms, frames, cell, and whether bonds were read or guessed. A reader registry that sniffs content rather than matching on suffix (fork <code>reader_api/</code>). Session storage as NPY plus a JSON manifest instead of a pickle.</li>
+</ul>
+</section>
+<section id="skip" class="level3">
+<h3 class="anchored" data-anchor-id="skip">Skip</h3>
+<p>Interactive building and minimisation, crystallographic symmetry editing, the provenance and quality system, the separate worker process for optional dependencies, band structure, DOS, Fermi surfaces, critic2, in-scene spectra, and the generic mesh generators. Measurements, selection, render setup and element colours are already covered as well or better in MN.</p>
+</section>
+</section>
+<section id="molar_vis-framing-and-camera-animation" class="level2">
+<h2 class="anchored" data-anchor-id="molar_vis-framing-and-camera-animation">molar_vis: framing and camera animation</h2>
+<p><code>framing.py</code> solves how close the camera should be for a given orientation and deliberately does not choose the orientation. molar_vis’s main contribution is choosing it.</p>
+<section id="unobstructed-view-cratesmolar_vis_coresrcunobstructed.rs" class="level3">
+<h3 class="anchored" data-anchor-id="unobstructed-view-cratesmolar_vis_coresrcunobstructed.rs">Unobstructed view (<code>crates/molar_vis_core/src/unobstructed.rs</code>)</h3>
+<p><code>vis.unobstructed_view(rep, zoom_out=1.0, resolution=256)</code> turns the camera so that the most target atoms are directly visible.</p>
+<ul>
+<li><strong>Visibility test.</strong> Spheres are projected orthographically. A target atom is hidden when a nearer sphere covers its projected centre. Nearer target atoms count too, so self-overlap is penalised. A 2D cell grid with cells of 2× the largest radius keeps the test cheap.</li>
+<li><strong>Scorers.</strong> Mesh representations occlude with their real triangles, tested by rays against a BVH. Small targets switch to a depth rasteriser that counts visible <em>area</em> (<code>unobstructed/pixels.rs</code>). A GPU version of the scorer also exists.</li>
+<li><strong>Search.</strong> A 256-direction Fibonacci sphere, then three refinement rings of 16 directions at 10°, 4° and 1.5° around the best direction (<code>search_directions_with_seeds</code>).</li>
+<li><strong>Orientation.</strong> <code>look_along_quat</code> keeps world-up upright, falling back to another axis when the direction is near-vertical.</li>
+<li><strong>Framing.</strong> <code>Camera::focus_visual_bounds</code> fits centre ± radius in the new basis at the viewport aspect ratio. <code>zoom_out</code> widens the framing about the target to show its surroundings.</li>
+</ul>
+</section>
+<section id="animation-animation.rs-docsanimation.md" class="level3">
+<h3 class="anchored" data-anchor-id="animation-animation.rs-docsanimation.md">Animation (<code>animation.rs</code>, <code>docs/ANIMATION.md</code>)</h3>
+<p><code>vis.movie()</code> takes the steps <code>rotate</code>, <code>zoom</code>, <code>focus</code>, <code>unobstructed_view</code>, <code>go_to_view</code>, <code>hold</code> and <code>move_view</code>, plus <code>movie.trajectory(mol, start, end, fps)</code>. That shape matches what the canvas-timeline prototype (#1238) already has. Interpolation details worth checking against #1238:</p>
+<ul>
+<li><strong>Rotation.</strong> Orientation is slerped; #1238 keys Euler angles with <code>compatible</code>. Euler interpolation between arbitrary viewpoints does not follow the great-circle path and can wobble. This is untested in MN.</li>
+<li><strong>Distance.</strong> Distance is interpolated in log space, so zoom speed feels constant. #1238 is linear.</li>
+<li><strong>Clipping.</strong> During a move, molar_vis keeps the wider of the start and end clip ranges. #1238’s <code>_PoseMove</code> only raises <code>clip_end</code> when the end pose needs it. Could a move between two tight framings clip partway through? Untested.</li>
+<li><strong>Orbits.</strong> They are evaluated from the start pose, so a 720° orbit keeps both turns. #1238’s single-Euler-component <code>Orbit</code> already does this.</li>
+<li><strong>Rotation centre.</strong> It can be separate from the frame centre (VMD’s <code>c</code> key, <code>Camera::set_center</code>). #1238’s <code>orbit</code> could take a <code>pivot=</code> argument.</li>
+<li><strong>Saved poses.</strong> <code>view_json()</code> / <code>go_to_view(json)</code> store a pose without touching lighting.</li>
+</ul>
+</section>
+<section id="other-methods-1171" class="level3">
+<h3 class="anchored" data-anchor-id="other-methods-1171">Other methods (#1171)</h3>
+<p>Issue #1171 (“Automatic viewpoint selection for look_at()”) lists:</p>
+<ul>
+<li>Viewpoint entropy (Vázquez et al.&nbsp;2003).</li>
+<li>Perceptual preference (Secord et al.&nbsp;2011).</li>
+<li>PCA of the point set.</li>
+<li>The Bonaventura et al.&nbsp;2018 survey.</li>
+<li><code>framing.enclosing_sphere()</code> for turntables that don’t “breathe” (it is implemented but unused).</li>
+</ul>
+<p>#1227 (“look_at with a point array and a custom viewpoint frames against the stale camera basis”) affects any automatic viewpoint that frames a <code>get_view()</code> array.</p>
+</section>
+</section>
+<section id="prototype-molecularnodesviewpoint.py-branch-unobstructed-view" class="level2">
+<h2 class="anchored" data-anchor-id="prototype-molecularnodesviewpoint.py-branch-unobstructed-view">Prototype: <code>molecularnodes/viewpoint.py</code> (branch <code>unobstructed-view</code>)</h2>
+<p>The prototype is a pure-numpy module that is independent of <code>framing.py</code>. Every method returns a basis as rows <code>(right, up, forward)</code>, so it composes with <code>fit_camera_to_points</code>. All the searched methods share <code>search()</code>, a 256-direction Fibonacci sphere followed by three refinement rings around the best 3 seeds (molar_vis refines only 1).</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Method</th>
+<th>Scorer</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>pca</code></td>
+<td>closed form: look along the least-variance axis, longest axis horizontal, signs fixed (look in from −Y, up +Z)</td>
+<td>Blind to occlusion. Unstable for near-degenerate spreads (see the oxDNA planar-PCA issue).</td>
+</tr>
+<tr class="even">
+<td><code>unobstructed</code></td>
+<td>molar_vis centre test: count target atoms whose projected centre no nearer sphere covers. Prefilters occluders to the target’s footprint, then does a pairwise comparison per direction</td>
+<td>Ties are broken towards the largest projected target bounding box.</td>
+</tr>
+<tr class="odd">
+<td><code>visible_area</code></td>
+<td>orthographic depth raster (<code>rasterize</code>) over the target’s enclosing sphere at a fixed world scale; counts winning target pixels</td>
+<td>About 40× slower than <code>unobstructed</code> in numpy.</td>
+</tr>
+<tr class="even">
+<td><code>entropy</code></td>
+<td>Vázquez viewpoint entropy over labelled parts (per atom by default), background included</td>
+<td>Needs no target, so it suits whole structures.</td>
+</tr>
+<tr class="odd">
+<td><code>raycast</code> (Canvas only)</td>
+<td><code>BVHTree</code> ray from each target atom towards the camera against the evaluated meshes</td>
+<td>Occludes with the real cartoon. Point-cloud styles are not meshes and are ignored.</td>
+</tr>
+</tbody>
+</table>
+<p>Wired up as <code>canvas.look_at(target, viewpoint="unobstructed" | "visible_area" | "raycast" | "pca" | "entropy", occluders=None)</code>. Occluders default to every visible mesh, point-cloud or curves object.</p>
+<p>Occluder handling: - Rendered vertices are thinned to one per 1.7 Å cube. - Points within 2 Å of the target are dropped. Without this, the target’s own rendering hides every atom from every direction.</p>
+<p>Also included is the fix for #1227: <code>frame_points</code> now updates the view layer before reading the basis.</p>
+<section id="results-cartoon-protein-ball-and-stick-ligand-cycles-16-samples-480360-margin-0.1" class="level3">
+<h3 class="anchored" data-anchor-id="results-cartoon-protein-ball-and-stick-ligand-cycles-16-samples-480360-margin-0.1">Results (cartoon protein + ball-and-stick ligand, Cycles 16 samples, 480×360, margin 0.1)</h3>
+<p>Visible = ligand atoms with a clear ray to the camera through the rendered cartoon. This is the <code>raycast</code> objective, so it is biased towards that method.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Structure</th>
+<th>Method</th>
+<th>Time (s)</th>
+<th>Visible</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1STP (biotin)</td>
+<td>front / pca / unobstructed / visible_area / raycast</td>
+<td>0.01–1.2</td>
+<td>16/16 for all</td>
+</tr>
+<tr class="even">
+<td>1STP</td>
+<td>entropy (whole structure)</td>
+<td>2.4</td>
+<td>13/16</td>
+</tr>
+<tr class="odd">
+<td>1cbs (retinoic acid in a β-barrel)</td>
+<td>front</td>
+<td>0.01</td>
+<td>10/22</td>
+</tr>
+<tr class="even">
+<td>1cbs</td>
+<td>pca</td>
+<td>0.01</td>
+<td>14/22</td>
+</tr>
+<tr class="odd">
+<td>1cbs</td>
+<td>unobstructed</td>
+<td>0.03</td>
+<td><strong>22/22</strong></td>
+</tr>
+<tr class="even">
+<td>1cbs</td>
+<td>visible_area</td>
+<td>1.3</td>
+<td><strong>22/22</strong></td>
+</tr>
+<tr class="odd">
+<td>1cbs</td>
+<td>raycast</td>
+<td>0.02</td>
+<td><strong>22/22</strong></td>
+</tr>
+<tr class="even">
+<td>1cbs</td>
+<td>entropy (whole structure)</td>
+<td>4.2</td>
+<td>18/22</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Recommendation (two structures only; superseded by the gallery below).</strong> <code>unobstructed</code> is as good as the more faithful scorers and fast (about 30 ms), so it should be the default. <code>raycast</code> is the best fit when the scene is all meshes. <code>visible_area</code> adds nothing here at about 40× the cost; keep <code>rasterize</code> for <code>entropy</code>. <code>pca</code> is a cheap first guess for whole structures.</li>
+<li><strong>1STP.</strong> Biotin is visible from every direction, so the methods differ only by tie-break.</li>
+</ul>
+</section>
+<section id="gallery-six-structures-docsdevviewpoint_gallery.py" class="level3">
+<h3 class="anchored" data-anchor-id="gallery-six-structures-docsdevviewpoint_gallery.py">Gallery: six structures (<code>docs/dev/viewpoint_gallery.py</code>)</h3>
+<p>The script renders pocket and whole-protein framing for 1cbs, 1STP, 1ATN, 8H1B, 4PNO and 6ZPA. Results below are in pocket mode; “clear” counts ligand atoms with a clear ray to the camera through the rendered cartoon.</p>
+<ul>
+<li><strong><code>raycast</code></strong> has every atom clear on all six structures, and it also looks best by eye.</li>
+<li><strong><code>unobstructed</code></strong> reaches every atom only on 1cbs and 1STP. It falls behind on 1ATN (23/31), 8H1B (23/27), 6ZPA (27/31) and 4PNO (27/29). Using each cartoon vertex as a 1.7 Å sphere makes the ribbon look thicker than it renders. Try a smaller occluder radius, or vertex normals, before making it the default.</li>
+<li><strong><code>visible_area</code></strong> sits between the two (26–29 clear on the harder cases) at about 40× the cost.</li>
+<li><strong><code>pca</code></strong> and <strong><code>entropy</code></strong> often hide the ligand. They suit whole-structure framing, not pockets.</li>
+</ul>
+<p>Golden snapshots: <code>test_render_viewpoint[front|pca|unobstructed|visible_area|raycast|entropy]</code> in <code>tests/test_render_images.py</code> (1cbs, 128 px).</p>
+</section>
+<section id="open-questions" class="level3">
+<h3 class="anchored" data-anchor-id="open-questions">Open questions</h3>
+<ul>
+<li><strong>API shape.</strong> Should automatic methods be more <code>viewpoint=</code> strings, or a separate <code>viewpoint="auto", method=...</code>? Should <code>occluders</code> be explicit or default to the scene?</li>
+<li><strong>Framing radii.</strong> <code>get_view()</code> returns atom centres, so selection framing ignores radii. molar_vis frames centre ± radius.</li>
+<li><strong>Context.</strong> There is no <code>zoom_out</code> for pocket context yet. <code>margin</code> works, but a pocket selection is closer to what molar_vis does.</li>
+<li><strong>Timeline.</strong> Add a timeline clip (#1238 <code>LookAt</code>) that solves <code>unobstructed</code> at play time.</li>
+<li><strong>Turntables.</strong> Use <code>enclosing_sphere</code> framing so they don’t breathe (#1171).</li>
+<li><strong>Perceptual preference</strong> (Secord 2011) is not prototyped. It needs fitted weights over several features.</li>
+<li><strong>Ensembles.</strong> An entropy label per residue or chain would suit ensembles better than per atom.</li>
+</ul>
+
+
+</section>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>This site is built with ❤️ and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

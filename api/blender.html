@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -239,6 +239,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../api/pubchem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Small Molecules from PubChem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../api/trajectories.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Trajectories</span></a>
   </div>
@@ -277,6 +283,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../api/solvent.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Solvent Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/electrostatics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Electrostatics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -332,8 +344,20 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/reference/entities.molecule.DSSPManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.molecule.DSSPManager</span></a>
+  <a href="../api/reference/entities.molecule.CalculationManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.CalculationManager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.molecule.DSSPCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.DSSPCalculation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.molecule.HBondCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.HBondCalculation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -530,12 +554,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../api/reference/nodes.general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -556,6 +574,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../api/reference/nodes.color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -586,6 +610,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../api/reference/nodes.geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -792,6 +822,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <li><p>A set of vertices can be turned to an object using <code>from_pydata</code> of <code>bpy.data.meshes</code> that can be used to create bounding box objects</p></li>
 <li><p><code>bpy.utils.expose_bundled_modules()</code> is needed to access Blender’s bundled <code>openvdb</code> package in the background mode (<code>bpy</code>)</p></li>
 <li><p>Blender app handlers (like <code>frame_change_post</code>, etc) are easy to add, but not straightforward to remove. Using the <code>clear</code> will remove all handlers, which is not desirable. The alternative is to remove by using the actual handler name (the function name)</p></li>
+<li><p>Avoid <code>bpy.ops.wm.read_factory_settings()</code> in a script that uses the installed extension. It has been reported to remove the extension’s bundled Python packages mid-run, after which <code>Molecule.load()</code> fails on missing biotite files. To start from a clean scene, delete the default objects yourself or run each render in its own Blender process</p></li>
 <li><p>Always use Blender’s <a href="https://docs.blender.org/manual/en/latest/advanced/blender_directory_layout.html#portable-installation">portable installation</a> to keep environments separate and clean</p></li>
 <li><p>Never keep references to Blender <a href="https://docs.blender.org/api/current/info_gotchas_internal_data_and_python_objects.html">data</a>. This is the primary cause of most <a href="https://docs.blender.org/api/current/info_gotchas_crashes.html">crashes</a> as outlined in the <a href="https://docs.blender.org/api/current/info_gotcha.html">gotchas</a></p></li>
 </ul>

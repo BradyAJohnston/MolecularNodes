@@ -72,7 +72,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
 <link href="../../api/reference/nodes.simulation.html" rel="next">
-<link href="../../api/reference/nodes.geometry.html" rel="prev">
+<link href="../../api/reference/nodes.materials.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
@@ -82,7 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -230,7 +230,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.materials.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.select.html">Select</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.general.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.select.html">Select</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -274,6 +274,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../api/pubchem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Small Molecules from PubChem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../api/trajectories.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Trajectories</span></a>
   </div>
@@ -312,6 +318,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/solvent.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Solvent Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/electrostatics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Electrostatics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -367,8 +379,20 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.molecule.DSSPManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.molecule.DSSPManager</span></a>
+  <a href="../../api/reference/entities.molecule.CalculationManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.CalculationManager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.DSSPCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.DSSPCalculation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.HBondCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.HBondCalculation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -565,12 +589,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -591,6 +609,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -621,6 +645,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -846,35 +876,41 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#inputs-24" id="toc-inputs-24" class="nav-link" data-scroll-target="#inputs-24">Inputs</a></li>
   <li><a href="#outputs-25" id="toc-outputs-25" class="nav-link" data-scroll-target="#outputs-25">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.SelectSphere" id="toc-molecularnodes.nodes.geometry.SelectSphere" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SelectSphere">Select Sphere</a>
+  <li><a href="#molecularnodes.nodes.geometry.SelectResidueClass" id="toc-molecularnodes.nodes.geometry.SelectResidueClass" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SelectResidueClass">Select Residue Class</a>
   <ul class="collapse">
   <li><a href="#parameters-25" id="toc-parameters-25" class="nav-link" data-scroll-target="#parameters-25">Parameters</a></li>
   <li><a href="#inputs-25" id="toc-inputs-25" class="nav-link" data-scroll-target="#inputs-25">Inputs</a></li>
   <li><a href="#outputs-26" id="toc-outputs-26" class="nav-link" data-scroll-target="#outputs-26">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.SelectedInstances" id="toc-molecularnodes.nodes.geometry.SelectedInstances" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SelectedInstances">Selected Instances</a>
+  <li><a href="#molecularnodes.nodes.geometry.SelectSphere" id="toc-molecularnodes.nodes.geometry.SelectSphere" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SelectSphere">Select Sphere</a>
   <ul class="collapse">
   <li><a href="#parameters-26" id="toc-parameters-26" class="nav-link" data-scroll-target="#parameters-26">Parameters</a></li>
   <li><a href="#inputs-26" id="toc-inputs-26" class="nav-link" data-scroll-target="#inputs-26">Inputs</a></li>
   <li><a href="#outputs-27" id="toc-outputs-27" class="nav-link" data-scroll-target="#outputs-27">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.SeparateAtoms" id="toc-molecularnodes.nodes.geometry.SeparateAtoms" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SeparateAtoms">Separate Atoms</a>
+  <li><a href="#molecularnodes.nodes.geometry.SelectedInstances" id="toc-molecularnodes.nodes.geometry.SelectedInstances" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SelectedInstances">Selected Instances</a>
   <ul class="collapse">
   <li><a href="#parameters-27" id="toc-parameters-27" class="nav-link" data-scroll-target="#parameters-27">Parameters</a></li>
   <li><a href="#inputs-27" id="toc-inputs-27" class="nav-link" data-scroll-target="#inputs-27">Inputs</a></li>
   <li><a href="#outputs-28" id="toc-outputs-28" class="nav-link" data-scroll-target="#outputs-28">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.SeparatePolymers" id="toc-molecularnodes.nodes.geometry.SeparatePolymers" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SeparatePolymers">Separate Polymers</a>
+  <li><a href="#molecularnodes.nodes.geometry.SeparateAtoms" id="toc-molecularnodes.nodes.geometry.SeparateAtoms" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SeparateAtoms">Separate Atoms</a>
   <ul class="collapse">
   <li><a href="#parameters-28" id="toc-parameters-28" class="nav-link" data-scroll-target="#parameters-28">Parameters</a></li>
   <li><a href="#inputs-28" id="toc-inputs-28" class="nav-link" data-scroll-target="#inputs-28">Inputs</a></li>
   <li><a href="#outputs-29" id="toc-outputs-29" class="nav-link" data-scroll-target="#outputs-29">Outputs</a></li>
   </ul></li>
+  <li><a href="#molecularnodes.nodes.geometry.SeparatePolymers" id="toc-molecularnodes.nodes.geometry.SeparatePolymers" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SeparatePolymers">Separate Polymers</a>
+  <ul class="collapse">
+  <li><a href="#parameters-29" id="toc-parameters-29" class="nav-link" data-scroll-target="#parameters-29">Parameters</a></li>
+  <li><a href="#inputs-29" id="toc-inputs-29" class="nav-link" data-scroll-target="#inputs-29">Inputs</a></li>
+  <li><a href="#outputs-30" id="toc-outputs-30" class="nav-link" data-scroll-target="#outputs-30">Outputs</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.materials.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.select.html">Select</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.general.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.select.html">Select</a></li></ol></nav></header>
 
 
 
@@ -4650,13 +4686,125 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
-<section id="molecularnodes.nodes.geometry.SelectSphere" class="level1">
-<h1>Select Sphere</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SelectSphere(and_<span class="op">=</span><span class="va">True</span>, or_<span class="op">=</span><span class="va">False</span>, <span class="bu">object</span><span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="molecularnodes.nodes.geometry.SelectResidueClass" class="level1">
+<h1>Select Residue Class</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SelectResidueClass(and_<span class="op">=</span><span class="va">True</span>, or_<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
-<p>GUI reference: <a href="../../nodes/select.html#select-sphere">Select Sphere</a>.</p>
+<p>GUI reference: <a href="../../nodes/select.html#select-residue-class">Select Residue Class</a>.</p>
 <section id="parameters-25" class="level2 doc-section doc-section-parameters">
 <h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-25">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 5%">
+<col style="width: 29%">
+<col style="width: 58%">
+<col style="width: 7%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>and_</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>The resulting selection must overlap with this input selection</td>
+<td><code class="custom-bool">True</code></td>
+</tr>
+<tr class="even">
+<td>or_</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
+<td><code class="custom-bool">False</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-25" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-25">Inputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 19%">
+<col style="width: 74%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.and_</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>The resulting selection must overlap with this input selection</td>
+</tr>
+<tr class="even">
+<td>i.or_</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>The resulting selection can be calculated from this node or be from this input selection</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-26" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-26">Outputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 26%">
+<col style="width: 48%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.positively_charged</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>ARG, HIS and LYS</td>
+</tr>
+<tr class="even">
+<td>o.negatively_charged</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>ASP and GLU</td>
+</tr>
+<tr class="odd">
+<td>o.polar_uncharged</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>SER, THR, ASN and GLN</td>
+</tr>
+<tr class="even">
+<td>o.special_case</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>CYS, SEC, GLY and PRO</td>
+</tr>
+<tr class="odd">
+<td>o.hydrophobic</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>ALA, VAL, ILE, LEU, MET, PHE, TYR and TRP</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.nodes.geometry.SelectSphere" class="level1">
+<h1>Select Sphere</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SelectSphere(and_<span class="op">=</span><span class="va">True</span>, or_<span class="op">=</span><span class="va">False</span>, <span class="bu">object</span><span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/select.html#select-sphere">Select Sphere</a>.</p>
+<section id="parameters-26" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-26">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 3%">
@@ -4694,8 +4842,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-25" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-25">Inputs</h2>
+<section id="inputs-26" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-26">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 4%">
@@ -4728,8 +4876,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-26" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-26">Outputs</h2>
+<section id="outputs-27" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-27">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 16%">
@@ -4760,11 +4908,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.SelectedInstances" class="level1">
 <h1>Selected Instances</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SelectedInstances(instances<span class="op">=</span><span class="va">None</span>, selection<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SelectedInstances(instances<span class="op">=</span><span class="va">None</span>, selection<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/select.html#selected-instances">Selected Instances</a>.</p>
-<section id="parameters-26" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-26">Parameters</h2>
+<section id="parameters-27" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-27">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 7%">
@@ -4796,8 +4944,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-26" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-26">Inputs</h2>
+<section id="inputs-27" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-27">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 11%">
@@ -4825,8 +4973,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-27" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-27">Outputs</h2>
+<section id="outputs-28" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-28">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 21%">
@@ -4862,11 +5010,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.SeparateAtoms" class="level1">
 <h1>Separate Atoms</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SeparateAtoms(atoms<span class="op">=</span><span class="va">None</span>, selection<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SeparateAtoms(atoms<span class="op">=</span><span class="va">None</span>, selection<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/select.html#separate-atoms">Separate Atoms</a>.</p>
-<section id="parameters-27" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-27">Parameters</h2>
+<section id="parameters-28" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-28">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 9%">
@@ -4898,8 +5046,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-27" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-27">Inputs</h2>
+<section id="inputs-28" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-28">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 14%">
@@ -4927,8 +5075,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-28" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-28">Outputs</h2>
+<section id="outputs-29" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-29">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 13%">
@@ -4964,11 +5112,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.SeparatePolymers" class="level1">
 <h1>Separate Polymers</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SeparatePolymers(atoms<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SeparatePolymers(atoms<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/select.html#separate-polymers">Separate Polymers</a>.</p>
-<section id="parameters-28" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-28">Parameters</h2>
+<section id="parameters-29" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-29">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 6%">
@@ -4994,8 +5142,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-28" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-28">Inputs</h2>
+<section id="inputs-29" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-29">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -5018,8 +5166,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-29" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-29">Outputs</h2>
+<section id="outputs-30" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-30">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -5454,8 +5602,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../api/reference/nodes.geometry.html" class="pagination-link" aria-label="Geometry">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Geometry</span>
+      <a href="../../api/reference/nodes.materials.html" class="pagination-link" aria-label="Materials">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Materials</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

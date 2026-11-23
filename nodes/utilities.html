@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -218,12 +218,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -244,6 +238,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -274,6 +274,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -356,6 +362,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#evaluate-on-atoms" id="toc-evaluate-on-atoms" class="nav-link" data-scroll-target="#evaluate-on-atoms">Evaluate on Atoms</a></li>
   <li><a href="#evaluate-per-group" id="toc-evaluate-per-group" class="nav-link" data-scroll-target="#evaluate-per-group">Evaluate Per Group</a></li>
   <li><a href="#fallback-boolean" id="toc-fallback-boolean" class="nav-link" data-scroll-target="#fallback-boolean">Fallback Boolean</a></li>
+  <li><a href="#fallback-camera" id="toc-fallback-camera" class="nav-link" data-scroll-target="#fallback-camera">Fallback Camera</a></li>
   <li><a href="#fallback-float" id="toc-fallback-float" class="nav-link" data-scroll-target="#fallback-float">Fallback Float</a></li>
   <li><a href="#fallback-integer" id="toc-fallback-integer" class="nav-link" data-scroll-target="#fallback-integer">Fallback Integer</a></li>
   <li><a href="#fallback-matrix" id="toc-fallback-matrix" class="nav-link" data-scroll-target="#fallback-matrix">Fallback Matrix</a></li>
@@ -878,7 +885,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="even">
 <td style="text-align: left;">Result</td>
 <td style="text-align: left;"><code class="custom-menu">Menu</code></td>
-<td style="text-align: left;">Where to store the result of the closure. Bundle overwrite the existing <code>MN/Atoms</code> bundle. Geometry passes along the bundle and joins the resulting geometry into the output.</td>
+<td style="text-align: left;">What the closure returns. ‘Atoms’: the closure runs on the input geometry and its result is the output. ‘Representation’ (styles): the closure runs on the <code>MN/Atoms</code> bundle if the input has one, its result is joined to the input’s existing representation, and the atoms are stored in the <code>MN/Atoms</code> bundle so later styles can still get them</td>
 </tr>
 </tbody>
 </table>
@@ -1013,6 +1020,55 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 <p>API Reference: <a href="../api/reference/nodes.utilities.html#molecularnodes.nodes.geometry.FallbackBoolean"><code>nodes.geometry.FallbackBoolean</code></a></p>
+</section>
+<section id="fallback-camera" class="level2">
+<h2 class="anchored" data-anchor-id="fallback-camera">Fallback Camera</h2>
+<p>Use <code class="custom-object">Camera</code>, or the scene’s active camera when it is empty, and output its <code class="custom-matrix">Transform</code> relative to this object</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Camera</td>
+<td style="text-align: left;"><code class="custom-object">Object</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Transform</td>
+<td style="text-align: left;"><code class="custom-matrix">Matrix</code></td>
+<td style="text-align: left;">Transformation matrix containing the location, rotation and scale of the object</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Camera</td>
+<td style="text-align: left;"><code class="custom-object">Object</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.utilities.html#molecularnodes.nodes.geometry.FallbackCamera"><code>nodes.geometry.FallbackCamera</code></a></p>
 </section>
 <section id="fallback-float" class="level2">
 <h2 class="anchored" data-anchor-id="fallback-float">Fallback Float</h2>

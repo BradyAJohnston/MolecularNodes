@@ -82,7 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -277,6 +277,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../api/pubchem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Small Molecules from PubChem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../api/trajectories.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Trajectories</span></a>
   </div>
@@ -315,6 +321,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../api/solvent.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Solvent Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/electrostatics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Electrostatics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -370,8 +382,20 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/reference/entities.molecule.DSSPManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.molecule.DSSPManager</span></a>
+  <a href="../api/reference/entities.molecule.CalculationManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.CalculationManager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.molecule.DSSPCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.DSSPCalculation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.molecule.HBondCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.HBondCalculation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -568,12 +592,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../api/reference/nodes.general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -594,6 +612,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../api/reference/nodes.color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -624,6 +648,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../api/reference/nodes.geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -723,24 +753,28 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 
 
 <p>MolecularNodes ships a small set of pre-built materials, available as classes in <code>mn.material</code>. Instantiating one creates a new, independent Blender material — starting values are set through the constructor, and every parameter remains tweakable on the instance afterwards.</p>
-<div id="bde35b4c" class="cell" data-execution_count="1">
+<div id="b206d5ba" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> molecularnodes.nodes <span class="im">import</span> geometry <span class="im">as</span> g</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nodebpy <span class="im">import</span> shader <span class="im">as</span> s</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>cv <span class="op">=</span> mn.Canvas(engine<span class="op">=</span><span class="st">"EEVEE"</span>, resolution<span class="op">=</span>(<span class="dv">800</span>, <span class="dv">800</span>), transparent<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/home/brady/actions-runner/_work/MolecularNodes/MolecularNodes/molecularnodes/nodes/_utils.py:4: FutureWarning: `databpy.nodes` is deprecated and will be removed in databpy 0.14.0. Node groups are handled by nodebpy (https://pypi.org/project/nodebpy/).
+  from databpy.nodes import append_from_blend, get_output, swap_tree</code></pre>
+</div>
 </div>
 <section id="pre-built-materials" class="level2">
 <h2 class="anchored" data-anchor-id="pre-built-materials">Pre-built materials</h2>
 <p>Pass a preset directly to <code>add_style()</code>. The parameters map onto the inputs of the nodes inside the material, so changing them updates the render immediately.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mat <span class="op">=</span> mn.material.AmbientOcclusion(distance<span class="op">=</span><span class="fl">2.0</span>)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"8H1B"</span>).add_style(<span class="st">"surface"</span>, material<span class="op">=</span>mat)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>cv.look_at(mol)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>display(cv.snapshot())</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>mat.distance <span class="op">=</span> <span class="fl">0.15</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>cv.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>mat <span class="op">=</span> mn.material.AmbientOcclusion(distance<span class="op">=</span><span class="fl">2.0</span>)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"8H1B"</span>).add_style(<span class="st">"surface"</span>, material<span class="op">=</span>mat)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>cv.look_at(mol)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>display(cv.snapshot())</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>mat.distance <span class="op">=</span> <span class="fl">0.15</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>cv.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div id="fig-material-preset" class="quarto-layout-panel">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-material-preset-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -777,12 +811,12 @@ Figure&nbsp;1: The Ambient Occlusion material is performant and aesthetically pl
 </figure>
 </div>
 <p>To swap the material on an already-created style, assign a new material to the style node’s material socket:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>flat <span class="op">=</span> mn.material.Flat(thickness<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>mol.tree.tree.nodes[<span class="st">"Style Surface"</span>].inputs[<span class="st">"Material"</span>].default_value <span class="op">=</span> (</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    flat.material</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>cv.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<div id="cell-fig-change-material-flat" class="cell quarto-layout-panel" data-layout-ncol="1" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>flat <span class="op">=</span> mn.material.Flat(thickness<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>mol.tree.tree.nodes[<span class="st">"Style Surface"</span>].inputs[<span class="st">"Material"</span>].default_value <span class="op">=</span> (</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    flat.material</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>cv.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="cell-fig-change-material-flat" class="cell quarto-layout-panel" data-execution_count="3" data-layout-ncol="1">
 <div class="quarto-layout-row">
 <div class="cell-output cell-output-display quarto-layout-cell" data-execution_count="3" style="flex-basis: 100.0%;justify-content: flex-start;">
 <div id="fig-change-material-flat" class="quarto-float quarto-figure quarto-figure-center anchored">
@@ -804,17 +838,17 @@ Figure&nbsp;2
 <h2 class="anchored" data-anchor-id="custom-materials">Custom materials</h2>
 <p>For full control, build a material from scratch with the <a href="https://bradyajohnston.github.io/nodebpy"><code>nodebpy</code></a> shader nodes. Anything built inside the <code>with s.material()</code> block becomes the material’s node tree, and the <code>MNColor</code> node provides the per-atom colors.</p>
 <div id="cell-fig-material-custom" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> s.material(<span class="st">"Custom Material"</span>) <span class="im">as</span> custom:</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    custom.nodes.clear()</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    col <span class="op">=</span> mn.nodes.shader.MNColor()</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    ao <span class="op">=</span> s.AmbientOcclusion(col, distance<span class="op">=</span><span class="fl">1.0</span>, samples<span class="op">=</span><span class="dv">128</span>)</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    ao.o.color <span class="op">&gt;&gt;</span> s.MaterialOutput().i.surface</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># regular node lookup and property assignment</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>mol.tree.tree.nodes[<span class="st">"Style Surface"</span>].inputs[<span class="st">"Material"</span>].default_value <span class="op">=</span> (</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    custom.material</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>cv.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> s.material(<span class="st">"Custom Material"</span>) <span class="im">as</span> custom:</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    custom.nodes.clear()</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    col <span class="op">=</span> mn.nodes.shader.MNColor()</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    ao <span class="op">=</span> s.AmbientOcclusion(col, distance<span class="op">=</span><span class="fl">1.0</span>, samples<span class="op">=</span><span class="dv">128</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    ao.o.color <span class="op">&gt;&gt;</span> s.MaterialOutput().i.surface</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co"># regular node lookup and property assignment</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>mol.tree.tree.nodes[<span class="st">"Style Surface"</span>].inputs[<span class="st">"Material"</span>].default_value <span class="op">=</span> (</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    custom.material</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>cv.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <div id="fig-material-custom" class="quarto-float quarto-figure quarto-figure-center anchored">
 <figure class="quarto-float quarto-float-fig figure">
@@ -832,12 +866,12 @@ Figure&nbsp;3: A custom material built with nodebpy’s shader nodes.
 <section id="render-engines-and-materials" class="level2">
 <h2 class="anchored" data-anchor-id="render-engines-and-materials">Render Engines and Materials</h2>
 <p>The different render engines handle materials diferently.</p>
-<div id="2787e22d" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> MDAnalysis <span class="im">as</span> mda</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> itertools</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> MDAnalysis.tests.datafiles <span class="im">import</span> PSF, DCD</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>cv <span class="op">=</span> mn.Canvas(resolution<span class="op">=</span>(<span class="dv">800</span>, <span class="dv">800</span>), transparent<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="e3899b64" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> MDAnalysis <span class="im">as</span> mda</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> itertools</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> MDAnalysis.tests.datafiles <span class="im">import</span> PSF, DCD</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>cv <span class="op">=</span> mn.Canvas(resolution<span class="op">=</span>(<span class="dv">800</span>, <span class="dv">800</span>), transparent<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 
 

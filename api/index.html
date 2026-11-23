@@ -81,7 +81,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -276,6 +276,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../api/pubchem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Small Molecules from PubChem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../api/trajectories.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Trajectories</span></a>
   </div>
@@ -314,6 +320,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../api/solvent.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Solvent Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/electrostatics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Electrostatics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -369,8 +381,20 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/reference/entities.molecule.DSSPManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.molecule.DSSPManager</span></a>
+  <a href="../api/reference/entities.molecule.CalculationManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.CalculationManager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.molecule.DSSPCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.DSSPCalculation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.molecule.HBondCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.HBondCalculation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -567,12 +591,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../api/reference/nodes.general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -593,6 +611,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../api/reference/nodes.color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -623,6 +647,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../api/reference/nodes.geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -754,7 +784,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="installation" class="level2">
 <h2 class="anchored" data-anchor-id="installation">Installation</h2>
-<p>If installed inside of Blender as an add-on, you can script using MN in the python console or when running scripts through Blender.</p>
+<p>If installed inside of Blender as an add-on, you can script using MN in the python console or when running scripts through Blender. The extension is not importable as <code>molecularnodes</code> there; import it through Blender’s extension namespace instead:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> bl_ext.blender_org.molecularnodes <span class="im">as</span> mn</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>You can also install and use inside of your own python projects.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -768,11 +799,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <div class="callout-body-container callout-body">
 <p><code>molecularnodes</code> is only compatible with <code>python==3.13</code></p>
 <p>Blender is very particular about python versions (and especially <code>numpy</code> versions). Blender adheres to the <a href="https://vfxplatform.com/">VFX Reference platform</a> which determines python and common package versions to be used across multiple VFX software for consistency.</p>
-<p>Because of this, the <code>bpy</code> package upon which <code>molecularnodes</code> is build is locked to <code>python==3.13</code> and in particular <code>numpy&gt;=2.3</code>. Going outside of these very particular versions is recipe for distaster.</p>
+<p>Because of this, the <code>bpy</code> package upon which <code>molecularnodes</code> is build is locked to <code>python==3.13</code> and in particular <code>numpy&gt;=2.3</code>. Going outside of these very particular versions is recipe for disaster.</p>
 </div>
 </div>
 <p>Blender (<code>bpy</code>) is listed as an optional dependency for MN so if you install inside of Blender itself, there isn’t a double up with the bunlded <code>bpy</code>. This means you’ll need to always manually request it when installing or add it as a requirement for separate projects.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install molecularnodes<span class="pp">[</span><span class="ss">bpy</span><span class="pp">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">pip</span> install molecularnodes<span class="pp">[</span><span class="ss">bpy</span><span class="pp">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="getting-started" class="level2">
 <h2 class="anchored" data-anchor-id="getting-started">Getting Started</h2>
@@ -816,23 +847,27 @@ Important
 <p>You <em>must</em> a new canvas first, before loading any structures.</p>
 </div>
 </div>
-<div id="ffe6b41f" class="cell" data-execution_count="1">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas(mn.scene.Cycles(samples<span class="op">=</span><span class="dv">32</span>), resolution<span class="op">=</span>(<span class="dv">720</span>, <span class="dv">480</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="7fa75e5f" class="cell" data-execution_count="1">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>canvas <span class="op">=</span> mn.Canvas(mn.scene.Cycles(samples<span class="op">=</span><span class="dv">32</span>), resolution<span class="op">=</span>(<span class="dv">720</span>, <span class="dv">480</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/home/brady/actions-runner/_work/MolecularNodes/MolecularNodes/molecularnodes/nodes/_utils.py:4: FutureWarning: `databpy.nodes` is deprecated and will be removed in databpy 0.14.0. Node groups are handled by nodebpy (https://pypi.org/project/nodebpy/).
+  from databpy.nodes import append_from_blend, get_output, swap_tree</code></pre>
+</div>
 <div class="cell-output cell-output-stdout">
-<pre><code>00:00.467  cycles           | WARNING HIPEW initialization failed: Error opening HIP dynamic library</code></pre>
+<pre><code>00:00.612  cycles           | WARNING HIPEW initialization failed: Error opening HIP dynamic library</code></pre>
 </div>
 </div>
 <section id="add-a-molecule" class="level3">
 <h3 class="anchored" data-anchor-id="add-a-molecule">Add a <code>Molecule</code></h3>
 <p>The <a href="../api/reference/Molecule.html#molecularnodes.Molecule"><code>mn.Molecule</code></a> can take a <code>AtomArray</code> from the <code>biotite</code> package directly, or it has the <a href="../api/reference/Molecule.html#molecularnodes.Molecule.fetch"><code>mn.Molecule.fetch</code></a> and <a href="../api/reference/Molecule.html#molecularnodes.Molecule.load"><code>mn.Molecule.load</code></a> class methods to download directly from the PDB or load a local file.</p>
 <p>After loading the molecule, to be able to see anything we must first add a style. Then we can frame the camera on the object and take a snapshot.</p>
-<div id="981d3017" class="cell" data-execution_count="2">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"4ozs"</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>mol.add_style(<span class="st">"cartoon"</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="75cd0955" class="cell" data-execution_count="2">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"4ozs"</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>mol.add_style(<span class="st">"cartoon"</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="2">
 <div>
 <figure class="figure">
@@ -841,15 +876,15 @@ Important
 </div>
 </div>
 </div>
-<div id="f60751f1" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>canvas.background <span class="op">=</span> (<span class="dv">0</span>, <span class="fl">0.6</span>, <span class="fl">0.6</span>, <span class="fl">1.0</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>canvas.camera.lens <span class="op">=</span> <span class="dv">130</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"9MD2"</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>mol.add_style(<span class="st">"cartoon"</span>, loop_radius<span class="op">=</span><span class="fl">0.6</span>, material<span class="op">=</span>mn.material.AmbientOcclusion())</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="31266c92" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>canvas.background <span class="op">=</span> (<span class="dv">0</span>, <span class="fl">0.6</span>, <span class="fl">0.6</span>, <span class="fl">1.0</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>canvas.camera.lens <span class="op">=</span> <span class="dv">130</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"9MD2"</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>mol.add_style(<span class="st">"cartoon"</span>, loop_radius<span class="op">=</span><span class="fl">0.6</span>, material<span class="op">=</span>mn.material.AmbientOcclusion())</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Info: Deleted 2 data-block(s)</code></pre>
 </div>
@@ -861,9 +896,9 @@ Important
 </div>
 </div>
 </div>
-<div id="82c1d451" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol, (<span class="op">-</span><span class="dv">180</span>, <span class="dv">0</span>, <span class="dv">0</span>))</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="56db792d" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol, (<span class="op">-</span><span class="dv">180</span>, <span class="dv">0</span>, <span class="dv">0</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
 <div>
 <figure class="figure">
@@ -872,24 +907,24 @@ Important
 </div>
 </div>
 </div>
-<div id="8ff96e3c" class="cell" data-execution_count="5">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>canvas.engine <span class="op">=</span> <span class="st">"eevee"</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>canvas.resolution <span class="op">=</span> (<span class="dv">800</span>, <span class="dv">800</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>canvas.transparent <span class="op">=</span> <span class="va">True</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"Q8W3K0"</span>, database<span class="op">=</span><span class="st">"alphafold"</span>)</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree.reset() <span class="im">as</span> (atoms, join):</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    (</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        atoms</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;</span> mn.nodes.geometry.SetColor(color<span class="op">=</span>mn.nodes.geometry.ColorPLDDT())</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;</span> mn.nodes.geometry.StyleCartoon(</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>            material<span class="op">=</span>mn.material.Default().material</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;</span> join</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol)</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="5543e11d" class="cell" data-execution_count="5">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>canvas.engine <span class="op">=</span> <span class="st">"eevee"</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>canvas.resolution <span class="op">=</span> (<span class="dv">800</span>, <span class="dv">800</span>)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>canvas.transparent <span class="op">=</span> <span class="va">True</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"Q8W3K0"</span>, database<span class="op">=</span><span class="st">"alphafold"</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree.reset() <span class="im">as</span> (atoms, join):</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    (</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        atoms</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;</span> mn.nodes.geometry.SetColor(color<span class="op">=</span>mn.nodes.geometry.ColorPLDDT())</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;</span> mn.nodes.geometry.StyleCartoon(</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>            material<span class="op">=</span>mn.material.Default().material</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;</span> join</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Info: Deleted 3 data-block(s)</code></pre>
 </div>

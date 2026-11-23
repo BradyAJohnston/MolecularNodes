@@ -36,7 +36,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../nodes/select.html" rel="next">
+<link href="../nodes/materials.html" rel="next">
 <link href="../nodes/ensemble.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -218,12 +218,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -244,6 +238,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -274,6 +274,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -346,18 +352,22 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#centre-on-selection" id="toc-centre-on-selection" class="nav-link active" data-scroll-target="#centre-on-selection">Centre on Selection</a></li>
+  <li><a href="#best-view" id="toc-best-view" class="nav-link active" data-scroll-target="#best-view">Best View</a></li>
+  <li><a href="#centre-on-selection" id="toc-centre-on-selection" class="nav-link" data-scroll-target="#centre-on-selection">Centre on Selection</a></li>
   <li><a href="#check-geometry" id="toc-check-geometry" class="nav-link" data-scroll-target="#check-geometry">Check Geometry</a></li>
   <li><a href="#clear-instance-transforms" id="toc-clear-instance-transforms" class="nav-link" data-scroll-target="#clear-instance-transforms">Clear Instance Transforms</a></li>
   <li><a href="#contains-geometry" id="toc-contains-geometry" class="nav-link" data-scroll-target="#contains-geometry">Contains Geometry</a></li>
   <li><a href="#curve-visualize" id="toc-curve-visualize" class="nav-link" data-scroll-target="#curve-visualize">Curve Visualize</a></li>
   <li><a href="#evaluate-on-instances" id="toc-evaluate-on-instances" class="nav-link" data-scroll-target="#evaluate-on-instances">Evaluate on Instances</a></li>
   <li><a href="#evaluate-ordered-bundles" id="toc-evaluate-ordered-bundles" class="nav-link" data-scroll-target="#evaluate-ordered-bundles">Evaluate Ordered Bundles</a></li>
-  <li><a href="#evluate-while-planar" id="toc-evluate-while-planar" class="nav-link" data-scroll-target="#evluate-while-planar">Evluate While Planar</a></li>
+  <li><a href="#evaluate-while-planar" id="toc-evaluate-while-planar" class="nav-link" data-scroll-target="#evaluate-while-planar">Evaluate While Planar</a></li>
+  <li><a href="#fade-geometry" id="toc-fade-geometry" class="nav-link" data-scroll-target="#fade-geometry">Fade Geometry</a></li>
   <li><a href="#fallback-geometry" id="toc-fallback-geometry" class="nav-link" data-scroll-target="#fallback-geometry">Fallback Geometry</a></li>
-  <li><a href="#geoemtry-to-planar" id="toc-geoemtry-to-planar" class="nav-link" data-scroll-target="#geoemtry-to-planar">Geoemtry to Planar</a></li>
+  <li><a href="#geometry-to-planar" id="toc-geometry-to-planar" class="nav-link" data-scroll-target="#geometry-to-planar">Geometry to Planar</a></li>
   <li><a href="#lag-geometry" id="toc-lag-geometry" class="nav-link" data-scroll-target="#lag-geometry">Lag Geometry</a></li>
+  <li><a href="#mesh-contours" id="toc-mesh-contours" class="nav-link" data-scroll-target="#mesh-contours">Mesh Contours</a></li>
   <li><a href="#offset-curve" id="toc-offset-curve" class="nav-link" data-scroll-target="#offset-curve">Offset Curve</a></li>
+  <li><a href="#orient-to-best-view" id="toc-orient-to-best-view" class="nav-link" data-scroll-target="#orient-to-best-view">Orient to Best View</a></li>
   <li><a href="#plexus" id="toc-plexus" class="nav-link" data-scroll-target="#plexus">Plexus</a></li>
   <li><a href="#primitive-arrow" id="toc-primitive-arrow" class="nav-link" data-scroll-target="#primitive-arrow">Primitive Arrow</a></li>
   <li><a href="#primitive-gimbal" id="toc-primitive-gimbal" class="nav-link" data-scroll-target="#primitive-gimbal">Primitive Gimbal</a></li>
@@ -392,6 +402,126 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 
 
 <p>General geometry processing utilities</p>
+<section id="best-view" class="level2">
+<h2 class="anchored" data-anchor-id="best-view">Best View</h2>
+<p>The direction from which the most selected points have a clear line of sight past the occluding meshes, as a camera transform</p>
+<p>Finds the direction from which the most selected points can be seen past the occluding meshes. Directions spread over a sphere are scored by casting a ray from each selected point back towards the camera and counting the rays that hit nothing, then refined on shrinking rings around the best. Ties go to the direction that shows the selection broadest. Plug a style’s output into <code class="custom-geometry">Occluders</code> so the view is judged against what will render; point clouds and instances do not block rays. <code class="custom-matrix">Transform</code> is a camera transform at the centre of the selection, looking down its local -Z along <code class="custom-vector">Direction</code>. <code class="custom-float">Stickiness</code> and <code class="custom-vector">Previous Direction</code> penalise turning away from a direction already on screen, which is always scored as a candidate. <code class="custom-float">Hysteresis</code> keeps <code class="custom-vector">Previous Direction</code> unless the best direction sees that share of the selected points more, so small differences between searches do not move the view.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Target</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Geometry whose points should be seen, such as the atoms</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">The points of Target that should be seen, such as a ligand</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Occluders</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Meshes that can block the view, such as the output of a style. Point clouds and instances do not block rays</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Up</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Direction kept upright in the view</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Stickiness</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Share of the selected points a turn of 180° away from Previous Direction must gain to be worth it. Shorter turns cost proportionally less</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Previous Direction</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Direction currently looked along, which Stickiness favours and which is always scored. Zero for none</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hysteresis</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Share of the selected points the best view must see beyond Previous Direction before leaving it</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Directions</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Directions spread evenly over the sphere in the first pass</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Refine</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Rings of refinement around the best direction, starting 10° away and shrinking by 0.4 each time</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Offset</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">How far in Å towards the camera each ray starts, to clear the point’s own geometry</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Transform</td>
+<td style="text-align: left;"><code class="custom-matrix">Matrix</code></td>
+<td style="text-align: left;">Camera transform: located at the centre of the selection and looking down its local -Z along Direction</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Rotation</td>
+<td style="text-align: left;"><code class="custom-rotation">Rotation</code></td>
+<td style="text-align: left;">Camera rotation looking along Direction</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Direction</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Direction the camera looks along</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Centre</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Centre of the selected points</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Visible</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Selected points with a clear line of sight</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Count</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Selected points</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.BestView"><code>nodes.geometry.BestView</code></a></p>
+</section>
 <section id="centre-on-selection" class="level2">
 <h2 class="anchored" data-anchor-id="centre-on-selection">Centre on Selection</h2>
 <p><a href="https://imgur.com/xSOH4Tr.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-1"><video src="https://imgur.com/xSOH4Tr.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/xSOH4Tr.mp4">Video</a></p>
@@ -763,8 +893,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 <p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.EvaluateOrderedBundles"><code>nodes.geometry.EvaluateOrderedBundles</code></a></p>
 </section>
-<section id="evluate-while-planar" class="level2">
-<h2 class="anchored" data-anchor-id="evluate-while-planar">Evluate While Planar</h2>
+<section id="evaluate-while-planar" class="level2">
+<h2 class="anchored" data-anchor-id="evaluate-while-planar">Evaluate While Planar</h2>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <colgroup>
@@ -788,12 +918,22 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="even">
 <td style="text-align: left;">Selection</td>
 <td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">The parts of the geometry that contibute to the planar calculation</td>
+<td style="text-align: left;">The parts of the geometry that contribute to the planar calculation</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Closure</td>
 <td style="text-align: left;"><code class="custom-closure">Closure</code></td>
 <td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Positive Space</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Also shift the planar geometry so that all of it has positive coordinates, starting at Padding. Grids built inside the closure then only need OpenVDB tree nodes on one side of each axis, which is faster</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Padding</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Distance from the origin to the planar geometry’s bounding box when Positive Space is enabled. Should cover anything the closure grows beyond the geometry, such as surface offsets</td>
 </tr>
 </tbody>
 </table>
@@ -814,7 +954,61 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 </tbody>
 </table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.EvluateWhilePlanar"><code>nodes.geometry.EvluateWhilePlanar</code></a></p>
+<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.EvaluateWhilePlanar"><code>nodes.geometry.EvaluateWhilePlanar</code></a></p>
+</section>
+<section id="fade-geometry" class="level2">
+<h2 class="anchored" data-anchor-id="fade-geometry">Fade Geometry</h2>
+<p>Fade geometry in and out by multiplying the alpha of its <code class="custom-attribute">Color</code> attribute on the point and instance domains. Place it after a style node and animate <code class="custom-float">Fade</code> from <code>1</code> to <code>0</code> to fade that style out of a scene, or from <code>0</code> to <code>1</code> to fade it in. The node multiplies the existing alpha, so geometry that is already partly transparent stays proportionally more transparent. Only materials that read the alpha show the fade: <code>Default</code>, <code>Squishy</code> and <code>Ambient Occlusion</code> do, while <code>Flat</code> and <code>Transparent</code> ignore it.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Geometry to fade, such as the output of a style node</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fade</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Multiplier for the alpha of the <code class="custom-attribute">Color</code> attribute. At <code>1</code> the geometry is passed through unchanged, at <code>0</code> it is removed</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Geometry with the faded alpha stored in <code class="custom-attribute">Color</code></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.FadeGeometry"><code>nodes.geometry.FadeGeometry</code></a></p>
 </section>
 <section id="fallback-geometry" class="level2">
 <h2 class="anchored" data-anchor-id="fallback-geometry">Fallback Geometry</h2>
@@ -860,8 +1054,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 <p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.FallbackGeometry"><code>nodes.geometry.FallbackGeometry</code></a></p>
 </section>
-<section id="geoemtry-to-planar" class="level2">
-<h2 class="anchored" data-anchor-id="geoemtry-to-planar">Geoemtry to Planar</h2>
+<section id="geometry-to-planar" class="level2">
+<h2 class="anchored" data-anchor-id="geometry-to-planar">Geometry to Planar</h2>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <colgroup>
@@ -885,7 +1079,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="even">
 <td style="text-align: left;">Selection</td>
 <td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">The parts of the geometry that contibute to the planar calculation</td>
+<td style="text-align: left;">The parts of the geometry that contribute to the planar calculation</td>
 </tr>
 </tbody>
 </table>
@@ -911,7 +1105,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 </tbody>
 </table>
-<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.GeoemtryToPlanar"><code>nodes.geometry.GeoemtryToPlanar</code></a></p>
+<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.GeometryToPlanar"><code>nodes.geometry.GeometryToPlanar</code></a></p>
 </section>
 <section id="lag-geometry" class="level2">
 <h2 class="anchored" data-anchor-id="lag-geometry">Lag Geometry</h2>
@@ -981,6 +1175,59 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 <p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.LagGeometry"><code>nodes.geometry.LagGeometry</code></a></p>
 </section>
+<section id="mesh-contours" class="level2">
+<h2 class="anchored" data-anchor-id="mesh-contours">Mesh Contours</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mesh</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">ISO surface geometry output</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Color</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Color to apply to the selected atoms</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Material</td>
+<td style="text-align: left;"><code class="custom-material">Material</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mesh</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.MeshContours"><code>nodes.geometry.MeshContours</code></a></p>
+</section>
 <section id="offset-curve" class="level2">
 <h2 class="anchored" data-anchor-id="offset-curve">Offset Curve</h2>
 <p><strong>Inputs</strong></p>
@@ -1038,6 +1285,111 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 <p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.OffsetCurve"><code>nodes.geometry.OffsetCurve</code></a></p>
+</section>
+<section id="orient-to-best-view" class="level2">
+<h2 class="anchored" data-anchor-id="orient-to-best-view">Orient to Best View</h2>
+<p>Rotate the geometry about the selection so the camera sees it from its Best View</p>
+<p>Rotates the geometry about the centre of the selection so the camera sees the selection from its <a href="../nodes/geometry.html#best-view"><code class="custom-node">Best View</code></a>. The meshes of <code class="custom-geometry">Geometry</code> are the occluders, so put it after the styles. The node follows <code class="custom-object">Camera</code>, or the scene’s active camera when that is empty: orbiting the camera turns the geometry with it, and <code class="custom-float">Factor</code> blends from the original orientation. Turn on <code>Smoothing::Boolean</code> to ease towards each new best view instead of jumping, for trajectories or an animated camera: every simulation step moves the translation and rotation separately by <code>a = lerp(a, b, 1 - 2^(-dt / Half Life))</code>, so the remaining gap halves every <code class="custom-float">Half Life</code> seconds at any frame rate. <code class="custom-float">Stickiness</code> makes the search favour views near the one on screen: each direction loses that share of the selected atoms, scaled by (1 - cos θ) / 2 of its angle θ from the current view, so turning around must gain the whole share. <code class="custom-float">Hysteresis</code> holds the view on screen until a new one sees that share of the selected atoms more. Both work with or without smoothing, and like smoothing they only advance during playback. Turn off <code>Move Geometry::Boolean</code> to leave the geometry in place and move a camera instead: <code class="custom-matrix">Camera Transform</code> is where the camera goes, relative to this object, for the same view. Store it on the first point of the output and give a second camera a Geometry Attribute constraint that reads it (type 4x4 matrix, Apply Target Transform on). That camera must not also be <code class="custom-object">Camera</code> or the active camera the node falls back to, or each depends on the other.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Geometry to rotate. Its meshes are what can block the view</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Atoms holding the points that should be seen</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">The atoms that should be seen, such as a ligand</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Camera</td>
+<td style="text-align: left;"><code class="custom-object">Object</code></td>
+<td style="text-align: left;">Object to orient towards</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Factor</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Blend from the original orientation to the best view</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Move Geometry</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Rotate the geometry to the best view. Turn off to leave it in place and move a camera with Camera Transform instead</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Smoothing</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Ease towards each new best view over the simulation instead of jumping. Only advances during playback</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Half Life</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Seconds for the remaining gap to the best view to halve</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Stickiness</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Favour best views near the one shown: the share of the selected atoms a turn of 180° must gain to be taken. Works with or without Smooth, and only advances during playback</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hysteresis</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Hold the view shown until a new best view sees this share of the selected atoms more. Works with or without Smooth, and only advances during playback</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Transform</td>
+<td style="text-align: left;"><code class="custom-matrix">Matrix</code></td>
+<td style="text-align: left;">Transform applied to the geometry</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Camera Transform</td>
+<td style="text-align: left;"><code class="custom-matrix">Matrix</code></td>
+<td style="text-align: left;">Where the camera goes, relative to this object, to see the unmoved geometry from the best view. Store it on a point and copy it to another camera with a Geometry Attribute constraint</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.geometry.html#molecularnodes.nodes.geometry.OrientToBestView"><code>nodes.geometry.OrientToBestView</code></a></p>
 </section>
 <section id="plexus" class="level2">
 <h2 class="anchored" data-anchor-id="plexus">Plexus</h2>
@@ -1932,8 +2284,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../nodes/select.html" class="pagination-link" aria-label="Select">
-        <span class="nav-page-text">Select</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../nodes/materials.html" class="pagination-link" aria-label="Materials">
+        <span class="nav-page-text">Materials</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

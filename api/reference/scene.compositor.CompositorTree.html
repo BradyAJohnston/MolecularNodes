@@ -82,7 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -274,6 +274,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../api/pubchem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Small Molecules from PubChem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../api/trajectories.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Trajectories</span></a>
   </div>
@@ -312,6 +318,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/solvent.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Solvent Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/electrostatics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Electrostatics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -367,8 +379,20 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.molecule.DSSPManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.molecule.DSSPManager</span></a>
+  <a href="../../api/reference/entities.molecule.CalculationManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.CalculationManager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.DSSPCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.DSSPCalculation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.HBondCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.HBondCalculation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -565,12 +589,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -591,6 +609,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -621,6 +645,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -698,6 +728,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a>
   <ul class="collapse">
   <li><a href="#molecularnodes.scene.compositor.CompositorTree.add_annotations" id="toc-molecularnodes.scene.compositor.CompositorTree.add_annotations" class="nav-link" data-scroll-target="#molecularnodes.scene.compositor.CompositorTree.add_annotations">add_annotations</a></li>
+  <li><a href="#molecularnodes.scene.compositor.CompositorTree.illustrate" id="toc-molecularnodes.scene.compositor.CompositorTree.illustrate" class="nav-link" data-scroll-target="#molecularnodes.scene.compositor.CompositorTree.illustrate">illustrate</a></li>
   <li><a href="#molecularnodes.scene.compositor.CompositorTree.reset" id="toc-molecularnodes.scene.compositor.CompositorTree.reset" class="nav-link" data-scroll-target="#molecularnodes.scene.compositor.CompositorTree.reset">reset</a></li>
   </ul></li>
   </ul></li>
@@ -783,6 +814,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>Composite Molecular Nodes annotations on top of the current output.</td>
 </tr>
 <tr class="even">
+<td><a href="#molecularnodes.scene.compositor.CompositorTree.illustrate">illustrate</a></td>
+<td>Insert an <code>Illustrate</code> node between Render Layers and whatever</td>
+</tr>
+<tr class="odd">
 <td><a href="#molecularnodes.scene.compositor.CompositorTree.reset">reset</a></td>
 <td>Clear the tree back to a default state and build within it.</td>
 </tr>
@@ -794,13 +829,98 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>Composite Molecular Nodes annotations on top of the current output.</p>
 <p>Alpha-composites the <code>mn_annotations</code> image over whatever currently feeds the output. Annotations are opt-in: :meth:<code>reset</code> clears them, so call this after building a custom compositor chain to draw them on top.</p>
 </section>
+<section id="molecularnodes.scene.compositor.CompositorTree.illustrate" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.scene.compositor.CompositorTree.illustrate">illustrate</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>scene.compositor.CompositorTree.illustrate(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    shading<span class="op">=</span><span class="st">'cone'</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    outline<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    outline_normals<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    id_pass<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">**</span>inputs,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Insert an <code>Illustrate</code> node between Render Layers and whatever currently consumes the rendered image.</p>
+<p>Enables the render passes the node reads (depth, plus the normal pass for <code>outline_normals</code> and the chosen shading pass) on the view layer, adds the node group with its inputs linked to the Render Layers node, and re-routes every existing consumer of the rendered image (the annotation overlay, or the output itself) to read from it instead. Calling it again replaces the node.</p>
+<p>With <code>shading="cone"</code> the shading comes from a <code>Cone Shadow</code> node, David Goodsell’s conical soft shadow computed from the depth pass alone, whose <code>Pixel Size</code> is set from the camera. It needs no lighting, so pair it with the <code>Flat</code> material (<code>mol.add_style("cartoon", material=mn.material.Flat())</code>) for Illustrate-style renders.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>node <span class="op">=</span> canvas.compositor.illustrate(shading<span class="op">=</span><span class="st">"cone"</span>, outline<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>node.i.outline_size.default_value <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>node.i.outline_color.default_value <span class="op">=</span> (<span class="fl">0.1</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span>, <span class="fl">1.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Depth outlines fire on every atom of an all-atom style. For lines between chains instead, have the material write an ID to an AOV and name it with <code>id_pass</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>material <span class="op">=</span> mn.material.Flat()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>material.add_aov(<span class="st">"chain_id"</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>mol.add_style(<span class="st">"spheres"</span>, material<span class="op">=</span>material)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>canvas.compositor.illustrate(outline<span class="op">=</span><span class="va">False</span>, id_pass<span class="op">=</span><span class="st">"chain_id"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="parameters" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>shading</td>
+<td>(<code>cone</code>, <code>ao</code>, <code>shadow</code>)</td>
+<td>What darkens the image: a <code>Cone Shadow</code> from the depth pass, the ambient occlusion pass, the shadow pass (EEVEE only; Cycles has no Shadow pass), or <code>None</code> for no shading at all.</td>
+<td><code>"cone"</code></td>
+</tr>
+<tr class="even">
+<td>outline</td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
+<td>Draw lines where the depth changes sharply, from the <code>Depth Outline</code> node inside the group.</td>
+<td><code class="custom-bool">True</code></td>
+</tr>
+<tr class="odd">
+<td>outline_normals</td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#bool">bool</a></td>
+<td>Also draw lines where the surface normal changes sharply; enables the normal pass.</td>
+<td><code class="custom-bool">False</code></td>
+</tr>
+<tr class="even">
+<td>id_pass</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td>Name of a float AOV to draw lines between its regions, through the <code>ID Outline</code> panel of the node. Declares the AOV on the view layer; a material must write to it (:func:<code>molecularnodes.material.add_aov</code>). Keep neighbouring IDs close: the pixel filter blends IDs along edges, so a large gap between them draws a heavier line.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>**inputs</td>
+<td></td>
+<td>Any other input of the node by its Python name, for example <code>outline_size=3</code> or <code>background=True</code>.</td>
+<td><code>{}</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns">Returns</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><a href="../../api/reference/nodes.compositor.html#molecularnodes.nodes.compositor.Illustrate">Illustrate</a></td>
+<td>The node handle; tweak its inputs afterwards through <code>node.i</code>.</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="molecularnodes.scene.compositor.CompositorTree.reset" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.scene.compositor.CompositorTree.reset">reset</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>scene.compositor.CompositorTree.reset()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>scene.compositor.CompositorTree.reset()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Clear the tree back to a default state and build within it.</p>
 <p>Discards the existing tree — including any annotation overlay, which can be restored with :meth:<code>add_annotations</code>. Use <code>with canvas.compositor</code> instead to append to the existing tree.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> canvas.compositor.reset() <span class="im">as</span> (image, output):</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    image <span class="op">&gt;&gt;</span> c.Glare.bloom(strength<span class="op">=</span><span class="fl">2.0</span>) <span class="op">&gt;&gt;</span> output</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> canvas.compositor.reset() <span class="im">as</span> (image, output):</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    image <span class="op">&gt;&gt;</span> c.Glare.bloom(strength<span class="op">=</span><span class="fl">2.0</span>) <span class="op">&gt;&gt;</span> output</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
 </section>

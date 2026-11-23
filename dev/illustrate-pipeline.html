@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>illustrate-pipeline – Molecular Nodes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-W3K8TDXSCF"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
+</script>
+<script type="module">
+    // Re-highlight code blocks with Shiki (the TextMate-grammar engine VS Code
+    // uses) for richer tokens than Pandoc's skylighting: function calls,
+    // attribute access, keyword arguments, etc. Pandoc's highlighting is kept
+    // in the HTML as a no-JS fallback and replaced here on load.
+    //
+    // To change colors, swap "dracula" for any theme from
+    // https://shiki.style/themes, or add/edit `tokenColors` rules below
+    // (scope reference: https://macromates.com/manual/en/language_grammars).
+    import { codeToHtml, bundledThemes } from "https://esm.sh/shiki@3";
+
+    const dracula = (await bundledThemes["dracula-soft"]()).default;
+    const theme = {
+        ...dracula,
+        name: "dracula-nodebpy",
+        tokenColors: [
+            ...dracula.tokenColors,
+            // Dracula ships no rule for Python call expressions; color them like
+            // function definitions so g.Cube() / tree.inputs.integer() pop.
+            {
+                scope: "meta.function-call.generic.python",
+                settings: { foreground: "#50FA7B" },
+            },
+        ],
+    };
+
+    async function rehighlight(pre) {
+        const code = pre.querySelector("code");
+        const lang = [...pre.classList].find(
+            (c) => !["sourceCode", "code-with-copy"].includes(c),
+        );
+        if (!code || !lang) return;
+        try {
+            const html = await codeToHtml(code.textContent.replace(/\n$/, ""), {
+                lang,
+                theme,
+            });
+            const shikiPre = new DOMParser()
+                .parseFromString(html, "text/html")
+                .querySelector("pre");
+            code.innerHTML = shikiPre.querySelector("code").innerHTML;
+            pre.style.backgroundColor = shikiPre.style.backgroundColor;
+            pre.style.color = shikiPre.style.color;
+        } catch {
+            // Unknown language for Shiki — keep Pandoc's highlighting.
+        }
+    }
+
+    await Promise.all(
+        [...document.querySelectorAll("pre.sourceCode")].map(rehighlight),
+    );
+</script>
+
+
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Molecular Nodes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../tutorials/index.html"> 
+<span class="menu-text">Documentation</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../nodes/index.html"> 
+<span class="menu-text">Nodes</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../api/"> 
+<span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../changelog.html"> 
+<span class="menu-text">Changelog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../examples/"> 
+<span class="menu-text">Examples</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../citations/"> 
+<span class="menu-text">Citations</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools tools-wide">
+    <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+    <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
+    <a href="https://youtube.com/c/bradyjohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#illustrate-rendering-pipeline---technical-reference" id="toc-illustrate-rendering-pipeline---technical-reference" class="nav-link active" data-scroll-target="#illustrate-rendering-pipeline---technical-reference">Illustrate Rendering Pipeline - Technical Reference</a>
+  <ul class="collapse">
+  <li><a href="#shading-model-flat-unlit" id="toc-shading-model-flat-unlit" class="nav-link" data-scroll-target="#shading-model-flat-unlit">1. Shading Model: Flat / Unlit</a></li>
+  <li><a href="#conical-soft-shadows-ao-substitute" id="toc-conical-soft-shadows-ao-substitute" class="nav-link" data-scroll-target="#conical-soft-shadows-ao-substitute">2. Conical Soft Shadows (AO Substitute)</a>
+  <ul class="collapse">
+  <li><a href="#algorithm" id="toc-algorithm" class="nav-link" data-scroll-target="#algorithm">Algorithm</a></li>
+  <li><a href="#parameters" id="toc-parameters" class="nav-link" data-scroll-target="#parameters">Parameters</a></li>
+  <li><a href="#blender-equivalent" id="toc-blender-equivalent" class="nav-link" data-scroll-target="#blender-equivalent">Blender Equivalent</a></li>
+  </ul></li>
+  <li><a href="#outlines-3-independent-layers" id="toc-outlines-3-independent-layers" class="nav-link" data-scroll-target="#outlines-3-independent-layers">3. Outlines (3 Independent Layers)</a>
+  <ul class="collapse">
+  <li><a href="#a.-contour-outlines-depth-edge-detection" id="toc-a.-contour-outlines-depth-edge-detection" class="nav-link" data-scroll-target="#a.-contour-outlines-depth-edge-detection">A. Contour Outlines (Depth-Edge Detection)</a></li>
+  <li><a href="#b.-subunitchain-outlines" id="toc-b.-subunitchain-outlines" class="nav-link" data-scroll-target="#b.-subunitchain-outlines">B. Subunit/Chain Outlines</a></li>
+  <li><a href="#c.-residue-outlines" id="toc-c.-residue-outlines" class="nav-link" data-scroll-target="#c.-residue-outlines">C. Residue Outlines</a></li>
+  <li><a href="#outline-combination" id="toc-outline-combination" class="nav-link" data-scroll-target="#outline-combination">Outline Combination</a></li>
+  <li><a href="#blender-equivalent-1" id="toc-blender-equivalent-1" class="nav-link" data-scroll-target="#blender-equivalent-1">Blender Equivalent</a></li>
+  </ul></li>
+  <li><a href="#depth-fog-atmospheric-perspective" id="toc-depth-fog-atmospheric-perspective" class="nav-link" data-scroll-target="#depth-fog-atmospheric-perspective">4. Depth Fog (Atmospheric Perspective)</a></li>
+  <li><a href="#final-pixel-composition-order" id="toc-final-pixel-composition-order" class="nav-link" data-scroll-target="#final-pixel-composition-order">5. Final Pixel Composition Order</a></li>
+  <li><a href="#whats-not-present" id="toc-whats-not-present" class="nav-link" data-scroll-target="#whats-not-present">6. What’s NOT Present</a></li>
+  <li><a href="#blender-recreation-strategy" id="toc-blender-recreation-strategy" class="nav-link" data-scroll-target="#blender-recreation-strategy">7. Blender Recreation Strategy</a></li>
+  <li><a href="#other-implementation-notes" id="toc-other-implementation-notes" class="nav-link" data-scroll-target="#other-implementation-notes">8. Other Implementation Notes</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
+
+
+
+
+<section id="illustrate-rendering-pipeline---technical-reference" class="level1">
+<h1>Illustrate Rendering Pipeline - Technical Reference</h1>
+<p>Pseudocode summary of David Goodsell’s Illustrate renderer (derived from the original Fortran source). Non-photorealistic renderer for biomolecular illustration. No traditional lighting model (no Phong, no Lambertian). Depth and form come entirely from conical soft shadows, depth fog, and edge-detection outlines. Colors are flat per-atom-type assignments.</p>
+<hr>
+<section id="shading-model-flat-unlit" class="level2">
+<h2 class="anchored" data-anchor-id="shading-model-flat-unlit">1. Shading Model: Flat / Unlit</h2>
+<p>No surface normals calculated and no light sources. Each atom gets a flat RGB color (0.0–1.0 per channel) based on its type. 3D appearance comes from: - Pre-rasterized sphere shapes (implicit curvature from the projection itself) - Shadows and outlines doing all the heavy lifting for depth perception</p>
+<p><strong>Blender equivalent:</strong> Use an Emission or flat Diffuse shader with no lighting contribution, or a Shader-to-RGB node to fully control shading.</p>
+<hr>
+</section>
+<section id="conical-soft-shadows-ao-substitute" class="level2">
+<h2 class="anchored" data-anchor-id="conical-soft-shadows-ao-substitute">2. Conical Soft Shadows (AO Substitute)</h2>
+<p>Primary depth-cueing technique. Functionally behaves like screen-space ambient occlusion.</p>
+<section id="algorithm" class="level3">
+<h3 class="anchored" data-anchor-id="algorithm">Algorithm</h3>
+<ul>
+<li>For each pixel, sample a neighborhood (±50 pixels, stepping by 5)</li>
+<li>For each sample, compare Z-depth of the sample vs.&nbsp;the current pixel</li>
+<li>If the sample is above the current pixel (closer to camera) by more than a threshold (<code>rcone</code>), and the horizontal distance × cone angle &lt; the vertical distance, it contributes shadow</li>
+<li>Each qualifying sample subtracts a small constant (<code>pcone</code>) from a shadow accumulator (starts at 1.0)</li>
+<li>The accumulator is clamped to a minimum (<code>pshadowmax</code>), preventing full blackness</li>
+</ul>
+</section>
+<section id="parameters" class="level3">
+<h3 class="anchored" data-anchor-id="parameters">Parameters</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 29%">
+<col style="width: 37%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Param</th>
+<th>Typical</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>pcone</code></td>
+<td>0.0023</td>
+<td>Shadow contribution per occluder — higher = darker</td>
+</tr>
+<tr class="even">
+<td><code>coneangle</code></td>
+<td>2.0</td>
+<td>Cone tightness — higher = more localized shadows</td>
+</tr>
+<tr class="odd">
+<td><code>rcone</code></td>
+<td>1.0 Å</td>
+<td>Minimum Z-gap to cast shadow — removes artifacts in tight crevices</td>
+</tr>
+<tr class="even">
+<td><code>pshadowmax</code></td>
+<td>0.2–0.7</td>
+<td>Maximum darkening clamp</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="blender-equivalent" class="level3">
+<h3 class="anchored" data-anchor-id="blender-equivalent">Blender Equivalent</h3>
+<p>Use the AO node in shader nodes, or a screen-space AO pass in compositing. <code>coneangle</code> maps to AO radius/distance, <code>pcone</code> to intensity, and <code>pshadowmax</code> to a clamp on the AO factor. A Pointiness or Cavity map baked from geometry could also work.</p>
+<hr>
+</section>
+</section>
+<section id="outlines-3-independent-layers" class="level2">
+<h2 class="anchored" data-anchor-id="outlines-3-independent-layers">3. Outlines (3 Independent Layers)</h2>
+<p>All outlines use screen-space post-processing on the Z-buffer or ID buffers, not geometry-based.</p>
+<section id="a.-contour-outlines-depth-edge-detection" class="level3">
+<h3 class="anchored" data-anchor-id="a.-contour-outlines-depth-edge-detection">A. Contour Outlines (Depth-Edge Detection)</h3>
+<p>Applies a second-derivative (Laplacian) kernel on the Z-buffer. Four kernel options available:</p>
+<ol type="1">
+<li><p><strong>Kernel 1</strong> — 3×3 Laplacian:</p>
+<pre><code>-0.8  -1.0  -0.8
+-1.0  +7.2  -1.0
+-0.8  -1.0  -0.8</code></pre></li>
+<li><p><strong>Kernel 2</strong> — 5×5 extended Laplacian (smoother)</p></li>
+<li><p><strong>Kernel 3</strong> — 3×3 Z-difference accumulation (accumulates normalized |Z_center - Z_neighbor| values)</p></li>
+<li><p><strong>Kernel 4</strong> — 5×5 Z-difference accumulation (excludes corners)</p></li>
+</ol>
+<p>Result is thresholded with a ramp (<code>l_low</code> to <code>l_high</code>) to convert to opacity. An additional smoothing pass: if ≥6 of 9 neighbors in a 3×3 grid have outline signal, average them; otherwise use center value only.</p>
+<p><strong>Parameters:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 29%">
+<col style="width: 37%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Param</th>
+<th>Typical</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>l_low</code></td>
+<td>3.0</td>
+<td>Lower threshold for outline opacity</td>
+</tr>
+<tr class="even">
+<td><code>l_high</code></td>
+<td>10.0</td>
+<td>Upper threshold — narrower range = jaggier outlines</td>
+</tr>
+<tr class="odd">
+<td><code>ikernel</code></td>
+<td>1–4</td>
+<td>Kernel selection</td>
+</tr>
+<tr class="even">
+<td><code>l_diff_min</code></td>
+<td>0.0 Å</td>
+<td>Minimum Z-height difference used in derivative</td>
+</tr>
+<tr class="odd">
+<td><code>l_diff_max</code></td>
+<td>5.0 Å</td>
+<td>Maximum Z-height difference — wider range detects larger features</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="b.-subunitchain-outlines" class="level3">
+<h3 class="anchored" data-anchor-id="b.-subunitchain-outlines">B. Subunit/Chain Outlines</h3>
+<ul>
+<li>Samples a 5×5 neighborhood of the object/chain ID buffer</li>
+<li>Counts how many neighbors belong to a different chain or biological assembly copy</li>
+<li>Thresholded with ramp (<code>r_low</code> to <code>r_high</code>, typically 3.0–10.0) to get opacity</li>
+</ul>
+</section>
+<section id="c.-residue-outlines" class="level3">
+<h3 class="anchored" data-anchor-id="c.-residue-outlines">C. Residue Outlines</h3>
+<ul>
+<li>Same 5×5 neighborhood sampling but on residue number</li>
+<li>Counts neighbors whose residue number differs by ≥ <code>resdiff</code> (typically 6000)</li>
+<li>Thresholded similarly (<code>g_low</code> to <code>g_high</code>, typically 3.0–8.0)</li>
+</ul>
+</section>
+<section id="outline-combination" class="level3">
+<h3 class="anchored" data-anchor-id="outline-combination">Outline Combination</h3>
+<p>All outline layers combined via <code>max(contour_opacity, residue_opacity)</code>, with subunit outline handled separately. Outlines darken the pixel:</p>
+<pre><code>final_color = (1 - outline_opacity) × shaded_color</code></pre>
+</section>
+<section id="blender-equivalent-1" class="level3">
+<h3 class="anchored" data-anchor-id="blender-equivalent-1">Blender Equivalent</h3>
+<p>Use the Compositor with: - A Depth pass → Sobel/Laplacian filter for contour outlines - Object Index or Material Index passes → edge detection for chain boundaries - Combine with Mix nodes using the outline as a factor to multiply in black - Alternatively, use Freestyle lines with different linesets for contour vs.&nbsp;chain boundaries</p>
+<hr>
+</section>
+</section>
+<section id="depth-fog-atmospheric-perspective" class="level2">
+<h2 class="anchored" data-anchor-id="depth-fog-atmospheric-perspective">4. Depth Fog (Atmospheric Perspective)</h2>
+<p>Linear fog blending between the atom color and a fog color based on Z-depth:</p>
+<pre><code>fog_factor = front_fog - (z_max - z_pixel) / z_range × (front_fog - back_fog)
+final = fog_factor × shadow × base_color + (1 - fog_factor) × fog_color</code></pre>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Param</th>
+<th>Typical</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>pfogh</code></td>
+<td>1.0</td>
+<td>Fog factor at front (1.0 = no fog)</td>
+</tr>
+<tr class="even">
+<td><code>pfogl</code></td>
+<td>1.0</td>
+<td>Fog factor at back (0.0 = fully fogged)</td>
+</tr>
+<tr class="odd">
+<td><code>rfog(3)</code></td>
+<td>configurable</td>
+<td>Fog RGB color</td>
+</tr>
+<tr class="even">
+<td><code>rback(3)</code></td>
+<td>configurable</td>
+<td>Background RGB color</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Blender equivalent:</strong> Use a Map Range node on the Z-depth pass in compositing, then Mix the render with the fog color. Or use the Mist pass with appropriate start/end distances.</p>
+<hr>
+</section>
+<section id="final-pixel-composition-order" class="level2">
+<h2 class="anchored" data-anchor-id="final-pixel-composition-order">5. Final Pixel Composition Order</h2>
+<p>For each pixel, in order:</p>
+<ol type="1">
+<li><strong>Base color</strong> — flat RGB from atom type lookup</li>
+<li><strong>× Shadow factor</strong> — conical soft shadow multiplier (0.2–1.0)</li>
+<li><strong>Fog blend</strong> — linear interpolation with fog color based on depth</li>
+<li><strong>× (1 - outline_opacity)</strong> — outlines darken toward black</li>
+<li><strong>Alpha</strong> — <code>max(is_atom ? 1 : 0, outline_opacity)</code> — outlines extend the alpha mask</li>
+</ol>
+<p>A separate opacity image is written for compositing.</p>
+<hr>
+</section>
+<section id="whats-not-present" class="level2">
+<h2 class="anchored" data-anchor-id="whats-not-present">6. What’s NOT Present</h2>
+<ul>
+<li>No specular highlights</li>
+<li>No diffuse lighting / light direction</li>
+<li>No surface normals</li>
+<li>No anti-aliasing or supersampling</li>
+<li>No transparency/translucency (atoms are fully opaque)</li>
+<li>No reflections</li>
+<li>No subsurface scattering</li>
+</ul>
+<hr>
+</section>
+<section id="blender-recreation-strategy" class="level2">
+<h2 class="anchored" data-anchor-id="blender-recreation-strategy">7. Blender Recreation Strategy</h2>
+<ol type="1">
+<li><strong>Material:</strong> Emission shader or Diffuse BSDF with a flat color, no scene lights (or use Shader-to-RGB for full control)</li>
+<li><strong>AO/Shadows:</strong> Enable AO in World settings or use an AO node in the shader, with distance matching <code>coneangle</code>, intensity matching <code>pcone</code>, and a clamp node for <code>pshadowmax</code></li>
+<li><strong>Outlines:</strong> Freestyle (contour + material boundary + edge marks for chains) or compositor-based edge detection on Depth + Object Index passes</li>
+<li><strong>Fog:</strong> Compositor Mist/Z-depth pass → Map Range → Mix with fog color</li>
+<li><strong>Compositing order:</strong> Render → AO multiply → Fog mix → Outline overlay → Output with alpha</li>
+</ol>
+<hr>
+</section>
+<section id="other-implementation-notes" class="level2">
+<h2 class="anchored" data-anchor-id="other-implementation-notes">8. Other Implementation Notes</h2>
+<ul>
+<li><strong>Coordinate system:</strong> Origin at upper-left, +X down, +Y left-to-right, +Z toward viewer</li>
+<li><strong>Clipping:</strong> Molecules clipped at Z=0</li>
+<li><strong>Framebuffer:</strong> Max 3000×3000 pixels</li>
+<li><strong>Output format:</strong> PPM (Portable Pix Map) text format, 8-bit color</li>
+<li><strong>Biological units:</strong> Supports BIOMT transformation matrices from PDB files</li>
+<li><strong>Transformation order:</strong> Rotation → Centering → Translation</li>
+</ul>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>This site is built with ❤️ and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

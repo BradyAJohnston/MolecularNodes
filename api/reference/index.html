@@ -46,7 +46,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -238,6 +238,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../api/pubchem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Small Molecules from PubChem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../api/trajectories.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Trajectories</span></a>
   </div>
@@ -276,6 +282,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/solvent.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Solvent Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/electrostatics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Electrostatics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -331,8 +343,20 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.molecule.DSSPManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.molecule.DSSPManager</span></a>
+  <a href="../../api/reference/entities.molecule.CalculationManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.CalculationManager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.DSSPCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.DSSPCalculation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.HBondCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.HBondCalculation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -529,12 +553,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -555,6 +573,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -585,6 +609,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -690,8 +720,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>Manages atom selections for a trajectory.</td>
 </tr>
 <tr class="odd">
-<td><a href="../../api/reference/entities.molecule.DSSPManager.html#molecularnodes.entities.molecule.DSSPManager">entities.molecule.DSSPManager</a></td>
-<td>DSSP Manager for trajectories</td>
+<td><a href="../../api/reference/entities.molecule.CalculationManager.html#molecularnodes.entities.molecule.CalculationManager">entities.molecule.CalculationManager</a></td>
+<td>Calculations that write attributes from the universe.</td>
+</tr>
+<tr class="even">
+<td><a href="../../api/reference/entities.molecule.DSSPCalculation.html#molecularnodes.entities.molecule.DSSPCalculation">entities.molecule.DSSPCalculation</a></td>
+<td>Secondary structure calculated with DSSP, as the <code class="custom-attribute">sec_struct</code> calculation</td>
+</tr>
+<tr class="odd">
+<td><a href="../../api/reference/entities.molecule.HBondCalculation.html#molecularnodes.entities.molecule.HBondCalculation">entities.molecule.HBondCalculation</a></td>
+<td>Hydrogen bonds calculated with MDAnalysis, as the <code>hbonds</code> calculation</td>
 </tr>
 <tr class="even">
 <td><a href="../../api/reference/entities.StreamingTrajectory.html#molecularnodes.entities.StreamingTrajectory">entities.StreamingTrajectory</a></td>
@@ -731,7 +769,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td><a href="../../api/reference/material.Flat.html#molecularnodes.material.Flat">material.Flat</a></td>
-<td>Flat cartoon-like shading with an optional dark outline.</td>
+<td>Flat cartoon-like shading, with an optional dark outline.</td>
 </tr>
 <tr class="even">
 <td><a href="../../api/reference/material.Squishy.html#molecularnodes.material.Squishy">material.Squishy</a></td>
@@ -826,24 +864,24 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <table class="caption-top table">
 <tbody>
 <tr class="odd">
-<td><a href="../../api/reference/nodes.materials.html">Materials</a></td>
-<td>Shader node groups for the pre-built materials</td>
-</tr>
-<tr class="even">
 <td><a href="../../api/reference/nodes.general.html">General</a></td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="../../api/reference/nodes.animate.html">Animate</a></td>
 <td>Animate values and geometry over frames</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="../../api/reference/nodes.attributes.html">Attributes</a></td>
 <td>Read attributes from structures</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="../../api/reference/nodes.color.html">Color</a></td>
 <td>Set and manipulate the colors of atoms</td>
+</tr>
+<tr class="odd">
+<td><a href="../../api/reference/nodes.compositor.html">Compositor</a></td>
+<td>Compositor node groups for post-processing renders: outlines, illustrative shading and masks from AOV passes</td>
 </tr>
 <tr class="even">
 <td><a href="../../api/reference/nodes.curves.html">Curves</a></td>
@@ -866,38 +904,42 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>General geometry processing utilities</td>
 </tr>
 <tr class="odd">
+<td><a href="../../api/reference/nodes.materials.html">Materials</a></td>
+<td>Shader node groups for the pre-built materials</td>
+</tr>
+<tr class="even">
 <td><a href="../../api/reference/nodes.select.html">Select</a></td>
 <td>Create boolean selections based on the atomic attributes</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="../../api/reference/nodes.simulation.html">Simulation</a></td>
 <td>Nodes for simulations inside of Geometry Nodes</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="../../api/reference/nodes.style.html">Style</a></td>
 <td>Generate geometry for the different molecular styles</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="../../api/reference/nodes.topology.html">Topology</a></td>
 <td>Work with the bond and residue topology of structures</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="../../api/reference/nodes.utilities.html">Utilities</a></td>
 <td>Small helper node groups used throughout Molecular Nodes</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="../../api/reference/nodes.utilities_attribute.html">Utilities / Attribute</a></td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="../../api/reference/nodes.utilities_boolean.html">Utilities / Boolean</a></td>
 <td></td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="../../api/reference/nodes.utilities_color.html">Utilities / Color</a></td>
 <td></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="../../api/reference/nodes.utilities_fields.html">Utilities / Fields</a></td>
 <td></td>
 </tr>

@@ -72,7 +72,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
 <link href="../../api/reference/entities.Ensemble.html" rel="next">
-<link href="../../api/reference/entities.molecule.DSSPManager.html" rel="prev">
+<link href="../../api/reference/entities.molecule.HBondCalculation.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
@@ -82,7 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -274,6 +274,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../api/pubchem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Small Molecules from PubChem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../api/trajectories.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Trajectories</span></a>
   </div>
@@ -312,6 +318,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/solvent.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Solvent Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/electrostatics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Electrostatics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -367,8 +379,20 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.molecule.DSSPManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.molecule.DSSPManager</span></a>
+  <a href="../../api/reference/entities.molecule.CalculationManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.CalculationManager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.DSSPCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.DSSPCalculation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.HBondCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.HBondCalculation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -565,12 +589,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -591,6 +609,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -621,6 +645,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -698,6 +728,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#methods" id="toc-methods" class="nav-link" data-scroll-target="#methods">Methods</a>
   <ul class="collapse">
   <li><a href="#molecularnodes.entities.StreamingTrajectory.add_style" id="toc-molecularnodes.entities.StreamingTrajectory.add_style" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.add_style">add_style</a></li>
+  <li><a href="#molecularnodes.entities.StreamingTrajectory.align_to" id="toc-molecularnodes.entities.StreamingTrajectory.align_to" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.align_to">align_to</a></li>
   <li><a href="#molecularnodes.entities.StreamingTrajectory.assemblies" id="toc-molecularnodes.entities.StreamingTrajectory.assemblies" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.assemblies">assemblies</a></li>
   <li><a href="#molecularnodes.entities.StreamingTrajectory.create_asset_nodes" id="toc-molecularnodes.entities.StreamingTrajectory.create_asset_nodes" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.create_asset_nodes">create_asset_nodes</a></li>
   <li><a href="#molecularnodes.entities.StreamingTrajectory.create_data_object" id="toc-molecularnodes.entities.StreamingTrajectory.create_data_object" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.create_data_object">create_data_object</a></li>
@@ -706,8 +737,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#molecularnodes.entities.StreamingTrajectory.frames_to_collection" id="toc-molecularnodes.entities.StreamingTrajectory.frames_to_collection" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.frames_to_collection">frames_to_collection</a></li>
   <li><a href="#molecularnodes.entities.StreamingTrajectory.from_file" id="toc-molecularnodes.entities.StreamingTrajectory.from_file" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.from_file">from_file</a></li>
   <li><a href="#molecularnodes.entities.StreamingTrajectory.get_view" id="toc-molecularnodes.entities.StreamingTrajectory.get_view" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.get_view">get_view</a></li>
+  <li><a href="#molecularnodes.entities.StreamingTrajectory.hide" id="toc-molecularnodes.entities.StreamingTrajectory.hide" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.hide">hide</a></li>
   <li><a href="#molecularnodes.entities.StreamingTrajectory.reset_playback" id="toc-molecularnodes.entities.StreamingTrajectory.reset_playback" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.reset_playback">reset_playback</a></li>
+  <li><a href="#molecularnodes.entities.StreamingTrajectory.select" id="toc-molecularnodes.entities.StreamingTrajectory.select" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.select">select</a></li>
+  <li><a href="#molecularnodes.entities.StreamingTrajectory.set_color" id="toc-molecularnodes.entities.StreamingTrajectory.set_color" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.set_color">set_color</a></li>
   <li><a href="#molecularnodes.entities.StreamingTrajectory.set_frame" id="toc-molecularnodes.entities.StreamingTrajectory.set_frame" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.set_frame">set_frame</a></li>
+  <li><a href="#molecularnodes.entities.StreamingTrajectory.show" id="toc-molecularnodes.entities.StreamingTrajectory.show" class="nav-link" data-scroll-target="#molecularnodes.entities.StreamingTrajectory.show">show</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -776,16 +811,48 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>All atoms as MDAnalysis AtomGroup.</td>
 </tr>
 <tr class="even">
+<td><a href="#molecularnodes.entities.StreamingTrajectory.average">average</a></td>
+<td>Number of frames either side of the current frame to average positions over.</td>
+</tr>
+<tr class="odd">
+<td><a href="#molecularnodes.entities.StreamingTrajectory.correct_periodic">correct_periodic</a></td>
+<td>Correct for periodic boundary crossing when interpolating or averaging.</td>
+</tr>
+<tr class="even">
+<td><a href="#molecularnodes.entities.StreamingTrajectory.frame">frame</a></td>
+<td>Manual frame of the trajectory, used when not updating with the scene.</td>
+</tr>
+<tr class="odd">
+<td><a href="#molecularnodes.entities.StreamingTrajectory.frame_attributes">frame_attributes</a></td>
+<td>The attributes written on frame changes, and where each comes from.</td>
+</tr>
+<tr class="even">
+<td><a href="#molecularnodes.entities.StreamingTrajectory.hidden">hidden</a></td>
+<td>Mask of the atoms left out of every style, one boolean per atom.</td>
+</tr>
+<tr class="odd">
+<td><a href="#molecularnodes.entities.StreamingTrajectory.interpolate">interpolate</a></td>
+<td>Interpolate positions when using subframes.</td>
+</tr>
+<tr class="even">
 <td><a href="#molecularnodes.entities.StreamingTrajectory.n_frames">n_frames</a></td>
 <td>Return None for streaming trajectories (unknown frame count).</td>
 </tr>
 <tr class="odd">
+<td><a href="#molecularnodes.entities.StreamingTrajectory.offset">offset</a></td>
+<td>Offset of the trajectory playback on the scene timeline.</td>
+</tr>
+<tr class="even">
 <td><a href="#molecularnodes.entities.StreamingTrajectory.props">props</a></td>
 <td>The custom Blender properties for the molecule object.</td>
 </tr>
+<tr class="odd">
+<td><a href="#molecularnodes.entities.StreamingTrajectory.subframes">subframes</a></td>
+<td>Number of subframes to insert between frames when updating with the scene.</td>
+</tr>
 <tr class="even">
-<td><a href="#molecularnodes.entities.StreamingTrajectory.uframe">uframe</a></td>
-<td>Current frame number in MDAnalysis Universe.</td>
+<td><a href="#molecularnodes.entities.StreamingTrajectory.update_with_scene">update_with_scene</a></td>
+<td>Update the entity when the scene frame changes.</td>
 </tr>
 </tbody>
 </table>
@@ -805,44 +872,64 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>Add a visual style to the trajectory.</td>
 </tr>
 <tr class="even">
+<td><a href="#molecularnodes.entities.StreamingTrajectory.align_to">align_to</a></td>
+<td>Superimpose this molecule onto <code>fixed</code> by setting its object transform.</td>
+</tr>
+<tr class="odd">
 <td><a href="#molecularnodes.entities.StreamingTrajectory.assemblies">assemblies</a></td>
 <td>Get the biological assemblies parsed from the source file.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="#molecularnodes.entities.StreamingTrajectory.create_asset_nodes">create_asset_nodes</a></td>
 <td>Create asset nodes for the entity object.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="#molecularnodes.entities.StreamingTrajectory.create_data_object">create_data_object</a></td>
 <td>Create the data object holding the biological assembly transforms.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="#molecularnodes.entities.StreamingTrajectory.create_object">create_object</a></td>
 <td>Create and initialize Blender object for trajectory.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="#molecularnodes.entities.StreamingTrajectory.fetch">fetch</a></td>
 <td>Fetch a structure from an online database into a Universe-backed entity.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="#molecularnodes.entities.StreamingTrajectory.frames_to_collection">frames_to_collection</a></td>
 <td>Bake a range of trajectory frames into a collection of frame objects.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><a href="#molecularnodes.entities.StreamingTrajectory.from_file">from_file</a></td>
 <td>Load a single structure file into a Universe-backed entity.</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><a href="#molecularnodes.entities.StreamingTrajectory.get_view">get_view</a></td>
 <td>The world-space positions of a view onto this molecule.</td>
+</tr>
+<tr class="odd">
+<td><a href="#molecularnodes.entities.StreamingTrajectory.hide">hide</a></td>
+<td>Add atoms to those left out of every style.</td>
 </tr>
 <tr class="even">
 <td><a href="#molecularnodes.entities.StreamingTrajectory.reset_playback">reset_playback</a></td>
 <td>Set the playback settings to their default values</td>
 </tr>
 <tr class="odd">
+<td><a href="#molecularnodes.entities.StreamingTrajectory.select">select</a></td>
+<td>A per-atom boolean mask from a selection.</td>
+</tr>
+<tr class="even">
+<td><a href="#molecularnodes.entities.StreamingTrajectory.set_color">set_color</a></td>
+<td>Set the <code class="custom-attribute">Color</code> attribute of the selected atoms.</td>
+</tr>
+<tr class="odd">
 <td><a href="#molecularnodes.entities.StreamingTrajectory.set_frame">set_frame</a></td>
 <td>Update trajectory state for scene frame.</td>
+</tr>
+<tr class="even">
+<td><a href="#molecularnodes.entities.StreamingTrajectory.show">show</a></td>
+<td>Remove atoms from those left out of every style.</td>
 </tr>
 </tbody>
 </table>
@@ -892,7 +979,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="even">
 <td>color</td>
 <td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | <a href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a href="https://docs.python.org/3/builtins/functions.html#float">float</a>] | <a href="https://docs.python.org/3/library/typing.html#typing.Callable">Callable</a> | None</td>
-<td>Coloring to apply upstream of the style via a <code>Set Color</code> node. Can be: - <code>"common"</code> / <code>"default"</code> for standard element colors with carbons colored randomly per chain - <code>"plddt"</code> to color by pLDDT (B-factor) confidence - the name of an existing <em>color</em> attribute on the geometry - an RGBA sequence of floats for a single uniform color - a zero-argument callable returning a color socket, evaluated inside the node tree context, e.g.&nbsp;<code>lambda: mg.ColorRainbow()</code>. This is the way to reach the full set of <code>Color*</code> nodes without writing out a whole node tree. - None (default) to add no color node, leaving the baked <code class="custom-attribute">Color</code> attribute in use. A string that is neither a keyword nor an existing color attribute raises a <code>UserWarning</code> and no color is applied.</td>
+<td>Coloring to apply upstream of the style via a <code>Set Color</code> node. Can be: - <code>"common"</code> / <code>"default"</code> for standard element colors with carbons colored randomly per chain - <code>"plddt"</code> to color by pLDDT (B-factor) confidence - the name of an existing <em>color</em> attribute on the geometry - a hex color or color name for a single uniform color, such as <code>"#00FFCC"</code>, <code>"salmon"</code> (CSS) or <code>"pymol:slate"</code> (see <code>color.parse_color</code>) - an RGBA sequence of floats for a single uniform color - a zero-argument callable returning a color socket, evaluated inside the node tree context, e.g.&nbsp;<code>lambda: mg.ColorRainbow()</code>. This is the way to reach the full set of <code>Color*</code> nodes without writing out a whole node tree. - a density entity (e.g.&nbsp;an APBS potential loaded with <code>mn.entities.density.Grids.load</code>) to color the styled geometry by sampling its grid, through a <code>Color Sample Grid</code> node. Unlike the other options this is applied <em>after</em> the style, at every point of its output (each surface vertex for <code>"surface"</code>), so instanced geometry such as instanced spheres is not colored. The range is the node’s default of -5 to 5 (red through light grey to blue); change <code>Min</code> and <code>Max</code> on the node for other grids. A density keeps its grid in the bundle of its styled output, which the node samples, so the density can keep its own style. - None (default) to add no color node, leaving the baked <code class="custom-attribute">Color</code> attribute in use. A string that is neither a keyword nor an existing color attribute raises a <code>UserWarning</code> and no color is applied.</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
@@ -964,12 +1051,86 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>If a selection is provided, it will be evaluated and stored as a new named attribute on the trajectory with an automatically generated name (sel_N).</p>
 </section>
 </section>
-<section id="molecularnodes.entities.StreamingTrajectory.assemblies" class="level3">
-<h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.assemblies">assemblies</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.assemblies(as_array<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>Get the biological assemblies parsed from the source file.</p>
+<section id="molecularnodes.entities.StreamingTrajectory.align_to" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.align_to">align_to</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.align_to(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    fixed,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    method<span class="op">=</span><span class="st">'sequence'</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    selection<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    fixed_selection<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Superimpose this molecule onto <code>fixed</code> by setting its object transform.</p>
+<p>Residues are paired by sequence (<code>method="sequence"</code>, the default) or by structure (<code>method="structure"</code>, proteins only), so the two molecules do not need identical sequences. The coordinates are not changed. See :func:<code>~molecularnodes.entities.molecule.align.align</code> for details.</p>
 <section id="parameters-2" class="level4 doc-section doc-section-parameters">
 <h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-2">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>fixed</td>
+<td><a href="../../api/reference/Molecule.html#molecularnodes.Molecule">Molecule</a></td>
+<td>The reference molecule, which stays where it is.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td>method</td>
+<td>(<code>sequence</code>, <code>structure</code>)</td>
+<td>How corresponding residues are found.</td>
+<td><code>"sequence"</code></td>
+</tr>
+<tr class="odd">
+<td>selection</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
+<td>MDAnalysis selection of this molecule’s atoms to fit on.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>fixed_selection</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
+<td>MDAnalysis selection of the fixed molecule’s atoms to fit on.</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-1" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-1">Returns</h4>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 8%">
+<col style="width: 31%">
+<col style="width: 59%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><code>AlignResult</code></td>
+<td>The fitted transform, RMSD and number of anchor atoms.</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.entities.StreamingTrajectory.assemblies" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.assemblies">assemblies</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.assemblies(as_array<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Get the biological assemblies parsed from the source file.</p>
+<section id="parameters-3" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-3">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -989,8 +1150,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="returns-1" class="level4 doc-section doc-section-returns">
-<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-1">Returns</h4>
+<section id="returns-2" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-2">Returns</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1011,22 +1172,22 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.entities.StreamingTrajectory.create_asset_nodes" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.create_asset_nodes">create_asset_nodes</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.create_asset_nodes()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.create_asset_nodes()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Create asset nodes for the entity object.</p>
 <p>This creates <code>Select</code> and <code class="custom-attribute">Color</code> nodes for each property combination. Chains, entities, and segments have nodes created for them if they have IDs. Nodes are created and registered as assets for the current Blender session so they can be added through drag-to-search in the node editor.</p>
 </section>
 <section id="molecularnodes.entities.StreamingTrajectory.create_data_object" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.create_data_object">create_data_object</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.create_data_object()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.create_data_object()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Create the data object holding the biological assembly transforms.</p>
 </section>
 <section id="molecularnodes.entities.StreamingTrajectory.create_object" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.create_object">create_object</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.create_object(name<span class="op">=</span><span class="st">'NewUniverseObject'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.create_object(name<span class="op">=</span><span class="st">'NewUniverseObject'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Create and initialize Blender object for trajectory.</p>
 <p>Creates mesh, computes attributes, sets up modifiers, registers with MolecularNodes.</p>
-<section id="parameters-3" class="level4 doc-section doc-section-parameters">
-<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-3">Parameters</h4>
+<section id="parameters-4" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-4">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1046,8 +1207,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="returns-2" class="level4 doc-section doc-section-returns">
-<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-2">Returns</h4>
+<section id="returns-3" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-3">Returns</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1068,15 +1229,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.entities.StreamingTrajectory.fetch" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.fetch">fetch</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.fetch(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    code,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">format</span><span class="op">=</span><span class="st">'.bcif'</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    cache<span class="op">=</span>download.CACHE_DIR,</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    database<span class="op">=</span><span class="st">'rcsb'</span>,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.fetch(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    code,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">format</span><span class="op">=</span><span class="st">'.bcif'</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    cache<span class="op">=</span>download.CACHE_DIR,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    database<span class="op">=</span><span class="st">'rcsb'</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    hide<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Fetch a structure from an online database into a Universe-backed entity.</p>
-<section id="parameters-4" class="level4 doc-section doc-section-parameters">
-<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-4">Parameters</h4>
+<section id="parameters-5" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-5">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1090,13 +1252,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td>code</td>
 <td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
-<td>The database accession code (e.g.&nbsp;a PDB id).</td>
+<td>The database accession code (e.g.&nbsp;a PDB id), or for <code>"pubchem"</code> a compound CID (e.g.&nbsp;<code>"2244"</code>) or name (e.g.&nbsp;<code>"aspirin"</code>).</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td>format</td>
 <td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
-<td>File format to download, by default <code>".bcif"</code>.</td>
+<td>File format to download, by default <code>".bcif"</code>. Ignored for <code>"pubchem"</code>, which always downloads the 3D conformer as SDF.</td>
 <td><code class="custom-string">'.bcif'</code></td>
 </tr>
 <tr class="odd">
@@ -1108,14 +1270,14 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="even">
 <td>database</td>
 <td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
-<td>The database to fetch from, by default <code>"rcsb"</code>.</td>
+<td>The database to fetch from: <code>"rcsb"</code> (default), <code>"alphafold"</code> or <code>"pubchem"</code>.</td>
 <td><code class="custom-string">'rcsb'</code></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="returns-3" class="level4 doc-section doc-section-returns">
-<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-3">Returns</h4>
+<section id="returns-4" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-4">Returns</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1136,17 +1298,18 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.entities.StreamingTrajectory.frames_to_collection" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.frames_to_collection">frames_to_collection</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.frames_to_collection(</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    start<span class="op">=</span><span class="dv">0</span>,</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    stop<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    step<span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.frames_to_collection(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    start<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    stop<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    step<span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Bake a range of trajectory frames into a collection of frame objects.</p>
-<p>Each object in the returned collection holds the atom positions (in Blender world units) for a single frame, in the same vertex order as this molecule’s mesh. The collection can then be read inside geometry nodes (e.g.&nbsp;with the <em>Animate Frames</em> node) to drive positions from baked data, rather than updating the <code>Universe</code> every scene frame.</p>
+<p>Each object in the returned collection holds the atom positions (in Blender world units) for a single frame, in the same vertex order as this molecule’s mesh, along with the attributes written on frame changes (see <code>frame_attributes</code>): those read from the trajectory, selections and calculations. The collection can then be read inside geometry nodes (e.g.&nbsp;with the <em>Animate Frames</em> node) to drive positions from baked data, rather than updating the <code>Universe</code> every scene frame.</p>
+<p>As in playback, a trajectory attribute that a frame lacks keeps the values of the last frame that had it, and selections and calculations that don’t update on frame changes keep the values they have now.</p>
 <p>Re-baking replaces any objects previously baked into the same collection.</p>
-<section id="parameters-5" class="level4 doc-section doc-section-parameters">
-<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-5">Parameters</h4>
+<section id="parameters-6" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-6">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1184,8 +1347,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="returns-4" class="level4 doc-section doc-section-returns">
-<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-4">Returns</h4>
+<section id="returns-5" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-5">Returns</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1225,12 +1388,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.entities.StreamingTrajectory.from_file" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.from_file">from_file</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.from_file(file_path, name<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.from_file(</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    file_path,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    name<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    data_block<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">format</span><span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Load a single structure file into a Universe-backed entity.</p>
-<p>The file (<code>.pdb</code>/<code>.cif</code>/<code>.bcif</code>/<code>.sdf</code>/<code>.mol</code>) is parsed by the biotite readers and converted into an MDAnalysis <code>Universe</code> via :func:<code>~molecularnodes.converters.universe_from_atoms</code>. Multi-model files become multi-frame universes. Biological assembly and entity/chain metadata parsed from the file are stored on the Blender object.</p>
+<p>The file (<code>.pdb</code>/<code>.cif</code>/<code>.bcif</code>/<code>.sdf</code>/<code>.mol</code>/<code>.cube</code>) is parsed by the biotite readers and converted into an MDAnalysis <code>Universe</code> via :func:<code>~molecularnodes.converters.universe_from_atoms</code>. Multi-model files become multi-frame universes. Biological assembly and entity/chain metadata parsed from the file are stored on the Blender object.</p>
 <p>Small-molecule crystallographic <code>.cif</code> files (e.g.&nbsp;from the ICSD or COD) are instead read by :mod:<code>~molecularnodes.entities.molecule.corecif</code>, which expands the asymmetric unit by the file’s symmetry operators to fill one unit cell. <code>.xyz</code> files are read natively by MDAnalysis, with elements taken from the atom names.</p>
-<section id="parameters-6" class="level4 doc-section doc-section-parameters">
-<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-6">Parameters</h4>
+<section id="parameters-7" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-7">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1243,8 +1411,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>file_path</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a> | <a href="https://docs.python.org/3/library/io.html#module-io">io</a>.<a href="https://docs.python.org/3/library/io.html#io.BytesIO">BytesIO</a></td>
-<td>Path to the structure file (or an in-memory <code>bcif</code> buffer).</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path">Path</a> | <a href="https://docs.python.org/3/library/io.html#module-io">io</a>.<a href="https://docs.python.org/3/library/io.html#io.BytesIO">BytesIO</a> | <a href="https://docs.python.org/3/library/io.html#module-io">io</a>.<a href="https://docs.python.org/3/library/io.html#io.StringIO">StringIO</a></td>
+<td>Path to the structure file, or an in-memory buffer of its contents.</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
@@ -1253,11 +1421,23 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td>Name for the Blender object. Defaults to the file name (extension included).</td>
 <td><code>None</code></td>
 </tr>
+<tr class="odd">
+<td>data_block</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
+<td>For a <code>.cif</code>/<code>.bcif</code> with several structures in separate data blocks, the name of the block to load. Blocks without atoms (such as restraint definitions) are skipped, so this is only needed when more than one block holds a structure; otherwise a :class:<code>~molecularnodes.entities.molecule.pdbx.MultipleStructuresError</code> listing the blocks is raised.</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>format</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
+<td>The file format (e.g.&nbsp;<code>"cif"</code>). Needed for a <code>StringIO</code> buffer, otherwise taken from the file suffix.</td>
+<td><code>None</code></td>
+</tr>
 </tbody>
 </table>
 </section>
-<section id="returns-5" class="level4 doc-section doc-section-returns">
-<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-5">Returns</h4>
+<section id="returns-6" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-6">Returns</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1278,11 +1458,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.entities.StreamingTrajectory.get_view" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.get_view">get_view</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.get_view(selection<span class="op">=</span><span class="va">None</span>, frame<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.get_view(selection<span class="op">=</span><span class="va">None</span>, frame<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The world-space positions of a view onto this molecule.</p>
 <p>Without a selection these are the positions of the geometry the molecule renders; with one they are the positions of the selected atoms. Pass the result to <a href="../../api/reference/Canvas.html#molecularnodes.Canvas.look_at"><code>look_at</code></a> to frame it, or combine views from several selections with <code>+</code> to frame all of them together.</p>
-<section id="parameters-7" class="level4 doc-section doc-section-parameters">
-<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-7">Parameters</h4>
+<section id="parameters-8" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-8">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1309,18 +1489,197 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
+<section id="molecularnodes.entities.StreamingTrajectory.hide" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.hide">hide</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.hide(selection)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Add atoms to those left out of every style.</p>
+<p>The selection is evaluated once, so a selection that depends on position uses the current frame. For a selection that updates, give it to a style with <code>add_style(selection=...)</code> instead.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>mol.hide(<span class="st">"element H"</span>).hide(<span class="st">"resname HOH"</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>mol.show(<span class="st">"resname ATP"</span>)  <span class="co"># ATP hydrogens are drawn again</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="parameters-9" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-9">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>selection</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | <a href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup">AtomGroup</a> | <code>array_like</code></td>
+<td>An existing boolean attribute, MDAnalysis selection string, static <code>AtomGroup</code> or boolean mask with one value per atom.</td>
+<td><em>required</em></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-7" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-7">Returns</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><a href="../../api/reference/Molecule.html#molecularnodes.Molecule">Molecule</a></td>
+<td>Returns self for method chaining.</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="raises-2" class="level4 doc-section doc-section-raises">
+<h4 class="doc-section doc-section-raises anchored" data-anchor-id="raises-2">Raises</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><a href="https://docs.python.org/3/builtins/exceptions.html#TypeError">TypeError</a></td>
+<td>If <code>selection</code> is a callable.</td>
+</tr>
+<tr class="even">
+<td></td>
+<td><a href="https://docs.python.org/3/builtins/exceptions.html#ValueError">ValueError</a></td>
+<td>If the selection is invalid, or an updating <code>AtomGroup</code>.</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="molecularnodes.entities.StreamingTrajectory.reset_playback" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.reset_playback">reset_playback</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.reset_playback()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.reset_playback()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Set the playback settings to their default values</p>
+</section>
+<section id="molecularnodes.entities.StreamingTrajectory.select" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.select">select</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.select(selection<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>A per-atom boolean mask from a selection.</p>
+<p>Use it to index any attribute, combining masks with <code>&amp;</code>, <code>|</code> and <code>~</code>. Indexing an attribute writes the changed values back to Blender::</p>
+<pre><code>mol["b_factor"][mol.select("resid 19:26")] = 1.0
+mask = mol.select("protein") &amp; ~mol.select("name H*")</code></pre>
+<p>A new attribute has to be stored for every atom, such as with <code>np.where</code>::</p>
+<pre><code>mol["highlight"] = np.where(mol.select("resid 19:26"), 1.0, 0.0)
+mol["is_site"] = mol.select("resid 19:26")</code></pre>
+<p>For the <code class="custom-attribute">Color</code> attribute, <code>set_color</code> also takes colour names.</p>
+<section id="parameters-10" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-10">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>selection</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | <a href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup">AtomGroup</a> | <a href="https://numpy.org/doc/stable/reference/index.html#module-numpy">np</a>.<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a> | None</td>
+<td>A string names an existing boolean attribute, or is otherwise an MDAnalysis selection phrase. An array is a boolean mask or atom indices. None selects every atom.</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-8" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-8">Returns</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><a href="https://numpy.org/doc/stable/reference/index.html#module-numpy">np</a>.<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a></td>
+<td>Boolean mask, True for the selected atoms</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="raises-3" class="level4 doc-section doc-section-raises">
+<h4 class="doc-section doc-section-raises anchored" data-anchor-id="raises-3">Raises</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><a href="https://docs.python.org/3/builtins/exceptions.html#TypeError">TypeError</a></td>
+<td>If the string names an attribute that isn’t boolean</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.entities.StreamingTrajectory.set_color" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.set_color">set_color</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.set_color(color, selection<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Set the <code class="custom-attribute">Color</code> attribute of the selected atoms.</p>
+<p>Styles added without a <code>color</code> show this attribute::</p>
+<pre><code>mol.set_color((0.1, 0.7, 0.7), selection="chainID A and resid 19:26")
+mol.set_color("#00FFCC", "protein")
+mol.set_color("pymol:slate", "chainID B")</code></pre>
+<section id="parameters-11" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-11">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>color</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | <a href="https://docs.python.org/3/library/typing.html#typing.Sequence">Sequence</a>[<a href="https://docs.python.org/3/builtins/functions.html#float">float</a>]</td>
+<td>A hex string such as <code>"#00FFCC"</code> or a colour name such as <code>"salmon"</code> or <code>"pymol:slate"</code>, which are sRGB and converted to linear (see <code>color.parse_color</code>), or linear RGB or RGBA from 0 to 1. Colours without an alpha keep the atoms’ current alpha.</td>
+<td><em>required</em></td>
+</tr>
+<tr class="even">
+<td>selection</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | <a href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup">AtomGroup</a> | <a href="https://numpy.org/doc/stable/reference/index.html#module-numpy">np</a>.<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray">ndarray</a> | None</td>
+<td>Atoms to color, as for <code>select</code>. None colors every atom.</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 <section id="molecularnodes.entities.StreamingTrajectory.set_frame" class="level3">
 <h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.set_frame">set_frame</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.set_frame(frame)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.set_frame(frame)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Update trajectory state for scene frame.</p>
 <p>Main entry point called by Blender’s animation system. Updates positions, selections, and calculations with recursion prevention.</p>
-<section id="parameters-8" class="level4 doc-section doc-section-parameters">
-<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-8">Parameters</h4>
+<section id="parameters-12" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-12">Parameters</h4>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -1333,8 +1692,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>frame</td>
-<td><a href="https://docs.python.org/3/builtins/functions.html#int">int</a></td>
-<td>Scene frame number (mapping applied to get Universe frame)</td>
+<td><a href="https://docs.python.org/3/builtins/functions.html#float">float</a></td>
+<td>Scene frame number or manual frame (mapping applied to get Universe frame)</td>
 <td><em>required</em></td>
 </tr>
 </tbody>
@@ -1343,6 +1702,51 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="notes-1" class="level4 doc-section doc-section-notes">
 <h4 class="doc-section doc-section-notes anchored" data-anchor-id="notes-1">Notes</h4>
 <p>Typically called automatically by frame change handlers, not user code.</p>
+</section>
+</section>
+<section id="molecularnodes.entities.StreamingTrajectory.show" class="level3">
+<h3 class="anchored" data-anchor-id="molecularnodes.entities.StreamingTrajectory.show">show</h3>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>entities.StreamingTrajectory.show(selection<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Remove atoms from those left out of every style.</p>
+<section id="parameters-13" class="level4 doc-section doc-section-parameters">
+<h4 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-13">Parameters</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>selection</td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | <a href="https://docs.mdanalysis.org/stable/documentation_pages/core/groups.html#MDAnalysis.core.groups.AtomGroup">AtomGroup</a> | <code>array_like</code></td>
+<td>The atoms to show, as for :meth:<code>hide</code>. Left out, every atom is shown.</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="returns-9" class="level4 doc-section doc-section-returns">
+<h4 class="doc-section doc-section-returns anchored" data-anchor-id="returns-9">Returns</h4>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td></td>
+<td><a href="../../api/reference/Molecule.html#molecularnodes.Molecule">Molecule</a></td>
+<td>Returns self for method chaining.</td>
+</tr>
+</tbody>
+</table>
 
 
 </section>
@@ -1753,8 +2157,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../api/reference/entities.molecule.DSSPManager.html" class="pagination-link" aria-label="entities.molecule.DSSPManager">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">entities.molecule.DSSPManager</span>
+      <a href="../../api/reference/entities.molecule.HBondCalculation.html" class="pagination-link" aria-label="entities.molecule.HBondCalculation">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">entities.molecule.HBondCalculation</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

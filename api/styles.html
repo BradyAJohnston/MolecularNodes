@@ -72,7 +72,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../api/trajectories.html" rel="next">
+<link href="../api/pubchem.html" rel="next">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -82,7 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -277,6 +277,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../api/pubchem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Small Molecules from PubChem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../api/trajectories.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Trajectories</span></a>
   </div>
@@ -315,6 +321,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../api/solvent.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Solvent Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/electrostatics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Electrostatics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -370,8 +382,20 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/reference/entities.molecule.DSSPManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.molecule.DSSPManager</span></a>
+  <a href="../api/reference/entities.molecule.CalculationManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.CalculationManager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.molecule.DSSPCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.DSSPCalculation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/entities.molecule.HBondCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.HBondCalculation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -568,12 +592,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../api/reference/nodes.general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -594,6 +612,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../api/reference/nodes.color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -624,6 +648,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../api/reference/nodes.geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -700,6 +730,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#callables-for-full-control" id="toc-callables-for-full-control" class="nav-link" data-scroll-target="#callables-for-full-control">Callables for Full Control</a></li>
   <li><a href="#building-a-style-tree" id="toc-building-a-style-tree" class="nav-link" data-scroll-target="#building-a-style-tree">Building a Style Tree</a></li>
   <li><a href="#style-gallery" id="toc-style-gallery" class="nav-link" data-scroll-target="#style-gallery">Style Gallery</a></li>
+  <li><a href="#hiding-atoms" id="toc-hiding-atoms" class="nav-link" data-scroll-target="#hiding-atoms">Hiding atoms</a></li>
   </ul>
 </nav>
     </div>
@@ -733,7 +764,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>Styles (or <em>representations</em>) are how we turn the raw atomic data of a <a href="../api/reference/Molecule.html#molecularnodes.Molecule"><code>Molecule</code></a> into something we can actually see. Every <code>Molecule</code> is styled the same way, whether it is a single static structure or a multi-frame trajectory.</p>
 <section id="setup" class="level2">
 <h2 class="anchored" data-anchor-id="setup">Setup</h2>
-<div id="1d75a6b4" class="cell" data-execution_count="1">
+<div id="a320f2e7" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> molecularnodes.nodes <span class="im">import</span> geometry <span class="im">as</span> g</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> MDAnalysis <span class="im">as</span> mda</span>
@@ -746,7 +777,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="add-a-style" class="level2">
 <h2 class="anchored" data-anchor-id="add-a-style">Add a Style</h2>
 <p>A style can be specified when adding the molecule to Blender. Styles are given as a string, with any style-specific options passed as keyword arguments to <a href="../api/reference/Molecule.html#molecularnodes.Molecule.add_style"><code>add_style</code></a>.</p>
-<div id="e5b6b202" class="cell" data-execution_count="2">
+<div id="26fa7d05" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule(u).add_style(<span class="st">"ribbon"</span>, quality<span class="op">=</span><span class="dv">4</span>, peptide_radius<span class="op">=</span><span class="fl">0.5</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -793,7 +824,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="selections">Selections</h2>
 <p>Each call to <a href="../api/reference/Molecule.html#molecularnodes.Molecule.add_style"><code>add_style</code></a> appends another style branch to the node tree, so different selections of the molecule can be shown with different styles.</p>
 <p>Add <code>StyleSpheres</code> to just residues 1 and 129. The string is used as a selection string to create an <code>mda.AtomGroup</code> which is used to create a boolean attribute, and that is used inside of the node tree for rendering.</p>
-<div id="90f39ddb" class="cell" data-execution_count="3">
+<div id="943802fe" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mol.add_style(<span class="st">"spheres"</span>, sphere<span class="op">=</span><span class="st">"Instance"</span>, selection<span class="op">=</span><span class="st">"resid 1 129"</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -805,7 +836,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="014a282a" class="cell" data-execution_count="4">
+<div id="216c69d5" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>mol.add_style(<span class="st">"surface"</span>, selection<span class="op">=</span><span class="st">"resid 100:150"</span>, material<span class="op">=</span><span class="st">"Flat"</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -818,7 +849,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 <p>A selection can also be an <code>mda.AtomGroup</code>.</p>
-<div id="3b58f51d" class="cell" data-execution_count="5">
+<div id="d9730395" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mol.add_style(<span class="st">"ball_and_stick"</span>, quality<span class="op">=</span><span class="dv">4</span>, selection<span class="op">=</span>u.select_atoms(<span class="st">"resid 180:200"</span>))</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -835,7 +866,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="callables-for-full-control">Callables for Full Control</h2>
 <p><code>style</code>, <code>selection</code> and <code>color</code> all accept a <strong>callable</strong>, which is evaluated inside the node tree context. This reaches the full node API without having to write out a whole tree, and is the recommended middle ground between <code>add_style</code> and <a href="#building-a-style-tree">building the tree yourself</a>.</p>
 <p>A callable <code>color</code> reaches any of the <code>Color*</code> nodes:</p>
-<div id="eae1a5bb" class="cell" data-execution_count="6">
+<div id="82283d43" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"8H1B"</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>mol.add_style(<span class="st">"cartoon"</span>, color<span class="op">=</span><span class="kw">lambda</span>: g.ColorSecondaryStructure())</span>
@@ -853,7 +884,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 <p>A callable <code>selection</code> composes the selection nodes with <code>&amp;</code>, <code>|</code> and <code>~</code>:</p>
-<div id="10b9d09d" class="cell" data-execution_count="7">
+<div id="aac459b9" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>mol.add_style(<span class="st">"sticks"</span>, selection<span class="op">=</span><span class="kw">lambda</span>: g.IsPeptide() <span class="op">&amp;</span> g.IsSideChain())</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>canvas.look_at(mol)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>canvas.snapshot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -866,7 +897,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 <p>A callable <code>style</code> sets allows easier setting of the values of the node itself.</p>
-<div id="6b01d3ba" class="cell" data-execution_count="8">
+<div id="252b9734" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>mol.add_style(</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">lambda</span>: g.StyleSpheres(</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    sphere<span class="op">=</span><span class="st">"Instance"</span>,</span>
@@ -886,7 +917,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 <p>A callable <code>style</code> defines the style node completely, so <code>selection</code>, <code>material</code> and style keyword arguments cannot be passed alongside it - set them inside the callable instead. To use an MDAnalysis selection phrase there, turn it into a node with <a href="../api/reference/entities.molecule.SelectionManager.html#molecularnodes.entities.molecule.SelectionManager.node"><code>node</code></a>:</p>
-<div id="4de231cf" class="cell" data-execution_count="9">
+<div id="08e196e0" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"9EYM"</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>mol.add_style(<span class="st">"cartoon"</span>, color<span class="op">=</span><span class="kw">lambda</span>: g.ColorRainbow())</span>
@@ -910,7 +941,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 <p><code>selections.node()</code> reuses an existing selection where it can, so calling it repeatedly (inside a loop, or on every rebuild of a tree) does not pile up duplicate selections:</p>
-<div id="9cc38287" class="cell" data-execution_count="10">
+<div id="3f4d5ba9" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>before <span class="op">=</span> <span class="bu">len</span>(mol.selections)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> mol.tree:</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">5</span>):</span>
@@ -925,10 +956,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="building-a-style-tree">Building a Style Tree</h2>
 <p>To take full control — or to start from a clean slate — build the node tree yourself with the <code>tree</code> context manager. <code>tree.reset()</code> clears the existing tree and yields the input <code>atoms</code> and output <code>join</code> sockets, so you can compose exactly the styles you want with their specific parameters. This is the recommended way to create styling that is more complex than simple styles and their selections.</p>
 <p>Attempting to expose the branching tree structure of Geometry Nodes via a Python API is a truly difficult task, and so instead we build the node tree using <code>nodebpy</code> as a specialised scripting interface for node trees.</p>
-<div id="d5f56964" class="cell" data-execution_count="11">
+<div id="bc7e42f5" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>mat <span class="op">=</span> mn.material.AmbientOcclusion()</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>mol.dssp.init()</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>mol.calculations.dssp(updating<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># `from_string` creates a managed selection; `.node()` gives a node reading its</span></span>
 <span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># boolean attribute, ready to plug into a style node's `Selection` input</span></span>
 <span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>sel <span class="op">=</span> mol.selections.from_string(<span class="st">"resname LYS"</span>)</span>
@@ -951,7 +982,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="style-gallery" class="level2">
 <h2 class="anchored" data-anchor-id="style-gallery">Style Gallery</h2>
 <p>Because styling is identical across all molecules, we can loop over structures fetched from the PDB and apply a different style to each.</p>
-<div id="a6a6755a" class="cell" data-execution_count="12">
+<div id="a3ada628" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>codes <span class="op">=</span> [<span class="st">"4ozs"</span>, <span class="st">"8H1B"</span>, <span class="st">"6N2Y"</span>]</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>styles <span class="op">=</span> [<span class="st">"cartoon"</span>, <span class="st">"ribbon"</span>, <span class="st">"surface"</span>]</span>
@@ -997,7 +1028,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 <p>Styles compose, so a single molecule can combine several representations with different selections and materials.</p>
-<div id="1c0a0825" class="cell" data-execution_count="13">
+<div id="254341a3" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> (</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    mn.Molecule.fetch(<span class="st">"8H1B"</span>)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    .add_style(<span class="st">"cartoon"</span>, material<span class="op">=</span><span class="st">"Ambient Occlusion"</span>)</span>
@@ -1017,7 +1048,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
-<div id="435e304e" class="cell" data-execution_count="14">
+<div id="ea607bc8" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>canvas.clear()</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>canvas.engine <span class="op">=</span> mn.scene.Cycles(samples<span class="op">=</span><span class="dv">32</span>)</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> (</span>
@@ -1038,6 +1069,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </div>
 </div>
 </div>
+</section>
+<section id="hiding-atoms" class="level2">
+<h2 class="anchored" data-anchor-id="hiding-atoms">Hiding atoms</h2>
+<p><code>Selection</code> chooses what one style draws. Hidden atoms are left out of every style, whatever its selection, and are not used in what the style computes. Calculations, selections and other nodes still see them.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.load(<span class="st">"structure.cif"</span>, hide<span class="op">=</span><span class="st">"element H"</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>mol.hide(<span class="st">"resname HOH"</span>)  <span class="co"># adds to the hidden atoms</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>mol.show(<span class="st">"resname ATP"</span>)  <span class="co"># removes from them</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>mol.show()  <span class="co"># shows every atom</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>mol.hidden[:<span class="dv">100</span>] <span class="op">=</span> <span class="va">True</span>  <span class="co"># a boolean mask, written back like mol.position</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>A selection is evaluated once. For a selection that updates on every frame, give it to a style with <code>add_style(selection=...)</code>, because <code>hide()</code> and <code>show()</code> reject updating <code>AtomGroup</code>s and <code>hidden</code> is a reserved selection name.</p>
+<p>The <code>Hidden</code> field in the Attributes panel and the import dialog takes a selection string. Applying it replaces the hidden atoms, and editing them from Python clears the field. The import dialog starts with <code>water</code>. Imports from Python hide nothing unless you pass <code>hide=</code>.</p>
+<p>To draw hidden atoms in only some styles of a hand-built tree, set the <code>hidden</code> attribute to false with a <code>Store Named Attribute</code> node before those styles.</p>
 
 
 </section>
@@ -1447,8 +1491,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="nav-page nav-page-previous">
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../api/trajectories.html" class="pagination-link" aria-label="Trajectories">
-        <span class="nav-page-text">Trajectories</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../api/pubchem.html" class="pagination-link" aria-label="Small Molecules from PubChem">
+        <span class="nav-page-text">Small Molecules from PubChem</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

@@ -1,0 +1,1480 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.10.18">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Compositor – Molecular Nodes</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../nodes/curves.html" rel="next">
+<link href="../nodes/color.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-W3K8TDXSCF"></script>
+
+<script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
+</script>
+<script type="module">
+    // Re-highlight code blocks with Shiki (the TextMate-grammar engine VS Code
+    // uses) for richer tokens than Pandoc's skylighting: function calls,
+    // attribute access, keyword arguments, etc. Pandoc's highlighting is kept
+    // in the HTML as a no-JS fallback and replaced here on load.
+    //
+    // To change colors, swap "dracula" for any theme from
+    // https://shiki.style/themes, or add/edit `tokenColors` rules below
+    // (scope reference: https://macromates.com/manual/en/language_grammars).
+    import { codeToHtml, bundledThemes } from "https://esm.sh/shiki@3";
+
+    const dracula = (await bundledThemes["dracula-soft"]()).default;
+    const theme = {
+        ...dracula,
+        name: "dracula-nodebpy",
+        tokenColors: [
+            ...dracula.tokenColors,
+            // Dracula ships no rule for Python call expressions; color them like
+            // function definitions so g.Cube() / tree.inputs.integer() pop.
+            {
+                scope: "meta.function-call.generic.python",
+                settings: { foreground: "#50FA7B" },
+            },
+        ],
+    };
+
+    async function rehighlight(pre) {
+        const code = pre.querySelector("code");
+        const lang = [...pre.classList].find(
+            (c) => !["sourceCode", "code-with-copy"].includes(c),
+        );
+        if (!code || !lang) return;
+        try {
+            const html = await codeToHtml(code.textContent.replace(/\n$/, ""), {
+                lang,
+                theme,
+            });
+            const shikiPre = new DOMParser()
+                .parseFromString(html, "text/html")
+                .querySelector("pre");
+            code.innerHTML = shikiPre.querySelector("code").innerHTML;
+            pre.style.backgroundColor = shikiPre.style.backgroundColor;
+            pre.style.color = shikiPre.style.color;
+        } catch {
+            // Unknown language for Shiki — keep Pandoc's highlighting.
+        }
+    }
+
+    await Promise.all(
+        [...document.querySelectorAll("pre.sourceCode")].map(rehighlight),
+    );
+</script>
+
+
+</head>
+
+<body class="nav-sidebar floating nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Molecular Nodes</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../tutorials/index.html"> 
+<span class="menu-text">Documentation</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="../nodes/index.html" aria-current="page"> 
+<span class="menu-text">Nodes</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../api/"> 
+<span class="menu-text">API</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../changelog.html"> 
+<span class="menu-text">Changelog</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../examples/"> 
+<span class="menu-text">Examples</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../citations/"> 
+<span class="menu-text">Citations</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools tools-wide">
+    <a href="https://github.com/BradyAJohnston/MolecularNodes" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-github"></i></a>
+    <a href="https://twitter.com/bradyajohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-twitter"></i></a>
+    <a href="https://youtube.com/c/bradyjohnston" title="" class="quarto-navigation-tool px-1" aria-label=""><i class="bi bi-youtube"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../nodes/compositor.html">Compositor</a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Overview</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/general.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">General</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/animate.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Animate</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/attributes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Attributes</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/compositor.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Compositor</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/curves.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Curves</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/dna.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">DNA</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/density.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Density</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/ensemble.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Ensemble</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/select.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Select</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Simulation</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/style.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Style</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/topology.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Topology</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utilities.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utilities_attribute.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Attribute</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utilities_boolean.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Boolean</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utilities_color.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/utilities_fields.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Utilities / Fields</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/generated_nodes.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Generated Node Groups</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#composite-depth-fog" id="toc-composite-depth-fog" class="nav-link active" data-scroll-target="#composite-depth-fog">Composite Depth Fog</a></li>
+  <li><a href="#cone-shadow" id="toc-cone-shadow" class="nav-link" data-scroll-target="#cone-shadow">Cone Shadow</a></li>
+  <li><a href="#depth-outline" id="toc-depth-outline" class="nav-link" data-scroll-target="#depth-outline">Depth Outline</a></li>
+  <li><a href="#id-outline" id="toc-id-outline" class="nav-link" data-scroll-target="#id-outline">ID Outline</a></li>
+  <li><a href="#illustrate" id="toc-illustrate" class="nav-link" data-scroll-target="#illustrate">Illustrate</a></li>
+  <li><a href="#mask-pixels" id="toc-mask-pixels" class="nav-link" data-scroll-target="#mask-pixels">Mask Pixels</a></li>
+  <li><a href="#outline" id="toc-outline" class="nav-link" data-scroll-target="#outline">Outline</a></li>
+  <li><a href="#value-to-mask" id="toc-value-to-mask" class="nav-link" data-scroll-target="#value-to-mask">Value to Mask</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Compositor</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>Compositor node groups for post-processing renders: outlines, illustrative shading and masks from AOV passes</p>
+<section id="composite-depth-fog" class="level2">
+<h2 class="anchored" data-anchor-id="composite-depth-fog">Composite Depth Fog</h2>
+<p>Linear depth fog after Goodsell’s Illustrate: the image is blended towards Fog Color by a factor that runs from Front Fog at Near to Back Fog at Far (1 is no fog, 0 is fully fogged). Expects straight alpha and keeps the image alpha</p>
+<p>Illustrate’s atmospheric perspective: the <code class="custom-color">Image</code> is blended towards <code class="custom-color">Fog Color</code> by a factor that runs from <code class="custom-float">Front Fog</code> at <code class="custom-float">Near</code> to <code class="custom-float">Back Fog</code> at <code class="custom-float">Far</code> (1 keeps the colour, 0 is fully fogged). Expects straight alpha and keeps the image alpha. Place it after <a href="../nodes/compositor.html#illustrate"><code class="custom-node">Illustrate</code></a> for fogged, flat-shaded renders.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Image</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Image to fog, with straight alpha</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Depth</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Depth pass from the Render Layers node, in world units</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Near</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Depth, in world units, of the front of the structure where the fog factor is Front Fog. canvas.compositor.illustrate() sets it from the scene bounds</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Far</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Depth, in world units, of the back of the structure where the fog factor is Back Fog</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Front Fog</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Fog factor at Near: 1 keeps the image colour, 0 is fully fogged</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Back Fog</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Fog factor at Far: 1 keeps the image colour, 0 is fully fogged</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fog Color</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Colour the image fades towards</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Image</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.compositor.html#molecularnodes.nodes.compositor.CompositeDepthFog"><code>nodes.compositor.CompositeDepthFog</code></a></p>
+</section>
+<section id="cone-shadow" class="level2">
+<h2 class="anchored" data-anchor-id="cone-shadow">Cone Shadow</h2>
+<p>Conical soft shadow from the Depth pass alone, after David Goodsell’s Illustrate: each pixel is darkened by the surrounding pixels that are closer to the camera by more than a gap that grows with their distance, so form comes from occlusion rather than lighting. 32 samples: 8 directions on 4 rings up to Radius</p>
+<p>Illustrate’s screen-space ambient occlusion from the <code class="custom-float">Depth</code> pass alone. 32 samples (8 directions on 4 rings up to <code class="custom-float">Pixel Radius</code> pixels) each cast shadow on the pixel when they are closer to the camera by more than the larger of <code class="custom-float">Threshold</code> and their screen distance times <code class="custom-float">Angle</code> (with <code class="custom-float">Pixel Size</code> relating pixels to depth); the output <code class="custom-float">Shadow</code> starts at 1, drops with every occluding sample and never goes below <code class="custom-float">Shadow Max</code>. Feed it to the <code class="custom-color">Shadow</code> input of <a href="../nodes/compositor.html#illustrate"><code class="custom-node">Illustrate</code></a>; <code>canvas.compositor.illustrate(shading="cone")</code> does this and sets <code class="custom-float">Pixel Size</code> from the camera.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Depth</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Depth pass from the Render Layers node, in world units</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Pixel Radius</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Radius of the sampled neighbourhood in pixels; the four rings of samples sit at a quarter, half, three quarters and the full radius</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Pixel Size</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Width of one pixel in world units at the structure, like the depth pass, which relates screen distance to depth for the cone test. canvas.compositor.illustrate() sets it from the camera</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Angle</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Tightness of the shadow cone: a sample casts shadow only when it is closer to the camera by more than its screen distance times this slope. Higher values keep shadows local to crevices</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Threshold</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Smallest depth gap, in Nanometres, that casts a shadow; removes speckle in tight crevices</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Shadow Strength</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Darkening when every sample occludes the pixel; the shadow per sample is this divided by the 32 samples</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Shadow Max</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">The shadow factor never drops below this value, so occluded pixels keep some of their colour instead of going black</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Shadow</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.compositor.html#molecularnodes.nodes.compositor.ConeShadow"><code>nodes.compositor.ConeShadow</code></a></p>
+</section>
+<section id="depth-outline" class="level2">
+<h2 class="anchored" data-anchor-id="depth-outline">Depth Outline</h2>
+<p>Line mask from the Depth pass, by one of two methods: Sobel, a thresholded Sobel edge detector on depth, or Goodsell, Illustrate’s 3x3 Laplacian with each neighbour’s step clamped to [Min Diff, Max Diff] and ramped from Low to High into a soft opacity. Optionally adds lines where the normal changes sharply; the lines are anti-aliased and thickened to Size pixels</p>
+<p>Line mask from the <code class="custom-float">Depth</code> pass by one of two methods, picked with <code class="custom-menu">Method</code>. <em>Sobel</em> draws hard lines wherever the Sobel gradient of the depth passes <code class="custom-float">Threshold</code>. <em>Goodsell</em> follows <em>Illustrate</em>: each of the eight neighbours contributes how much farther it is than the centre, clamped to [<code class="custom-float">Min Diff</code>, <code class="custom-float">Max Diff</code>] and weighted 1.0 on the edges and 0.8 on the corners, and the sum is ramped from <code class="custom-float">Low</code> to <code class="custom-float">High</code> into a soft opacity, optionally smoothed (<code class="custom-bool">Smooth</code>), so lines land on the nearer side of each depth step and their weight follows its size. Distances are in world units, like the depth pass. The <em>Normals</em> panel adds lines from the <code class="custom-vector">Normals Pass</code> to catch creases between surfaces at the same depth; either way the lines are anti-aliased and thickened to <code class="custom-int">Size</code> pixels. Unlike the shader <a href="../nodes/materials.html#outline-mask"><code class="custom-node">Outline Mask</code></a>, lines are drawn between separate objects and over transparent backgrounds; draw them with <a href="../nodes/compositor.html#outline"><code class="custom-node">Outline</code></a>.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Depth</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Depth pass from the Render Layers node, in world units</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Method</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Sobel draws hard lines wherever the depth gradient passes Threshold; Goodsell draws soft lines on the nearer side of each depth step, weighted by the size of the step, as in Illustrate</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Size</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Line thickness in pixels</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Threshold</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Depth gradient, in world units like the depth pass, above which a line is drawn, for the Sobel method</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Weighted sum of the clamped depth steps, in world units, at which a line starts to appear</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">High</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Weighted sum of the clamped depth steps, in world units, at which a line is fully opaque. A narrower range from Low gives harder lines</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Min Diff</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Smallest depth step between neighbouring pixels, in world units, that contributes to a line</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Max Diff</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Depth steps larger than this, in world units, count as this much; a wider range emphasises larger features</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Smooth</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Average the opacity over the 3x3 neighbourhood where at least six of its nine pixels carry line signal, softening jagged lines</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Normals</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Also draw lines where the surface normal changes sharply, catching creases between surfaces at the same depth</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Normals Pass</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Normal pass from the Render Layers node</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Normals Threshold</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Change in normal between neighbouring pixels above which a line is drawn, when Normals is enabled</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mask</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.compositor.html#molecularnodes.nodes.compositor.DepthOutline"><code>nodes.compositor.DepthOutline</code></a></p>
+</section>
+<section id="id-outline" class="level2">
+<h2 class="anchored" data-anchor-id="id-outline">ID Outline</h2>
+<p>Outline opacity between regions of an ID pass after Goodsell’s Illustrate: counts, over the 5x5 neighbourhood, the pixels whose ID differs from the centre by more than Min Difference and ramps the count from Low to High into an opacity. Feed it a float AOV such as chain_id or res_id (canvas.add_aov and mn.material.add_aov) for chain or residue outlines</p>
+<p>Illustrate’s chain and residue outlines: counts, over the 5x5 neighbourhood, the pixels whose <code class="custom-float">ID</code> differs from the centre by more than <code class="custom-float">Min Difference</code> and ramps the count from <code class="custom-float">Low</code> to <code class="custom-float">High</code> into an opacity. Feed it a float AOV such as <code class="custom-attribute">chain_id</code> or <code class="custom-attribute">res_id</code> (<code>canvas.add_aov("chain_id")</code>, <code>mn.material.add_aov(material, "chain_id", offset=1.0)</code>) and draw it with <a href="../nodes/compositor.html#outline"><code class="custom-node">Outline</code></a>.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">ID</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">A float pass identifying regions, such as a chain_id or res_id AOV from the Render Layers node. Use small IDs: the render’s pixel filter blends IDs along edges, so a large gap between neighbours draws a heavier line</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Min Difference</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Difference in ID above which two pixels belong to different regions. 0.5 separates integer IDs; raise it to outline every few residues of a res_id pass instead of each one</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Low</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Number of differing neighbours, of 24, at which the line starts to appear</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">High</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Number of differing neighbours, of 24, at which the line is fully opaque</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Opacity</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.compositor.html#molecularnodes.nodes.compositor.IDOutline"><code>nodes.compositor.IDOutline</code></a></p>
+</section>
+<section id="illustrate" class="level2">
+<h2 class="anchored" data-anchor-id="illustrate">Illustrate</h2>
+<p>Illustrative, flat-shaded composite of the render passes: a base colour shaded by the ambient occlusion or shadow pass, outlines from depth and normals, an optional flat background and a depth fade of the alpha</p>
+<p>Flat, illustrative composite of the render passes, wired straight from the Render Layers node. The <em>Shading</em> panel darkens the <code class="custom-color">Image</code> by the smoothed <code class="custom-color">Shadow</code> input (Kuwahara for a painterly look, Blur for a soft one), which takes the Ambient Occlusion or Shadow pass, or the output of <a href="../nodes/compositor.html#cone-shadow"><code class="custom-node">Cone Shadow</code></a> for shading from the depth pass alone; the <em>Outline</em> panel draws lines from <a href="../nodes/compositor.html#depth-outline"><code class="custom-node">Depth Outline</code></a> with <a href="../nodes/compositor.html#outline"><code class="custom-node">Outline</code></a>, by its Sobel or Goodsell method; the <em>Background</em> panel composites over a flat colour. From Python, <code>canvas.compositor.illustrate()</code> enables the passes, adds the shading source and inserts the node in one call.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Image</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Combined pass from the Render Layers node</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Alpha</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Alpha pass from the Render Layers node</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Depth</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Depth pass from the Render Layers node, in world units</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Normal</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Normal pass from the Render Layers node</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Shading</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Darken the base colour by the ambient occlusion or shadow pass</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Shadow</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Shadow pass from the Render Layers node</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Shading Intensity</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">How dark the fully occluded or shadowed pixels become</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Shading Smoothing</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Filter applied to the shading pass before it is used. Kuwahara gives a painterly, flat result; Blur a soft one</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Smoothing Size</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Size of the smoothing filter in pixels</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Kuwahara Type</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Outline</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Draw lines where the depth or normal changes sharply</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Outline Color</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Colour of the lines</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Outline Size</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Line thickness in pixels</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Outline Method</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Sobel draws hard lines wherever the depth gradient passes Depth Threshold; Goodsell draws soft lines on the nearer side of each depth step, as in Illustrate</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Depth Threshold</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Depth gradient, in world units, above which a line is drawn, for the Sobel method</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Outline Low</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Weighted sum of the clamped depth steps, in world units, at which a line starts to appear</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Outline High</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Weighted sum of the clamped depth steps, in world units, at which a line is fully opaque</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Outline Max Diff</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Depth steps larger than this, in world units, count as this much; a wider range emphasises larger features</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Outline Smooth</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Average the outline over the 3x3 neighbourhood where most pixels carry line signal</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Outline Normals</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Also draw lines where the surface normal changes sharply, catching creases between surfaces at the same depth</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Outline Normal Threshold</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Change in normal between neighbouring pixels above which a line is drawn, when Outline Normals is enabled</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ID Outline</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Draw lines between the regions of an ID pass, such as chains, in the outline colour</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ID</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">A float pass identifying regions, such as a chain_id AOV from the Render Layers node. Use small IDs: the render’s pixel filter blends IDs along edges, so a large gap between neighbours draws a heavier line</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ID Min Difference</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Difference in ID above which two pixels belong to different regions</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">ID Low</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Number of differing neighbours, of 24, at which a line starts to appear</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">ID High</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Number of differing neighbours, of 24, at which a line is fully opaque</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Background</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Composite the result over a flat background colour</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Background Color</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Flat colour behind the structure</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Image</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.compositor.html#molecularnodes.nodes.compositor.Illustrate"><code>nodes.compositor.Illustrate</code></a></p>
+</section>
+<section id="mask-pixels" class="level2">
+<h2 class="anchored" data-anchor-id="mask-pixels">Mask Pixels</h2>
+<p>Split an image by a mask into the pixels inside it and the pixels outside it, each with the rest made transparent, so the two can be processed separately and recombined with Alpha Over</p>
+<p>Splits an <code class="custom-color">Image</code> by a <code class="custom-float">Mask</code> into the pixels inside it (<code class="custom-color">Masked</code>) and outside it (<code class="custom-color">Inverse</code>), each with the rest made transparent, so the two can be filtered separately and recombined with an Alpha Over node.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Image</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Image to split</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mask</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Pixels to keep in the Masked output, such as from Value to Mask</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Masked</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Inverse</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.compositor.html#molecularnodes.nodes.compositor.MaskPixels"><code>nodes.compositor.MaskPixels</code></a></p>
+</section>
+<section id="outline" class="level2">
+<h2 class="anchored" data-anchor-id="outline">Outline</h2>
+<p>Draw a line mask over an image in a flat colour, keeping the lines visible over a transparent background</p>
+<p>Draws a <code class="custom-float">Mask</code> over an <code class="custom-color">Image</code> in <code class="custom-color">Color</code>. The alpha is set once, deliberately, to the larger of the line coverage and the image alpha, so lines survive on transparent backgrounds.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Image</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Image to draw the lines over</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Mask</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Where to draw lines, such as the output of Composite Outline Mask</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Color</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Colour of the lines</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Image</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.compositor.html#molecularnodes.nodes.compositor.Outline"><code>nodes.compositor.Outline</code></a></p>
+</section>
+<section id="value-to-mask" class="level2">
+<h2 class="anchored" data-anchor-id="value-to-mask">Value to Mask</h2>
+<p>Mask of the pixels where a float pass, such as an AOV written by a material, matches a value within a tolerance</p>
+<p>Compares a float pass against <code class="custom-float">Target</code> within <code class="custom-float">Epsilon</code> and outputs the matching pixels as <code class="custom-float">Mask</code> and the rest as <code class="custom-float">Inverse</code>. Meant for AOV passes written by a material from an attribute such as <code class="custom-attribute">chain_id</code> (<code>canvas.add_aov("chain_id")</code> and <code>mn.material.add_aov(material, "chain_id")</code>), so one chain can be recoloured, outlined or left untouched in the compositor.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">A float pass, such as an AOV written by a material from an attribute like chain_id</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Target</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">The value to select from the pass</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Epsilon</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Tolerance around Target that still counts as a match</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mask</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Inverse</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.compositor.html#molecularnodes.nodes.compositor.ValueToMask"><code>nodes.compositor.ValueToMask</code></a></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../nodes/color.html" class="pagination-link" aria-label="Color">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Color</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../nodes/curves.html" class="pagination-link" aria-label="Curves">
+        <span class="nav-page-text">Curves</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer">
+  <div class="nav-footer">
+    <div class="nav-footer-left">
+<p>This site is built with ❤️ and <a href="https://quarto.org/">Quarto</a>.</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
+    <div class="nav-footer-right">
+      &nbsp;
+    </div>
+  </div>
+</footer>
+
+
+
+
+</body></html>

@@ -36,7 +36,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../nodes/curves.html" rel="next">
+<link href="../nodes/compositor.html" rel="next">
 <link href="../nodes/attributes.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -218,12 +218,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -244,6 +238,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -274,6 +274,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -349,17 +355,23 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#color-atomic-number" id="toc-color-atomic-number" class="nav-link active" data-scroll-target="#color-atomic-number">Color Atomic Number</a></li>
   <li><a href="#color-attribute-map" id="toc-color-attribute-map" class="nav-link" data-scroll-target="#color-attribute-map">Color Attribute Map</a></li>
   <li><a href="#color-attribute-random" id="toc-color-attribute-random" class="nav-link" data-scroll-target="#color-attribute-random">Color Attribute Random</a></li>
+  <li><a href="#color-css" id="toc-color-css" class="nav-link" data-scroll-target="#color-css">Color CSS</a></li>
   <li><a href="#color-common" id="toc-color-common" class="nav-link" data-scroll-target="#color-common">Color Common</a></li>
   <li><a href="#color-element" id="toc-color-element" class="nav-link" data-scroll-target="#color-element">Color Element</a></li>
   <li><a href="#color-goodsell" id="toc-color-goodsell" class="nav-link" data-scroll-target="#color-goodsell">Color Goodsell</a></li>
+  <li><a href="#color-matplotlib" id="toc-color-matplotlib" class="nav-link" data-scroll-target="#color-matplotlib">Color matplotlib</a></li>
   <li><a href="#color-mix-intermediate" id="toc-color-mix-intermediate" class="nav-link" data-scroll-target="#color-mix-intermediate">Color Mix Intermediate</a></li>
   <li><a href="#color-oklab-mix" id="toc-color-oklab-mix" class="nav-link" data-scroll-target="#color-oklab-mix">Color OKLab Mix</a></li>
   <li><a href="#color-oklab-offset" id="toc-color-oklab-offset" class="nav-link" data-scroll-target="#color-oklab-offset">Color OKLab Offset</a></li>
   <li><a href="#color-plddt" id="toc-color-plddt" class="nav-link" data-scroll-target="#color-plddt">Color pLDDT</a></li>
+  <li><a href="#color-pymol" id="toc-color-pymol" class="nav-link" data-scroll-target="#color-pymol">Color PyMOL</a></li>
   <li><a href="#color-rainbow" id="toc-color-rainbow" class="nav-link" data-scroll-target="#color-rainbow">Color Rainbow</a></li>
   <li><a href="#color-res-name" id="toc-color-res-name" class="nav-link" data-scroll-target="#color-res-name">Color Res Name</a></li>
+  <li><a href="#color-residue-class" id="toc-color-residue-class" class="nav-link" data-scroll-target="#color-residue-class">Color Residue Class</a></li>
+  <li><a href="#color-sample-grid" id="toc-color-sample-grid" class="nav-link" data-scroll-target="#color-sample-grid">Color Sample Grid</a></li>
   <li><a href="#color-secondary-structure" id="toc-color-secondary-structure" class="nav-link" data-scroll-target="#color-secondary-structure">Color Secondary Structure</a></li>
   <li><a href="#color-to-lch" id="toc-color-to-lch" class="nav-link" data-scroll-target="#color-to-lch">Color to LCh</a></li>
+  <li><a href="#color-vmd" id="toc-color-vmd" class="nav-link" data-scroll-target="#color-vmd">Color VMD</a></li>
   <li><a href="#lch-to-color" id="toc-lch-to-color" class="nav-link" data-scroll-target="#lch-to-color">LCh to Color</a></li>
   <li><a href="#random-color" id="toc-random-color" class="nav-link" data-scroll-target="#random-color">Random Color</a></li>
   <li><a href="#set-color" id="toc-set-color" class="nav-link" data-scroll-target="#set-color">Set Color</a></li>
@@ -609,6 +621,50 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 <p>API Reference: <a href="../api/reference/nodes.color.html#molecularnodes.nodes.geometry.ColorAttributeRandom"><code>nodes.geometry.ColorAttributeRandom</code></a></p>
+</section>
+<section id="color-css" class="level2">
+<h2 class="anchored" data-anchor-id="color-css">Color CSS</h2>
+<p>A named CSS colour, the colour names MolViewSpec and ChimeraX use. The colours are the same as <code>mol.set_color("salmon")</code> from Python, where a name without a prefix is a CSS name.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Color</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">CSS colour name, as used by MolViewSpec and ChimeraX</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Color</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">The named colour, in linear RGB</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.color.html#molecularnodes.nodes.geometry.ColorCSS"><code>nodes.geometry.ColorCSS</code></a></p>
 </section>
 <section id="color-common" class="level2">
 <h2 class="anchored" data-anchor-id="color-common">Color Common</h2>
@@ -1180,6 +1236,95 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 <p>API Reference: <a href="../api/reference/nodes.color.html#molecularnodes.nodes.geometry.ColorGoodsell"><code>nodes.geometry.ColorGoodsell</code></a></p>
 </section>
+<section id="color-matplotlib" class="level2">
+<h2 class="anchored" data-anchor-id="color-matplotlib">Color matplotlib</h2>
+<p>Colour a <code class="custom-float">Value</code> from <code>0</code> to <code>1</code> with one of matplotlib’s colormaps. Pick the group with <code class="custom-menu">Category</code>, then the colormap from that group’s menu; the other groups’ menus are ignored. <code class="custom-bool">Reverse</code> runs the colormap from <code>1</code> to <code>0</code>, like matplotlib’s <code>_r</code> maps. Values outside <code>0..1</code> are clamped. Pair with <a href="../nodes/utilities_fields.html#field-remap"><code class="custom-node">Field Remap</code></a> or a Map Range node to colour an attribute such as <code class="custom-attribute">b_factor</code> over its own range. Each colormap is a Color Ramp of at most 32 stops fitted to matplotlib’s colours, within about 1/255 for most maps; a few busy maps such as <code>gist_ncar</code>, <code>nipy_spectral</code> and <code>jet</code> lose some detail, noted in the frame next to each ramp inside the node.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Position along the colormap, 0 to 1. Values outside are clamped</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Reverse</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Run the colormap from 1 to 0, like matplotlib’s _r maps</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Category</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Group of colormaps, as in matplotlib’s colormap reference</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Uniform</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Perceptually uniform sequential colormap, used when Category is Uniform</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Sequential</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Sequential colormap, used when Category is Sequential</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sequential 2</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Sequential (2) colormap, used when Category is Sequential 2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Diverging</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Diverging colormap, used when Category is Diverging</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Cyclic</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Cyclic colormap, used when Category is Cyclic</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Qualitative</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Qualitative colormap, used when Category is Qualitative</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Miscellaneous</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Miscellaneous colormap, used when Category is Miscellaneous</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Color</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Colour of the selected colormap at Value</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.color.html#molecularnodes.nodes.geometry.ColorMatplotlib"><code>nodes.geometry.ColorMatplotlib</code></a></p>
+</section>
 <section id="color-mix-intermediate" class="level2">
 <h2 class="anchored" data-anchor-id="color-mix-intermediate">Color Mix Intermediate</h2>
 <p>Mix between two colors, potentially via an intermediate color. Use either linear or OKLab color spaces</p>
@@ -1411,6 +1556,100 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 <p>API Reference: <a href="../api/reference/nodes.color.html#molecularnodes.nodes.geometry.ColorPLDDT"><code>nodes.geometry.ColorPLDDT</code></a></p>
+</section>
+<section id="color-pymol" class="level2">
+<h2 class="anchored" data-anchor-id="color-pymol">Color PyMOL</h2>
+<p>A named colour from PyMOL, with the value PyMOL gives it, so a scene can match a figure or session made in PyMOL. Pick the group with <code class="custom-menu">Category</code>, then the colour from that group’s menu; the groups follow PyMOL’s own Color menu, with PyMOL’s element colours as the <code>Elements</code> group. The colours are the same as <code>mol.set_color("pymol:salmon")</code> from Python. PyMOL’s values for some names differ from the CSS colours of the same name, such as <code>green</code> and <code>orange</code>; <a href="../nodes/color.html#color-css"><code class="custom-node">Color CSS</code></a> has those.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Category</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Group of colours, as in PyMOL’s Color menu</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Reds</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">PyMOL colour, used when Category is Reds</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Greens</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">PyMOL colour, used when Category is Greens</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Blues</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">PyMOL colour, used when Category is Blues</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Yellows</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">PyMOL colour, used when Category is Yellows</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Magentas</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">PyMOL colour, used when Category is Magentas</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Cyans</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">PyMOL colour, used when Category is Cyans</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Oranges</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">PyMOL colour, used when Category is Oranges</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Tints</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">PyMOL colour, used when Category is Tints</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Grays</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">PyMOL colour, used when Category is Grays</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Elements</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">PyMOL colour, used when Category is Elements</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Color</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">The named colour, in linear RGB</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.color.html#molecularnodes.nodes.geometry.ColorPyMOL"><code>nodes.geometry.ColorPyMOL</code></a></p>
 </section>
 <section id="color-rainbow" class="level2">
 <h2 class="anchored" data-anchor-id="color-rainbow">Color Rainbow</h2>
@@ -1662,6 +1901,159 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 <p>API Reference: <a href="../api/reference/nodes.color.html#molecularnodes.nodes.geometry.ColorResName"><code>nodes.geometry.ColorResName</code></a></p>
 </section>
+<section id="color-residue-class" class="level2">
+<h2 class="anchored" data-anchor-id="color-residue-class">Color Residue Class</h2>
+<p>Color amino acids by residue class, with the same classes as <a href="../nodes/select.html#select-residue-class"><code class="custom-node">Select Residue Class</code></a>. Anything that is not an amino acid keeps its current color.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Positively Charged</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Color for ARG, HIS and LYS</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Negatively Charged</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Color for ASP and GLU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Polar Uncharged</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Color for SER, THR, ASN and GLN</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Special Case</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Color for CYS, SEC, GLY and PRO</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hydrophobic</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Color for ALA, VAL, ILE, LEU, MET, PHE, TYR and TRP</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Color</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Residue class colors, and the current color for anything that is not an amino acid</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.color.html#molecularnodes.nodes.geometry.ColorResidueClass"><code>nodes.geometry.ColorResidueClass</code></a></p>
+</section>
+<section id="color-sample-grid" class="level2">
+<h2 class="anchored" data-anchor-id="color-sample-grid">Color Sample Grid</h2>
+<p>Color each point by the value of a float grid at its position, such as an electrostatic potential from APBS on a <code>Style Surface</code>. Pick the volume object with <code class="custom-object">Object</code> and the grid with <code class="custom-string">Grid Name</code>; densities loaded with Molecular Nodes name their grid <code>density</code>. Values from <code class="custom-float">Min</code> to <code class="custom-float">Max</code> blend linearly from <code class="custom-color">A</code> through <code class="custom-color">Intermediate</code> to <code class="custom-color">B</code>, and values outside the range take the end colors. The default -5 to 5 suits an APBS potential in kT/e. <code class="custom-float">Value</code> outputs the sampled value, trilinearly interpolated, and is zero outside the grid. Densities are stored as 32-bit float grids, as Blender’s grid nodes return zero for 64-bit (<code>DOUBLE</code>) grids. Place it in a <code>Set Color</code> after a style to color the style’s own points (each surface vertex), or before a style to color the atoms by the value at their centres. Pick the density itself in <code class="custom-object">Object</code>, styled or not: density styles turn the volume into a mesh, but <a href="../nodes/density.html#import-volume"><code class="custom-node">Import Volume</code></a> keeps the grid in the bundle of its output as <code>MN Grid &lt;Name&gt;</code> and the styles pass it on, so the node samples the grid named <code class="custom-string">Grid Name</code> there, otherwise the grid of that name in the object’s own volume. The grid is sampled in world space, so moving either object moves the molecule through the grid.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Object</td>
+<td style="text-align: left;"><code class="custom-object">Object</code></td>
+<td style="text-align: left;">Object holding the grid to sample: a density loaded with Molecular Nodes, styled or not, or any volume object</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Grid Name</td>
+<td style="text-align: left;"><code class="custom-string">String</code></td>
+<td style="text-align: left;">Name of the grid to sample: the Name of the density’s Import Volume node (<code>density</code> by default), or a grid of the object’s own volume</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Min</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Grid value mapped to color A, in the grid’s own units (kT/e for an APBS potential)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Max</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Grid value mapped to color B, in the grid’s own units</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">A</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Color for values at or below Min</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Intermediate</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Color for the value halfway between Min and Max. Colors blend linearly from A to Intermediate to B</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">B</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Color for values at or above Max</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Color</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">Color mapped from the grid value at each point</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Grid value at each point, trilinearly interpolated. Zero outside the grid</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.color.html#molecularnodes.nodes.geometry.ColorSampleGrid"><code>nodes.geometry.ColorSampleGrid</code></a></p>
+</section>
 <section id="color-secondary-structure" class="level2">
 <h2 class="anchored" data-anchor-id="color-secondary-structure">Color Secondary Structure</h2>
 <p><strong>Inputs</strong></p>
@@ -1762,6 +2154,45 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 <p>API Reference: <a href="../api/reference/nodes.color.html#molecularnodes.nodes.geometry.ColorToLCh"><code>nodes.geometry.ColorToLCh</code></a></p>
+</section>
+<section id="color-vmd" class="level2">
+<h2 class="anchored" data-anchor-id="color-vmd">Color VMD</h2>
+<p>A named colour from VMD, with the value VMD gives it by default, in VMD’s colour ID order (<code>blue</code> is ID 0). The colours are the same as <code>mol.set_color("vmd:mauve")</code> from Python. VMD’s values for some names differ from the CSS colours of the same name, such as <code>gray</code> and <code>green</code>; <a href="../nodes/color.html#color-css"><code class="custom-node">Color CSS</code></a> has those.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Color</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">VMD colour, in colour ID order (0 to 32)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Color</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;">The named colour, in linear RGB</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.color.html#molecularnodes.nodes.geometry.ColorVMD"><code>nodes.geometry.ColorVMD</code></a></p>
 </section>
 <section id="lch-to-color" class="level2">
 <h2 class="anchored" data-anchor-id="lch-to-color">LCh to Color</h2>
@@ -2381,8 +2812,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../nodes/curves.html" class="pagination-link" aria-label="Curves">
-        <span class="nav-page-text">Curves</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../nodes/compositor.html" class="pagination-link" aria-label="Compositor">
+        <span class="nav-page-text">Compositor</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

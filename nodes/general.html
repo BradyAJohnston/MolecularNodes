@@ -37,7 +37,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
 <link href="../nodes/animate.html" rel="next">
-<link href="../nodes/materials.html" rel="prev">
+<link href="../nodes/index.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -215,12 +215,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/general.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">General</span></a>
   </div>
@@ -241,6 +235,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -271,6 +271,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -343,12 +349,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#assembly-id" id="toc-assembly-id" class="nav-link active" data-scroll-target="#assembly-id">Assembly ID</a></li>
-  <li><a href="#edge-length" id="toc-edge-length" class="nav-link" data-scroll-target="#edge-length">Edge Length</a></li>
-  <li><a href="#image-id" id="toc-image-id" class="nav-link" data-scroll-target="#image-id">Image ID</a></li>
-  <li><a href="#symmetry-id" id="toc-symmetry-id" class="nav-link" data-scroll-target="#symmetry-id">Symmetry ID</a></li>
-  <li><a href="#color-ao" id="toc-color-ao" class="nav-link" data-scroll-target="#color-ao">Color AO</a></li>
-  <li><a href="#flat-internal" id="toc-flat-internal" class="nav-link" data-scroll-target="#flat-internal">Flat Internal</a></li>
+  <li><a href="#edge-length" id="toc-edge-length" class="nav-link active" data-scroll-target="#edge-length">Edge Length</a></li>
   </ul>
 </nav>
     </div>
@@ -374,50 +375,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </header>
 
 
-<section id="assembly-id" class="level2">
-<h2 class="anchored" data-anchor-id="assembly-id">Assembly ID</h2>
-<p>Read the <code>frame_id</code> attribute, created when multiple frames from a trajectory are merged into a single structure</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 24%">
-<col style="width: 24%">
-<col style="width: 52%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">assembly_id</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Read the <code>frame_id</code> attribute from the geometry</td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.general.html#molecularnodes.nodes.geometry.AssemblyID"><code>nodes.geometry.AssemblyID</code></a></p>
-</section>
 <section id="edge-length" class="level2">
 <h2 class="anchored" data-anchor-id="edge-length">Edge Length</h2>
 <p><strong>Outputs</strong></p>
@@ -438,200 +395,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 <p>API Reference: <a href="../api/reference/nodes.general.html#molecularnodes.nodes.geometry.EdgeLength"><code>nodes.geometry.EdgeLength</code></a></p>
-</section>
-<section id="image-id" class="level2">
-<h2 class="anchored" data-anchor-id="image-id">Image ID</h2>
-<p>Read the <code>frame_id</code> attribute, created when multiple frames from a trajectory are merged into a single structure</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 24%">
-<col style="width: 24%">
-<col style="width: 52%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">image_id</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Read the <code>image_id</code> attribute from the geometry</td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.general.html#molecularnodes.nodes.geometry.ImageID"><code>nodes.geometry.ImageID</code></a></p>
-</section>
-<section id="symmetry-id" class="level2">
-<h2 class="anchored" data-anchor-id="symmetry-id">Symmetry ID</h2>
-<p>Read the <code>frame_id</code> attribute, created when multiple frames from a trajectory are merged into a single structure</p>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 24%">
-<col style="width: 24%">
-<col style="width: 52%">
-</colgroup>
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">sym_id</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Read the <code>frame_id</code> attribute from the geometry</td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.general.html#molecularnodes.nodes.geometry.SymmetryID"><code>nodes.geometry.SymmetryID</code></a></p>
-</section>
-<section id="color-ao" class="level2">
-<h2 class="anchored" data-anchor-id="color-ao">Color AO</h2>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Color</td>
-<td style="text-align: left;"><code class="custom-color">Color</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Menu</td>
-<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">AO Space</td>
-<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Distance</td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Exponent</td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Result</td>
-<td style="text-align: left;"><code class="custom-color">Color</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.general.html#molecularnodes.nodes.shader.ColorAO"><code>nodes.shader.ColorAO</code></a></p>
-</section>
-<section id="flat-internal" class="level2">
-<h2 class="anchored" data-anchor-id="flat-internal">Flat Internal</h2>
-<p><strong>Inputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Outline</td>
-<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Threshold</td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Thickness</td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p><strong>Outputs</strong></p>
-<table class="caption-top table">
-<thead>
-<tr class="header">
-<th style="text-align: left;">Name</th>
-<th style="text-align: left;">Type</th>
-<th style="text-align: left;">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td style="text-align: left;">Emission</td>
-<td style="text-align: left;"><code class="custom-shader">Shader</code></td>
-<td style="text-align: left;"></td>
-</tr>
-</tbody>
-</table>
-<p>API Reference: <a href="../api/reference/nodes.general.html#molecularnodes.nodes.shader.FlatInternal"><code>nodes.shader.FlatInternal</code></a></p>
 
 
 </section>
@@ -1039,8 +802,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../nodes/materials.html" class="pagination-link" aria-label="Materials">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Materials</span>
+      <a href="../nodes/index.html" class="pagination-link" aria-label="Overview">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Overview</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

@@ -71,7 +71,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
-<link href="../../api/reference/nodes.curves.html" rel="next">
+<link href="../../api/reference/nodes.compositor.html" rel="next">
 <link href="../../api/reference/nodes.attributes.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
@@ -82,7 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -230,7 +230,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.materials.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.color.html">Color</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.general.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.color.html">Color</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -274,6 +274,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../api/pubchem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Small Molecules from PubChem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../api/trajectories.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Trajectories</span></a>
   </div>
@@ -312,6 +318,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/solvent.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Solvent Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/electrostatics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Electrostatics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -367,8 +379,20 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.molecule.DSSPManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.molecule.DSSPManager</span></a>
+  <a href="../../api/reference/entities.molecule.CalculationManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.CalculationManager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.DSSPCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.DSSPCalculation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.HBondCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.HBondCalculation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -565,12 +589,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -591,6 +609,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.color.html" class="sidebar-item-text sidebar-link active">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -621,6 +645,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -710,99 +740,135 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#inputs-2" id="toc-inputs-2" class="nav-link" data-scroll-target="#inputs-2">Inputs</a></li>
   <li><a href="#outputs-2" id="toc-outputs-2" class="nav-link" data-scroll-target="#outputs-2">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.ColorCommon" id="toc-molecularnodes.nodes.geometry.ColorCommon" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorCommon">Color Common</a>
+  <li><a href="#molecularnodes.nodes.geometry.ColorCSS" id="toc-molecularnodes.nodes.geometry.ColorCSS" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorCSS">Color CSS</a>
   <ul class="collapse">
   <li><a href="#parameters-3" id="toc-parameters-3" class="nav-link" data-scroll-target="#parameters-3">Parameters</a></li>
   <li><a href="#inputs-3" id="toc-inputs-3" class="nav-link" data-scroll-target="#inputs-3">Inputs</a></li>
   <li><a href="#outputs-3" id="toc-outputs-3" class="nav-link" data-scroll-target="#outputs-3">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.ColorElement" id="toc-molecularnodes.nodes.geometry.ColorElement" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorElement">Color Element</a>
+  <li><a href="#molecularnodes.nodes.geometry.ColorCommon" id="toc-molecularnodes.nodes.geometry.ColorCommon" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorCommon">Color Common</a>
   <ul class="collapse">
   <li><a href="#parameters-4" id="toc-parameters-4" class="nav-link" data-scroll-target="#parameters-4">Parameters</a></li>
   <li><a href="#inputs-4" id="toc-inputs-4" class="nav-link" data-scroll-target="#inputs-4">Inputs</a></li>
   <li><a href="#outputs-4" id="toc-outputs-4" class="nav-link" data-scroll-target="#outputs-4">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.ColorGoodsell" id="toc-molecularnodes.nodes.geometry.ColorGoodsell" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorGoodsell">Color Goodsell</a>
+  <li><a href="#molecularnodes.nodes.geometry.ColorElement" id="toc-molecularnodes.nodes.geometry.ColorElement" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorElement">Color Element</a>
   <ul class="collapse">
   <li><a href="#parameters-5" id="toc-parameters-5" class="nav-link" data-scroll-target="#parameters-5">Parameters</a></li>
   <li><a href="#inputs-5" id="toc-inputs-5" class="nav-link" data-scroll-target="#inputs-5">Inputs</a></li>
   <li><a href="#outputs-5" id="toc-outputs-5" class="nav-link" data-scroll-target="#outputs-5">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.ColorMixIntermediate" id="toc-molecularnodes.nodes.geometry.ColorMixIntermediate" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorMixIntermediate">Color Mix Intermediate</a>
+  <li><a href="#molecularnodes.nodes.geometry.ColorGoodsell" id="toc-molecularnodes.nodes.geometry.ColorGoodsell" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorGoodsell">Color Goodsell</a>
   <ul class="collapse">
   <li><a href="#parameters-6" id="toc-parameters-6" class="nav-link" data-scroll-target="#parameters-6">Parameters</a></li>
   <li><a href="#inputs-6" id="toc-inputs-6" class="nav-link" data-scroll-target="#inputs-6">Inputs</a></li>
   <li><a href="#outputs-6" id="toc-outputs-6" class="nav-link" data-scroll-target="#outputs-6">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.ColorOKLabMix" id="toc-molecularnodes.nodes.geometry.ColorOKLabMix" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorOKLabMix">Color OKLab Mix</a>
+  <li><a href="#molecularnodes.nodes.geometry.ColorMatplotlib" id="toc-molecularnodes.nodes.geometry.ColorMatplotlib" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorMatplotlib">Color matplotlib</a>
   <ul class="collapse">
   <li><a href="#parameters-7" id="toc-parameters-7" class="nav-link" data-scroll-target="#parameters-7">Parameters</a></li>
   <li><a href="#inputs-7" id="toc-inputs-7" class="nav-link" data-scroll-target="#inputs-7">Inputs</a></li>
   <li><a href="#outputs-7" id="toc-outputs-7" class="nav-link" data-scroll-target="#outputs-7">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.ColorOKLabOffset" id="toc-molecularnodes.nodes.geometry.ColorOKLabOffset" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorOKLabOffset">Color OKLab Offset</a>
+  <li><a href="#molecularnodes.nodes.geometry.ColorMixIntermediate" id="toc-molecularnodes.nodes.geometry.ColorMixIntermediate" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorMixIntermediate">Color Mix Intermediate</a>
   <ul class="collapse">
   <li><a href="#parameters-8" id="toc-parameters-8" class="nav-link" data-scroll-target="#parameters-8">Parameters</a></li>
   <li><a href="#inputs-8" id="toc-inputs-8" class="nav-link" data-scroll-target="#inputs-8">Inputs</a></li>
   <li><a href="#outputs-8" id="toc-outputs-8" class="nav-link" data-scroll-target="#outputs-8">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.ColorPLDDT" id="toc-molecularnodes.nodes.geometry.ColorPLDDT" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorPLDDT">Color pLDDT</a>
+  <li><a href="#molecularnodes.nodes.geometry.ColorOKLabMix" id="toc-molecularnodes.nodes.geometry.ColorOKLabMix" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorOKLabMix">Color OKLab Mix</a>
   <ul class="collapse">
   <li><a href="#parameters-9" id="toc-parameters-9" class="nav-link" data-scroll-target="#parameters-9">Parameters</a></li>
   <li><a href="#inputs-9" id="toc-inputs-9" class="nav-link" data-scroll-target="#inputs-9">Inputs</a></li>
   <li><a href="#outputs-9" id="toc-outputs-9" class="nav-link" data-scroll-target="#outputs-9">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.ColorRainbow" id="toc-molecularnodes.nodes.geometry.ColorRainbow" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorRainbow">Color Rainbow</a>
+  <li><a href="#molecularnodes.nodes.geometry.ColorOKLabOffset" id="toc-molecularnodes.nodes.geometry.ColorOKLabOffset" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorOKLabOffset">Color OKLab Offset</a>
   <ul class="collapse">
   <li><a href="#parameters-10" id="toc-parameters-10" class="nav-link" data-scroll-target="#parameters-10">Parameters</a></li>
   <li><a href="#inputs-10" id="toc-inputs-10" class="nav-link" data-scroll-target="#inputs-10">Inputs</a></li>
   <li><a href="#outputs-10" id="toc-outputs-10" class="nav-link" data-scroll-target="#outputs-10">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.ColorResName" id="toc-molecularnodes.nodes.geometry.ColorResName" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorResName">Color Res Name</a>
+  <li><a href="#molecularnodes.nodes.geometry.ColorPLDDT" id="toc-molecularnodes.nodes.geometry.ColorPLDDT" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorPLDDT">Color pLDDT</a>
   <ul class="collapse">
   <li><a href="#parameters-11" id="toc-parameters-11" class="nav-link" data-scroll-target="#parameters-11">Parameters</a></li>
   <li><a href="#inputs-11" id="toc-inputs-11" class="nav-link" data-scroll-target="#inputs-11">Inputs</a></li>
   <li><a href="#outputs-11" id="toc-outputs-11" class="nav-link" data-scroll-target="#outputs-11">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.ColorSecondaryStructure" id="toc-molecularnodes.nodes.geometry.ColorSecondaryStructure" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorSecondaryStructure">Color Secondary Structure</a>
+  <li><a href="#molecularnodes.nodes.geometry.ColorPyMOL" id="toc-molecularnodes.nodes.geometry.ColorPyMOL" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorPyMOL">Color PyMOL</a>
   <ul class="collapse">
   <li><a href="#parameters-12" id="toc-parameters-12" class="nav-link" data-scroll-target="#parameters-12">Parameters</a></li>
   <li><a href="#inputs-12" id="toc-inputs-12" class="nav-link" data-scroll-target="#inputs-12">Inputs</a></li>
   <li><a href="#outputs-12" id="toc-outputs-12" class="nav-link" data-scroll-target="#outputs-12">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.ColorToLCh" id="toc-molecularnodes.nodes.geometry.ColorToLCh" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorToLCh">Color to LCh</a>
+  <li><a href="#molecularnodes.nodes.geometry.ColorRainbow" id="toc-molecularnodes.nodes.geometry.ColorRainbow" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorRainbow">Color Rainbow</a>
   <ul class="collapse">
   <li><a href="#parameters-13" id="toc-parameters-13" class="nav-link" data-scroll-target="#parameters-13">Parameters</a></li>
   <li><a href="#inputs-13" id="toc-inputs-13" class="nav-link" data-scroll-target="#inputs-13">Inputs</a></li>
   <li><a href="#outputs-13" id="toc-outputs-13" class="nav-link" data-scroll-target="#outputs-13">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.LChToColor" id="toc-molecularnodes.nodes.geometry.LChToColor" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.LChToColor">LCh to Color</a>
+  <li><a href="#molecularnodes.nodes.geometry.ColorResName" id="toc-molecularnodes.nodes.geometry.ColorResName" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorResName">Color Res Name</a>
   <ul class="collapse">
   <li><a href="#parameters-14" id="toc-parameters-14" class="nav-link" data-scroll-target="#parameters-14">Parameters</a></li>
   <li><a href="#inputs-14" id="toc-inputs-14" class="nav-link" data-scroll-target="#inputs-14">Inputs</a></li>
   <li><a href="#outputs-14" id="toc-outputs-14" class="nav-link" data-scroll-target="#outputs-14">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.RandomColor" id="toc-molecularnodes.nodes.geometry.RandomColor" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.RandomColor">Random Color</a>
+  <li><a href="#molecularnodes.nodes.geometry.ColorResidueClass" id="toc-molecularnodes.nodes.geometry.ColorResidueClass" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorResidueClass">Color Residue Class</a>
   <ul class="collapse">
   <li><a href="#parameters-15" id="toc-parameters-15" class="nav-link" data-scroll-target="#parameters-15">Parameters</a></li>
   <li><a href="#inputs-15" id="toc-inputs-15" class="nav-link" data-scroll-target="#inputs-15">Inputs</a></li>
   <li><a href="#outputs-15" id="toc-outputs-15" class="nav-link" data-scroll-target="#outputs-15">Outputs</a></li>
   </ul></li>
-  <li><a href="#molecularnodes.nodes.geometry.SetColor" id="toc-molecularnodes.nodes.geometry.SetColor" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SetColor">Set Color</a>
+  <li><a href="#molecularnodes.nodes.geometry.ColorSampleGrid" id="toc-molecularnodes.nodes.geometry.ColorSampleGrid" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorSampleGrid">Color Sample Grid</a>
   <ul class="collapse">
   <li><a href="#parameters-16" id="toc-parameters-16" class="nav-link" data-scroll-target="#parameters-16">Parameters</a></li>
   <li><a href="#inputs-16" id="toc-inputs-16" class="nav-link" data-scroll-target="#inputs-16">Inputs</a></li>
   <li><a href="#outputs-16" id="toc-outputs-16" class="nav-link" data-scroll-target="#outputs-16">Outputs</a></li>
   </ul></li>
+  <li><a href="#molecularnodes.nodes.geometry.ColorSecondaryStructure" id="toc-molecularnodes.nodes.geometry.ColorSecondaryStructure" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorSecondaryStructure">Color Secondary Structure</a>
+  <ul class="collapse">
+  <li><a href="#parameters-17" id="toc-parameters-17" class="nav-link" data-scroll-target="#parameters-17">Parameters</a></li>
+  <li><a href="#inputs-17" id="toc-inputs-17" class="nav-link" data-scroll-target="#inputs-17">Inputs</a></li>
+  <li><a href="#outputs-17" id="toc-outputs-17" class="nav-link" data-scroll-target="#outputs-17">Outputs</a></li>
+  </ul></li>
+  <li><a href="#molecularnodes.nodes.geometry.ColorToLCh" id="toc-molecularnodes.nodes.geometry.ColorToLCh" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorToLCh">Color to LCh</a>
+  <ul class="collapse">
+  <li><a href="#parameters-18" id="toc-parameters-18" class="nav-link" data-scroll-target="#parameters-18">Parameters</a></li>
+  <li><a href="#inputs-18" id="toc-inputs-18" class="nav-link" data-scroll-target="#inputs-18">Inputs</a></li>
+  <li><a href="#outputs-18" id="toc-outputs-18" class="nav-link" data-scroll-target="#outputs-18">Outputs</a></li>
+  </ul></li>
+  <li><a href="#molecularnodes.nodes.geometry.ColorVMD" id="toc-molecularnodes.nodes.geometry.ColorVMD" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.ColorVMD">Color VMD</a>
+  <ul class="collapse">
+  <li><a href="#parameters-19" id="toc-parameters-19" class="nav-link" data-scroll-target="#parameters-19">Parameters</a></li>
+  <li><a href="#inputs-19" id="toc-inputs-19" class="nav-link" data-scroll-target="#inputs-19">Inputs</a></li>
+  <li><a href="#outputs-19" id="toc-outputs-19" class="nav-link" data-scroll-target="#outputs-19">Outputs</a></li>
+  </ul></li>
+  <li><a href="#molecularnodes.nodes.geometry.LChToColor" id="toc-molecularnodes.nodes.geometry.LChToColor" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.LChToColor">LCh to Color</a>
+  <ul class="collapse">
+  <li><a href="#parameters-20" id="toc-parameters-20" class="nav-link" data-scroll-target="#parameters-20">Parameters</a></li>
+  <li><a href="#inputs-20" id="toc-inputs-20" class="nav-link" data-scroll-target="#inputs-20">Inputs</a></li>
+  <li><a href="#outputs-20" id="toc-outputs-20" class="nav-link" data-scroll-target="#outputs-20">Outputs</a></li>
+  </ul></li>
+  <li><a href="#molecularnodes.nodes.geometry.RandomColor" id="toc-molecularnodes.nodes.geometry.RandomColor" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.RandomColor">Random Color</a>
+  <ul class="collapse">
+  <li><a href="#parameters-21" id="toc-parameters-21" class="nav-link" data-scroll-target="#parameters-21">Parameters</a></li>
+  <li><a href="#inputs-21" id="toc-inputs-21" class="nav-link" data-scroll-target="#inputs-21">Inputs</a></li>
+  <li><a href="#outputs-21" id="toc-outputs-21" class="nav-link" data-scroll-target="#outputs-21">Outputs</a></li>
+  </ul></li>
+  <li><a href="#molecularnodes.nodes.geometry.SetColor" id="toc-molecularnodes.nodes.geometry.SetColor" class="nav-link" data-scroll-target="#molecularnodes.nodes.geometry.SetColor">Set Color</a>
+  <ul class="collapse">
+  <li><a href="#parameters-22" id="toc-parameters-22" class="nav-link" data-scroll-target="#parameters-22">Parameters</a></li>
+  <li><a href="#inputs-22" id="toc-inputs-22" class="nav-link" data-scroll-target="#inputs-22">Inputs</a></li>
+  <li><a href="#outputs-22" id="toc-outputs-22" class="nav-link" data-scroll-target="#outputs-22">Outputs</a></li>
+  </ul></li>
   <li><a href="#molecularnodes.nodes.shader.MNColor" id="toc-molecularnodes.nodes.shader.MNColor" class="nav-link" data-scroll-target="#molecularnodes.nodes.shader.MNColor">MN Color</a>
   <ul class="collapse">
-  <li><a href="#outputs-17" id="toc-outputs-17" class="nav-link" data-scroll-target="#outputs-17">Outputs</a></li>
+  <li><a href="#outputs-23" id="toc-outputs-23" class="nav-link" data-scroll-target="#outputs-23">Outputs</a></li>
   </ul></li>
   </ul>
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.materials.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.color.html">Color</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.general.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.color.html">Color</a></li></ol></nav></header>
 
 
 
@@ -1213,20 +1279,90 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
-<section id="molecularnodes.nodes.geometry.ColorCommon" class="level1">
-<h1>Color Common</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorCommon(</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    hydrogen<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    carbon<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    nitrogen<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    oxygen<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    phosphorous<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    sulfur<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="molecularnodes.nodes.geometry.ColorCSS" class="level1">
+<h1>Color CSS</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorCSS(color<span class="op">=</span><span class="st">'steelblue'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
-<p>GUI reference: <a href="../../nodes/color.html#color-common">Color Common</a>.</p>
+<p>GUI reference: <a href="../../nodes/color.html#color-css">Color CSS</a>.</p>
 <section id="parameters-3" class="level2 doc-section doc-section-parameters">
 <h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-3">Parameters</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>color</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['aliceblue', 'antiquewhite', 'aqua', 'aquamarine', 'azure', 'beige', 'bisque', 'black', 'blanchedalmond', 'blue', 'blueviolet', 'brown', 'burlywood', 'cadetblue', 'chartreuse', 'chocolate', 'coral', 'cornflowerblue', 'cornsilk', 'crimson', 'cyan', 'darkblue', 'darkcyan', 'darkgoldenrod', 'darkgray', 'darkgreen', 'darkgrey', 'darkkhaki', 'darkmagenta', 'darkolivegreen', 'darkorange', 'darkorchid', 'darkred', 'darksalmon', 'darkseagreen', 'darkslateblue', 'darkslategray', 'darkslategrey', 'darkturquoise', 'darkviolet', 'deeppink', 'deepskyblue', 'dimgray', 'dimgrey', 'dodgerblue', 'firebrick', 'floralwhite', 'forestgreen', 'fuchsia', 'gainsboro', 'ghostwhite', 'gold', 'goldenrod', 'gray', 'green', 'greenyellow', 'grey', 'honeydew', 'hotpink', 'indianred', 'indigo', 'ivory', 'khaki', 'lavender', 'lavenderblush', 'lawngreen', 'lemonchiffon', 'lightblue', 'lightcoral', 'lightcyan', 'lightgoldenrodyellow', 'lightgray', 'lightgreen', 'lightgrey', 'lightpink', 'lightsalmon', 'lightseagreen', 'lightskyblue', 'lightslategray', 'lightslategrey', 'lightsteelblue', 'lightyellow', 'lime', 'limegreen', 'linen', 'magenta', 'maroon', 'mediumaquamarine', 'mediumblue', 'mediumorchid', 'mediumpurple', 'mediumseagreen', 'mediumslateblue', 'mediumspringgreen', 'mediumturquoise', 'mediumvioletred', 'midnightblue', 'mintcream', 'mistyrose', 'moccasin', 'navajowhite', 'navy', 'oldlace', 'olive', 'olivedrab', 'orange', 'orangered', 'orchid', 'palegoldenrod', 'palegreen', 'paleturquoise', 'palevioletred', 'papayawhip', 'peachpuff', 'peru', 'pink', 'plum', 'powderblue', 'purple', 'rebeccapurple', 'red', 'rosybrown', 'royalblue', 'saddlebrown', 'salmon', 'sandybrown', 'seagreen', 'seashell', 'sienna', 'silver', 'skyblue', 'slateblue', 'slategray', 'slategrey', 'snow', 'springgreen', 'steelblue', 'tan', 'teal', 'thistle', 'tomato', 'turquoise', 'violet', 'wheat', 'white', 'whitesmoke', 'yellow', 'yellowgreen']</td>
+<td>CSS colour name, as used by MolViewSpec and ChimeraX</td>
+<td><code class="custom-string">'steelblue'</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-3" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-3">Inputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 24%">
+<col style="width: 65%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.color</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>CSS colour name, as used by MolViewSpec and ChimeraX</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-3" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-3">Outputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.color</td>
+<td><code class="custom-color">ColorSocket</code></td>
+<td>The named colour, in linear RGB</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.nodes.geometry.ColorCommon" class="level1">
+<h1>Color Common</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorCommon(</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    hydrogen<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    carbon<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    nitrogen<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    oxygen<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    phosphorous<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    sulfur<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/color.html#color-common">Color Common</a>.</p>
+<section id="parameters-4" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-4">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -1282,8 +1418,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-3" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-3">Inputs</h2>
+<section id="inputs-4" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-4">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 18%">
@@ -1331,8 +1467,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-3" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-3">Outputs</h2>
+<section id="outputs-4" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-4">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -1358,92 +1494,92 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.ColorElement" class="level1">
 <h1>Color Element</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorElement(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    h<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    he<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    li<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    be<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    b<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    c<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    n<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    o<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    f<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    ne<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    na<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    mg<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    al<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    si<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    p<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    s<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    cl<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    ar<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    k<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    ca<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    sc<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    ti<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    v<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    cr<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    mn<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    fe<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>    co<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    ni<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    cu<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    zn<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>    ga<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    ge<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>    as_<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    se<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>    br<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>    kr<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>    rb<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>    sr<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>    zr<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>    nb<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>    mo<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>    tc<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>    ru<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>    rh<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>    pd<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>    ag<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>    cd<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>    in_<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>    sn<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>    sb<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>    te<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>    i<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>    xe<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>    cs<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>    ba<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>    la<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a>    ce<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-60"><a href="#cb5-60" aria-hidden="true" tabindex="-1"></a>    pr<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-61"><a href="#cb5-61" aria-hidden="true" tabindex="-1"></a>    nd<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-62"><a href="#cb5-62" aria-hidden="true" tabindex="-1"></a>    pm<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-63"><a href="#cb5-63" aria-hidden="true" tabindex="-1"></a>    sm<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-64"><a href="#cb5-64" aria-hidden="true" tabindex="-1"></a>    eu<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-65"><a href="#cb5-65" aria-hidden="true" tabindex="-1"></a>    gd<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-66"><a href="#cb5-66" aria-hidden="true" tabindex="-1"></a>    tb<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-67"><a href="#cb5-67" aria-hidden="true" tabindex="-1"></a>    dy<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-68"><a href="#cb5-68" aria-hidden="true" tabindex="-1"></a>    ho<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-69"><a href="#cb5-69" aria-hidden="true" tabindex="-1"></a>    er<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-70"><a href="#cb5-70" aria-hidden="true" tabindex="-1"></a>    tm<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-71"><a href="#cb5-71" aria-hidden="true" tabindex="-1"></a>    yb<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-72"><a href="#cb5-72" aria-hidden="true" tabindex="-1"></a>    lu<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-73"><a href="#cb5-73" aria-hidden="true" tabindex="-1"></a>    hf<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-74"><a href="#cb5-74" aria-hidden="true" tabindex="-1"></a>    ta<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-75"><a href="#cb5-75" aria-hidden="true" tabindex="-1"></a>    w<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-76"><a href="#cb5-76" aria-hidden="true" tabindex="-1"></a>    re<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-77"><a href="#cb5-77" aria-hidden="true" tabindex="-1"></a>    os<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-78"><a href="#cb5-78" aria-hidden="true" tabindex="-1"></a>    ir<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-79"><a href="#cb5-79" aria-hidden="true" tabindex="-1"></a>    pt<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-80"><a href="#cb5-80" aria-hidden="true" tabindex="-1"></a>    au<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-81"><a href="#cb5-81" aria-hidden="true" tabindex="-1"></a>    hg<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb5-82"><a href="#cb5-82" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorElement(</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    h<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    he<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    li<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    be<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    b<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    c<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    n<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    o<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    f<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    ne<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    na<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    mg<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    al<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    si<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    p<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    s<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    cl<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    ar<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    k<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    ca<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    sc<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    ti<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    v<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    cr<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    mn<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    fe<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    co<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    ni<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    cu<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    zn<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    ga<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    ge<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    as_<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    se<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    br<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    kr<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    rb<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    sr<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    y<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    zr<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>    nb<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>    mo<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>    tc<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>    ru<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>    rh<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>    pd<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>    ag<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>    cd<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>    in_<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>    sn<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>    sb<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>    te<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>    i<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>    xe<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>    cs<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>    ba<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>    la<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a>    ce<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>    pr<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>    nd<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a>    pm<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>    sm<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>    eu<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>    gd<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>    tb<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>    dy<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a>    ho<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>    er<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>    tm<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a>    yb<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>    lu<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a>    hf<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>    ta<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>    w<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-76"><a href="#cb6-76" aria-hidden="true" tabindex="-1"></a>    re<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-77"><a href="#cb6-77" aria-hidden="true" tabindex="-1"></a>    os<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-78"><a href="#cb6-78" aria-hidden="true" tabindex="-1"></a>    ir<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-79"><a href="#cb6-79" aria-hidden="true" tabindex="-1"></a>    pt<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-80"><a href="#cb6-80" aria-hidden="true" tabindex="-1"></a>    au<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-81"><a href="#cb6-81" aria-hidden="true" tabindex="-1"></a>    hg<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb6-82"><a href="#cb6-82" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/color.html#color-element">Color Element</a>.</p>
-<section id="parameters-4" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-4">Parameters</h2>
+<section id="parameters-5" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-5">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 8%">
@@ -1943,8 +2079,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-4" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-4">Inputs</h2>
+<section id="inputs-5" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-5">Inputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2357,8 +2493,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-4" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-4">Outputs</h2>
+<section id="outputs-5" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-5">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 11%">
@@ -2384,11 +2520,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.ColorGoodsell" class="level1">
 <h1>Color Goodsell</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorGoodsell(color<span class="op">=</span><span class="va">None</span>, factor<span class="op">=</span><span class="fl">0.3</span>, invert<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorGoodsell(color<span class="op">=</span><span class="va">None</span>, factor<span class="op">=</span><span class="fl">0.3</span>, invert<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/color.html#color-goodsell">Color Goodsell</a>.</p>
-<section id="parameters-5" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-5">Parameters</h2>
+<section id="parameters-6" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-6">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 6%">
@@ -2426,8 +2562,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-5" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-5">Inputs</h2>
+<section id="inputs-6" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-6">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -2460,8 +2596,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-5" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-5">Outputs</h2>
+<section id="outputs-6" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-6">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 11%">
@@ -2485,20 +2621,205 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
+<section id="molecularnodes.nodes.geometry.ColorMatplotlib" class="level1">
+<h1>Color matplotlib</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorMatplotlib(</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    value<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    reverse<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    category<span class="op">=</span><span class="st">'Uniform'</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    uniform<span class="op">=</span><span class="st">'viridis'</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    sequential<span class="op">=</span><span class="st">'Greys'</span>,</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    sequential_2<span class="op">=</span><span class="st">'binary'</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    diverging<span class="op">=</span><span class="st">'PiYG'</span>,</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>    cyclic<span class="op">=</span><span class="st">'twilight'</span>,</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>    qualitative<span class="op">=</span><span class="st">'Pastel1'</span>,</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>    miscellaneous<span class="op">=</span><span class="st">'ocean'</span>,</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/color.html#color-matplotlib">Color matplotlib</a>.</p>
+<section id="parameters-7" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-7">Parameters</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>value</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Position along the colormap, 0 to 1. Values outside are clamped</td>
+<td><code>0.5</code></td>
+</tr>
+<tr class="even">
+<td>reverse</td>
+<td><code class="custom-bool">InputBoolean</code></td>
+<td>Run the colormap from 1 to 0, like matplotlib’s _r maps</td>
+<td><code class="custom-bool">False</code></td>
+</tr>
+<tr class="odd">
+<td>category</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['Uniform', 'Sequential', 'Sequential 2', 'Diverging', 'Cyclic', 'Qualitative', 'Miscellaneous']</td>
+<td>Group of colormaps, as in matplotlib’s colormap reference</td>
+<td><code class="custom-string">'Uniform'</code></td>
+</tr>
+<tr class="even">
+<td>uniform</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['viridis', 'plasma', 'inferno', 'magma', 'cividis']</td>
+<td>Perceptually uniform sequential colormap, used when Category is Uniform</td>
+<td><code class="custom-string">'viridis'</code></td>
+</tr>
+<tr class="odd">
+<td>sequential</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['Greys', 'Purples', 'Blues', 'Greens', 'Oranges', 'Reds', 'YlOrBr', 'YlOrRd', 'OrRd', 'PuRd', 'RdPu', 'BuPu', 'GnBu', 'PuBu', 'YlGnBu', 'PuBuGn', 'BuGn', 'YlGn']</td>
+<td>Sequential colormap, used when Category is Sequential</td>
+<td><code class="custom-string">'Greys'</code></td>
+</tr>
+<tr class="even">
+<td>sequential_2</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['binary', 'gray', 'bone', 'pink', 'spring', 'summer', 'autumn', 'winter', 'cool', 'Wistia', 'hot', 'afmhot', 'gist_heat', 'copper']</td>
+<td>Sequential (2) colormap, used when Category is Sequential 2</td>
+<td><code class="custom-string">'binary'</code></td>
+</tr>
+<tr class="odd">
+<td>diverging</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['PiYG', 'PRGn', 'BrBG', 'PuOr', 'RdGy', 'RdBu', 'RdYlBu', 'RdYlGn', 'Spectral', 'coolwarm', 'bwr', 'seismic', 'berlin', 'managua', 'vanimo']</td>
+<td>Diverging colormap, used when Category is Diverging</td>
+<td><code class="custom-string">'PiYG'</code></td>
+</tr>
+<tr class="even">
+<td>cyclic</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['twilight', 'twilight_shifted', 'hsv']</td>
+<td>Cyclic colormap, used when Category is Cyclic</td>
+<td><code class="custom-string">'twilight'</code></td>
+</tr>
+<tr class="odd">
+<td>qualitative</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['Pastel1', 'Pastel2', 'Paired', 'Accent', 'Dark2', 'Set1', 'Set2', 'Set3', 'tab10', 'tab20', 'tab20b', 'tab20c', 'okabe_ito']</td>
+<td>Qualitative colormap, used when Category is Qualitative</td>
+<td><code class="custom-string">'Pastel1'</code></td>
+</tr>
+<tr class="even">
+<td>miscellaneous</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['ocean', 'gist_earth', 'terrain', 'gist_stern', 'gnuplot', 'gnuplot2', 'CMRmap', 'cubehelix', 'brg', 'gist_rainbow', 'rainbow', 'jet', 'turbo', 'nipy_spectral', 'gist_ncar']</td>
+<td>Miscellaneous colormap, used when Category is Miscellaneous</td>
+<td><code class="custom-string">'ocean'</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-7" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-7">Inputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 20%">
+<col style="width: 64%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.value</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Position along the colormap, 0 to 1. Values outside are clamped</td>
+</tr>
+<tr class="even">
+<td>i.reverse</td>
+<td><code class="custom-bool">BooleanSocket</code></td>
+<td>Run the colormap from 1 to 0, like matplotlib’s _r maps</td>
+</tr>
+<tr class="odd">
+<td>i.category</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>Group of colormaps, as in matplotlib’s colormap reference</td>
+</tr>
+<tr class="even">
+<td>i.uniform</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>Perceptually uniform sequential colormap, used when Category is Uniform</td>
+</tr>
+<tr class="odd">
+<td>i.sequential</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>Sequential colormap, used when Category is Sequential</td>
+</tr>
+<tr class="even">
+<td>i.sequential_2</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>Sequential (2) colormap, used when Category is Sequential 2</td>
+</tr>
+<tr class="odd">
+<td>i.diverging</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>Diverging colormap, used when Category is Diverging</td>
+</tr>
+<tr class="even">
+<td>i.cyclic</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>Cyclic colormap, used when Category is Cyclic</td>
+</tr>
+<tr class="odd">
+<td>i.qualitative</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>Qualitative colormap, used when Category is Qualitative</td>
+</tr>
+<tr class="even">
+<td>i.miscellaneous</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>Miscellaneous colormap, used when Category is Miscellaneous</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-7" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-7">Outputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 30%">
+<col style="width: 57%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.color</td>
+<td><code class="custom-color">ColorSocket</code></td>
+<td>Colour of the selected colormap at Value</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="molecularnodes.nodes.geometry.ColorMixIntermediate" class="level1">
 <h1>Color Mix Intermediate</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorMixIntermediate(</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    factor<span class="op">=</span><span class="fl">0.5</span>,</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    menu<span class="op">=</span><span class="st">'Linear'</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    socket_2<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    a<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    socket_4<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    b<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorMixIntermediate(</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    factor<span class="op">=</span><span class="fl">0.5</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    menu<span class="op">=</span><span class="st">'Linear'</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    socket_2<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    a<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    socket_4<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    b<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/color.html#color-mix-intermediate">Color Mix Intermediate</a>.</p>
-<section id="parameters-6" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-6">Parameters</h2>
+<section id="parameters-8" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-8">Parameters</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2548,8 +2869,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-6" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-6">Inputs</h2>
+<section id="inputs-8" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-8">Inputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2592,8 +2913,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-6" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-6">Outputs</h2>
+<section id="outputs-8" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-8">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2614,11 +2935,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.ColorOKLabMix" class="level1">
 <h1>Color OKLab Mix</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorOKLabMix(factor<span class="op">=</span><span class="fl">0.5</span>, a<span class="op">=</span><span class="va">None</span>, b<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorOKLabMix(factor<span class="op">=</span><span class="fl">0.5</span>, a<span class="op">=</span><span class="va">None</span>, b<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/color.html#color-oklab-mix">Color OKLab Mix</a>.</p>
-<section id="parameters-7" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-7">Parameters</h2>
+<section id="parameters-9" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-9">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -2656,8 +2977,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-7" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-7">Inputs</h2>
+<section id="inputs-9" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-9">Inputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2685,8 +3006,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-7" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-7">Outputs</h2>
+<section id="outputs-9" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-9">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2707,18 +3028,18 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.ColorOKLabOffset" class="level1">
 <h1>Color OKLab Offset</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorOKLabOffset(</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    colorspace<span class="op">=</span><span class="st">'OKLab'</span>,</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    luminance<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    saturation<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    lightness<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    hue<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorOKLabOffset(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    color<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    colorspace<span class="op">=</span><span class="st">'OKLab'</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    luminance<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    saturation<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    lightness<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    hue<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/color.html#color-oklab-offset">Color OKLab Offset</a>.</p>
-<section id="parameters-8" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-8">Parameters</h2>
+<section id="parameters-10" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-10">Parameters</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2768,8 +3089,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-8" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-8">Inputs</h2>
+<section id="inputs-10" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-10">Inputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2812,8 +3133,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-8" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-8">Outputs</h2>
+<section id="outputs-10" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-10">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2834,11 +3155,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.ColorPLDDT" class="level1">
 <h1>Color pLDDT</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorPLDDT(_50<span class="op">=</span><span class="va">None</span>, _70<span class="op">=</span><span class="va">None</span>, socket_2<span class="op">=</span><span class="va">None</span>, socket_3<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorPLDDT(_50<span class="op">=</span><span class="va">None</span>, _70<span class="op">=</span><span class="va">None</span>, socket_2<span class="op">=</span><span class="va">None</span>, socket_3<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/color.html#color-plddt">Color pLDDT</a>.</p>
-<section id="parameters-9" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-9">Parameters</h2>
+<section id="parameters-11" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-11">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 11%">
@@ -2882,8 +3203,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-9" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-9">Inputs</h2>
+<section id="inputs-11" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-11">Inputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -2916,8 +3237,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-9" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-9">Outputs</h2>
+<section id="outputs-11" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-11">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -2941,21 +3262,213 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
+<section id="molecularnodes.nodes.geometry.ColorPyMOL" class="level1">
+<h1>Color PyMOL</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorPyMOL(</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    category<span class="op">=</span><span class="st">'Reds'</span>,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    reds<span class="op">=</span><span class="st">'red'</span>,</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    greens<span class="op">=</span><span class="st">'green'</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    blues<span class="op">=</span><span class="st">'blue'</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    yellows<span class="op">=</span><span class="st">'yellow'</span>,</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    magentas<span class="op">=</span><span class="st">'magenta'</span>,</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    cyans<span class="op">=</span><span class="st">'cyan'</span>,</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    oranges<span class="op">=</span><span class="st">'orange'</span>,</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    tints<span class="op">=</span><span class="st">'wheat'</span>,</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    grays<span class="op">=</span><span class="st">'white'</span>,</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    elements<span class="op">=</span><span class="st">'actinium'</span>,</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/color.html#color-pymol">Color PyMOL</a>.</p>
+<section id="parameters-12" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-12">Parameters</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>category</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['Reds', 'Greens', 'Blues', 'Yellows', 'Magentas', 'Cyans', 'Oranges', 'Tints', 'Grays', 'Elements']</td>
+<td>Group of colours, as in PyMOL’s Color menu</td>
+<td><code class="custom-string">'Reds'</code></td>
+</tr>
+<tr class="even">
+<td>reds</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['red', 'tv_red', 'raspberry', 'darksalmon', 'salmon', 'deepsalmon', 'warmpink', 'firebrick', 'ruby', 'chocolate', 'brown']</td>
+<td>PyMOL colour, used when Category is Reds</td>
+<td><code class="custom-string">'red'</code></td>
+</tr>
+<tr class="odd">
+<td>greens</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['green', 'tv_green', 'chartreuse', 'splitpea', 'smudge', 'palegreen', 'limegreen', 'lime', 'limon', 'forest']</td>
+<td>PyMOL colour, used when Category is Greens</td>
+<td><code class="custom-string">'green'</code></td>
+</tr>
+<tr class="even">
+<td>blues</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['blue', 'tv_blue', 'marine', 'slate', 'lightblue', 'skyblue', 'purpleblue', 'deepblue', 'density']</td>
+<td>PyMOL colour, used when Category is Blues</td>
+<td><code class="custom-string">'blue'</code></td>
+</tr>
+<tr class="odd">
+<td>yellows</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['yellow', 'tv_yellow', 'paleyellow', 'yelloworange', 'limon', 'wheat', 'sand']</td>
+<td>PyMOL colour, used when Category is Yellows</td>
+<td><code class="custom-string">'yellow'</code></td>
+</tr>
+<tr class="even">
+<td>magentas</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['magenta', 'lightmagenta', 'hotpink', 'pink', 'lightpink', 'dirtyviolet', 'violet', 'violetpurple', 'purple', 'deeppurple']</td>
+<td>PyMOL colour, used when Category is Magentas</td>
+<td><code class="custom-string">'magenta'</code></td>
+</tr>
+<tr class="odd">
+<td>cyans</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['cyan', 'palecyan', 'aquamarine', 'greencyan', 'teal', 'deepteal', 'lightteal']</td>
+<td>PyMOL colour, used when Category is Cyans</td>
+<td><code class="custom-string">'cyan'</code></td>
+</tr>
+<tr class="even">
+<td>oranges</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['orange', 'tv_orange', 'brightorange', 'lightorange', 'yelloworange', 'olive', 'deepolive']</td>
+<td>PyMOL colour, used when Category is Oranges</td>
+<td><code class="custom-string">'orange'</code></td>
+</tr>
+<tr class="odd">
+<td>tints</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['wheat', 'palegreen', 'lightblue', 'paleyellow', 'lightpink', 'palecyan', 'lightorange', 'bluewhite']</td>
+<td>PyMOL colour, used when Category is Tints</td>
+<td><code class="custom-string">'wheat'</code></td>
+</tr>
+<tr class="even">
+<td>grays</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['white', 'gray90', 'gray80', 'gray70', 'gray60', 'gray50', 'gray40', 'gray30', 'gray20', 'gray10', 'black']</td>
+<td>PyMOL colour, used when Category is Grays</td>
+<td><code class="custom-string">'white'</code></td>
+</tr>
+<tr class="odd">
+<td>elements</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['actinium', 'aluminum', 'americium', 'antimony', 'argon', 'arsenic', 'astatine', 'barium', 'berkelium', 'beryllium', 'bismuth', 'bohrium', 'boron', 'bromine', 'cadmium', 'calcium', 'californium', 'carbon', 'cerium', 'cesium', 'chlorine', 'chromium', 'cobalt', 'copper', 'curium', 'deuterium', 'dubnium', 'dysprosium', 'einsteinium', 'erbium', 'europium', 'fermium', 'fluorine', 'francium', 'gadolinium', 'gallium', 'germanium', 'gold', 'hafnium', 'hassium', 'helium', 'holmium', 'hydrogen', 'indium', 'iodine', 'iridium', 'iron', 'krypton', 'lanthanum', 'lawrencium', 'lead', 'lithium', 'lutetium', 'magnesium', 'manganese', 'meitnerium', 'mendelevium', 'mercury', 'molybdenum', 'neodymium', 'neon', 'neptunium', 'nickel', 'niobium', 'nitrogen', 'nobelium', 'osmium', 'oxygen', 'palladium', 'phosphorus', 'platinum', 'plutonium', 'polonium', 'potassium', 'praseodymium', 'promethium', 'protactinium', 'radium', 'radon', 'rhenium', 'rhodium', 'rubidium', 'ruthenium', 'rutherfordium', 'samarium', 'scandium', 'seaborgium', 'selenium', 'silicon', 'silver', 'sodium', 'strontium', 'sulfur', 'tantalum', 'technetium', 'tellurium', 'terbium', 'thallium', 'thorium', 'thulium', 'tin', 'titanium', 'tungsten', 'uranium', 'vanadium', 'xenon', 'ytterbium', 'yttrium', 'zinc', 'zirconium']</td>
+<td>PyMOL colour, used when Category is Elements</td>
+<td><code class="custom-string">'actinium'</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-12" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-12">Inputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 25%">
+<col style="width: 58%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.category</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>Group of colours, as in PyMOL’s Color menu</td>
+</tr>
+<tr class="even">
+<td>i.reds</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>PyMOL colour, used when Category is Reds</td>
+</tr>
+<tr class="odd">
+<td>i.greens</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>PyMOL colour, used when Category is Greens</td>
+</tr>
+<tr class="even">
+<td>i.blues</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>PyMOL colour, used when Category is Blues</td>
+</tr>
+<tr class="odd">
+<td>i.yellows</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>PyMOL colour, used when Category is Yellows</td>
+</tr>
+<tr class="even">
+<td>i.magentas</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>PyMOL colour, used when Category is Magentas</td>
+</tr>
+<tr class="odd">
+<td>i.cyans</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>PyMOL colour, used when Category is Cyans</td>
+</tr>
+<tr class="even">
+<td>i.oranges</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>PyMOL colour, used when Category is Oranges</td>
+</tr>
+<tr class="odd">
+<td>i.tints</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>PyMOL colour, used when Category is Tints</td>
+</tr>
+<tr class="even">
+<td>i.grays</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>PyMOL colour, used when Category is Grays</td>
+</tr>
+<tr class="odd">
+<td>i.elements</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>PyMOL colour, used when Category is Elements</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-12" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-12">Outputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.color</td>
+<td><code class="custom-color">ColorSocket</code></td>
+<td>The named colour, in linear RGB</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="molecularnodes.nodes.geometry.ColorRainbow" class="level1">
 <h1>Color Rainbow</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorRainbow(</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    factor<span class="op">=</span><span class="st">'Chain'</span>,</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    color_space<span class="op">=</span><span class="st">'HSV'</span>,</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    offset<span class="op">=</span><span class="fl">0.0</span>,</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    hsl_saturation<span class="op">=</span><span class="fl">0.8</span>,</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    hsl_value<span class="op">=</span><span class="fl">0.8</span>,</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    oklab_luminance<span class="op">=</span><span class="fl">0.94</span>,</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    oklab_chroma<span class="op">=</span><span class="fl">0.2</span>,</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorRainbow(</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    factor<span class="op">=</span><span class="st">'Chain'</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    color_space<span class="op">=</span><span class="st">'HSV'</span>,</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    offset<span class="op">=</span><span class="fl">0.0</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    hsl_saturation<span class="op">=</span><span class="fl">0.8</span>,</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    hsl_value<span class="op">=</span><span class="fl">0.8</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    oklab_luminance<span class="op">=</span><span class="fl">0.94</span>,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    oklab_chroma<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/color.html#color-rainbow">Color Rainbow</a>.</p>
-<section id="parameters-10" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-10">Parameters</h2>
+<section id="parameters-13" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-13">Parameters</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3011,8 +3524,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-10" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-10">Inputs</h2>
+<section id="inputs-13" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-13">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 11%">
@@ -3065,8 +3578,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-10" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-10">Outputs</h2>
+<section id="outputs-13" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-13">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3087,40 +3600,40 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.ColorResName" class="level1">
 <h1>Color Res Name</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorResName(</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    ala<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    arg<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    asn<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    asp<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    cys<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    glu<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    gln<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    gly<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    his<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    ile<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    leu<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>    lys<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>    met<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>    phe<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>    pro<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    ser<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    thr<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    trp<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    tyr<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    val<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    a<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    c<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>    g<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    t<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>    ra<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>    rc<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>    rg<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>    ru<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorResName(</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>    ala<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>    arg<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    asn<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    asp<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    cys<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    glu<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    gln<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    gly<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    his<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    ile<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>    leu<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    lys<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    met<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>    phe<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>    pro<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    ser<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>    thr<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    trp<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    tyr<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    val<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>    a<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    c<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>    g<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>    t<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    ra<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>    rc<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>    rg<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>    ru<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/color.html#color-res-name">Color Res Name</a>.</p>
-<section id="parameters-11" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-11">Parameters</h2>
+<section id="parameters-14" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-14">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 8%">
@@ -3308,8 +3821,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-11" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-11">Inputs</h2>
+<section id="inputs-14" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-14">Inputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3462,8 +3975,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-11" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-11">Outputs</h2>
+<section id="outputs-14" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-14">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3482,18 +3995,309 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
+<section id="molecularnodes.nodes.geometry.ColorResidueClass" class="level1">
+<h1>Color Residue Class</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorResidueClass(</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    positively_charged<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    negatively_charged<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    polar_uncharged<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    special_case<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    hydrophobic<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/color.html#color-residue-class">Color Residue Class</a>.</p>
+<section id="parameters-15" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-15">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 33%">
+<col style="width: 42%">
+<col style="width: 8%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>positively_charged</td>
+<td><code class="custom-color">InputColor</code></td>
+<td>Color for ARG, HIS and LYS</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>negatively_charged</td>
+<td><code class="custom-color">InputColor</code></td>
+<td>Color for ASP and GLU</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>polar_uncharged</td>
+<td><code class="custom-color">InputColor</code></td>
+<td>Color for SER, THR, ASN and GLN</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>special_case</td>
+<td><code class="custom-color">InputColor</code></td>
+<td>Color for CYS, SEC, GLY and PRO</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>hydrophobic</td>
+<td><code class="custom-color">InputColor</code></td>
+<td>Color for ALA, VAL, ILE, LEU, MET, PHE, TYR and TRP</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-15" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-15">Inputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 22%">
+<col style="width: 54%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.positively_charged</td>
+<td><code class="custom-color">ColorSocket</code></td>
+<td>Color for ARG, HIS and LYS</td>
+</tr>
+<tr class="even">
+<td>i.negatively_charged</td>
+<td><code class="custom-color">ColorSocket</code></td>
+<td>Color for ASP and GLU</td>
+</tr>
+<tr class="odd">
+<td>i.polar_uncharged</td>
+<td><code class="custom-color">ColorSocket</code></td>
+<td>Color for SER, THR, ASN and GLN</td>
+</tr>
+<tr class="even">
+<td>i.special_case</td>
+<td><code class="custom-color">ColorSocket</code></td>
+<td>Color for CYS, SEC, GLY and PRO</td>
+</tr>
+<tr class="odd">
+<td>i.hydrophobic</td>
+<td><code class="custom-color">ColorSocket</code></td>
+<td>Color for ALA, VAL, ILE, LEU, MET, PHE, TYR and TRP</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-15" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-15">Outputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 19%">
+<col style="width: 73%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.color</td>
+<td><code class="custom-color">ColorSocket</code></td>
+<td>Residue class colors, and the current color for anything that is not an amino acid</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="molecularnodes.nodes.geometry.ColorSampleGrid" class="level1">
+<h1>Color Sample Grid</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorSampleGrid(</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">object</span><span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    grid_name<span class="op">=</span><span class="st">'density'</span>,</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">min</span><span class="op">=-</span><span class="fl">5.0</span>,</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">max</span><span class="op">=</span><span class="fl">5.0</span>,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    a<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    intermediate<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    b<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/color.html#color-sample-grid">Color Sample Grid</a>.</p>
+<section id="parameters-16" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-16">Parameters</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 6%">
+<col style="width: 21%">
+<col style="width: 65%">
+<col style="width: 6%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>object</td>
+<td><code class="custom-object">InputObject</code></td>
+<td>Object holding the grid to sample: a density loaded with Molecular Nodes, styled or not, or any volume object</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>grid_name</td>
+<td><code class="custom-string">InputString</code></td>
+<td>Name of the grid to sample: the Name of the density’s Import Volume node (<code>density</code> by default), or a grid of the object’s own volume</td>
+<td><code class="custom-string">'density'</code></td>
+</tr>
+<tr class="odd">
+<td>min</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Grid value mapped to color A, in the grid’s own units (kT/e for an APBS potential)</td>
+<td><code>-5.0</code></td>
+</tr>
+<tr class="even">
+<td>max</td>
+<td><code class="custom-float">InputFloat</code></td>
+<td>Grid value mapped to color B, in the grid’s own units</td>
+<td><code>5.0</code></td>
+</tr>
+<tr class="odd">
+<td>a</td>
+<td><code class="custom-color">InputColor</code></td>
+<td>Color for values at or below Min</td>
+<td><code>None</code></td>
+</tr>
+<tr class="even">
+<td>intermediate</td>
+<td><code class="custom-color">InputColor</code></td>
+<td>Color for the value halfway between Min and Max. Colors blend linearly from A to Intermediate to B</td>
+<td><code>None</code></td>
+</tr>
+<tr class="odd">
+<td>b</td>
+<td><code class="custom-color">InputColor</code></td>
+<td>Color for values at or above Max</td>
+<td><code>None</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-16" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-16">Inputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 9%">
+<col style="width: 13%">
+<col style="width: 77%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.object</td>
+<td><code class="custom-object">ObjectSocket</code></td>
+<td>Object holding the grid to sample: a density loaded with Molecular Nodes, styled or not, or any volume object</td>
+</tr>
+<tr class="even">
+<td>i.grid_name</td>
+<td><code class="custom-string">StringSocket</code></td>
+<td>Name of the grid to sample: the Name of the density’s Import Volume node (<code>density</code> by default), or a grid of the object’s own volume</td>
+</tr>
+<tr class="odd">
+<td>i.min</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Grid value mapped to color A, in the grid’s own units (kT/e for an APBS potential)</td>
+</tr>
+<tr class="even">
+<td>i.max</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Grid value mapped to color B, in the grid’s own units</td>
+</tr>
+<tr class="odd">
+<td>i.a</td>
+<td><code class="custom-color">ColorSocket</code></td>
+<td>Color for values at or below Min</td>
+</tr>
+<tr class="even">
+<td>i.intermediate</td>
+<td><code class="custom-color">ColorSocket</code></td>
+<td>Color for the value halfway between Min and Max. Colors blend linearly from A to Intermediate to B</td>
+</tr>
+<tr class="odd">
+<td>i.b</td>
+<td><code class="custom-color">ColorSocket</code></td>
+<td>Color for values at or above Max</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-16" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-16">Outputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 8%">
+<col style="width: 20%">
+<col style="width: 70%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.color</td>
+<td><code class="custom-color">ColorSocket</code></td>
+<td>Color mapped from the grid value at each point</td>
+</tr>
+<tr class="even">
+<td>o.value</td>
+<td><code class="custom-float">FloatSocket</code></td>
+<td>Grid value at each point, trilinearly interpolated. Zero outside the grid</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="molecularnodes.nodes.geometry.ColorSecondaryStructure" class="level1">
 <h1>Color Secondary Structure</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorSecondaryStructure(</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>    helix<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    sheet<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    loop<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    other<span class="op">=</span><span class="va">None</span>,</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorSecondaryStructure(</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    helix<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    sheet<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    loop<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    other<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/color.html#color-secondary-structure">Color Secondary Structure</a>.</p>
-<section id="parameters-12" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-12">Parameters</h2>
+<section id="parameters-17" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-17">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 7%">
@@ -3537,8 +4341,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-12" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-12">Inputs</h2>
+<section id="inputs-17" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-17">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -3576,8 +4380,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-12" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-12">Outputs</h2>
+<section id="outputs-17" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-17">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 12%">
@@ -3603,11 +4407,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.ColorToLCh" class="level1">
 <h1>Color to LCh</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorToLCh(color<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorToLCh(color<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/color.html#color-to-lch">Color to LCh</a>.</p>
-<section id="parameters-13" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-13">Parameters</h2>
+<section id="parameters-18" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-18">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -3633,8 +4437,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-13" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-13">Inputs</h2>
+<section id="inputs-18" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-18">Inputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3652,8 +4456,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-13" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-13">Outputs</h2>
+<section id="outputs-18" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-18">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3682,13 +4486,83 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 </section>
 </section>
+<section id="molecularnodes.nodes.geometry.ColorVMD" class="level1">
+<h1>Color VMD</h1>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.ColorVMD(color<span class="op">=</span><span class="st">'blue'</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<!-- link to the GUI node documentation (docs/_renderer.py) -->
+<p>GUI reference: <a href="../../nodes/color.html#color-vmd">Color VMD</a>.</p>
+<section id="parameters-19" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-19">Parameters</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>color</td>
+<td><code class="custom-menu">InputMenu</code> | <a href="https://docs.python.org/3/library/typing.html#typing.Literal">Literal</a>['blue', 'red', 'gray', 'orange', 'yellow', 'tan', 'silver', 'green', 'white', 'pink', 'cyan', 'purple', 'lime', 'mauve', 'ochre', 'iceblue', 'black', 'yellow2', 'yellow3', 'green2', 'green3', 'cyan2', 'cyan3', 'blue2', 'blue3', 'violet', 'violet2', 'magenta', 'magenta2', 'red2', 'red3', 'orange2', 'orange3']</td>
+<td>VMD colour, in colour ID order (0 to 32)</td>
+<td><code class="custom-string">'blue'</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="inputs-19" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-19">Inputs</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 12%">
+<col style="width: 28%">
+<col style="width: 59%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>i.color</td>
+<td><code class="custom-menu">MenuSocket</code></td>
+<td>VMD colour, in colour ID order (0 to 32)</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outputs-19" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-19">Outputs</h2>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>o.color</td>
+<td><code class="custom-color">ColorSocket</code></td>
+<td>The named colour, in linear RGB</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
 <section id="molecularnodes.nodes.geometry.LChToColor" class="level1">
 <h1>LCh to Color</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.LChToColor(l<span class="op">=</span><span class="fl">0.0</span>, c<span class="op">=</span><span class="fl">0.0</span>, h<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.LChToColor(l<span class="op">=</span><span class="fl">0.0</span>, c<span class="op">=</span><span class="fl">0.0</span>, h<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/color.html#lch-to-color">LCh to Color</a>.</p>
-<section id="parameters-14" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-14">Parameters</h2>
+<section id="parameters-20" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-20">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -3726,8 +4600,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-14" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-14">Inputs</h2>
+<section id="inputs-20" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-20">Inputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3755,8 +4629,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-14" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-14">Outputs</h2>
+<section id="outputs-20" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-20">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3777,19 +4651,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.RandomColor" class="level1">
 <h1>Random Color</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.RandomColor(</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span><span class="op">=</span><span class="dv">0</span>,</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    color_seed<span class="op">=</span><span class="dv">0</span>,</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    colorspace<span class="op">=</span><span class="st">'HSL'</span>,</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    hsl_saturation<span class="op">=</span><span class="fl">0.6</span>,</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    hsl_lightness<span class="op">=</span><span class="fl">0.6</span>,</span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    oklab_luminance<span class="op">=</span><span class="fl">0.9</span>,</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    oklab_chroma<span class="op">=</span><span class="fl">0.2</span>,</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.RandomColor(</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">id</span><span class="op">=</span>Default.ID_OR_INDEX,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    color_seed<span class="op">=</span><span class="dv">0</span>,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    colorspace<span class="op">=</span><span class="st">'HSL'</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    hsl_saturation<span class="op">=</span><span class="fl">0.6</span>,</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>    hsl_lightness<span class="op">=</span><span class="fl">0.6</span>,</span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    oklab_luminance<span class="op">=</span><span class="fl">0.9</span>,</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>    oklab_chroma<span class="op">=</span><span class="fl">0.2</span>,</span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/color.html#random-color">Random Color</a>.</p>
-<section id="parameters-15" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-15">Parameters</h2>
+<section id="parameters-21" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-21">Parameters</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3803,8 +4677,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td>id</td>
 <td><code class="custom-int">InputInteger</code></td>
-<td>ID</td>
-<td><code>0</code></td>
+<td>ID. When unconnected: The “id” attribute if available, otherwise the index.</td>
+<td><code>Default.ID_OR_INDEX</code></td>
 </tr>
 <tr class="even">
 <td>color_seed</td>
@@ -3845,8 +4719,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-15" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-15">Inputs</h2>
+<section id="inputs-21" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-21">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 20%">
@@ -3899,8 +4773,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-15" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-15">Outputs</h2>
+<section id="outputs-21" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-21">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -3921,11 +4795,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.SetColor" class="level1">
 <h1>Set Color</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SetColor(atoms<span class="op">=</span><span class="va">None</span>, selection<span class="op">=</span><span class="va">True</span>, color<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.SetColor(atoms<span class="op">=</span><span class="va">None</span>, selection<span class="op">=</span><span class="va">True</span>, color<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/color.html#set-color">Set Color</a>.</p>
-<section id="parameters-16" class="level2 doc-section doc-section-parameters">
-<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-16">Parameters</h2>
+<section id="parameters-22" class="level2 doc-section doc-section-parameters">
+<h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-22">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 9%">
@@ -3963,8 +4837,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="inputs-16" class="level2 doc-section doc-section-inputs">
-<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-16">Inputs</h2>
+<section id="inputs-22" class="level2 doc-section doc-section-inputs">
+<h2 class="doc-section doc-section-inputs anchored" data-anchor-id="inputs-22">Inputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 14%">
@@ -3997,8 +4871,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 </section>
-<section id="outputs-16" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-16">Outputs</h2>
+<section id="outputs-22" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-22">Outputs</h2>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 10%">
@@ -4024,11 +4898,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.shader.MNColor" class="level1">
 <h1>MN Color</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>nodes.shader.MNColor()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>nodes.shader.MNColor()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/color.html#mn-color">MN Color</a>.</p>
-<section id="outputs-17" class="level2 doc-section doc-section-outputs">
-<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-17">Outputs</h2>
+<section id="outputs-23" class="level2 doc-section doc-section-outputs">
+<h2 class="doc-section doc-section-outputs anchored" data-anchor-id="outputs-23">Outputs</h2>
 <table class="caption-top table">
 <thead>
 <tr class="header">
@@ -4463,8 +5337,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../../api/reference/nodes.curves.html" class="pagination-link" aria-label="Curves">
-        <span class="nav-page-text">Curves</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../../api/reference/nodes.compositor.html" class="pagination-link" aria-label="Compositor">
+        <span class="nav-page-text">Compositor</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>

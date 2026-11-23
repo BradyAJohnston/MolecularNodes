@@ -72,7 +72,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../../">
 <link href="../../api/reference/nodes.dna.html" rel="next">
-<link href="../../api/reference/nodes.color.html" rel="prev">
+<link href="../../api/reference/nodes.compositor.html" rel="prev">
 <script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../../site_libs/quarto-html/popper.min.js"></script>
@@ -82,7 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -230,7 +230,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.materials.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.curves.html">Curves</a></li></ol></nav>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.general.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.curves.html">Curves</a></li></ol></nav>
         <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
@@ -274,6 +274,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../api/pubchem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Small Molecules from PubChem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../api/trajectories.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Trajectories</span></a>
   </div>
@@ -312,6 +318,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/solvent.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Solvent Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/electrostatics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Electrostatics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -367,8 +379,20 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.molecule.DSSPManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.molecule.DSSPManager</span></a>
+  <a href="../../api/reference/entities.molecule.CalculationManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.CalculationManager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.DSSPCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.DSSPCalculation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.HBondCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.HBondCalculation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -565,12 +589,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 show">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -591,6 +609,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -621,6 +645,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -744,7 +774,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.materials.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.curves.html">Curves</a></li></ol></nav></header>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../../api/reference/index.html">Reference</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.general.html">Nodes</a></li><li class="breadcrumb-item"><a href="../../api/reference/nodes.curves.html">Curves</a></li></ol></nav></header>
 
 
 
@@ -1217,7 +1247,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="molecularnodes.nodes.geometry.CurveOffsetDot" class="level1">
 <h1>Curve Offset Dot</h1>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.CurveOffsetDot(</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    normal<span class="op">=</span><span class="va">None</span>,</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    normal<span class="op">=</span>Default.NORMAL,</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    offset<span class="op">=-</span><span class="dv">1</span>,</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    threshold_direction<span class="op">=</span><span class="st">'Less Than'</span>,</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    threshold_cutoff<span class="op">=-</span><span class="fl">0.9</span>,</span>
@@ -1241,8 +1271,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td>normal</td>
 <td><code class="custom-vector">InputVector</code></td>
-<td>Normal</td>
-<td><code>None</code></td>
+<td>Normal. When unconnected: The geometry’s normal direction.</td>
+<td><code>Default.NORMAL</code></td>
 </tr>
 <tr class="even">
 <td>offset</td>
@@ -1353,7 +1383,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.CurveRotation" class="level1">
 <h1>Curve Rotation</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.CurveRotation(normal<span class="op">=</span><span class="va">None</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.CurveRotation(normal<span class="op">=</span>Default.NORMAL)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Computes the rotation of the point on the curve, by default using the <code class="custom-attribute">Normal</code> attribute and the <code>Tangent</code> axis</p>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/curves.html#curve-rotation">Curve Rotation</a>.</p>
@@ -1361,10 +1391,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-4">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 5%">
-<col style="width: 28%">
-<col style="width: 58%">
-<col style="width: 7%">
+<col style="width: 3%">
+<col style="width: 20%">
+<col style="width: 66%">
+<col style="width: 8%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1378,8 +1408,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td>normal</td>
 <td><code class="custom-vector">InputVector</code></td>
-<td>The default direction to use as the Secondary Axis / X axis when computing the rotation</td>
-<td><code>None</code></td>
+<td>The default direction to use as the Secondary Axis / X axis when computing the rotation. When unconnected: The geometry’s normal direction.</td>
+<td><code>Default.NORMAL</code></td>
 </tr>
 </tbody>
 </table>
@@ -1506,7 +1536,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="molecularnodes.nodes.geometry.OffsetPointAlongCurve" class="level1">
 <h1>Offset Point Along Curve</h1>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.OffsetPointAlongCurve(point_index<span class="op">=</span><span class="dv">0</span>, offset<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>nodes.geometry.OffsetPointAlongCurve(point_index<span class="op">=</span>Default.INDEX, offset<span class="op">=</span><span class="fl">0.0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Offset along the current point’s curve, by a number of points. 1 offsets by a single point on the curve (regardless of how far away they are). 1.5 offsets to half way between <code>Point Index</code> + 1 and <code>Point Index</code> + 2, returning the <code>Length</code> and the <code>Factor</code> for this point on the curve</p>
 <!-- link to the GUI node documentation (docs/_renderer.py) -->
 <p>GUI reference: <a href="../../nodes/curves.html#offset-point-along-curve">Offset Point Along Curve</a>.</p>
@@ -1514,10 +1544,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-5">Parameters</h2>
 <table class="caption-top table">
 <colgroup>
+<col style="width: 6%">
+<col style="width: 23%">
+<col style="width: 61%">
 <col style="width: 8%">
-<col style="width: 31%">
-<col style="width: 51%">
-<col style="width: 7%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1531,8 +1561,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td>point_index</td>
 <td><code class="custom-int">InputInteger</code></td>
-<td>The field to evaluate at the given <code class="custom-attribute">Index</code> + <code>Offset</code> on the point domain</td>
-<td><code>0</code></td>
+<td>The field to evaluate at the given <code class="custom-attribute">Index</code> + <code>Offset</code> on the point domain. When unconnected: The index from the context.</td>
+<td><code>Default.INDEX</code></td>
 </tr>
 <tr class="even">
 <td>offset</td>
@@ -2023,8 +2053,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../../api/reference/nodes.color.html" class="pagination-link" aria-label="Color">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Color</span>
+      <a href="../../api/reference/nodes.compositor.html" class="pagination-link" aria-label="Compositor">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Compositor</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

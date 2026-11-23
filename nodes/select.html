@@ -37,7 +37,7 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
 <link href="../nodes/simulation.html" rel="next">
-<link href="../nodes/geometry.html" rel="prev">
+<link href="../nodes/materials.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -218,12 +218,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -244,6 +238,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -274,6 +274,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -372,6 +378,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#select-res-id-string" id="toc-select-res-id-string" class="nav-link" data-scroll-target="#select-res-id-string">Select Res ID String</a></li>
   <li><a href="#select-res-name" id="toc-select-res-name" class="nav-link" data-scroll-target="#select-res-name">Select Res Name</a></li>
   <li><a href="#select-res-whole" id="toc-select-res-whole" class="nav-link" data-scroll-target="#select-res-whole">Select Res Whole</a></li>
+  <li><a href="#select-residue-class" id="toc-select-residue-class" class="nav-link" data-scroll-target="#select-residue-class">Select Residue Class</a></li>
   <li><a href="#select-sphere" id="toc-select-sphere" class="nav-link" data-scroll-target="#select-sphere">Select Sphere</a></li>
   <li><a href="#selected-instances" id="toc-selected-instances" class="nav-link" data-scroll-target="#selected-instances">Selected Instances</a></li>
   <li><a href="#separate-atoms" id="toc-separate-atoms" class="nav-link" data-scroll-target="#separate-atoms">Separate Atoms</a></li>
@@ -2338,6 +2345,80 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </table>
 <p>API Reference: <a href="../api/reference/nodes.select.html#molecularnodes.nodes.geometry.SelectResWhole"><code>nodes.geometry.SelectResWhole</code></a></p>
 </section>
+<section id="select-residue-class" class="level2">
+<h2 class="anchored" data-anchor-id="select-residue-class">Select Residue Class</h2>
+<p>Select amino acids by residue class, following the side chain chart on Wikipedia’s <a href="https://en.wikipedia.org/wiki/Amino_acid">Amino acid</a> page: <em>Positively Charged</em> (ARG, HIS, LYS), <em>Negatively Charged</em> (ASP, GLU), <em>Polar Uncharged</em> (SER, THR, ASN, GLN), <em>Special Case</em> (CYS, SEC, GLY, PRO) and <em>Hydrophobic</em> (ALA, VAL, ILE, LEU, MET, PHE, TYR, TRP). Classes are read from the <code class="custom-attribute">res_name</code> attribute, so modified residues follow their parent residue (MSE as MET) and residues without a <code class="custom-attribute">res_name</code> are in no class. HIS is classed as positively charged, although with a side chain pKa near 6 it is mostly neutral at physiological pH.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">And</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">The resulting selection must overlap with this input selection</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Or</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">The resulting selection can be calculated from this node or be from this input selection</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Positively Charged</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">ARG, HIS and LYS</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Negatively Charged</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">ASP and GLU</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Polar Uncharged</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">SER, THR, ASN and GLN</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Special Case</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">CYS, SEC, GLY and PRO</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Hydrophobic</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">ALA, VAL, ILE, LEU, MET, PHE, TYR and TRP</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.select.html#molecularnodes.nodes.geometry.SelectResidueClass"><code>nodes.geometry.SelectResidueClass</code></a></p>
+</section>
 <section id="select-sphere" class="level2">
 <h2 class="anchored" data-anchor-id="select-sphere">Select Sphere</h2>
 <p><a href="https://imgur.com/xdeTZR7.mp4" class="lightbox" data-gallery="quarto-lightbox-gallery-18"><video src="https://imgur.com/xdeTZR7.mp4" class="img-fluid" controls=""></video></a><a href="https://imgur.com/xdeTZR7.mp4">Video</a></p>
@@ -2988,8 +3069,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../nodes/geometry.html" class="pagination-link" aria-label="Geometry">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Geometry</span>
+      <a href="../nodes/materials.html" class="pagination-link" aria-label="Materials">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Materials</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">

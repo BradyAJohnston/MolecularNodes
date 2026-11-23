@@ -82,7 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -347,6 +347,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#installing-the-addon" id="toc-installing-the-addon" class="nav-link" data-scroll-target="#installing-the-addon">Installing the Addon</a>
   <ul class="collapse">
   <li><a href="#thats-it" id="toc-thats-it" class="nav-link" data-scroll-target="#thats-it">That’s it!</a></li>
+  <li><a href="#from-the-command-line" id="toc-from-the-command-line" class="nav-link" data-scroll-target="#from-the-command-line">From the command line</a></li>
   </ul></li>
   <li><a href="#installing-the-startup-template" id="toc-installing-the-startup-template" class="nav-link" data-scroll-target="#installing-the-startup-template">Installing the Startup Template</a></li>
   <li><a href="#start-importing-structures" id="toc-start-importing-structures" class="nav-link" data-scroll-target="#start-importing-structures">Start Importing Structures!</a></li>
@@ -415,6 +416,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h3 class="anchored" data-anchor-id="thats-it">That’s it!</h3>
 <p>All of the additional python packages now come pre-installed. To update the add-on, use the same panel and Blender should automatically detect updates.</p>
 </section>
+<section id="from-the-command-line" class="level3">
+<h3 class="anchored" data-anchor-id="from-the-command-line">From the command line</h3>
+<p>For headless machines and CI, the extension can be installed without opening Blender. Blender refuses to reach the extensions platform unless online access is enabled, so pass <code>--online-mode</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">blender</span> <span class="at">--online-mode</span> <span class="at">--command</span> extension sync</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">blender</span> <span class="at">--online-mode</span> <span class="at">--command</span> extension install <span class="at">--enable</span> molecularnodes</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
 </section>
 <section id="installing-the-startup-template" class="level2">
 <h2 class="anchored" data-anchor-id="installing-the-startup-template">Installing the Startup Template</h2>
@@ -430,12 +437,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="installation-error-missing-biotite-module" class="level3">
 <h3 class="anchored" data-anchor-id="installation-error-missing-biotite-module">Installation error: missing biotite module</h3>
 <p>In some Linux systems, trying to install <code>Molecular Nodes</code> through the <code>Get Extensions</code> panel in Blender may lead to the following error:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Report:</span> Error</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">No</span> module named <span class="st">'biotite.structure.bonds'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">Report:</span> Error</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">No</span> module named <span class="st">'biotite.structure.bonds'</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This is likely due to a mismatch in the Python versions installed in your system and in what Blender expects (see issue <a href="https://github.com/BradyAJohnston/MolecularNodes/issues/629">#629</a>).</p>
 <p>To avoid this issue, try installing Blender through a self-contained package system such as Flatpack or Snap. These package managers usually need to be installed and/or activated in your system.</p>
 <p>For example, after installing Snap in Fedora 40, you can install Blender through Snap with the command which solves the <code>biotite</code> dependency error.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> snap install blender <span class="at">--classic</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sudo</span> snap install blender <span class="at">--classic</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
 </section>

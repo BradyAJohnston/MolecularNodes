@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -218,12 +218,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -244,6 +238,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -274,6 +274,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -370,6 +376,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#edge-info" id="toc-edge-info" class="nav-link" data-scroll-target="#edge-info">Edge Info</a></li>
   <li><a href="#find-bonded-atom" id="toc-find-bonded-atom" class="nav-link" data-scroll-target="#find-bonded-atom">Find Bonded Atom</a></li>
   <li><a href="#find-bonds" id="toc-find-bonds" class="nav-link" data-scroll-target="#find-bonds">Find Bonds</a></li>
+  <li><a href="#find-hbonds" id="toc-find-hbonds" class="nav-link" data-scroll-target="#find-hbonds">Find HBonds</a></li>
   <li><a href="#menu-residue-mask" id="toc-menu-residue-mask" class="nav-link" data-scroll-target="#menu-residue-mask">Menu Residue Mask</a></li>
   <li><a href="#menu-residue-name" id="toc-menu-residue-name" class="nav-link" data-scroll-target="#menu-residue-name">Menu Residue Name</a></li>
   <li><a href="#nucleic-chi" id="toc-nucleic-chi" class="nav-link" data-scroll-target="#nucleic-chi">Nucleic Chi</a></li>
@@ -1100,37 +1107,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Factor</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;">A residues relative position along a chain. 0 being the first residue in a chain, 1 being the last</td>
+<td style="text-align: left;">A residue’s relative position along its chain, 0 for the first residue and 1 for the last</td>
 </tr>
 <tr class="even">
+<td style="text-align: left;">Residue Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index of the residue within its chain, starting at 0 for the first residue</td>
+</tr>
+<tr class="odd">
 <td style="text-align: left;">Residue Count</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
 <td style="text-align: left;">Number of residues in the chain</td>
 </tr>
-<tr class="odd">
-<td style="text-align: left;">Residue Index</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Res ID along the chain if counting from 1</td>
-</tr>
 <tr class="even">
-<td style="text-align: left;">First res_id</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">The first Res ID in a chain (truncated chains start above 1)</td>
+<td style="text-align: left;">Is First</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">If the atom is in the first residue of its chain</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Last res_id</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">The Res ID of the last residue in chain (not equal to Length if chain is truncated)</td>
+<td style="text-align: left;">Is Last</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">If the atom is in the last residue of its chain</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Index of First</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Index in whole structure of the first atom in the chain</td>
+<td style="text-align: left;"><code class="custom-attribute">Index</code> (in the whole structure) of the first atom in the chain</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Index of Last</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Index in the whole structure the last atom in the chain</td>
+<td style="text-align: left;"><code class="custom-attribute">Index</code> (in the whole structure) of the last atom in the chain</td>
 </tr>
 </tbody>
 </table>
@@ -1653,6 +1660,76 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 <p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.FindBonds"><code>nodes.geometry.FindBonds</code></a></p>
+</section>
+<section id="find-hbonds" class="level2">
+<h2 class="anchored" data-anchor-id="find-hbonds">Find HBonds</h2>
+<p>Find hydrogen bonds between the atoms, as fields on the hydrogens</p>
+<p>Finds hydrogen bonds between the input <code class="custom-geometry">Atoms</code> in the node tree, giving for each hydrogen whether it is in a hydrogen bond (<code class="custom-bool">Is HBonded</code>) and the index of its acceptor (<code class="custom-int">Acceptor Index</code>, -1 for other atoms). Each hydrogen is paired with the nearest heavy atom within 1.2 Å as its donor, and nitrogen and oxygen atoms are donors and acceptors. A bond needs the donor and acceptor within <code class="custom-float">Distance</code> and a donor-hydrogen-acceptor angle of at least <code class="custom-float">Angle</code>, the same criteria and defaults as <code>MDAnalysis.analysis.hydrogenbonds</code>. A hydrogen bonds to at most one acceptor, so of a bifurcated hydrogen bond only one is found. Structures need explicit hydrogens.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Atoms</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Atomic geometry to find hydrogen bonds in</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Selection</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Selection of atoms considered as hydrogens, donors and acceptors</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Distance</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Maximum distance between the donor and acceptor in Angstroms</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Angle</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Minimum donor-hydrogen-acceptor angle</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Is HBonded</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">True for each hydrogen in a hydrogen bond</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Acceptor Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index of the acceptor a hydrogen bonds to, -1 for other atoms</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.topology.html#molecularnodes.nodes.geometry.FindHBonds"><code>nodes.geometry.FindHBonds</code></a></p>
 </section>
 <section id="menu-residue-mask" class="level2">
 <h2 class="anchored" data-anchor-id="menu-residue-mask">Menu Residue Mask</h2>
@@ -2312,37 +2389,37 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Factor</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;">An atom’s relative position in a residue, with the first atom being 0 and the last atom being 1</td>
+<td style="text-align: left;">An atom’s relative position in its residue, 0 for the first atom and 1 for the last</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Atom Count</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Number of atoms in a residue</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">Atom Index</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Index of an atom in a residue when counting from 0</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">First atom_name</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">the atom_name for the first atom in a residue</td>
+<td style="text-align: left;">Index of the atom within its residue, starting at 0 for the first atom</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Last atom_name</td>
+<td style="text-align: left;">Atom Count</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">The atom_name for the last atom in a residue</td>
+<td style="text-align: left;">Number of atoms in the residue</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Is First</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">If the atom is the first atom in its residue</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Is Last</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">If the atom is the last atom in its residue</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Index of First</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Index (in the whole structure) for the first atom in a residue</td>
+<td style="text-align: left;"><code class="custom-attribute">Index</code> (in the whole structure) of the first atom in the residue</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Index of Last</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Index (in the whole structure) for the last atom in a residue</td>
+<td style="text-align: left;"><code class="custom-attribute">Index</code> (in the whole structure) of the last atom in the residue</td>
 </tr>
 </tbody>
 </table>
@@ -2669,44 +2746,34 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Atom Factor</td>
+<td style="text-align: left;">Factor</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;">Factor of the atom within the structure, which is the relative position of the <code class="custom-attribute">Index</code> within the overall structure between 0 and 1</td>
+<td style="text-align: left;">An atom’s relative position in the structure, 0 for the first atom and 1 for the last</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Index</td>
+<td style="text-align: left;">Atom Index</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"><code class="custom-attribute">Index</code> of the point within the structure. Equal to the <code class="custom-attribute">Index</code> input node</td>
+<td style="text-align: left;">Index of the atom within the structure, equal to the <code class="custom-attribute">Index</code> input node</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Atom Count</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Number of atoms in the structure, equal to the size of the Point Domain</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Index of First</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"><code class="custom-attribute">Index</code> of first atom in the entire structure, which will always be 0</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Index of Last</td>
-<td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Index of last atom in the entire structure. Equal to <code>Atom Count</code> - 1</td>
+<td style="text-align: left;">Number of atoms in the structure</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Residue Factor</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">A residue’s relative position in the structure, 0 for the first residue and 1 for the last</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Residue Index</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">A unique <code>Group ID</code> that increases whenever <code>Sub Group ID</code> or <code>Group ID</code> change</td>
+<td style="text-align: left;">Index of the residue within the structure, starting at 0 for the first residue</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Residue Count</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Number of residues in the structure</td>
 </tr>
 </tbody>
 </table>

@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -215,12 +215,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -241,6 +235,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -271,6 +271,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -348,9 +354,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#lattice-grid" id="toc-lattice-grid" class="nav-link" data-scroll-target="#lattice-grid">Lattice Grid</a></li>
   <li><a href="#periodic-array" id="toc-periodic-array" class="nav-link" data-scroll-target="#periodic-array">Periodic Array</a></li>
   <li><a href="#periodic-box" id="toc-periodic-box" class="nav-link" data-scroll-target="#periodic-box">Periodic Box</a></li>
+  <li><a href="#periodic-cell" id="toc-periodic-cell" class="nav-link" data-scroll-target="#periodic-cell">Periodic Cell</a></li>
   <li><a href="#periodic-image" id="toc-periodic-image" class="nav-link" data-scroll-target="#periodic-image">Periodic Image</a></li>
+  <li><a href="#periodic-offset" id="toc-periodic-offset" class="nav-link" data-scroll-target="#periodic-offset">Periodic Offset</a></li>
+  <li><a href="#periodic-unwrap" id="toc-periodic-unwrap" class="nav-link" data-scroll-target="#periodic-unwrap">Periodic Unwrap</a></li>
   <li><a href="#rotation-cistem" id="toc-rotation-cistem" class="nav-link" data-scroll-target="#rotation-cistem">Rotation cisTEM</a></li>
   <li><a href="#rotation-relion" id="toc-rotation-relion" class="nav-link" data-scroll-target="#rotation-relion">Rotation RELION</a></li>
+  <li><a href="#symmetry-cubic" id="toc-symmetry-cubic" class="nav-link" data-scroll-target="#symmetry-cubic">Symmetry Cubic</a></li>
+  <li><a href="#symmetry-cyclic" id="toc-symmetry-cyclic" class="nav-link" data-scroll-target="#symmetry-cyclic">Symmetry Cyclic</a></li>
+  <li><a href="#symmetry-dihedral" id="toc-symmetry-dihedral" class="nav-link" data-scroll-target="#symmetry-dihedral">Symmetry Dihedral</a></li>
+  <li><a href="#symmetry-helical" id="toc-symmetry-helical" class="nav-link" data-scroll-target="#symmetry-helical">Symmetry Helical</a></li>
   <li><a href="#tem-rotation" id="toc-tem-rotation" class="nav-link" data-scroll-target="#tem-rotation">TEM Rotation</a></li>
   </ul>
 </nav>
@@ -535,6 +548,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <p>Create a grid of lattice points based on the periodic box vectors.</p>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -546,37 +564,42 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">A</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Box vector A in world units, such as from Periodic Box</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">B</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Box vector B in world units, such as from Periodic Box</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">C</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Box vector C in world units, such as from Periodic Box</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">X</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Number of images along the a vector</td>
+<td style="text-align: left;">Number of lattice points along box vector A</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Y</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Number of images along the b vector</td>
+<td style="text-align: left;">Number of lattice points along box vector B</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Z</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Number of images along the c vector</td>
+<td style="text-align: left;">Number of lattice points along box vector C</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -588,7 +611,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Grid</td>
 <td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">A point at each lattice point, starting at the origin and going along box vectors A, B and C</td>
 </tr>
 </tbody>
 </table>
@@ -615,62 +638,67 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Geometry</td>
 <td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Geometry to copy into each periodic image</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Update</td>
 <td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">Update the box lengths and angles with the simulation</td>
+<td style="text-align: left;">Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">a</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Length of box vector A in world units, where 1 m is 1 nm</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">b</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Length of box vector B in world units, where 1 m is 1 nm</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">c</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Length of box vector C in world units, where 1 m is 1 nm</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">alpha</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Angle between box vectors B and C, in degrees</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">beta</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Angle between box vectors A and C, in degrees</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">gamma</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Angle between box vectors A and B, in degrees</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">X</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Number of images along the a vector</td>
+<td style="text-align: left;">Number of images along box vector A</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Y</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Number of images along the b vector</td>
+<td style="text-align: left;">Number of images along box vector B</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Z</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Number of images along the c vector</td>
+<td style="text-align: left;">Number of images along box vector C</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -682,7 +710,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Instances</td>
 <td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">A copy of the geometry in each periodic image, starting at the original and going along box vectors A, B and C</td>
 </tr>
 </tbody>
 </table>
@@ -690,7 +718,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </section>
 <section id="periodic-box" class="level2">
 <h2 class="anchored" data-anchor-id="periodic-box">Periodic Box</h2>
-<p>Get the box vectors for a trajectory’s periodic simulation box. These vectors can be used to create periodic images of the trajectory</p>
+<p>Get the box vectors for a trajectory’s periodic simulation box. These vectors can be used to create periodic images of the trajectory. <code class="custom-matrix">Matrix</code> holds the same vectors as its columns, so transforming by it converts fractional coordinates of the box to world coordinates, and by its inverse the reverse. The box lengths are in world units, where 1 m is 1 nm, and the angles in degrees, as the trajectory sets them while <code class="custom-bool">Update</code> is on.</p>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
 <colgroup>
@@ -709,42 +737,47 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Update</td>
 <td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">Update the box lengths and angles with the simulation. This does not change anything directly inside of the node tree, but the mda.Universe that updates the positions will also update this node.</td>
+<td style="text-align: left;">Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">a</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Length of box vector A in world units, where 1 m is 1 nm</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">b</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Length of box vector B in world units, where 1 m is 1 nm</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">c</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Length of box vector C in world units, where 1 m is 1 nm</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">alpha</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Angle between box vectors B and C, in degrees</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">beta</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Angle between box vectors A and C, in degrees</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">gamma</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Angle between box vectors A and B, in degrees</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -756,27 +789,127 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">A</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Box vector A in world units, along the X axis</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">B</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Box vector B in world units, in the XY plane</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">C</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Box vector C in world units</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Matrix</td>
+<td style="text-align: left;"><code class="custom-matrix">Matrix</code></td>
+<td style="text-align: left;">The box vectors A, B and C as columns, which transforms fractional coordinates of the box into world coordinates</td>
 </tr>
 </tbody>
 </table>
 <p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.PeriodicBox"><code>nodes.geometry.PeriodicBox</code></a></p>
+</section>
+<section id="periodic-cell" class="level2">
+<h2 class="anchored" data-anchor-id="periodic-cell">Periodic Cell</h2>
+<p>Mesh and edges of the periodic unit cell, the box spanned by the box vectors or the compact cell around its centre</p>
+<p>Mesh of the periodic unit cell, read from the trajectory on every frame while <code class="custom-bool">Update</code> is on. With <code class="custom-menu">Wrap</code> set to <code class="custom-string">Box</code> it is the box spanned by the box vectors; with <code class="custom-string">Compact</code> it is the compact (Wigner-Seitz) cell around the box centre, such as a hexagonal prism for a hexagonal box or a rhombic dodecahedron, matching the <code class="custom-menu">Wrap</code> of <a href="../nodes/ensemble.html#periodic-offset"><code class="custom-node">Periodic Offset</code></a>. <code class="custom-geometry">Mesh</code> is the closed cell and <code class="custom-geometry">Edges</code> its edges as curves, for a wireframe with <code>Curve to Mesh</code>. Both are empty without a box.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Wrap</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">The box spanned by the box vectors, or the compact cell around the box centre (GROMACS <code>-ur compact</code>), matching the Wrap of Periodic Offset</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Update</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">a</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Length of box vector A in world units, where 1 m is 1 nm</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">b</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Length of box vector B in world units, where 1 m is 1 nm</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">c</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Length of box vector C in world units, where 1 m is 1 nm</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Angle between box vectors B and C, in degrees</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">beta</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Angle between box vectors A and C, in degrees</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">gamma</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Angle between box vectors A and B, in degrees</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Mesh</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">The closed cell in world units, empty without a box</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Edges</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">The edges of the cell as curves, without the diagonals of its triangulated faces, empty without a box</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.PeriodicCell"><code>nodes.geometry.PeriodicCell</code></a></p>
 </section>
 <section id="periodic-image" class="level2">
 <h2 class="anchored" data-anchor-id="periodic-image">Periodic Image</h2>
 <p>Get the location of a single lattice point of the trajectory, based on the box vectors and the chosen lattice indices.</p>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -788,37 +921,42 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">A</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Box vector A in world units, such as from Periodic Box</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">B</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Box vector B in world units, such as from Periodic Box</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">C</td>
 <td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Box vector C in world units, such as from Periodic Box</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Image A</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Number of box vectors A from the origin to the image</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Image B</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Number of box vectors B from the origin to the image</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Image C</td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Number of box vectors C from the origin to the image</td>
 </tr>
 </tbody>
 </table>
 <p><strong>Outputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -830,11 +968,216 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Points</td>
 <td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">A single point at the image, Image A × A + Image B × B + Image C × C</td>
 </tr>
 </tbody>
 </table>
 <p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.PeriodicImage"><code>nodes.geometry.PeriodicImage</code></a></p>
+</section>
+<section id="periodic-offset" class="level2">
+<h2 class="anchored" data-anchor-id="periodic-offset">Periodic Offset</h2>
+<p>Offset positions through the periodic box and wrap them back inside it</p>
+<p>Move positions through the periodic box and wrap them back inside it, as when re-centring a simulation box. With <code class="custom-menu">Offset Type</code> set to <code class="custom-string">Factor</code> the <code class="custom-vector">Offset Factor</code> is in fractions of the box vectors, so 0.5 moves by half the box whatever its shape or size. With <code class="custom-string">Distance</code> the <code class="custom-vector">Offset Distance</code> is in world units, where 1 m is 1 nm. Works for orthorhombic and triclinic boxes, which are read from the trajectory on every frame while <code class="custom-bool">Update</code> is on. Without a box the positions are unchanged. <code class="custom-menu">Wrap</code> set to <code class="custom-string">Box</code> wraps into the box spanned by the box vectors, a slanted prism for a triclinic box; <code class="custom-string">Compact</code> moves each position to its image nearest the box centre (GROMACS <code>-ur compact</code>), so a hexagonal box keeps its hexagonal prism shape, using a KD-tree over the 27 neighbouring images.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Positions to move and wrap into the periodic box</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Offset Type</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Give the offset as a factor of the box vectors, or as a distance</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Offset Factor</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Offset as a factor of box vectors A, B and C, so 0.5 moves by half the box along each</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Offset Distance</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Offset as a distance in world units, where 1 m is 1 nm</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Wrap</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Wrap into the box spanned by the box vectors, or into the compact cell around the box centre, putting each position at its image nearest the centre (GROMACS <code>-ur compact</code>). For a hexagonal box the compact cell is a hexagonal prism</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Update</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">a</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Length of box vector A in world units, where 1 m is 1 nm</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">b</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Length of box vector B in world units, where 1 m is 1 nm</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">c</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Length of box vector C in world units, where 1 m is 1 nm</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">alpha</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Angle between box vectors B and C, in degrees</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">beta</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Angle between box vectors A and C, in degrees</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">gamma</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Angle between box vectors A and B, in degrees</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Positions offset and wrapped into the periodic box, or unchanged without a box</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.PeriodicOffset"><code>nodes.geometry.PeriodicOffset</code></a></p>
+</section>
+<section id="periodic-unwrap" class="level2">
+<h2 class="anchored" data-anchor-id="periodic-unwrap">Periodic Unwrap</h2>
+<p>Make groups of atoms whole across the periodic box, such as molecules split by its boundaries</p>
+<p>Make groups of atoms whole where the periodic box has split them across its boundaries. Atoms with the same <code class="custom-int">Group ID</code> are kept together: link <code>fragment_id</code> for bonded molecules, or <code class="custom-attribute">chain_id</code> or <code class="custom-attribute">ures_id</code> for a topology without bonds. Unlinked, each atom is its own group. Each atom moves to the periodic image nearest the circular mean of its group, so every group must be shorter than half the box. <code class="custom-bool">Place Groups</code> wraps the centre of each group into the box, or with <code class="custom-menu">Wrap</code> set to <code class="custom-string">Compact</code> into the compact cell around the box centre, as <a href="../nodes/ensemble.html#periodic-offset"><code class="custom-node">Periodic Offset</code></a> does; otherwise groups stay where they are, nearest their average position. Uses <a href="../nodes/ensemble.html#periodic-offset"><code class="custom-node">Periodic Offset</code></a>.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Positions to make whole across the periodic box</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Group ID</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Atoms with the same ID are kept whole, such as <code>fragment_id</code> for bonded molecules or <code class="custom-attribute">chain_id</code>. Each group must be shorter than half the box</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Place Groups</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Wrap the centre of each group into the periodic box. Otherwise each group stays nearest its average position</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Wrap</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">With Place Groups, wrap each group centre into the box spanned by the box vectors, or into the compact cell around the box centre, as in Periodic Offset</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Update</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Set the box lengths and angles from the trajectory on every frame change, as the molecule updates its positions. Turn off to set them by hand</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">a</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Length of box vector A in world units, where 1 m is 1 nm</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">b</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Length of box vector B in world units, where 1 m is 1 nm</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">c</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Length of box vector C in world units, where 1 m is 1 nm</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">alpha</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Angle between box vectors B and C, in degrees</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">beta</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Angle between box vectors A and C, in degrees</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">gamma</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Angle between box vectors A and B, in degrees</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Positions with each group made whole, or unchanged without a box</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.PeriodicUnwrap"><code>nodes.geometry.PeriodicUnwrap</code></a></p>
 </section>
 <section id="rotation-cistem" class="level2">
 <h2 class="anchored" data-anchor-id="rotation-cistem">Rotation cisTEM</h2>
@@ -889,6 +1232,286 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 <p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.RotationRELION"><code>nodes.geometry.RotationRELION</code></a></p>
+</section>
+<section id="symmetry-cubic" class="level2">
+<h2 class="anchored" data-anchor-id="symmetry-cubic">Symmetry Cubic</h2>
+<p>Build a tetrahedral (T, 12 copies), octahedral (O, 24) or icosahedral (I, 60) assembly from one copy</p>
+<p>Build a cubic assembly from one copy: <code class="custom-menu">Group</code> picks tetrahedral (12 copies, as in Dps), octahedral (24, as in ferritin) or icosahedral (60, as in small virus capsids). At zero <code class="custom-rotation">Orientation</code> the two-folds lie along X, Y and Z with a three-fold along (1, 1, 1), and for icosahedral a five-fold along (0, 1, 1.618); rotate it to match a structure, and set <code class="custom-vector">Centre</code> to the point all the axes pass through. Shares the <code class="custom-float">Animate</code> input with <a href="../nodes/ensemble.html#symmetry-cyclic"><code class="custom-node">Symmetry Cyclic</code></a>.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Geometry to replicate over the group</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Group</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Which cubic point group to build</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Orientation</td>
+<td style="text-align: left;"><code class="custom-rotation">Rotation</code></td>
+<td style="text-align: left;">Rotation of the group’s axes. At zero the two-folds lie along X, Y and Z and a three-fold along (1, 1, 1); for icosahedral a five-fold lies along (0, 1, 1.618)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Centre</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Point all the symmetry axes pass through</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Animate</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">0 places a copy back on the original, 1 builds the full symmetry. Evaluated on each copy, so a field such as Stagger Value moves the copies one after another</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Instances</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.SymmetryCubic"><code>nodes.geometry.SymmetryCubic</code></a></p>
+</section>
+<section id="symmetry-cyclic" class="level2">
+<h2 class="anchored" data-anchor-id="symmetry-cyclic">Symmetry Cyclic</h2>
+<p>Build a cyclic (Cn) assembly: n copies evenly spaced around one axis</p>
+<p>Build a cyclic (Cn) assembly the file does not describe: <code>Order::Integer</code> copies of the geometry evenly spaced about an <code class="custom-vector">Axis</code> passing through <code class="custom-vector">Centre</code>. Rings, pores and most homo-oligomers. The <code class="custom-float">Animate</code> input interpolates each copy from the original (0) to its final placement (1) for assembly animations. It is evaluated per copy, so <a href="../nodes/animate.html#stagger-value"><code class="custom-node">Stagger Value</code></a> moves the copies one after another. Every copy carries a <code>sym_id</code> attribute, readable with the <a href="../nodes/attributes.html#symmetry-id"><code class="custom-node">Symmetry ID</code></a> node.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Geometry to replicate around the axis</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Order</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Number of copies evenly spaced around the axis (the n of Cn)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Axis</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Direction of the symmetry axis</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Centre</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Point the symmetry axis passes through</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Animate</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">0 places a copy back on the original, 1 builds the full symmetry. Evaluated on each copy, so a field such as Stagger Value moves the copies one after another</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Instances</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.SymmetryCyclic"><code>nodes.geometry.SymmetryCyclic</code></a></p>
+</section>
+<section id="symmetry-dihedral" class="level2">
+<h2 class="anchored" data-anchor-id="symmetry-dihedral">Symmetry Dihedral</h2>
+<p>Build a dihedral (Dn) assembly: a ring of n copies plus the same ring flipped by a perpendicular two-fold, giving 2n copies</p>
+<p>Build a dihedral (Dn) assembly: a ring of <code>Order::Integer</code> copies about the <code class="custom-vector">Axis</code>, plus the same ring flipped by a two-fold perpendicular to it, giving 2n copies. Back-to-back rings such as GroEL. Shares the <code class="custom-float">Animate</code> input with <a href="../nodes/ensemble.html#symmetry-cyclic"><code class="custom-node">Symmetry Cyclic</code></a>.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Geometry to replicate around the axis</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Order</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Number of copies in each ring (the n of Dn), giving 2n copies in total</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Axis</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Direction of the main symmetry axis</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Centre</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Point the symmetry axes pass through</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Offset</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Rotation of the flipped ring about the axis, which sets where the perpendicular two-fold lies</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Animate</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">0 places a copy back on the original, 1 builds the full symmetry. Evaluated on each copy, so a field such as Stagger Value moves the copies one after another</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Instances</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.SymmetryDihedral"><code>nodes.geometry.SymmetryDihedral</code></a></p>
+</section>
+<section id="symmetry-helical" class="level2">
+<h2 class="anchored" data-anchor-id="symmetry-helical">Symmetry Helical</h2>
+<p>Build a helical assembly: each subunit advances along the axis by the rise and rotates about it by the twist</p>
+<p>Build a helical filament: <code>Count::Integer</code> subunits, each advanced <code class="custom-float">Rise</code> Angstrom along the <code class="custom-vector">Axis</code> and rotated <code class="custom-float">Twist</code> about it, relative to the one before. Actin, microtubules, amyloid and pili. The defaults are actin’s 27.5 Angstrom rise and -166.7 degree twist. <code>Axial Symmetry::Integer</code> repeats each subunit evenly around the axis for filaments with Cn symmetry, such as amyloid built from two protofilaments (C2). Shares the <code class="custom-float">Animate</code> input with <a href="../nodes/ensemble.html#symmetry-cyclic"><code class="custom-node">Symmetry Cyclic</code></a>.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Geometry</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">Geometry to replicate along the helix</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Count</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Number of subunits to place along the helix, each repeated Axial Symmetry times around the axis</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Rise</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Distance advanced along the axis per subunit, in Angstrom</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Twist</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Angle rotated about the axis per subunit</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Axial Symmetry</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Cn rotational symmetry about the helical axis: each subunit is repeated this many times evenly around the axis, as in filaments built from several protofilaments</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Axis</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Direction of the helical axis</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Centre</td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">Point the helical axis passes through</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Animate</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">0 places a copy back on the original, 1 builds the full symmetry. Evaluated on each copy, so a field such as Stagger Value moves the copies one after another</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Instances</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.ensemble.html#molecularnodes.nodes.geometry.SymmetryHelical"><code>nodes.geometry.SymmetryHelical</code></a></p>
 </section>
 <section id="tem-rotation" class="level2">
 <h2 class="anchored" data-anchor-id="tem-rotation">TEM Rotation</h2>

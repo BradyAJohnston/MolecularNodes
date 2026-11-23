@@ -26,6 +26,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -47,7 +82,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -317,6 +352,8 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <ul class="collapse">
   <li><a href="#point-attributes" id="toc-point-attributes" class="nav-link" data-scroll-target="#point-attributes">Point Attributes</a></li>
   <li><a href="#edge-attributes" id="toc-edge-attributes" class="nav-link" data-scroll-target="#edge-attributes">Edge Attributes</a></li>
+  <li><a href="#attributes-by-format" id="toc-attributes-by-format" class="nav-link" data-scroll-target="#attributes-by-format">Attributes by Format</a></li>
+  <li><a href="#reading-attributes-from-python" id="toc-reading-attributes-from-python" class="nav-link" data-scroll-target="#reading-attributes-from-python">Reading Attributes from Python</a></li>
   </ul></li>
   <li><a href="#domains" id="toc-domains" class="nav-link" data-scroll-target="#domains">Domains</a></li>
   </ul></li>
@@ -444,8 +481,48 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="attributes-1" class="level2">
 <h2 class="anchored" data-anchor-id="attributes-1">Attributes</h2>
 <p>All of the molecular attributes which are defined as strings such as <code class="custom-attribute">chain_id</code>, <code class="custom-attribute">res_name</code>, etc. are stored as integers in the geometry because Geometry Nodes does not support string attributes.</p>
-<p>For <code class="custom-attribute">chain_id</code>, <code class="custom-attribute">entity_id</code> and other dynamic attributes, the unique values are first sorted alphabetically and then assigned an integer value based on their order.</p>
-<p>For other attributes such as <code class="custom-attribute">res_name</code>, they are looked up from the dictionary and assigned an integer value.</p>
+<p>How the integer is assigned depends on the attribute. For the dynamic ones the strings are stored as metadata on the object, so an integer can be mapped back to its string (see <a href="#reading-attributes-from-python">Reading Attributes from Python</a>):</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Attribute</th>
+<th>Integer assigned from</th>
+<th>Strings stored in</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-attribute">chain_id</code></td>
+<td>Position in the alphabetically sorted list of unique chain IDs</td>
+<td><code>mol.props.chain_ids</code></td>
+</tr>
+<tr class="even">
+<td><code class="custom-attribute">entity_id</code></td>
+<td>Position in the <code>entity</code> category of the file, in file order</td>
+<td><code>mol.props.entity_ids</code></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-attribute">segid</code></td>
+<td>Index of the segment, in topology order</td>
+<td><code>mol.props.segments</code></td>
+</tr>
+<tr class="even">
+<td><code class="custom-attribute">atom_types</code></td>
+<td>Position in the sorted list of unique atom types</td>
+<td><code>mol.props.atom_type_unique</code></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-attribute">res_name</code></td>
+<td>Fixed <a href="./data_table.html#residue-names">lookup table</a></td>
+<td></td>
+</tr>
+<tr class="even">
+<td><code class="custom-attribute">atom_name</code></td>
+<td>Fixed <a href="./data_table.html#atom-names">lookup table</a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 <section id="point-attributes" class="level3">
 <h3 class="anchored" data-anchor-id="point-attributes">Point Attributes</h3>
 <table class="caption-top table">
@@ -465,17 +542,17 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="even">
 <td style="text-align: left;"><code class="custom-attribute">b_factor</code></td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;">The temperature factor for the atom on import. If importing an AlphaFold structure this corresponds to the <code class="custom-float">pLDDT</code> value.</td>
+<td style="text-align: left;">The temperature factor for the atom on import. If importing an AlphaFold structure this corresponds to the <code class="custom-float">pLDDT</code> value. For a trajectory whose frames have their own B-factors, such as the models of a multi-model <code>.pdb</code> or <code>.cif</code> file, it is updated on each frame. A file loaded on its own only updates them when they differ between models.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code class="custom-attribute">occupancy</code></td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;">The crystallographic occupancy of the atom, or <code class="custom-float">0.0</code> if the file has none.</td>
+<td style="text-align: left;">The crystallographic occupancy of the atom, or <code class="custom-float">0.0</code> if the file has none. Updated on each frame when the frames have their own occupancies, as for <code class="custom-attribute">b_factor</code>.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code class="custom-attribute">charge</code></td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;">The charge of the atom: partial charges when the topology provides them (e.g.&nbsp;simulation topologies), formal charges from structure files, or <code class="custom-float">0.0</code> if unavailable.</td>
+<td style="text-align: left;">The charge of the atom, only present when the file or topology provides charges: partial charges from simulation topologies, formal charges from structure files. Updated on each frame from the <code>q</code> column of a LAMMPS dump read with <code>additional_columns</code>.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code class="custom-attribute">vdw_radii</code></td>
@@ -483,34 +560,34 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td style="text-align: left;">The radii of the atom, stored in world space (~<code class="custom-float">0.15</code>). Values sourced from <a href="https://en.wikipedia.org/wiki/Atomic_radii_of_the_elements_(data_page)">Wikipedia</a>.</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;"><code class="custom-attribute">lipophobicity</code></td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;">Lipophobicity value for the atom, looked up from its residue and atom name.</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;"><code class="custom-attribute">sec_struct</code></td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
 <td style="text-align: left;">Defines secondary structure for the residue the atom is part of. <code class="custom-int">0</code> for not a protein. <code class="custom-int">1</code> for helices, <code class="custom-int">2</code> for sheets, <code class="custom-int">3</code> for coils / unstructured.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code class="custom-attribute">mass</code></td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
 <td style="text-align: left;">Mass of the element</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td style="text-align: left;"><code class="custom-attribute">chain_id</code></td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">The integer representation of the chain ID, for it’s position in the sorted list of chain IDs in the structure.</td>
+<td style="text-align: left;">Position of the chain ID in the sorted list <code>mol.props.chain_ids</code>. For <code>.cif</code> and <code>.bcif</code> files this is the author chain ID (<code>auth_asym_id</code>), as in <code>.pdb</code> files.</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td style="text-align: left;"><code class="custom-attribute">segid</code></td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
 <td style="text-align: left;">The index of the segment the atom belongs to, when the topology defines segments. The segment names are stored as metadata on the object.</td>
 </tr>
+<tr class="even">
+<td style="text-align: left;"><code>fragment_id</code></td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">The index of the bonded molecule (fragment) the atom belongs to, for structures with bonds. Link it into <code class="custom-int">Group ID</code> of <a href="./nodes/ensemble.html#periodic-unwrap"><code class="custom-node">Periodic Unwrap</code></a> to keep molecules whole.</td>
+</tr>
 <tr class="odd">
 <td style="text-align: left;"><code class="custom-attribute">entity_id</code></td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">Multiple chains can be the same <code>entity</code>, if they are copies of the same protein that appear multiple times in the structure. Also sorted and assigned integers on import.</td>
+<td style="text-align: left;">Multiple chains can be the same <code>entity</code>, if they are copies of the same protein in the structure. Only <code>.cif</code> and <code>.bcif</code> files define entities. Numbered in the file’s order.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code class="custom-attribute">res_name</code></td>
@@ -520,12 +597,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;"><code class="custom-attribute">res_id</code></td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">The residue number, which starts at <code class="custom-int">1</code> for the first residue in each chain. If a structure is truncated it might not start at 1.</td>
+<td style="text-align: left;">The residue number. For <code>.cif</code> and <code>.bcif</code> files this is the author residue number (<code>auth_seq_id</code>), as in <code>.pdb</code> files, so it may not start at <code class="custom-int">1</code> for the first residue in each chain.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code class="custom-attribute">ures_id</code></td>
 <td style="text-align: left;"><code class="custom-int">Int</code></td>
-<td style="text-align: left;">The <code class="custom-attribute">ures_id</code> starts at <code class="custom-int">0</code> and increases by 1 for each residue across the whole structure, compared to the <code class="custom-attribute">res_id</code> which starts at <code class="custom-int">1</code> and restarts at 1 for each chain.</td>
+<td style="text-align: left;">The <code class="custom-attribute">ures_id</code> starts at <code class="custom-int">0</code> and increases by 1 for each residue across the whole structure, unlike <code class="custom-attribute">res_id</code>, which follows the file’s numbering within each chain.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code class="custom-attribute">atomic_number</code></td>
@@ -555,32 +632,32 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="even">
 <td style="text-align: left;"><code class="custom-attribute">is_alpha_carbon</code></td>
 <td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">Whether the atom is an alpha carbon (atom name <code>CA</code>, or <code>BB</code> for coarse-grained structures).</td>
+<td style="text-align: left;">Whether the atom is an alpha carbon (atom name <code>CA</code>, or <code>BB</code> for coarse-grained structures) of an amino acid residue. Ions and ligands are excluded.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code class="custom-attribute">is_side_chain</code></td>
 <td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">Whether the atom is part of a side chain: a peptide or nucleic atom that is not part of the backbone.</td>
+<td style="text-align: left;">Whether the atom is part of a side chain: an atom of an amino acid or nucleotide residue that is not part of the backbone. The alpha carbon also counts as side chain.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code class="custom-attribute">is_backbone</code></td>
 <td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">Whether the atom is part of the peptide or nucleic backbone, based on its atom name.</td>
+<td style="text-align: left;">Whether the atom is part of the peptide or nucleic backbone, based on its atom name, in amino acid and nucleotide residues. Ions and ligands are excluded.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code class="custom-attribute">is_solvent</code></td>
 <td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">Whether the atom is part of a solvent molecule, based on its residue and atom names.</td>
+<td style="text-align: left;">Whether the atom is part of a solvent molecule (such as water), based on its residue and atom names.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code class="custom-attribute">is_nucleic</code></td>
 <td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">Whether the atom is part of a nucleic acid.</td>
+<td style="text-align: left;">Whether the atom is part of a residue MDAnalysis recognises as a nucleic acid.</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;"><code class="custom-attribute">is_peptide</code></td>
 <td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">Whether the atom is part of a peptide, including coarse-grained (Martini) beads.</td>
+<td style="text-align: left;">Whether the atom is part of an amino acid residue, including modified residues (such as <code>HIC</code>) and coarse-grained (Martini) <code>BB</code> or <code>SC*</code> beads.</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;"><code class="custom-attribute">is_lipid</code></td>
@@ -596,6 +673,16 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td style="text-align: left;"><code class="custom-attribute">is_carb</code></td>
 <td style="text-align: left;"><code class="custom-bool">Bool</code></td>
 <td style="text-align: left;">Whether the atom is part of a carbohydrate, based on its residue name.</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>velocity</code></td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The velocity of the atom, stored on each frame that has velocities (such as frames of <code>.trr</code> files). Scaled by the world scale like positions, so it is in Blender units per ps (Å/ps × <code class="custom-float">0.1</code>), and <code>position + velocity</code> gives where the atom heads in 1 ps. Interpolated and averaged between frames like positions. GROMACS can write velocities on only some frames (<code>nstvout</code>): the attribute appears on the first frame with them, and frames without them keep the values last stored. Interpolating towards a frame without them uses the current frame’s values, and averaging uses only the frames that have them.</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>force</code></td>
+<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
+<td style="text-align: left;">The force on the atom, stored on each frame that has forces (such as frames of <code>.trr</code> files). Kept in the MDAnalysis units of kJ/(mol·Å) and not scaled by the world scale, as a force is not a length. Frames without forces (GROMACS <code>nstfout</code>) are handled the same way as for <code>velocity</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -676,6 +763,117 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 </tbody>
 </table>
+</section>
+<section id="attributes-by-format" class="level3">
+<h3 class="anchored" data-anchor-id="attributes-by-format">Attributes by Format</h3>
+<p>Which attributes are created depends on what the file provides. These attributes are created for every format: <code>position</code>, <code class="custom-attribute">atomic_number</code>, <code class="custom-attribute">atom_name</code>, <code class="custom-attribute">atom_types</code>, <code class="custom-attribute">res_name</code>, <code class="custom-attribute">res_id</code>, <code class="custom-attribute">segid</code>, <code class="custom-attribute">mass</code>, <code class="custom-attribute">vdw_radii</code>, <code class="custom-attribute">b_factor</code>, <code class="custom-attribute">occupancy</code>, <code class="custom-attribute">Color</code> and the <code>is_*</code> flags except <code class="custom-attribute">is_hetero</code> and <code class="custom-attribute">is_carb</code>. The others vary:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 14%">
+<col style="width: 17%">
+<col style="width: 19%">
+<col style="width: 18%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Attribute</th>
+<th style="text-align: center;"><code>.pdb</code></th>
+<th style="text-align: center;"><code>.cif</code> / <code>.bcif</code></th>
+<th style="text-align: center;"><code>.sdf</code> / <code>.mol</code></th>
+<th style="text-align: center;">MD topology</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code class="custom-attribute">chain_id</code></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td><code class="custom-attribute">entity_id</code></td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-attribute">ures_id</code></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td><code class="custom-attribute">atom_id</code></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr class="odd">
+<td><code class="custom-attribute">sec_struct</code></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+<td style="text-align: center;">✓</td>
+</tr>
+<tr class="even">
+<td><code class="custom-attribute">is_hetero</code></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td><code class="custom-attribute">is_carb</code></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="even">
+<td><code class="custom-attribute">bond_type</code></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;"></td>
+</tr>
+<tr class="odd">
+<td><code>fragment_id</code></td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">✓</td>
+<td style="text-align: center;">if the topology has bonds</td>
+</tr>
+<tr class="even">
+<td><code class="custom-attribute">charge</code></td>
+<td style="text-align: center;">if in the file</td>
+<td style="text-align: center;">if in the file</td>
+<td style="text-align: center;">if in the file</td>
+<td style="text-align: center;">if the topology has charges</td>
+</tr>
+</tbody>
+</table>
+<p>Simulation topologies differ in what they contain, so the MD column is for typical topologies such as <code>.psf</code> and <code>.gro</code>. Trajectories also get <code>velocity</code> and <code>force</code> once a frame that has them is shown; most trajectory formats, such as <code>.xtc</code> and <code>.dcd</code>, store neither. Other per-atom values that MDAnalysis reads for each frame into <code>ts.data</code> are stored as attributes too: the B-factors and occupancies of each model of a <code>.pdb</code> file (as <code class="custom-attribute">b_factor</code> and <code class="custom-attribute">occupancy</code>; a multi-model <code>.pdb</code>, <code>.cif</code> or <code>.bcif</code> file loaded on its own updates them the same way when they differ between models), the <code>additional_columns</code> of a LAMMPS dump (<code>q</code> as <code class="custom-attribute">charge</code>, others by their column name) and the <code>additional_blocks</code> of a <code>.tng</code> file (by block name). Any other key that is the name of an attribute Molecular Nodes creates on import, such as a LAMMPS <code class="custom-attribute">mass</code> column, is stored with a <code>ts_</code> prefix (<code>ts_mass</code>) so it never overwrites that attribute. Float values are interpolated and averaged between frames like positions; integer and boolean values take the current frame’s values. The attributes a trajectory updates on each frame are listed in its <em>Attributes</em> panel, along with its selections, with their source: the trajectory, a <a href="./api/reference/entities.molecule.SelectionManager.html#molecularnodes.entities.molecule.SelectionManager">selection</a>, or a calculation in <code>Molecule.calculations</code> (such as <code class="custom-attribute">sec_struct</code> from DSSP, which a trajectory without secondary structure in its files gets on load, run on the first frame and set to update on every frame with <code>mol.calculations.dssp(updating=True)</code> or the toggle in the list, where selecting it shows its settings). <code>Molecule.frame_attributes</code> returns the same list as a <code>dict</code> of name to source. Single-frame structures keep the values from import. <code>mol.list_attributes()</code> lists the attributes on a molecule, and <code>mol.named_attribute()</code> raises an error for one that was not created. In the node tree there is no error: reading a missing attribute gives <code class="custom-int">0</code> (or <code class="custom-bool">False</code>) for every atom, so selecting by <code class="custom-attribute">entity_id</code> on a <code>.pdb</code> file treats every atom as entity <code class="custom-int">0</code>.</p>
+</section>
+<section id="reading-attributes-from-python" class="level3">
+<h3 class="anchored" data-anchor-id="reading-attributes-from-python">Reading Attributes from Python</h3>
+<p><code>mol.named_attribute()</code> returns the attribute stored on the object as a <code>numpy</code> array, one value per atom. The integer attributes in the table above can be mapped back to their strings with the stored metadata:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> molecularnodes <span class="im">as</span> mn</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>mol <span class="op">=</span> mn.Molecule.fetch(<span class="st">"1CD3"</span>, <span class="bu">format</span><span class="op">=</span><span class="st">"cif"</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>chain_id <span class="op">=</span> mol.named_attribute(<span class="st">"chain_id"</span>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>chain_names <span class="op">=</span> np.array(mol.props.chain_ids)[chain_id]  <span class="co"># e.g. "1", "2", "B"</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>is_alpha_carbon <span class="op">=</span> mol.named_attribute(<span class="st">"is_alpha_carbon"</span>)</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(np.unique(chain_names[is_alpha_carbon], return_counts<span class="op">=</span><span class="va">True</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p><code>position</code> is in Blender units, the coordinates in Å scaled by the <a href="#world-scale">world scale</a>, for the current frame and before any node tree changes. <code>mol.universe.atoms.positions</code> has the same coordinates in Å.</p>
+<p><code>mol.named_attribute(name, evaluate=True)</code> instead reads the geometry after the node tree is evaluated, which is not one point per atom once a style is applied. A cartoon is a mesh with many more vertices than there are atoms, and spheres are instances by default so the evaluated mesh is empty. To get atom positions, read the stored <code>position</code> or the universe instead of the evaluated geometry.</p>
 </section>
 </section>
 <section id="domains" class="level2">

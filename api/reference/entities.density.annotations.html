@@ -82,7 +82,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -274,6 +274,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
+  <a href="../../api/pubchem.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Small Molecules from PubChem</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
   <a href="../../api/trajectories.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Trajectories</span></a>
   </div>
@@ -312,6 +318,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/solvent.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Solvent Density</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/electrostatics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Electrostatics</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -367,8 +379,20 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/entities.molecule.DSSPManager.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">entities.molecule.DSSPManager</span></a>
+  <a href="../../api/reference/entities.molecule.CalculationManager.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.CalculationManager</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.DSSPCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.DSSPCalculation</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/entities.molecule.HBondCalculation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">entities.molecule.HBondCalculation</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -565,12 +589,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
       <ul id="quarto-sidebar-section-9" class="collapse list-unstyled sidebar-section depth2 ">  
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -591,6 +609,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -621,6 +645,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../../api/reference/nodes.geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../../api/reference/nodes.materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -941,6 +971,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="parameters-1" class="level6 doc-section doc-section-parameters">
 <h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-1">Parameters</h6>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 55%">
+<col style="width: 25%">
+<col style="width: 11%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -952,13 +988,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>v1</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D or 2D vector or tuple</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td>v2</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D or 2D vector or tuple</td>
 <td><em>required</em></td>
 </tr>
@@ -1014,7 +1050,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1108,7 +1144,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>start_dv</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a> | None</td>
 <td>The direction vector along which to start the circle (arc) If not provided, a random point in the circle plane is chosen</td>
 <td><code>None</code></td>
 </tr>
@@ -1126,7 +1162,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1185,7 +1221,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>start_dv</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a> | None</td>
 <td>The direction vector along which to start the circle (arc) If not provided, a random point in the plane perpendicular to the normal is chosen</td>
 <td><code>None</code></td>
 </tr>
@@ -1203,7 +1239,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1236,7 +1272,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>location</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D position vector of the base center</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
@@ -1254,7 +1290,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>axis</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Axis of the cone</td>
 <td><code>(0, 0, 1)</code></td>
 </tr>
@@ -1266,7 +1302,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1299,7 +1335,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>location</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D position vector of the base center</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
@@ -1317,7 +1353,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>axis</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Axis of the cylinder</td>
 <td><code>(0, 0, 1)</code></td>
 </tr>
@@ -1329,7 +1365,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1376,19 +1412,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
@@ -1406,7 +1442,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1453,19 +1489,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
@@ -1483,7 +1519,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1535,13 +1571,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>origin</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Center of the base of the cylinder</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
 <tr class="odd">
 <td>axis</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Axis of the cylinder</td>
 <td><code>(0, 0, 1)</code></td>
 </tr>
@@ -1553,7 +1589,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1605,13 +1641,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>origin</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Center of the base of the pyramid</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
 <tr class="odd">
 <td>axis</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Axis of the pyramid</td>
 <td><code>(0, 0, 1)</code></td>
 </tr>
@@ -1623,7 +1659,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1653,7 +1689,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>location</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D position vector of the center</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
@@ -1665,7 +1701,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1707,7 +1743,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1749,7 +1785,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1821,7 +1857,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>origin</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Origin of the box</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
@@ -1833,7 +1869,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1882,7 +1918,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -1963,7 +1999,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>input_name</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>The input name update that trigged this validation callback. When no specific input name is available, None is passed.</td>
 <td><code>None</code></td>
 </tr>
@@ -2233,6 +2269,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="parameters-20" class="level6 doc-section doc-section-parameters">
 <h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-20">Parameters</h6>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 55%">
+<col style="width: 25%">
+<col style="width: 11%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -2244,13 +2286,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>v1</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D or 2D vector or tuple</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td>v2</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D or 2D vector or tuple</td>
 <td><em>required</em></td>
 </tr>
@@ -2301,7 +2343,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2395,7 +2437,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>start_dv</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a> | None</td>
 <td>The direction vector along which to start the circle (arc) If not provided, a random point in the circle plane is chosen</td>
 <td><code>None</code></td>
 </tr>
@@ -2413,7 +2455,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2472,7 +2514,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>start_dv</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a> | None</td>
 <td>The direction vector along which to start the circle (arc) If not provided, a random point in the plane perpendicular to the normal is chosen</td>
 <td><code>None</code></td>
 </tr>
@@ -2490,7 +2532,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2523,7 +2565,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>location</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D position vector of the base center</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
@@ -2541,7 +2583,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>axis</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Axis of the cone</td>
 <td><code>(0, 0, 1)</code></td>
 </tr>
@@ -2553,7 +2595,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2586,7 +2628,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>location</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D position vector of the base center</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
@@ -2604,7 +2646,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>axis</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Axis of the cylinder</td>
 <td><code>(0, 0, 1)</code></td>
 </tr>
@@ -2616,7 +2658,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2663,19 +2705,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
@@ -2693,7 +2735,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2740,19 +2782,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
@@ -2770,7 +2812,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2822,13 +2864,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>origin</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Center of the base of the cylinder</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
 <tr class="odd">
 <td>axis</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Axis of the cylinder</td>
 <td><code>(0, 0, 1)</code></td>
 </tr>
@@ -2840,7 +2882,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2892,13 +2934,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>origin</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Center of the base of the pyramid</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
 <tr class="odd">
 <td>axis</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Axis of the pyramid</td>
 <td><code>(0, 0, 1)</code></td>
 </tr>
@@ -2910,7 +2952,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2940,7 +2982,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>location</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D position vector of the center</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
@@ -2952,7 +2994,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -2994,7 +3036,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3036,7 +3078,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3108,7 +3150,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>origin</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Origin of the box</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
@@ -3120,7 +3162,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3169,7 +3211,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3250,7 +3292,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>input_name</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>The input name update that trigged this validation callback. When no specific input name is available, None is passed.</td>
 <td><code>None</code></td>
 </tr>
@@ -3433,6 +3475,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="parameters-39" class="level6 doc-section doc-section-parameters">
 <h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-39">Parameters</h6>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 55%">
+<col style="width: 25%">
+<col style="width: 11%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -3444,13 +3492,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>v1</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D or 2D vector or tuple</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td>v2</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D or 2D vector or tuple</td>
 <td><em>required</em></td>
 </tr>
@@ -3501,7 +3549,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3595,7 +3643,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>start_dv</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a> | None</td>
 <td>The direction vector along which to start the circle (arc) If not provided, a random point in the circle plane is chosen</td>
 <td><code>None</code></td>
 </tr>
@@ -3613,7 +3661,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3672,7 +3720,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>start_dv</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a> | None</td>
 <td>The direction vector along which to start the circle (arc) If not provided, a random point in the plane perpendicular to the normal is chosen</td>
 <td><code>None</code></td>
 </tr>
@@ -3690,7 +3738,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3723,7 +3771,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>location</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D position vector of the base center</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
@@ -3741,7 +3789,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>axis</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Axis of the cone</td>
 <td><code>(0, 0, 1)</code></td>
 </tr>
@@ -3753,7 +3801,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3786,7 +3834,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>location</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D position vector of the base center</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
@@ -3804,7 +3852,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>axis</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Axis of the cylinder</td>
 <td><code>(0, 0, 1)</code></td>
 </tr>
@@ -3816,7 +3864,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3863,19 +3911,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
@@ -3893,7 +3941,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -3940,19 +3988,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
@@ -3970,7 +4018,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4022,13 +4070,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>origin</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Center of the base of the cylinder</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
 <tr class="odd">
 <td>axis</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Axis of the cylinder</td>
 <td><code>(0, 0, 1)</code></td>
 </tr>
@@ -4040,7 +4088,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4092,13 +4140,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>origin</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Center of the base of the pyramid</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
 <tr class="odd">
 <td>axis</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Axis of the pyramid</td>
 <td><code>(0, 0, 1)</code></td>
 </tr>
@@ -4110,7 +4158,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4140,7 +4188,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>location</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D position vector of the center</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
@@ -4152,7 +4200,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4194,7 +4242,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4236,7 +4284,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4308,7 +4356,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>origin</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Origin of the box</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
@@ -4320,7 +4368,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4369,7 +4417,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4450,7 +4498,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>input_name</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>The input name update that trigged this validation callback. When no specific input name is available, None is passed.</td>
 <td><code>None</code></td>
 </tr>
@@ -4654,6 +4702,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <section id="parameters-58" class="level6 doc-section doc-section-parameters">
 <h6 class="doc-section doc-section-parameters anchored" data-anchor-id="parameters-58">Parameters</h6>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 7%">
+<col style="width: 55%">
+<col style="width: 25%">
+<col style="width: 11%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Name</th>
@@ -4665,13 +4719,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>v1</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D or 2D vector or tuple</td>
 <td><em>required</em></td>
 </tr>
 <tr class="even">
 <td>v2</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D or 2D vector or tuple</td>
 <td><em>required</em></td>
 </tr>
@@ -4722,7 +4776,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4816,7 +4870,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>start_dv</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a> | None</td>
 <td>The direction vector along which to start the circle (arc) If not provided, a random point in the circle plane is chosen</td>
 <td><code>None</code></td>
 </tr>
@@ -4834,7 +4888,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4893,7 +4947,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>start_dv</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a> | None</td>
 <td>The direction vector along which to start the circle (arc) If not provided, a random point in the plane perpendicular to the normal is chosen</td>
 <td><code>None</code></td>
 </tr>
@@ -4911,7 +4965,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -4944,7 +4998,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>location</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D position vector of the base center</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
@@ -4962,7 +5016,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>axis</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Axis of the cone</td>
 <td><code>(0, 0, 1)</code></td>
 </tr>
@@ -4974,7 +5028,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5007,7 +5061,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>location</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D position vector of the base center</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
@@ -5025,7 +5079,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>axis</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Axis of the cylinder</td>
 <td><code>(0, 0, 1)</code></td>
 </tr>
@@ -5037,7 +5091,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5084,19 +5138,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
@@ -5114,7 +5168,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5161,19 +5215,19 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>v1_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at v1</td>
 <td><code>None</code></td>
 </tr>
 <tr class="even">
 <td>v2_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at v2</td>
 <td><code>None</code></td>
 </tr>
 <tr class="odd">
 <td>mid_text</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#str">str</a> | None</td>
 <td>Optional text to display at the middle of the line</td>
 <td><code>None</code></td>
 </tr>
@@ -5191,7 +5245,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5243,13 +5297,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>origin</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Center of the base of the cylinder</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
 <tr class="odd">
 <td>axis</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Axis of the cylinder</td>
 <td><code>(0, 0, 1)</code></td>
 </tr>
@@ -5261,7 +5315,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5313,13 +5367,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>origin</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Center of the base of the pyramid</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
 <tr class="odd">
 <td>axis</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Axis of the pyramid</td>
 <td><code>(0, 0, 1)</code></td>
 </tr>
@@ -5331,7 +5385,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5361,7 +5415,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tbody>
 <tr class="odd">
 <td>location</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>A 3D position vector of the center</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
@@ -5373,7 +5427,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5415,7 +5469,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5457,7 +5511,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5529,7 +5583,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>origin</td>
-<td><a href="file://objects_inv/bpy/mathutils.html#mathutils.Vector">Vector</a></td>
+<td><code>VectorLike</code></td>
 <td>Origin of the box</td>
 <td><code>(0, 0, 0)</code></td>
 </tr>
@@ -5541,7 +5595,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>
@@ -5590,7 +5644,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tr>
 <tr class="even">
 <td>overrides</td>
-<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a></td>
+<td><a href="https://docs.python.org/3/builtins/stdtypes.html#dict">dict</a> | None</td>
 <td>Optional dictionary to override common annotation params</td>
 <td><code>None</code></td>
 </tr>

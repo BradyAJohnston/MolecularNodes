@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -215,12 +215,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -241,6 +235,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -271,6 +271,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -346,6 +352,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <li><a href="#density-style-iso-surface" id="toc-density-style-iso-surface" class="nav-link active" data-scroll-target="#density-style-iso-surface">Density Style ISO Surface</a></li>
   <li><a href="#density-style-surface" id="toc-density-style-surface" class="nav-link" data-scroll-target="#density-style-surface">Density Style Surface</a></li>
   <li><a href="#density-style-wire" id="toc-density-style-wire" class="nav-link" data-scroll-target="#density-style-wire">Density Style Wire</a></li>
+  <li><a href="#import-volume" id="toc-import-volume" class="nav-link" data-scroll-target="#import-volume">Import Volume</a></li>
   </ul>
 </nav>
     </div>
@@ -376,6 +383,11 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <h2 class="anchored" data-anchor-id="density-style-iso-surface">Density Style ISO Surface</h2>
 <p><strong>Inputs</strong></p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
 <thead>
 <tr class="header">
 <th style="text-align: left;">Name</th>
@@ -390,52 +402,22 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <td style="text-align: left;">Input geometry</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Visible</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">Visibility of style</td>
-</tr>
-<tr class="odd">
 <td style="text-align: left;">Threshold</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;">ISO value</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Show Contours</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">Whether to show surface contours</td>
+<td style="text-align: left;">ISO value. Surfaces are meshed at +Threshold and, for signed grids such as potentials or orbitals, at -Threshold</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Only Contours</td>
-<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
-<td style="text-align: left;">Only show contour edges</td>
+<td style="text-align: left;">Process Grid</td>
+<td style="text-align: left;"><code class="custom-closure">Closure</code></td>
+<td style="text-align: left;">Extra operations on the Float grid before being turned into a mesh</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Contour Thickness</td>
-<td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;">Thickness of the contour edges</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Contour Color</td>
-<td style="text-align: left;"><code class="custom-color">Color</code></td>
-<td style="text-align: left;">Color of contour edges</td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Slice Width</td>
-<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;">1</td>
-</tr>
-<tr class="odd">
-<td style="text-align: left;">Slice Center</td>
-<td style="text-align: left;"><code class="custom-vector">Vector</code></td>
-<td style="text-align: left;"></td>
-</tr>
-<tr class="even">
-<td style="text-align: left;">Negative Color</td>
+<td style="text-align: left;">Negative</td>
 <td style="text-align: left;"><code class="custom-color">Color</code></td>
 <td style="text-align: left;">Color for negative ISO values</td>
 </tr>
 <tr class="odd">
-<td style="text-align: left;">Positive Color</td>
+<td style="text-align: left;">Positive</td>
 <td style="text-align: left;"><code class="custom-color">Color</code></td>
 <td style="text-align: left;">Color for positive ISO values</td>
 </tr>
@@ -505,7 +487,7 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="even">
 <td style="text-align: left;">Hide Dust</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Hide mesh islands with a total face area below this, in nm². 0 keeps everything</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Color</td>
@@ -573,12 +555,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 <tr class="odd">
 <td style="text-align: left;">Hide Dust</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;"></td>
+<td style="text-align: left;">Hide mesh islands with a total face area below this, in nm². 0 keeps everything</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Wire Radius</td>
 <td style="text-align: left;"><code class="custom-float">Float</code></td>
-<td style="text-align: left;">Radius of the created wire (in relative nm)</td>
+<td style="text-align: left;">Radius of the created wire, in picometres</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Wire Resolution</td>
@@ -620,6 +602,75 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </tbody>
 </table>
 <p>API Reference: <a href="../api/reference/nodes.density.html#molecularnodes.nodes.geometry.DensityStyleWire"><code>nodes.geometry.DensityStyleWire</code></a></p>
+</section>
+<section id="import-volume" class="level2">
+<h2 class="anchored" data-anchor-id="import-volume">Import Volume</h2>
+<p>Import a volume from a <code>.vdb</code> file at <code class="custom-string">Path</code>. Density trees have no input geometry: each branch starts with this node, followed by a style. <code>{index}</code> in the path is replaced by an index, to pick one of <code class="custom-int">Count</code> numbered files, such as the frames of an animation or the orbitals of one cube file. The index is <code class="custom-int">Index</code>, or with <code class="custom-bool">Follow Frame</code> the scene frame counted from <code class="custom-int">Frame Start</code>; it is clamped to the files, so frames past the last file hold it. The <code>density</code> grid is also kept in the bundle of the output as <code>MN Grid &lt;Name&gt;</code>, and density styles pass it on to the mesh they make, so <a href="../nodes/color.html#color-sample-grid"><code class="custom-node">Color Sample Grid</code></a> can sample it by <code class="custom-string">Name</code> after the volume has been styled. Give each branch that imports a different grid its own name.</p>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Path</td>
+<td style="text-align: left;"><code class="custom-string">String</code></td>
+<td style="text-align: left;">Path of the .vdb file to import. <code>{index}</code> is replaced by the index, to pick one of several numbered files</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Index</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Index of the file to import, when Follow Frame is off</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Follow Frame</td>
+<td style="text-align: left;"><code class="custom-bool">Bool</code></td>
+<td style="text-align: left;">Take the index from the scene frame, counted from Frame Start, to play the files as an animation</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Frame Start</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Scene frame that shows the first file, when Follow Frame is on</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Name</td>
+<td style="text-align: left;"><code class="custom-string">String</code></td>
+<td style="text-align: left;">Name to store the <code>density</code> grid under in the bundle of the output, as <code>MN Grid &lt;Name&gt;</code>. Color Sample Grid finds it by this name after a style has turned the volume into a mesh</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Count</td>
+<td style="text-align: left;"><code class="custom-int">Int</code></td>
+<td style="text-align: left;">Number of numbered files. The index is clamped to them, so frames past the last file hold it</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Volume</td>
+<td style="text-align: left;"><code class="custom-geometry">Geometry</code></td>
+<td style="text-align: left;">The imported volume</td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.density.html#molecularnodes.nodes.geometry.ImportVolume"><code>nodes.geometry.ImportVolume</code></a></p>
 
 
 </section>

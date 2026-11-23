@@ -36,8 +36,8 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<link href="../nodes/general.html" rel="next">
-<link href="../nodes/index.html" rel="prev">
+<link href="../nodes/select.html" rel="next">
+<link href="../nodes/geometry.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -47,7 +47,7 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-b85bc7c33db8c58e0ec93c3465666fed.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-cf537f47c02263b96802a5caadf76bdf.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-dbf43de1c3d2d5277c93ff8f956cc6fc.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -215,12 +215,6 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link active">
- <span class="menu-text">Materials</span></a>
-  </div>
-</li>
-        <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
   <a href="../nodes/general.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">General</span></a>
   </div>
@@ -241,6 +235,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/color.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Color</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/compositor.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Compositor</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -271,6 +271,12 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   <div class="sidebar-item-container"> 
   <a href="../nodes/geometry.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Geometry</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../nodes/materials.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text">Materials</span></a>
   </div>
 </li>
         <li class="sidebar-item">
@@ -343,7 +349,10 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
     <h2 id="toc-title">On this page</h2>
    
   <ul class="collapse">
-  <li><a href="#outline-mask" id="toc-outline-mask" class="nav-link active" data-scroll-target="#outline-mask">Outline Mask</a></li>
+  <li><a href="#ambient-occlusion-internal" id="toc-ambient-occlusion-internal" class="nav-link active" data-scroll-target="#ambient-occlusion-internal">Ambient Occlusion Internal</a></li>
+  <li><a href="#color-ao" id="toc-color-ao" class="nav-link" data-scroll-target="#color-ao">Color AO</a></li>
+  <li><a href="#flat-internal" id="toc-flat-internal" class="nav-link" data-scroll-target="#flat-internal">Flat Internal</a></li>
+  <li><a href="#outline-mask" id="toc-outline-mask" class="nav-link" data-scroll-target="#outline-mask">Outline Mask</a></li>
   <li><a href="#transparent-outline-internal" id="toc-transparent-outline-internal" class="nav-link" data-scroll-target="#transparent-outline-internal">Transparent Outline Internal</a></li>
   </ul>
 </nav>
@@ -371,6 +380,190 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
 
 
 <p>Shader node groups for the pre-built materials</p>
+<section id="ambient-occlusion-internal" class="level2">
+<h2 class="anchored" data-anchor-id="ambient-occlusion-internal">Ambient Occlusion Internal</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Color</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Menu</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Shade with ambient occlusion (<code>AO</code>) or with the plain color (<code>None</code>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AO Space</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;">Look in local geometry or world space for AO calculations</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Distance</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Distance for AO calculations</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Exponent</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;">Exponent to apply to AO calculations</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 24%">
+<col style="width: 24%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Cycles</td>
+<td style="text-align: left;"><code class="custom-shader">Shader</code></td>
+<td style="text-align: left;">Emission of the occluded color. Always opaque: ambient occlusion does not work alongside a Transparent BSDF, so the alpha of <code class="custom-attribute">Color</code> is ignored</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">EEVEE</td>
+<td style="text-align: left;"><code class="custom-shader">Shader</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.materials.html#molecularnodes.nodes.shader.AmbientOcclusionInternal"><code>nodes.shader.AmbientOcclusionInternal</code></a></p>
+</section>
+<section id="color-ao" class="level2">
+<h2 class="anchored" data-anchor-id="color-ao">Color AO</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Color</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Menu</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">AO Space</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Distance</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Exponent</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Result</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.materials.html#molecularnodes.nodes.shader.ColorAO"><code>nodes.shader.ColorAO</code></a></p>
+</section>
+<section id="flat-internal" class="level2">
+<h2 class="anchored" data-anchor-id="flat-internal">Flat Internal</h2>
+<p><strong>Inputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Outline</td>
+<td style="text-align: left;"><code class="custom-menu">Menu</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Threshold</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Thickness</td>
+<td style="text-align: left;"><code class="custom-float">Float</code></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Color</td>
+<td style="text-align: left;"><code class="custom-color">Color</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Outputs</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Name</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Emission</td>
+<td style="text-align: left;"><code class="custom-shader">Shader</code></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+<p>API Reference: <a href="../api/reference/nodes.materials.html#molecularnodes.nodes.shader.FlatInternal"><code>nodes.shader.FlatInternal</code></a></p>
+</section>
 <section id="outline-mask" class="level2">
 <h2 class="anchored" data-anchor-id="outline-mask">Outline Mask</h2>
 <p><strong>Inputs</strong></p>
@@ -873,13 +1066,13 @@ gtag('config', 'G-W3K8TDXSCF', { 'anonymize_ip': true});
   </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../nodes/index.html" class="pagination-link" aria-label="Overview">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Overview</span>
+      <a href="../nodes/geometry.html" class="pagination-link" aria-label="Geometry">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Geometry</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../nodes/general.html" class="pagination-link" aria-label="General">
-        <span class="nav-page-text">General</span> <i class="bi bi-arrow-right-short"></i>
+      <a href="../nodes/select.html" class="pagination-link" aria-label="Select">
+        <span class="nav-page-text">Select</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
