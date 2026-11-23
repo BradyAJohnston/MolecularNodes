@@ -8,6 +8,11 @@ from mathutils import Euler, Matrix, Vector
 from .. import framing
 
 
+def as_vector(value: Vector | Sequence[float] | np.ndarray) -> Vector:
+    """A 3D ``Vector`` from a ``Vector``, a sequence or an array."""
+    return Vector((float(value[0]), float(value[1]), float(value[2])))
+
+
 class Viewpoint(StrEnum):
     DEFAULT = "default"
     FRONT = "front"
@@ -112,9 +117,37 @@ class Camera:
         return None if constraint is None else constraint.target
 
     @property
+    def _pivot(self) -> bpy.types.Object:
+        """The pivot of a camera known to be rigged."""
+        pivot = self.pivot
+        assert pivot is not None, "The camera is not rigged."
+        return pivot
+
+    @property
+    def _target(self) -> bpy.types.Object:
+        """The look-at target of a camera known to be rigged."""
+        target = self.target
+        assert target is not None, "The camera is not rigged."
+        return target
+
+    @property
+    def _focus_point(self) -> bpy.types.Object:
+        """The focus empty of a camera known to be rigged."""
+        focus = self.focus_point
+        assert focus is not None, "The camera is not rigged."
+        return focus
+
+    @property
+    def dof(self) -> bpy.types.CameraDOFSettings:
+        """The camera's depth of field settings."""
+        dof = self.camera_data.dof
+        assert dof is not None
+        return dof
+
+    @property
     def focus_point(self) -> bpy.types.Object | None:
         """The empty the camera focuses on, if the camera is rigged."""
-        focus = self.camera_data.dof.focus_object
+        focus = self.dof.focus_object
         if focus is not None and focus.get(RIG_PROPERTY) == "focus":
             return focus
         return None
@@ -172,16 +205,19 @@ class Camera:
         focus.empty_display_size = 0.1
         focus.hide_render = True
         focus[RIG_PROPERTY] = "focus"
+        assert scene is not None
         for obj in (pivot, target, focus):
             scene.collection.objects.link(obj)
 
         camera.parent = pivot
         camera.matrix_parent_inverse.identity()
-        constraint = camera.constraints.new("DAMPED_TRACK")
+        constraint = cast(
+            bpy.types.DampedTrackConstraint, camera.constraints.new("DAMPED_TRACK")
+        )
         constraint.name = LOOK_AT_CONSTRAINT
         constraint.target = target
         constraint.track_axis = "TRACK_NEGATIVE_Z"
-        self.camera_data.dof.focus_object = focus
+        self.dof.focus_object = focus
         self._place(location, rotation, distance)
         focus.location = target.location
 
@@ -207,7 +243,10 @@ class Camera:
                 bpy.data.objects.remove(obj, do_unlink=True)
 
     def _place(
-        self, location: Sequence[float], rotation: Euler, distance: float
+        self,
+        location: Vector | Sequence[float] | np.ndarray,
+        rotation: Euler,
+        distance: float,
     ) -> None:
         """
         Pose the rig: the camera at a world ``location`` with a world
@@ -216,10 +255,10 @@ class Camera:
         """
         pivot, target = self.pivot, self.target
         assert pivot is not None and target is not None
-        rotation = Euler(rotation, "XYZ")
+        rotation = Euler((rotation.x, rotation.y, rotation.z), "XYZ")
         rotation.make_compatible(pivot.rotation_euler)
         forward = rotation.to_matrix() @ Vector((0.0, 0.0, -1.0))
-        centre = Vector(location) + forward * distance
+        centre = as_vector(location) + forward * distance
         pivot.location = centre
         pivot.rotation_euler = rotation
         target.location = centre
@@ -260,7 +299,9 @@ class Camera:
         rotation = matrix.to_3x3().normalized()
         forward = rotation @ Vector((0.0, 0.0, -1.0))
         turn = forward.rotation_difference(direction.normalized()).to_matrix()
-        return Matrix.LocRotScale(location, turn @ rotation, matrix.to_scale())
+        return Matrix.LocRotScale(
+            location.to_tuple(), turn @ rotation, matrix.to_scale().to_tuple()
+        )
 
     @property
     def location(self) -> Vector:
@@ -276,7 +317,7 @@ class Camera:
         if not self.is_rigged:
             self.camera.location = value
             return
-        rotation = self.matrix_world.to_euler("XYZ", self.pivot.rotation_euler)
+        rotation = self.matrix_world.to_euler("XYZ", self._pivot.rotation_euler)
         self._place(value, rotation, self._distance)
 
     @property
@@ -334,9 +375,10 @@ class Camera:
     def rotation(self) -> tuple[float, float, float]:
         """Get the camera's world rotation in degrees (XYZ)"""
         if not self.is_rigged:
-            return tuple(degrees(angle) for angle in self.camera.rotation_euler)
-        euler = self.matrix_world.to_euler("XYZ", self.pivot.rotation_euler)
-        return tuple(degrees(angle) for angle in euler)
+            euler = self.camera.rotation_euler
+        else:
+            euler = self.matrix_world.to_euler("XYZ", self._pivot.rotation_euler)
+        return (degrees(euler.x), degrees(euler.y), degrees(euler.z))
 
     @rotation.setter
     def rotation(self, angles: Sequence[float]) -> None:
@@ -445,7 +487,7 @@ class Camera:
         if self.is_rigged:
             centre, _ = framing.enclosing_sphere(points)
             depth = float(np.dot(centre - location, basis[2]))
-            rotation = self.matrix_world.to_euler("XYZ", self.pivot.rotation_euler)
+            rotation = self.matrix_world.to_euler("XYZ", self._pivot.rotation_euler)
             self._place(location, rotation, max(depth, self.clip_start))
         else:
             self.camera.location = Vector(location.tolist())
@@ -466,7 +508,7 @@ class Camera:
         matrix = Matrix(np.column_stack([right, up, -forward]).tolist())
         if self.is_rigged:
             # turn the rig in place, as setting `rotation` does
-            rotation = matrix.to_euler("XYZ", self.pivot.rotation_euler)
+            rotation = matrix.to_euler("XYZ", self._pivot.rotation_euler)
             self._place(self.location, rotation, self._distance)
             return
         # to_euler() takes only Euler orders, so a camera in QUATERNION or

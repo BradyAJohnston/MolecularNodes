@@ -1294,7 +1294,7 @@ class Canvas:
             overwrite=overwrite,
         )
 
-    def timeline(self, fps: float | None = None, start: int | None = None) -> Timeline:
+    def timeline(self, fps: int | None = None, start: int | None = None) -> Timeline:
         """
         Start a storyboard that compiles to keyframes on the scene.
 

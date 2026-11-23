@@ -29,16 +29,21 @@ Design notes
 
 from __future__ import annotations
 import math
+import warnings
 from abc import ABC, abstractmethod
+from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Callable, Sequence
+from typing import TYPE_CHECKING, Callable, Generator, Literal, Sequence, cast
 import bpy
 import numpy as np
 from mathutils import Euler, Matrix, Vector
+from nodebpy.builder import TreeBuilder
 from .. import framing
 from ..blender import utils as blender_utils
+from ..blender.registered import object_props
 from ..entities.base import MolecularEntity
 from ..session import get_session
+from .camera import as_vector
 
 if TYPE_CHECKING:
     from .base import Canvas
@@ -48,6 +53,13 @@ if TYPE_CHECKING:
 # ---------------------------------------------------------------------------
 # Easing
 # ---------------------------------------------------------------------------
+
+
+#: the Blender keyframe ``(interpolation, easing)`` pairs the rate functions use
+BlenderInterpolation = tuple[
+    Literal["CONSTANT", "LINEAR", "BEZIER", "SINE", "QUAD"],
+    Literal["AUTO", "EASE_IN", "EASE_OUT", "EASE_IN_OUT"],
+]
 
 
 class Easing:
@@ -66,7 +78,7 @@ class Easing:
     EASE_OUT = "ease_out"
 
     #: Blender ``(interpolation, easing)`` per rate function.
-    _BLENDER = {
+    _BLENDER: dict[str, BlenderInterpolation] = {
         LINEAR: ("LINEAR", "AUTO"),
         SMOOTH: ("BEZIER", "AUTO"),
         SINE: ("SINE", "EASE_IN_OUT"),
@@ -94,7 +106,7 @@ class Easing:
         return key
 
     @classmethod
-    def blender(cls, easing: str) -> tuple[str, str]:
+    def blender(cls, easing: str) -> BlenderInterpolation:
         return cls._BLENDER[cls.validate(easing)]
 
     @classmethod
@@ -116,7 +128,7 @@ def _find_fcurve(
     Actions are slotted (Blender 4.4+): the curves for this ID live in the
     channel bag of the slot the ID's animation data is assigned to.
     """
-    anim = id_data.animation_data
+    anim = getattr(id_data, "animation_data", None)
     if anim is None or anim.action is None:
         return None
     slot = anim.action_slot
@@ -150,7 +162,9 @@ class Channel:
 
     @property
     def id_data(self) -> bpy.types.ID:
-        return self.owner.id_data
+        id_data = self.owner.id_data
+        assert id_data is not None
+        return id_data
 
     @property
     def data_path(self) -> str:
@@ -199,7 +213,10 @@ class Channel:
         return float(fcurve.evaluate(frame))
 
     def insert(
-        self, frame: int, value: float, interpolation: tuple[str, str] | None = None
+        self,
+        frame: int,
+        value: float,
+        interpolation: BlenderInterpolation | None = None,
     ) -> None:
         """
         Key the property to ``value`` at ``frame``.
@@ -323,10 +340,12 @@ def target_points(target) -> np.ndarray:
     entity in the session; anything else is taken as ``(N, 3)`` positions.
     """
     if target is None:
+        scene = bpy.context.scene
+        assert scene is not None
         points = [
             blender_utils.evaluated_points(entity.object)
             for entity in get_session().entities.values()
-            if entity.object.name in bpy.context.scene.objects
+            if entity.object.name in scene.objects
         ]
         if not points:
             raise ValueError("The scene holds no entities to use as a target.")
@@ -340,7 +359,7 @@ def target_points(target) -> np.ndarray:
 
 def target_centre(target) -> Vector:
     centre, _ = framing.enclosing_sphere(target_points(target))
-    return Vector(centre)
+    return as_vector(centre)
 
 
 # ---------------------------------------------------------------------------
@@ -356,7 +375,7 @@ class Key:
     channel: Channel
     frame: int
     value: float
-    interpolation: tuple[str, str] | None = None
+    interpolation: BlenderInterpolation | None = None
 
 
 def _tween_keys(
@@ -441,6 +460,7 @@ class Tween(Clip):
         easing: str | None = None,
         *,
         pairs: Sequence[tuple[Channel, float]] | None = None,
+        name: str | None = None,
     ):
         super().__init__(run_time, easing)
         if pairs is None:
@@ -448,7 +468,9 @@ class Tween(Clip):
                 raise ValueError("A tween needs a target and a value.")
             pairs = resolve_channels(target, value)
         self._pairs = list(pairs)
-        self._name = self._pairs[0][0].data_path if self._pairs else "tween"
+        if name is None:
+            name = self._pairs[0][0].data_path if self._pairs else "tween"
+        self._name = name
 
     def channels(self) -> list[Channel]:
         return [channel for channel, _ in self._pairs]
@@ -457,7 +479,7 @@ class Tween(Clip):
         return _tween_keys(self._pairs, frame_start, frame_end, easing)
 
     def __repr__(self) -> str:
-        return f"<tween {self._name} {self.run_time:g}s {self.easing}>"
+        return f"<{self.label} {self._name} {self.run_time:g}s {self.easing}>"
 
 
 class Step(Tween):
@@ -537,7 +559,7 @@ class Frames(Clip):
         self._start, self._end = float(start), float(end)
 
     def keys(self, timeline, frame_start, frame_end, easing) -> list[Key]:
-        channel = Channel(self._entity.object.mn, "frame")
+        channel = Channel(object_props(self._entity.object), "frame")
         interpolation = Easing.blender(easing)
         return [
             Key(channel, frame_start, self._start, interpolation),
@@ -552,6 +574,198 @@ class Frames(Clip):
             f"<frames {self._entity.name} {self._start:g}->{self._end:g} "
             f"{self.run_time:g}s {self.easing}>"
         )
+
+
+# ---------------------------------------------------------------------------
+# Style clips: nodes spliced into an entity's tree, then tweened
+# ---------------------------------------------------------------------------
+#
+# Fading and recolouring are not properties a style node has, so the timeline
+# adds the node that does it - `Fade Geometry` after the style, a `Set Color`
+# mixing towards the new colour before it - and tweens one input of that node.
+# Each spliced node is a no-op until its input is keyed (a fade of 1, a mix
+# factor of 0), so adding one leaves the render unchanged.
+
+_FADE_LABEL = "Timeline Fade"
+_RECOLOR_LABEL = "Timeline Recolor"
+
+
+def _style_nodes(target) -> list[bpy.types.Node]:
+    """
+    The style nodes a fade or recolour applies to: every style of an entity,
+    a style from ``entity.styles`` or a node, or a sequence of those.
+    """
+    if isinstance(target, MolecularEntity):
+        return target.styles._nodes()
+    if isinstance(target, (list, tuple)):
+        return [node for item in target for node in _style_nodes(item)]
+    node = getattr(target, "node", target)
+    if not isinstance(node, bpy.types.Node):
+        raise TypeError(
+            "Expected an entity, a style from `entity.styles` or a node, not "
+            f"{type(target).__name__}."
+        )
+    return [node]
+
+
+def _style_names(target) -> str:
+    return ", ".join(node.label or node.name for node in _style_nodes(target))
+
+
+def _color_name(color) -> str:
+    if callable(color):
+        return getattr(color, "__name__", "nodes")
+    if isinstance(color, str):
+        return color
+    return "(" + ", ".join(f"{float(c):g}" for c in color) + ")"
+
+
+def _entity_of(node: bpy.types.Node) -> MolecularEntity | None:
+    """The session entity whose tree holds ``node``, if any."""
+    for entity in get_session().entities.values():
+        if entity.object.modifiers.get("Molecular Nodes") is None:
+            continue
+        if entity.modifier_node_tree == node.id_data:
+            return entity
+    return None
+
+
+@contextmanager
+def _building(tree: bpy.types.NodeTree) -> Generator[None, None, None]:
+    """Create nodebpy nodes in ``tree`` without entering it, which would
+    rearrange the user's nodes on exit."""
+    builder = TreeBuilder(cast(bpy.types.GeometryNodeTree, tree))
+    builder.activate_tree()
+    try:
+        yield
+    finally:
+        builder.deactivate_tree()
+
+
+def _node_tree(node: bpy.types.Node) -> bpy.types.NodeTree:
+    tree = node.id_data
+    assert isinstance(tree, bpy.types.NodeTree)
+    return tree
+
+
+def _links(socket: bpy.types.NodeSocket) -> bpy.types.NodeLinks:
+    """The links of a socket, which the bpy stubs type as optional."""
+    links = socket.links
+    assert links is not None
+    return links
+
+
+def _geometry_socket(sockets) -> bpy.types.NodeSocket:
+    for socket in sockets:
+        if socket.type == "GEOMETRY":
+            return socket
+    raise ValueError("The node has no geometry socket.")
+
+
+def _fade_node(style: bpy.types.Node) -> bpy.types.Node:
+    """The `Fade Geometry` node after ``style``, added on first use."""
+    from ..nodes.geometry import FadeGeometry
+
+    output = _geometry_socket(style.outputs)
+    for link in _links(output):
+        if link.to_node is not None and link.to_node.label == _FADE_LABEL:
+            return link.to_node
+    tree = _node_tree(style)
+    with _building(tree):
+        fade = FadeGeometry().node
+    fade.label = _FADE_LABEL
+    fade.location = (style.location.x + style.width + 40, style.location.y)
+    targets = [link.to_socket for link in _links(output)]
+    for link in list(_links(output)):
+        tree.links.remove(link)
+    tree.links.new(output, fade.inputs["Geometry"])
+    for socket in targets:
+        if socket is not None:
+            tree.links.new(fade.outputs["Geometry"], socket)
+    return fade
+
+
+def _recolor_node(style: bpy.types.Node, color, selection) -> bpy.types.NodeSocket:
+    """
+    Add a `Set Color` in front of ``style`` that mixes the incoming ``Color``
+    towards ``color`` in OKLab, and return its mix factor socket (at 0).
+
+    ``color`` and ``selection`` are resolved inside the tree, so callables
+    building nodes from `molecularnodes.nodes.geometry` work as in
+    ``add_style``. Each call adds a new node directly before the style, so
+    later recolours apply on top of earlier ones.
+    """
+    from nodebpy.nodes.geometry import NamedAttribute
+    from ..nodes.geometry import ColorOKLabMix, SetColor
+
+    entity = _entity_of(style)
+    geometry_in = _geometry_socket(style.inputs)
+    tree = _node_tree(style)
+    with _building(tree):
+        color_input = _resolve_color(entity, color)
+        selection_input = _resolve_selection(entity, selection)
+        mix = ColorOKLabMix(factor=0.0, a=NamedAttribute.color("Color"), b=color_input)
+        set_color = SetColor(selection=selection_input, color=mix)
+    node = set_color.node
+    node.label = _RECOLOR_LABEL
+    node.location = (style.location.x - node.width - 40, style.location.y)
+    mix.node.location = (node.location.x - mix.node.width - 40, node.location.y)
+    if geometry_in.is_linked:
+        link = _links(geometry_in)[0]
+        source = link.from_socket
+        tree.links.remove(link)
+        if source is not None:
+            tree.links.new(source, _geometry_socket(node.inputs))
+    tree.links.new(_geometry_socket(node.outputs), geometry_in)
+    return mix.node.inputs["Factor"]
+
+
+def _resolve_color(entity: MolecularEntity | None, color):
+    """A colour for the `Color OKLab Mix` ``B`` input: a callable building
+    nodes, a hex code or colour name, an attribute or keyword the entity
+    knows, or RGB(A) values."""
+    from .. import color as mn_color
+
+    if callable(color):
+        return color()
+    resolver = getattr(entity, "_style_color_input", None)
+    if resolver is not None:
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            resolved = resolver(color)
+        if resolved is None:
+            raise ValueError(f"Cannot recolor to {color!r}.")
+        if isinstance(resolved, tuple) and len(resolved) == 3:
+            resolved = (*resolved, 1.0)
+        return resolved
+    if isinstance(color, str):
+        color = mn_color.parse_color(color)
+    rgba = tuple(float(c) for c in color)
+    return rgba if len(rgba) == 4 else (*rgba[:3], 1.0)
+
+
+def _resolve_selection(entity: MolecularEntity | None, selection):
+    """A selection for `Set Color`: ``None`` for everything, a callable
+    building nodes, or what ``add_style`` accepts on a molecule."""
+    from nodebpy.nodes.geometry import NamedAttribute
+
+    if selection is None:
+        return None
+    if callable(selection):
+        return selection()
+    resolver = getattr(entity, "_resolve_style_selection", None)
+    if resolver is None:
+        raise TypeError(
+            "Only a molecule's styles can be recoloured with a selection phrase; "
+            "pass a callable building the selection nodes instead."
+        )
+    name = resolver(selection)
+    if name is None:
+        raise ValueError(
+            f"Selection {selection!r} is neither an attribute nor a valid "
+            "MDAnalysis selection."
+        )
+    return NamedAttribute.boolean(name)
 
 
 # ---------------------------------------------------------------------------
@@ -571,9 +785,9 @@ def _rig(camera: "Camera") -> None:
     scene's entities, or at the focus distance if there are none."""
     if camera.is_rigged:
         return
-    distance = camera.camera_data.dof.focus_distance
+    distance = camera.dof.focus_distance
     try:
-        depth = (target_centre(None) - camera.location).dot(Vector(camera.basis[2]))
+        depth = (target_centre(None) - camera.location).dot(as_vector(camera.basis[2]))
     except ValueError:
         depth = 0.0
     if depth > camera.clip_start:
@@ -654,7 +868,7 @@ class _PoseMove(CameraMove):
 
     def end_state(self) -> list[tuple[Channel, float]]:
         cam = self._camera
-        obj, pivot, target = cam.camera, cam.pivot, cam.target
+        obj, pivot, target = cam.camera, cam._pivot, cam._target
         data = cam.camera_data
         saved = (
             pivot.location.copy(),
@@ -784,11 +998,11 @@ class Orbit(Sampled):
         self._previous: Euler | None = None
 
     def channels(self) -> list[Channel]:
-        return [Channel(self._camera.pivot, "rotation_euler", i) for i in range(3)]
+        return [Channel(self._camera._pivot, "rotation_euler", i) for i in range(3)]
 
     def prepare(self) -> None:
         _rig(self._camera)
-        pivot = self._camera.pivot
+        pivot = self._camera._pivot
         self._start = pivot.rotation_euler.copy()
         self._previous = pivot.rotation_euler.copy()
         axis = self._axis
@@ -798,15 +1012,15 @@ class Orbit(Sampled):
                 "y": Vector((0, 1, 0)),
                 "z": Vector((0, 0, 1)),
                 # the camera's own axes, for tumbling relative to the view
-                "up": Vector(self._camera.basis[1]),
-                "right": Vector(self._camera.basis[0]),
+                "up": as_vector(self._camera.basis[1]),
+                "right": as_vector(self._camera.basis[0]),
             }
             if axis.lower() not in named:
                 raise ValueError(
                     f"Unknown orbit axis '{axis}'; use {sorted(named)} or a vector."
                 )
             axis = named[axis.lower()]
-        self._axis_vector = Vector(axis).normalized()
+        self._axis_vector = as_vector(axis).normalized()
 
     def euler_component(self) -> tuple[int, float] | None:
         """
@@ -832,11 +1046,12 @@ class Orbit(Sampled):
 
     def sample(self, u: float) -> Sequence[float]:
         assert self._start is not None and self._previous is not None
-        matrix = Matrix.Rotation(self._angle * u, 3, self._axis_vector)
+        assert self._axis_vector is not None
+        matrix = Matrix.Rotation(self._angle * u, 3, self._axis_vector.to_tuple())
         euler = (matrix @ self._start.to_matrix()).to_euler("XYZ", self._previous)
         # keep successive eulers continuous so the curve never wraps
         self._previous = euler
-        return list(euler)
+        return [euler.x, euler.y, euler.z]
 
     def keys(self, timeline, frame_start, frame_end, easing) -> list[Key]:
         self.prepare()
@@ -846,7 +1061,7 @@ class Orbit(Sampled):
             centre = target_centre(self._about)
             pairs = [
                 (Channel(obj, "location", i), float(centre[i]))
-                for obj in (cam.pivot, cam.target)
+                for obj in (cam._pivot, cam._target)
                 for i in range(3)
                 if abs(obj.location[i] - centre[i]) > 1e-9
             ]
@@ -855,7 +1070,7 @@ class Orbit(Sampled):
         if component is None:
             return keys + super().keys(timeline, frame_start, frame_end, easing)
         index, sign = component
-        channel = Channel(cam.pivot, "rotation_euler", index)
+        channel = Channel(cam._pivot, "rotation_euler", index)
         end = channel.value_at(frame_start) + sign * self._angle
         return keys + _tween_keys([(channel, end)], frame_start, frame_end, easing)
 
@@ -892,9 +1107,11 @@ class Focus(Clip):
     def keys(self, timeline, frame_start, frame_end, easing) -> list[Key]:
         cam = self._camera
         _rig(cam)
-        dof = cam.camera_data.dof
+        dof = cam.dof
         centre = target_centre(self._target)
-        pairs = [(Channel(cam.focus_point, "location", i), centre[i]) for i in range(3)]
+        pairs = [
+            (Channel(cam._focus_point, "location", i), centre[i]) for i in range(3)
+        ]
         keys = _tween_keys(pairs, frame_start, frame_end, easing)
         fstop = Channel(dof, "aperture_fstop")
         use_dof = Channel(dof, "use_dof")
@@ -956,7 +1173,7 @@ class Timeline:
     """
 
     def __init__(
-        self, canvas: "Canvas", fps: float | None = None, start: int | None = None
+        self, canvas: "Canvas", fps: int | None = None, start: int | None = None
     ):
         self.canvas = canvas
         if fps is not None:
@@ -1073,6 +1290,118 @@ class Timeline:
     ) -> Tween:
         """A clip easing ``target`` to ``value``; see :func:`resolve_channels`."""
         return Tween(target, value, run_time, easing)
+
+    def fade(
+        self,
+        target,
+        value: float,
+        run_time: float | None = None,
+        easing: str | None = None,
+    ) -> Tween:
+        """
+        A clip fading styles to ``value``: 1 is fully shown, 0 is gone.
+
+        The first fade of a style adds a `Fade Geometry` node after it, which
+        multiplies the alpha of the ``Color`` attribute and removes the
+        geometry at 0. Later fades and :meth:`set_visible` reuse that node, so
+        a style can fade out and back in, or two styles can cross-fade.
+
+        Materials that ignore alpha, such as the ``Ambient Occlusion`` preset,
+        stay opaque until the geometry is removed at 0.
+
+        Parameters
+        ----------
+        target : MolecularEntity | style | bpy.types.Node | sequence
+            Every style of an entity, one style from ``entity.styles``, a
+            style node, or a list of these.
+        value : float
+            Fade to reach, from 0 to 1.
+        run_time : float, optional
+            Length in seconds (default 1).
+        easing : str, optional
+            Rate function (default ``"smooth"``).
+
+        Examples
+        --------
+        ::
+
+            with canvas.timeline() as t:
+                t.play(t.fade(mol.styles[0], 0.0), t.fade(mol.styles[1], 1.0))
+        """
+        pairs = [
+            (Channel(_fade_node(node).inputs["Fade"], "default_value"), float(value))
+            for node in _style_nodes(target)
+        ]
+        return Tween(
+            pairs=pairs,
+            run_time=run_time,
+            easing=easing,
+            name=f"fade {_style_names(target)} -> {value:g}",
+        )
+
+    def set_visible(self, target, visible: bool) -> "Timeline":
+        """
+        Show or hide styles at the cursor, a cut rather than a fade. Uses the
+        same `Fade Geometry` node as :meth:`fade`, so the two can be mixed.
+        """
+        pairs = [
+            (Channel(_fade_node(node).inputs["Fade"], "default_value"), float(visible))
+            for node in _style_nodes(target)
+        ]
+        word = "show" if visible else "hide"
+        return self.play(Step(pairs=pairs, name=f"{word} {_style_names(target)}"))
+
+    def recolor(
+        self,
+        target,
+        color,
+        selection=None,
+        run_time: float | None = None,
+        easing: str | None = None,
+    ) -> Tween:
+        """
+        A clip blending the colour of styles to ``color``.
+
+        Adds a `Set Color` node in front of each style that mixes the incoming
+        ``Color`` attribute with ``color`` in OKLab, and eases its mix factor
+        from 0 to 1, so the change is a smooth blend rather than a jump. Each
+        recolour adds its own node, applied on top of the ones before it.
+
+        Parameters
+        ----------
+        target : MolecularEntity | style | bpy.types.Node | sequence
+            As for :meth:`fade`.
+        color : str | Sequence[float] | Callable
+            What ``add_style(color=...)`` takes: a hex code or colour name
+            (``"#00FFCC"``, ``"pymol:slate"``), RGB(A) values, a colour
+            keyword or attribute, or a callable building colour nodes, such as
+            ``lambda: mg.ColorResidueClass()``.
+        selection : str | AtomGroup | Callable, optional
+            Recolour only these atoms; what ``add_style(selection=...)``
+            takes. Everything when left out.
+        run_time : float, optional
+            Length in seconds (default 1).
+        easing : str, optional
+            Rate function (default ``"smooth"``).
+
+        Examples
+        --------
+        ::
+
+            with canvas.timeline() as t:
+                t.play(t.recolor(mol, "orange", selection="resid 40-60"))
+                t.play(t.recolor(mol, lambda: mg.ColorResidueClass()))
+        """
+        pairs = [
+            (Channel(_recolor_node(node, color, selection), "default_value"), 1.0)
+            for node in _style_nodes(target)
+        ]
+        return Tween(
+            pairs=pairs,
+            run_time=run_time,
+            easing=easing,
+            name=f"recolor {_style_names(target)} -> {_color_name(color)}",
+        )
 
     # -- bookkeeping ------------------------------------------------------
 

@@ -7,6 +7,8 @@ title: "Changelog"
 ## Added
 - `Canvas.timeline()`, a storyboard layer that compiles camera moves (`canvas.camera.look_at`, `orbit`, `dolly`, `zoom`, `move_to`, `focus`), value tweens on node inputs, entity and annotation properties, and trajectory playback (`traj.play(a, b)`) into ordinary keyframes. The camera is now parented to a `camera_pivot` empty so an orbit is one pair of keys; `Camera.location` and `Camera.rotation` are world-space. `entity.styles` gives the style nodes of an entity's tree by index or name for animating from the simple API.
 - A storyboard gallery in the docs (`docs/examples/timeline/`): nineteen scripts that reproduce ProteinMotion's examples with the timeline layer, with their renders, each noting what Molecular Nodes cannot do yet.
+- `t.fade(style, value)` and `t.set_visible(style, visible)` on a timeline fade or cut styles with a `Fade Geometry` node added after each style, and `t.recolor(style, color, selection=)` blends styles to a new colour with a `Set Color` and `Color OKLab Mix` node added in front. Each takes an entity (every style), a style from `entity.styles`, a node, or a list.
+- Selection phrases accept `chain A` as well as `chainID A`, as MDAnalysis 2.12 will.
 
 # v520.3.0 - 2026-11-23
 
