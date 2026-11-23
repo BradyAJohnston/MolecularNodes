@@ -8,11 +8,11 @@ order: 12
 {{< video videos/synchronized_plots.mp4 >}}
 
 The ensemble is aligned in memory, the per-residue RMSF is computed with MDAnalysis and
-     stored as an attribute, and the cartoon reads it through `Color Attribute Map` while all
-     116 models play.
+stored as an attribute, and the cartoon reads it through `Color Attribute Map` while all
+116 models play.
 
-     The contact map, sequence track, distance trace and legend that ProteinMotion draws beside
-     the structure are plot annotations Molecular Nodes does not have yet.
+The contact map, sequence track, distance trace and legend that ProteinMotion draws beside
+the structure are plot annotations Molecular Nodes does not have yet.
 
 After ProteinMotion's [`synchronized_plots.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/synchronized_plots.py).
 

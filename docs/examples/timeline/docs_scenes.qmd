@@ -14,8 +14,7 @@ uv run python docs/examples/timeline/scripts/docs_examples.py out_dir callout_sc
 ```
 
 Scenes whose subject Molecular Nodes cannot animate yet (write-on text, 3D highlights,
-hydrogen bonds, charge contacts, deformation) show what can be shown and say what is
-missing in a comment.
+charge contacts, deformation) show what can be shown and say what is missing in a comment.
 
 ::: {.grid}
 

@@ -1,6 +1,6 @@
 ---
 title: "DNA morph"
-description: "B-DNA to Z-DNA, as a cut where a contact-guided morph would go."
+description: "B-DNA to Z-DNA, as a cross-fade where a contact-guided morph would go."
 video: videos/dna_morph.mp4
 order: 6
 ---
@@ -8,8 +8,8 @@ order: 6
 {{< video videos/dna_morph.mp4 >}}
 
 ProteinMotion morphs chain A of 1BNA into chain A of 2DCG with C1′ anchors and a
-     per-residue delay. That needs the planned `Morph To Attribute` node, so this storyboard
-     turns the source, cuts to the target, reframes and adds ball-and-stick.
+per-residue delay. That needs the planned `Morph To Attribute` node, so this storyboard
+turns the source, cross-fades to the target while reframing, and fades in ball-and-stick.
 
 After ProteinMotion's [`dna_morph.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/dna_morph.py).
 

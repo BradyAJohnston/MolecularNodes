@@ -8,11 +8,12 @@ order: 14
 {{< video videos/density_maps.mp4 >}}
 
 The 1UBQ map from PDBe, loaded as a density entity and styled with
-     `Density Style ISO Surface`. The timeline tweens the contour threshold, in sigma of the
-     map, and moves the node's built-in slice through the box.
+`Density Style ISO Surface`. The surface fades in while the timeline tweens the contour
+threshold, in sigma of the map, and a thin box moves through the cell to cut a section:
+an empty read by a `Select Cube` node, with a `Delete Geometry` after the surface.
 
-     ProteinMotion crops the map around the helix; without a crop node the whole unit cell is
-     shown, which is why the contour is busy.
+ProteinMotion crops the map around the helix; without a crop node the whole unit cell is
+shown, which is why the contour is busy.
 
 After ProteinMotion's [`density_maps.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/density_maps.py).
 

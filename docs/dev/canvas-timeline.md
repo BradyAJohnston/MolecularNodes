@@ -270,15 +270,24 @@ State as of 2026-09-21, PR "Canvas timeline layer (design discussion + prototype
   small) and a Quarto listing with a page per storyboard that embeds the
   script from its file. The scripts are not run during the docs build. Their
   shared helpers in `scripts/_common.py` are also a list of what the API still
-  lacks: a visibility switch spliced in front of linked `Selection` inputs, a
-  turntable empty for spinning an object about its centre, a transparent
-  context material standing in for per-atom opacity.
+  lacks: a turntable empty for spinning an object about its centre, and a
+  `switch` that cross-fades a list of styles. Fades, cuts and colour blends use
+  `t.fade`, `t.set_visible` and `t.recolor` (see below).
+- **Style clips** (added 2026-11-23): `t.fade(target, value)` and
+  `t.set_visible(target, visible)` key a `Fade Geometry` node added after each
+  style (label `Timeline Fade`, reused); `t.recolor(target, color, selection=)`
+  adds a `Set Color` mixing the incoming `Color` with the new colour through
+  `Color OKLab Mix` (label `Timeline Recolor`, one per call) and eases the mix
+  factor. They live on the timeline rather than on style objects:
+  `entity.styles[...]` wraps nodes as a bare nodebpy `Group`, and the generated
+  style classes are rewritten by `nodebpy dump`.
 - **Bug found on the way, not fixed here**: `handlers.render_pre_handler`
   returns early when no entity has annotations, so the compositor's annotation
   overlay keeps the previous scene's labels after `canvas.clear()`.
   `_common.clear_annotation_overlay` blanks the image as a workaround.
-- **Next steps**: `follow=True` on `Focus` (section 4); a `Set Opacity` node
-  so fades are possible; `Animate Stagger`, `Morph To Attribute` and
-  `Style Highlight` as the gallery's comments call for them; `label.write()`
+- **Next steps**: `follow=True` on `Focus` (section 4); staggered fades and
+  recolours, either keyed or driven by `Animate Action` (undecided);
+  `Morph To Attribute` and `Style Highlight` as the gallery's comments call
+  for them; `label.write()`
   once text annotations have a `progress` property; user-facing docs for the
   API itself once it is agreed.

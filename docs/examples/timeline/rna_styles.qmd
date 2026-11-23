@@ -7,12 +7,12 @@ order: 4
 
 {{< video videos/rna_styles.mp4 >}}
 
-Yeast tRNA (1EHZ) with the anticodon loop painted gold. The camera turns while the rest
-     of the molecule fades, a callout names the loop, the base shape cuts from rectangles to
-     cylinders, the cartoon cuts to B-factor colouring and finally to a surface.
+Yeast tRNA (1EHZ). The anticodon loop blends to gold with `t.recolor` while the rest of
+the molecule fades with `t.fade`, a callout names the loop, base cylinders fade in over the
+rectangles, and the cartoon cross-fades to B-factor colouring and finally to a surface.
 
-     ProteinMotion writes the callout on with a vector animation and eases each residue's
-     colour in turn; both are cuts here.
+ProteinMotion writes the callout on with a vector animation and eases each residue's
+colour in turn; the callout is a cut and the loop changes colour at once.
 
 After ProteinMotion's [`rna_styles.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/rna_styles.py).
 

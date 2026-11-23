@@ -101,77 +101,18 @@ def rgba(hex_color: str, alpha: float = 1.0) -> tuple[float, float, float, float
     return (*map(float, linear), alpha)
 
 
-def paint(mol: mn.Molecule, selection: str | None, color: str, alpha=None) -> None:
+def switch(timeline, styles, shown, run_time: float = 0.5) -> None:
     """
-    Write a colour into the ``Color`` attribute for a selection.
-
-    Styles with no ``color=`` read this attribute, so painting a region before
-    ``add_style`` colours it in every representation. The alpha channel is read
-    by the ``Default`` material as opacity.
-    """
-    colors = mol.named_attribute("Color")
-    ix = slice(None) if selection is None else mol.universe.select_atoms(selection).ix
-    colors[ix, :3] = rgba(color)[:3]
-    if alpha is not None:
-        colors[ix, 3] = alpha
-    mol.store_named_attribute(colors, "Color", atype="FLOAT_COLOR")
-
-
-def context_material(transparency: float = 0.9) -> mn.material.Transparent:
-    """
-    A see-through material for everything outside the region of interest.
-
-    ProteinMotion's ``SetOpacity(context, x)`` has no per-atom equivalent yet
-    (a ``Set Opacity`` node is planned), so the context is styled separately
-    with this material and its ``transparency`` socket is tweened instead.
-    """
-    return mn.material.Transparent(transparency=transparency, fresnel=False)
-
-
-def visibility(style) -> bpy.types.NodeSocket:
-    """
-    A keyable boolean socket that shows or hides a style node.
-
-    An unlinked ``Selection`` input is that socket. A style added with a
-    selection has it linked, so a Boolean Math ``AND`` is spliced in between
-    and its free input is the switch. (A node's ``mute`` is not animatable.)
-    """
-    node = style.node
-    socket = node.inputs["Selection"]
-    if not socket.is_linked:
-        return socket
-    link = socket.links[0]
-    gate = link.from_node
-    if gate.bl_idname == "FunctionNodeBooleanMath" and gate.label == "visibility":
-        return gate.inputs[1]
-    tree = node.id_data
-    source = link.from_socket
-    tree.links.remove(link)
-    gate = tree.nodes.new("FunctionNodeBooleanMath")
-    gate.operation = "AND"
-    gate.label = "visibility"
-    # a new Boolean Math input defaults to False, which would hide the style
-    gate.inputs[1].default_value = True
-    gate.location = (node.location.x - 200, node.location.y - 150)
-    tree.links.new(source, gate.inputs[0])
-    tree.links.new(gate.outputs[0], socket)
-    return gate.inputs[1]
-
-
-def show_only(timeline, styles, visible) -> None:
-    """
-    Switch which style nodes are shown at the cursor, by keying their
-    visibility switch. ProteinMotion cross-fades representations; without an
-    opacity channel this is a cut.
+    Cross-fade from one representation to another: ProteinMotion's
+    ``Representation(p, name)``. Every style in ``styles`` fades to 1 if it is
+    in ``shown`` and to 0 otherwise.
     """
     # nodebpy overloads ``==`` on nodes to build Compare nodes, so test identity
-    for style in styles:
-        timeline.set(visibility(style), any(style is shown for shown in visible))
-
-
-def hide(*styles) -> None:
-    for style in styles:
-        visibility(style).default_value = False
+    clips = [
+        timeline.fade(style, 1.0 if any(style is s for s in shown) else 0.0)
+        for style in styles
+    ]
+    timeline.play(*clips, run_time=run_time)
 
 
 def align_frames(mol: mn.Molecule, selection: str = "name CA") -> None:

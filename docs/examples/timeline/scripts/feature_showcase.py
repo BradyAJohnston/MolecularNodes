@@ -13,13 +13,10 @@ from _common import (
     TEAL,
     align_frames,
     callout,
-    context_material,
-    hide,
     make_canvas,
-    paint,
     render,
     show,
-    show_only,
+    switch,
     title,
 )
 import molecularnodes as mn
@@ -29,18 +26,14 @@ MUTED = "#9eafc4"
 canvas = make_canvas()
 p = mn.Molecule.fetch("1CLL")
 helix, lobe = "protein and resid 69-88", "protein and resid 5-38"
-paint(p, None, "#8299ad")
-context = context_material(0.0)
+p.set_color("#8299ad")
 p.add_style("cartoon", selection=f"{helix} or {lobe}")
-p.add_style(
-    "cartoon", selection=f"protein and not ({helix} or {lobe})", material=context
-)
+p.add_style("cartoon", selection=f"protein and not ({helix} or {lobe})")
 p.add_style("ribbon", selection="protein")
 p.add_style("ball_and_stick", selection="protein")
 p.add_style("surface", selection="protein")
 cartoon, cartoon_ctx, ribbon, sticks, surface = list(p.styles)
 styles = [cartoon, cartoon_ctx, ribbon, sticks, surface]
-hide(ribbon, sticks, surface)
 canvas.look_at(p, viewpoint=(72, 0, 12), margin=0.35)
 
 chapters = {}
@@ -111,6 +104,7 @@ def heading(t, name):
 
 
 with canvas.timeline() as t:
+    t.set_visible([ribbon, sticks, surface], False)
     heading(t, "Representations")
     show(t, identity, badges["Cartoon"])
     t.play(canvas.camera.orbit(7), run_time=1.8)
@@ -121,36 +115,32 @@ with canvas.timeline() as t:
         (surface, "Molecular surface"),
     ):
         show(t, last, visible=False)
-        show_only(t, styles, [style])
+        switch(t, styles, [style])
         show(t, badges[name])
         t.play(canvas.camera.orbit(7), run_time=1.9)
         t.play(canvas.camera.orbit(5), run_time=1.1)
         last = badges[name]
     show(t, last, visible=False)
-    show_only(t, styles, [cartoon, cartoon_ctx])
+    switch(t, styles, [cartoon, cartoon_ctx])
 
     heading(t, "Color + transparency")
-    # PM: Colorize(helix, TEAL, residue_delay=0.065), Colorize(lobe, GOLD, ...):
-    # staggered colour needs the planned Animate Stagger node; painted below
-    paint(p, helix, TEAL)
-    paint(p, lobe, GOLD)
-    t.play(canvas.camera.orbit(7), run_time=2.5)
+    # PM: Colorize(helix, TEAL, residue_delay=0.065), Colorize(lobe, GOLD, ...);
+    # the colour blends in without the per-residue stagger
+    regions = [cartoon, ribbon, sticks, surface]
     t.play(
-        t.tween(context.internal_node.i.transparency, 0.8),
-        canvas.camera.orbit(6),
-        run_time=2,
+        t.recolor(regions, TEAL, selection=helix),
+        t.recolor(regions, GOLD, selection=lobe),
+        canvas.camera.orbit(7),
+        run_time=2.5,
     )
-    t.play(
-        t.tween(context.internal_node.i.transparency, 0.0),
-        canvas.camera.orbit(5),
-        run_time=1.5,
-    )
+    t.play(t.fade(cartoon_ctx, 0.2), canvas.camera.orbit(6), run_time=2)
+    t.play(t.fade(cartoon_ctx, 1.0), canvas.camera.orbit(5), run_time=1.5)
 
     heading(t, "Focus + annotation")
     # PM: helix.highlight(style="sphere"), highlight(style="box") - no highlight style yet
     t.play(
         canvas.camera.look_at(p.get_view(helix), margin=0.3),
-        t.tween(context.internal_node.i.transparency, 0.95),
+        t.fade(cartoon_ctx, 0.05),
         run_time=2.8,
     )
     show(t, note)
@@ -158,7 +148,7 @@ with canvas.timeline() as t:
     show(t, note, visible=False)
     t.play(
         canvas.camera.look_at(p, margin=0.35),
-        t.tween(context.internal_node.i.transparency, 0.0),
+        t.fade(cartoon_ctx, 1.0),
         run_time=2.5,
     )
 
@@ -171,7 +161,7 @@ render(canvas, t, "feature_showcase_a")
 
 nmr = mn.Molecule.fetch("1CFC")
 align_frames(nmr, "name CA")
-paint(nmr, None, "#8299ad")
+nmr.set_color("#8299ad")
 nmr.add_style("cartoon", selection="protein")
 p.object.hide_render = True
 canvas.look_at(nmr, viewpoint=(72, 0, 12), margin=0.35)

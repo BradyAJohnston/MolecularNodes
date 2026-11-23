@@ -7,7 +7,7 @@ in-memory MDAnalysis trajectory so the entity plays it like any other.
 
 import MDAnalysis as mda
 import numpy as np
-from _common import hide, make_canvas, render, show_only, spin, world_points
+from _common import make_canvas, render, spin, switch, world_points
 from MDAnalysis.coordinates.memory import MemoryReader
 import molecularnodes as mn
 
@@ -36,17 +36,18 @@ protein.add_style("cartoon", selection="protein").add_style(
     "ribbon", selection="protein"
 ).add_style("ball_and_stick", selection="protein")
 cartoon, ribbon, sticks = list(protein.styles)
-hide(ribbon, sticks)
 canvas.look_at(protein, viewpoint=(75, 0, -20), margin=0.05)
 
 with canvas.timeline() as t:
-    # PM: FadeIn(p) - no opacity channel yet
+    t.set_visible(protein, False)
+    # PM: FadeIn(p)
+    t.play(t.fade(cartoon, 1.0), run_time=0.8)
     t.play(spin(protein, 126), run_time=3.2)
-    show_only(t, [cartoon, ribbon, sticks], [ribbon])
+    switch(t, [cartoon, ribbon, sticks], [ribbon])
     t.play(spin(protein, 50, axis="x"), run_time=2)
-    show_only(t, [cartoon, ribbon, sticks], [sticks])
+    switch(t, [cartoon, ribbon, sticks], [sticks])
     t.play(canvas.camera.orbit(50), run_time=2)
-    show_only(t, [cartoon, ribbon, sticks], [cartoon])
+    switch(t, [cartoon, ribbon, sticks], [cartoon])
     # PM: Deform(p, stretch) then Morph(p, original) - needs Morph To Attribute
     t.play(protein.play(0, 60), spin(protein, 85), run_time=4, easing="linear")
     t.wait(0.7)

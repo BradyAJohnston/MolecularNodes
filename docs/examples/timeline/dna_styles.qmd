@@ -1,6 +1,6 @@
 ---
 title: "DNA base styles"
-description: "Slabs and sticks for the bases, a painted region, chain transparency and a surface."
+description: "Slabs and sticks for the bases, a region recoloured, chain B faded and a surface."
 video: videos/dna_styles.mp4
 order: 5
 ---
@@ -8,9 +8,11 @@ order: 5
 {{< video videos/dna_styles.mp4 >}}
 
 B-DNA (1BNA). The cartoon's `Base Shape` gives the slab and stick looks; ProteinMotion's
-     ring and ladder styles have no cartoon equivalent yet. Residues 5 to 8 of chain A are
-     painted, chain B fades through a transparent material, and the scene ends on a molecular
-     surface.
+ring and ladder styles have no cartoon equivalent yet. Residues 5 to 8 of chain A blend to
+gold with `t.recolor` while chain B fades with `t.fade`, and the representations
+cross-fade through to a molecular surface.
+
+ProteinMotion recolours each residue in turn; here the region changes colour at once.
 
 After ProteinMotion's [`dna_styles.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/dna_styles.py).
 

@@ -10,7 +10,7 @@ order: 15
 {{< video videos/large_protein_subunit.mp4 >}}
 
 1AON coloured by chain with `Color Attribute Random`, half a turn as cartoon and a
-     quarter turn as ball-and-stick. A second storyboard spins one subunit.
+quarter turn as ball-and-stick. A second storyboard spins one subunit.
 
 After ProteinMotion's [`large_protein.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/large_protein.py).
 

@@ -46,8 +46,8 @@ MN_EXAMPLES_ENGINE=CYCLES uv run python docs/examples/timeline/scripts/quickstar
 
 Structures are fetched into the Molecular Nodes download cache on first use.
 `_common.py` holds the shared setup and the few helpers the scripts need:
-painting a selection's colour, a transparent context material, cutting between
-style nodes, titles and callouts, spinning an object about its centre.
+cross-fading between style nodes, titles and callouts, spinning an object about
+its centre.
 
 ## What maps onto what
 
@@ -58,27 +58,29 @@ style nodes, titles and callouts, spinning an object about its centre.
 | `self.focus(region)`, `Focus(camera, region)` | `canvas.camera.look_at(view, margin=)` |
 | `camera.set_focus(...)`, `FocusPull(camera, region, fstop=)` | `canvas.camera.focus(view, fstop=)` |
 | `camera.zoom(f)` | `canvas.camera.zoom(lens)` |
-| `Representation(p, name)` | `show_only(t, styles, [style])`: a cut, keyed on the style's `Selection` input |
-| `region.set_color(c)`, `Colorize(region, c)` | `paint(mol, selection, c)` into the `Color` attribute (static) |
-| `SetOpacity(region, x)` | a second style on the region with `mn.material.Transparent`, its `transparency` socket tweened |
+| `Representation(p, name)` | `t.fade(old, 0)` with `t.fade(new, 1)`, or `switch(t, styles, [style])`; `t.set_visible(style, False)` for a cut |
+| `FadeIn(p)`, `FadeOut(p)` | `t.fade(mol, 1)`, `t.fade(mol, 0)`: every style of the entity |
+| `region.set_color(c)` | `mol.set_color(c, selection)` into the `Color` attribute (static) |
+| `Colorize(region, c)` | `t.recolor(styles, c, selection=)`: a blend to the new colour |
+| `SetOpacity(region, x)` | `t.fade(style, x)` on a style holding the region |
+| `HydrogenBonds(p, ...)` | `mol.calculations.hbonds(...)` and the `Style HBonds` node |
 | `ColorByProperty(p, values)` | `color=lambda: mg.ColorAttributeMap(name=, min=, max=)` |
 | `PlayTrajectory(p, start=, end=)` | `mol.play(start, end)` |
 | `Text(...)`, `region.callout(...)` | `title(mol, ...)` (2D label), `callout(mol, selection, ...)` (3D label at the selection's centre with a pointer) |
 | `Distance(a, b)` | `mol.annotations.add_com_distance(...)` |
 | `Trajectory.aligned(indices=)` | `align_frames(mol, selection)` (MDAnalysis `AlignTraj`, in memory) |
-| `DensityMap.from_file`, `isosurface`, `slice` | `Grids.load(..., style="density_iso_surface")`, `threshold` and `slice_center` inputs |
+| `DensityMap.from_file`, `isosurface`, `slice` | `Grids.load(..., style="density_iso_surface")` and its `threshold` input; a slice is a box empty read by `Select Cube` |
 
 ## Not there yet
 
-- **Opacity per atom** (`FadeIn`/`FadeOut`, `SetOpacity` with `residue_delay`): needs a `Set Opacity` node. The `Default` material already reads the `Color` attribute's alpha, so a static opacity can be painted.
-- **Staggered per-residue changes** (`residue_delay=` on colour, opacity, morphs): needs the `Animate Stagger` node.
-- **Morphs and deformations** (`Morph`, `BackboneMorph`, `Deform`, `ContactMatch`): need `Morph To Attribute`. The morph storyboards cut between the two structures.
-- **3D highlights** (`region.highlight(style="sphere" | "box" | "atoms")`): a `Style Highlight` node. The regions are painted instead.
-- **Hydrogen bonds and electrostatics** (`HydrogenBonds`, `Electrostatics`): analysis nodes plus a dashed-bond style. One pair is drawn with a distance annotation where it matters.
+- **Staggered per-residue changes** (`residue_delay=` on colour and opacity): the `Animate Action` and `Stagger Value` nodes can stagger a value per residue, but `t.fade` and `t.recolor` change a whole selection at once.
+- **Morphs and deformations** (`Morph`, `BackboneMorph`, `Deform`, `ContactMatch`): need `Morph To Attribute`. The morph storyboards cross-fade between the two structures.
+- **3D highlights** (`region.highlight(style="sphere" | "box" | "atoms")`): a `Style Highlight` node. The regions are coloured instead.
+- **Electrostatics** (`Electrostatics`): a `Coulomb Contacts` analysis node.
 - **Write-on text** (`Write`, `Unwrite`): a `progress` property on text annotations. Labels are cut in and out.
 - **Plots and legends** (`ContactMap`, `TimeSeriesPlot`, `SequenceTrack`, `ColorLegend`): plot annotations.
-- **Cross-fading representations**: needs opacity; representation changes are cuts.
-- **Depth cue**: no shortcut for a mist pass.
+- **Depth cue**: the `Composite Depth Fog` compositor node exists, but `Canvas` has no shortcut for it yet.
+- **Opacity with ambient occlusion**: the `Ambient Occlusion` material is always opaque, so a fade on a style using it only removes the geometry at 0.
 - ProteinMotion's `contact_report.py` has no counterpart: it is a matplotlib report on its own contact-matching output, not a scene.
 
 The design notes for the timeline are in `docs/dev/canvas-timeline.md`, and the

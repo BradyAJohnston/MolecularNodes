@@ -10,12 +10,10 @@ from _common import (
     GOLD,
     align_frames,
     callout,
-    hide,
     make_canvas,
-    paint,
     render,
     show,
-    show_only,
+    switch,
     title,
 )
 import molecularnodes as mn
@@ -25,7 +23,6 @@ protein = mn.Molecule.fetch("2K39")
 align_frames(protein, "name CA and resid 1-70")
 protein.add_style("cartoon").add_style("ball_and_stick")
 cartoon, sticks = list(protein.styles)
-hide(sticks)
 canvas.look_at(protein, viewpoint=(70, 0, 37), margin=0.15)
 
 heading = title(protein, "Every residue has a story.", position=(0.065, 0.07), size=64)
@@ -59,9 +56,6 @@ tail_note = callout(
     size=38,
     color=CYAN,
 )
-# PM: helix.highlight(style="sphere"), tail.highlight(style="atoms") - painted instead
-paint(protein, "resid 23-34", GOLD)
-paint(protein, "resid 71-76", CYAN)
 # residue labels at the Cα of residues 8, 44 and 70, ProteinMotion's label_residues
 residue_labels = []
 for resid, offset in ((8, (-270, -90)), (44, (520, -100)), (70, (400, 150))):
@@ -75,22 +69,30 @@ for resid, offset in ((8, (-270, -90)), (44, (520, -100)), (70, (400, 150))):
             size=34,
         )
     )
-paint(protein, "resid 8 44 70", GOLD)
 
 with canvas.timeline() as t:
+    t.set_visible(sticks, False)
     show(t, heading)  # PM: Write(title, stroke_width=1.8), run_time=2.2
     t.wait(2.2)
     show(t, subtitle, footer)
     t.wait(0.6)
     show(t, helix_note, tail_note)
-    t.wait(2)
+    # PM: helix.highlight(style="sphere"), tail.highlight(style="atoms") - the
+    # regions are recoloured instead
+    t.play(
+        t.recolor(protein, GOLD, selection="resid 23-34"),
+        t.recolor(protein, CYAN, selection="resid 71-76"),
+        run_time=0.8,
+    )
+    t.wait(1.2)
     t.play(protein.play(0, 16), canvas.camera.orbit(20), run_time=4, easing="smooth")
     show(t, helix_note, tail_note, visible=False)
     t.wait(1.2)
-    show_only(t, [cartoon, sticks], [sticks])
-    t.wait(0.8)
+    switch(t, [cartoon, sticks], [sticks])
+    t.wait(0.3)
     show(t, *residue_labels)
-    t.wait(2)
+    t.play(t.recolor(protein, GOLD, selection="resid 8 44 70"), run_time=0.8)
+    t.wait(1.2)
     t.play(protein.play(16, 36), canvas.camera.orbit(23), run_time=5, easing="smooth")
     t.wait(1)
 

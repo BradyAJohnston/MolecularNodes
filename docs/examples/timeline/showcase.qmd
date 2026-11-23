@@ -7,12 +7,12 @@ order: 13
 
 {{< video videos/showcase_gallery.mp4 >}}
 
-Ubiquitin turns through cartoon, ribbon and ball-and-stick, then plays a synthetic
-     sine-wave motion built as an in-memory MDAnalysis trajectory. A second storyboard places
-     three copies side by side, each spinning about its own centre.
+Ubiquitin fades in, turns and cross-fades through cartoon, ribbon and ball-and-stick,
+then plays a synthetic sine-wave motion built as an in-memory MDAnalysis trajectory. A
+second storyboard places three copies side by side, each spinning about its own centre.
 
-     ProteinMotion's deformation and morph back to the original coordinates need
-     `Morph To Attribute`.
+ProteinMotion's deformation and morph back to the original coordinates need
+`Morph To Attribute`.
 
 After ProteinMotion's [`showcase.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/showcase.py).
 

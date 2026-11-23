@@ -5,8 +5,8 @@ After ProteinMotion's ``examples/docs_examples.py``. Run all of them, or one:
     uv run python docs/examples/timeline/scripts/docs_examples.py out_dir [name]
 
 Scenes whose subject Molecular Nodes cannot animate yet (write-on text, 3D
-highlights, hydrogen bonds, charge contacts, deformation) render what can be
-shown and say what is missing in a comment.
+highlights, charge contacts, deformation) render what can be shown and say
+what is missing in a comment.
 """
 
 import sys
@@ -15,18 +15,17 @@ from _common import (
     GOLD,
     align_frames,
     callout,
-    context_material,
     design_pixels,
-    hide,
     make_canvas,
-    paint,
     render,
+    rgba,
     show,
-    show_only,
     spin,
+    switch,
     title,
 )
 import molecularnodes as mn
+from molecularnodes.nodes import geometry as mg
 
 SCENES = {}
 
@@ -46,12 +45,13 @@ def ubiquitin(canvas, style="cartoon", viewpoint=(70, 0, 37), margin=0.05, **kwa
 @scene
 def motion(canvas):
     p = ubiquitin(canvas)
+    p.add_style("ribbon", selection="protein")
+    cartoon, ribbon = list(p.styles)
     with canvas.timeline() as t:
-        t.play(spin(p, 180), run_time=3)  # PM: FadeIn(p) first - no opacity channel yet
-        p.add_style("ribbon", selection="protein")
-        cartoon, ribbon = list(p.styles)
-        hide(ribbon)
-        show_only(t, [cartoon, ribbon], [ribbon])
+        t.set_visible(p, False)
+        t.play(t.fade(cartoon, 1.0), run_time=0.8)  # PM: FadeIn(p)
+        t.play(spin(p, 180), run_time=3)
+        switch(t, [cartoon, ribbon], [ribbon])
         t.play(
             t.tween((p.object, "location"), (0.5, 0, 0)),
             canvas.camera.orbit(34),
@@ -67,11 +67,11 @@ def representations(canvas):
     for name in ("ribbon", "ball_and_stick", "surface"):
         p.add_style(name, selection="protein")
     styles = list(p.styles)
-    hide(*styles[1:])
     with canvas.timeline() as t:
+        t.set_visible(styles[1:], False)
         t.wait(1)
         for style in styles[1:]:
-            show_only(t, styles, [style])
+            switch(t, styles, [style])
             t.play(spin(p, 26), run_time=1.5)
     return t
 
@@ -79,7 +79,7 @@ def representations(canvas):
 @scene
 def region_focus(canvas):
     p = ubiquitin(canvas)
-    paint(p, "resid 23-34", GOLD)  # PM: helix.highlight(style="box")
+    p.set_color(GOLD, "resid 23-34")  # PM: helix.highlight(style="box")
     helix = p.get_view("resid 23-34")
     with canvas.timeline() as t:
         t.play(canvas.camera.look_at(helix, margin=0.3), run_time=1.5)
@@ -91,9 +91,9 @@ def region_focus(canvas):
 @scene
 def highlights(canvas):
     # PM: helix.highlight(style="sphere" | "box" | "atoms") - the planned Style
-    # Highlight node. The helix is painted and shown with each representation.
+    # Highlight node. The helix is coloured and shown with each representation.
     p = ubiquitin(canvas)
-    paint(p, "resid 23-34", GOLD)
+    p.set_color(GOLD, "resid 23-34")
     with canvas.timeline() as t:
         t.play(spin(p, 40), run_time=3)
     return t
@@ -139,7 +139,7 @@ def callout_scene(canvas):
         offset=(-260, 40),
         size=48,
     )
-    paint(p, "resid 23-34", GOLD)  # PM: helix.highlight(style="box")
+    p.set_color(GOLD, "resid 23-34")  # PM: helix.highlight(style="box")
     with canvas.timeline() as t:
         show(t, note)
         t.wait(1)
@@ -174,9 +174,10 @@ def residue_labels(canvas):
 @scene
 def residue_colors(canvas):
     p = mn.Molecule.fetch("1UBQ")
-    paint(p, "resid 23-34", CYAN)
-    paint(p, "resid 2-7", GOLD)
-    paint(p, "resid 71-76", "#9fb3c8", alpha=0.2)  # opacity through the Color alpha
+    p.set_color(CYAN, "resid 23-34")
+    p.set_color(GOLD, "resid 2-7")
+    # opacity through the Color alpha, which the Default material reads
+    p.set_color(rgba("#9fb3c8", alpha=0.2), "resid 71-76")
     p.add_style("cartoon", selection="protein")
     canvas.look_at(p, viewpoint=(70, 0, 37), margin=0.05)
     with canvas.timeline() as t:
@@ -186,41 +187,35 @@ def residue_colors(canvas):
 
 @scene
 def color_change(canvas):
-    # PM: Colorize(helix, cyan, residue_delay=0.09) - a staggered colour change
-    # needs the planned Animate Stagger node; colours are cut with a second
-    # painted style here.
+    # PM: Colorize(helix, cyan, residue_delay=0.09); the colour blends in
+    # without the per-residue stagger
     p = mn.Molecule.fetch("1UBQ")
     p.add_style("cartoon", selection="protein")
-    p.add_style("cartoon", selection="protein")
-    plain, coloured = list(p.styles)
-    hide(coloured)
     canvas.look_at(p, viewpoint=(70, 0, 37), margin=0.05)
     with canvas.timeline() as t:
         t.wait(1)
-        paint(p, "resid 23-34", CYAN)
-        paint(p, "resid 2-7", GOLD)
-        # both styles read the same painted attribute; the cut is between
-        # colour and a SetColor override on the plain style
-        show_only(t, [plain, coloured], [coloured])
-        t.wait(2.5)
+        t.play(
+            t.recolor(p, CYAN, selection="resid 23-34"),
+            t.recolor(p, GOLD, selection="resid 2-7"),
+            run_time=1.5,
+        )
+        t.wait(1)
     return t
 
 
 @scene
 def opacity(canvas):
     p = mn.Molecule.fetch("1UBQ")
-    paint(p, "resid 23-34", CYAN)
-    context = context_material(0.0)
-    p.add_style("ball_and_stick", selection="resid 23-34", material=context)
+    p.set_color(CYAN, "resid 23-34")
+    p.add_style("ball_and_stick", selection="resid 23-34")
     p.add_style("ball_and_stick", selection="protein and not resid 23-34")
+    helix = p.styles[0]
     canvas.look_at(p, viewpoint=(70, 0, 37), margin=0.05)
     with canvas.timeline() as t:
         t.wait(0.5)
-        t.play(
-            t.tween(context.internal_node.i.transparency, 0.9), run_time=2
-        )  # SetOpacity(helix, 0.1)
+        t.play(t.fade(helix, 0.1), run_time=2)  # SetOpacity(helix, 0.1)
         t.wait(0.7)
-        t.play(t.tween(context.internal_node.i.transparency, 0.0), run_time=1.5)
+        t.play(t.fade(helix, 1.0), run_time=1.5)
         t.wait(0.5)
     return t
 
@@ -256,19 +251,31 @@ def distances(canvas):
 @scene
 def hydrogen_bonds(canvas):
     # PM: HydrogenBonds(p, donors=..., max_distance=3.5, min_angle=150).highlight()
-    # needs the planned Hydrogen Bonds node. One i -> i+4 backbone pair is
-    # drawn with a distance annotation to stand in.
-    p = ubiquitin(canvas, style="ball_and_stick", margin=0.1)
-    ruler = p.annotations.add_com_distance(
-        selection1="resid 24 and name O",
-        selection2="resid 28 and name N",
-        text1="O 24",
-        text2="N 28",
+    # MDAnalysis needs explicit hydrogens, so this is the 2K39 NMR model of
+    # ubiquitin rather than the 1UBQ crystal structure
+    p = mn.Molecule.fetch("2K39")
+    p.add_style("cartoon", selection="protein")
+    hbonds = p.calculations.hbonds(
+        selection="protein", d_a_cutoff=3.5, d_h_a_angle_cutoff=150
     )
-    ruler.visible = False
+    with p.tree as tree:
+        (
+            tree.atoms
+            >> mg.StyleHBonds(
+                data_object=hbonds.object,
+                radius=0.2,
+                color=rgba(GOLD),
+                material=mn.material.append_material("Default"),
+            )
+            >> tree.join
+        )
+    network = p.styles["Style HBonds"]
+    canvas.look_at(p, viewpoint=(70, 0, 37), margin=0.1)
     with canvas.timeline() as t:
-        show(t, ruler)
-        t.wait(2)
+        t.set_visible(network, False)
+        t.wait(0.5)
+        t.play(t.fade(network, 1.0), run_time=1)
+        t.wait(0.5)
         t.play(canvas.camera.orbit(34), run_time=3)
         t.wait(1)
     return t

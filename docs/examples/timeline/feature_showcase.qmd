@@ -9,12 +9,12 @@ order: 16
 
 {{< video videos/feature_showcase_b.mp4 >}}
 
-Chapters with headings, badges and a callout: representation cuts, painted regions and
-     transparency, a focus move onto the central helix, and then the deposited 1CFC NMR
-     ensemble played as a second entity.
+Chapters with headings, badges and a callout: cross-fades between representations,
+regions recoloured with `t.recolor` and a context faded with `t.fade`, a focus move onto
+the central helix, and then the deposited 1CFC NMR ensemble played as a second entity.
 
-     ProteinMotion continues with a contact-guided morph into troponin C, hydrogen bonds, live
-     distances and electrostatics; those chapters are marked in the script as comments.
+ProteinMotion continues with a contact-guided morph into troponin C, hydrogen bonds, live
+distances and electrostatics; those chapters are marked in the script as comments.
 
 After ProteinMotion's [`feature_showcase.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/feature_showcase.py).
 

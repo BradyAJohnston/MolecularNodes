@@ -8,8 +8,8 @@ order: 18
 {{< video videos/benchmark.mp4 >}}
 
 Copies of ubiquitin on a grid, one full turn each, timed end to end and written to
-     `benchmark.json`. Not a claim about peak performance; a reproducible number for one
-     machine.
+`benchmark.json`. Not a claim about peak performance; a reproducible number for one
+machine.
 
 After ProteinMotion's [`benchmark.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/benchmark.py).
 

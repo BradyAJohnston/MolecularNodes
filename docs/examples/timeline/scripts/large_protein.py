@@ -3,7 +3,7 @@
 After ProteinMotion's ``examples/large_protein.py``.
 """
 
-from _common import hide, make_canvas, render, show_only, spin
+from _common import make_canvas, render, spin, switch
 import molecularnodes as mn
 from molecularnodes.nodes import geometry as mg
 
@@ -14,16 +14,16 @@ complex_.add_style(
     "ball_and_stick", color=lambda: mg.ColorAttributeRandom(name="chain_id")
 )
 cartoon, sticks = complex_.styles[0], complex_.styles[1]
-hide(sticks)
 # PM orients the chaperonin axis vertically from an SVD of the Cα positions;
 # the side viewpoint does the same job for this assembly.
 canvas.look_at(complex_, viewpoint=(80, 0, 17), margin=0.05)
 # PM: camera.depth_cue = 0.45 - no depth cue (mist) shortcut yet.
 
 with canvas.timeline() as t:
+    t.set_visible(sticks, False)
     t.wait(0.5)
     t.play(spin(complex_, 180), run_time=4, easing="linear")
-    show_only(t, [cartoon, sticks], [sticks])
+    switch(t, [cartoon, sticks], [sticks])
     t.play(spin(complex_, 90), run_time=3, easing="linear")
     t.wait(0.5)
 

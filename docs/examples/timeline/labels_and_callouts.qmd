@@ -8,9 +8,11 @@ order: 9
 {{< video videos/labels_and_callouts.mp4 >}}
 
 Text annotations on the 2K39 ensemble: 2D titles, 3D callouts anchored at the helix and
-     the C-terminal tail, and residue labels at three Cα atoms, all following the conformers as
-     they play. ProteinMotion writes the text on stroke by stroke; here labels are cut in and
-     out, since a write-on needs a `progress` property on text annotations.
+the C-terminal tail, and residue labels at three Cα atoms, all following the conformers as
+they play. Each region is recoloured with `t.recolor` as its label appears.
+
+ProteinMotion writes the text on stroke by stroke; here labels are cut in and out, since a
+write-on needs a `progress` property on text annotations.
 
 After ProteinMotion's [`labels_and_callouts.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/labels_and_callouts.py).
 

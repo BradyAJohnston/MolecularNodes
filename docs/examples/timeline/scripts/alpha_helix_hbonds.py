@@ -2,15 +2,16 @@
 
 After ProteinMotion's ``examples/alpha_helix_hbonds.py``. The helix is built
 in numpy (phi -57, psi -47, omega 180, explicit amide H) into an MDAnalysis
-Universe. The i -> i+4 O···N pairs are drawn with ``com_distance`` annotations;
-a geometric hydrogen-bond detector (the planned ``Hydrogen Bonds`` node) is
-what ProteinMotion animates here.
+Universe. The hydrogen bonds are found by MDAnalysis through
+``mol.calculations.hbonds()`` and drawn by the ``Style HBonds`` node; one
+donor-acceptor pair is measured with a ``com_distance`` annotation.
 """
 
 import MDAnalysis as mda
 import numpy as np
-from _common import GOLD, context_material, make_canvas, render, show, title
+from _common import GOLD, make_canvas, render, rgba, show, title
 import molecularnodes as mn
+from molecularnodes.nodes import geometry as mg
 
 
 def unit(v):
@@ -88,9 +89,26 @@ def ideal_helix(n=16, phi=-57, psi=-47) -> mda.Universe:
 
 canvas = make_canvas()
 helix = mn.Molecule(ideal_helix())
-context = context_material(0.0)
-helix.add_style("ball_and_stick", selection="not resid 5-9", material=context)
+helix.add_style("ball_and_stick", selection="not resid 5-9")
 helix.add_style("ball_and_stick", selection="resid 5-9")
+context = helix.styles[0]
+# PM: HydrogenBonds(p, hydrogens="explicit", max_distance=3.5, min_angle=150)
+hbonds = helix.calculations.hbonds(d_a_cutoff=3.5, d_h_a_angle_cutoff=150)
+with helix.tree as tree:
+    (
+        tree.atoms
+        >> mg.StyleHBonds(
+            data_object=hbonds.object,
+            radius=0.12,
+            dashes=6,
+            color=rgba(GOLD),
+            # without a material Blender draws the bonds plain grey
+            material=mn.material.append_material("Default"),
+        )
+        >> tree.join
+    )
+network = helix.styles["Style HBonds"]
+found = len(hbonds.object.data.edges)
 canvas.look_at(helix, viewpoint=(85, 0, 25), margin=0.15)
 
 heading = title(helix, "Hydrogen bonds in an α helix", size=57)
@@ -109,19 +127,8 @@ footer = title(
     color="#74869e",
 )
 count = title(
-    helix, "12 expected|12 drawn", position=(0.065, 0.35), size=42, color=GOLD
+    helix, f"12 expected|{found} found", position=(0.065, 0.35), size=42, color=GOLD
 )
-# PM: HydrogenBonds(p, hydrogens="explicit", max_distance=3.5, min_angle=150).highlight(mode="3d")
-network = []
-for i in range(1, 13):
-    ruler = helix.annotations.add_com_distance(
-        selection1=f"resid {i} and name O",
-        selection2=f"resid {i + 4} and name N",
-        text1="",
-        text2="",
-    )
-    ruler.visible = False
-    network.append(ruler)
 bond = helix.annotations.add_com_distance(
     selection1="resid 9 and name H",
     selection2="resid 5 and name O",
@@ -146,15 +153,19 @@ nh_label = title(
 turn = helix.get_view("resid 5-9")
 
 with canvas.timeline() as t:
+    t.set_visible(network, False)
     show(t, heading, subtitle, footer)
     t.wait(1.8)
-    show(t, *network, count)
+    # PM: hbonds.highlight(mode="3d")
+    t.play(t.fade(network, 1.0), run_time=0.6)
+    show(t, count)
     t.wait(2)
     t.play(canvas.camera.orbit(52), run_time=4)
     t.wait(0.6)
-    show(t, *network, count, visible=False)
+    show(t, count, visible=False)
     t.play(
-        t.tween(context.internal_node.i.transparency, 0.94),  # SetOpacity(other, 0.06)
+        t.fade(network, 0.0),
+        t.fade(context, 0.06),  # SetOpacity(other, 0.06)
         canvas.camera.look_at(turn, margin=0.3),
         run_time=1.6,
     )
@@ -163,11 +174,12 @@ with canvas.timeline() as t:
     t.wait(1.2)
     show(t, bond, o_label, nh_label, visible=False)
     t.play(
-        t.tween(context.internal_node.i.transparency, 0.0),
-        canvas.camera.look_at(helix, margin=0.15),
+        t.fade(context, 1.0),
+        t.fade(network, 1.0),
+        canvas.camera.look_at(helix.get_view("all"), margin=0.15),
         run_time=1.6,
     )
-    show(t, *network, count)
+    show(t, count)
     t.play(canvas.camera.orbit(40), run_time=3)
     t.wait(0.8)
 
