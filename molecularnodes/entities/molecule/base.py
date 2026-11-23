@@ -38,6 +38,7 @@ from ...utils import (
     _UNSET,
     Unset,
     is_periodic_box,
+    select_atoms,
     temp_override_property,
 )
 from ..base import EntityType, MolecularEntity, MolecularTree
@@ -1481,7 +1482,7 @@ class Molecule(MolecularEntity):
                         "attribute, so it can't be used as a selection"
                     )
                 return values
-            return _ag_to_bool(self.universe.select_atoms(selection))
+            return _ag_to_bool(select_atoms(self.universe, selection))
         mask = np.zeros(self.atoms.n_atoms, dtype=bool)
         mask[slice(None) if selection is None else selection] = True
         return mask
@@ -1541,7 +1542,7 @@ class Molecule(MolecularEntity):
             # otherwise interpret it as an MDAnalysis selection phrase, validating it
             # first so an invalid phrase warns rather than storing a broken selection
             try:
-                self.universe.select_atoms(selection)
+                select_atoms(self.universe, selection)
             except Exception:
                 warnings.warn(
                     f"Selection '{selection}' is neither an existing named attribute "
@@ -1670,7 +1671,7 @@ class Molecule(MolecularEntity):
                 if values.dtype == bool:
                     return values
             try:
-                selection = self.universe.select_atoms(selection)
+                selection = select_atoms(self.universe, selection)
             except Exception as e:
                 raise ValueError(f"Invalid selection {selection!r}: {e}") from e
         if isinstance(selection, AtomGroup):
@@ -2267,7 +2268,7 @@ class Molecule(MolecularEntity):
                 # allow multiple comma separated selection phrases as well
                 selection_array = selection.split(",")
                 try:
-                    atom_group = self.universe.select_atoms(*selection_array)
+                    atom_group = select_atoms(self.universe, *selection_array)
                 except Exception:
                     raise ValueError(f"Invalid {selection} phrase")
             else:

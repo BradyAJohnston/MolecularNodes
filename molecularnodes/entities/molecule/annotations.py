@@ -5,6 +5,7 @@ from mathutils import Vector
 from MDAnalysis.core.groups import AtomGroup
 from ...annotations.base import BaseAnnotation
 from ...annotations.manager import BaseAnnotationManager
+from ...utils import select_atoms
 from ..annotations import Label2D, Label3D
 from ..base import EntityType
 
@@ -157,8 +158,11 @@ class AtomInfo(MoleculeAnnotation):
                 # check if selection phrase is valid
                 # mda throws exception if invalid
                 universe = self.trajectory.universe
-                self.atom_group = universe.select_atoms(
-                    params.selection, periodic=params.periodic, updating=params.updating
+                self.atom_group = select_atoms(
+                    universe,
+                    params.selection,
+                    periodic=params.periodic,
+                    updating=params.updating,
                 )
             elif isinstance(params.selection, AtomGroup):
                 self.atom_group = params.selection
@@ -216,8 +220,11 @@ class COM(MoleculeAnnotation):
                 # check if selection phrase is valid
                 # mda throws exception if invalid
                 universe = self.trajectory.universe
-                self.atom_group = universe.select_atoms(
-                    params.selection, periodic=params.periodic, updating=params.updating
+                self.atom_group = select_atoms(
+                    universe,
+                    params.selection,
+                    periodic=params.periodic,
+                    updating=params.updating,
                 )
             elif isinstance(params.selection, AtomGroup):
                 self.atom_group = params.selection
@@ -274,7 +281,8 @@ class COMDistance(MoleculeAnnotation):
             if isinstance(params.selection1, str):
                 # check if selection phrase is valid
                 # mda throws exception if invalid
-                self.atom_group1 = universe.select_atoms(
+                self.atom_group1 = select_atoms(
+                    universe,
                     params.selection1,
                     periodic=params.periodic,
                     updating=params.updating,
@@ -290,7 +298,8 @@ class COMDistance(MoleculeAnnotation):
             if isinstance(params.selection2, str):
                 # check if selection phrase is valid
                 # mda throws exception if invalid
-                self.atom_group2 = universe.select_atoms(
+                self.atom_group2 = select_atoms(
+                    universe,
                     params.selection2,
                     periodic=params.periodic,
                     updating=params.updating,

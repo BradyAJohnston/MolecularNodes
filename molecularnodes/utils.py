@@ -1,6 +1,7 @@
 import io
 import json
 import os
+import re
 import sys
 from contextlib import ExitStack
 from typing import List, cast
@@ -291,3 +292,30 @@ def temp_override_properties(stack: ExitStack, properties: list) -> None:
     """
     for property in properties:
         stack.enter_context(temp_override_property(*property))
+
+
+# MDAnalysis 2.12 accepts `chain A` as an alias of `chainID A`. Until that is
+# the minimum version, phrases are rewritten here. Remove this, and route the
+# callers straight to `universe.select_atoms`, once MDAnalysis>=2.12 is required.
+_CHAIN_ALIAS = re.compile(r"\bchain\b(?=\s)")
+
+
+def _mda_has_chain_alias() -> bool:
+    import MDAnalysis
+
+    major, minor = (int(part) for part in MDAnalysis.__version__.split(".")[:2])
+    return (major, minor) >= (2, 12)
+
+
+def selection_phrase(phrase: str) -> str:
+    """Rewrite ``chain A`` as ``chainID A`` for MDAnalysis older than 2.12."""
+    if _mda_has_chain_alias():
+        return phrase
+    return _CHAIN_ALIAS.sub("chainID", phrase)
+
+
+def select_atoms(universe, *phrases: str, **kwargs):
+    """``universe.select_atoms``, also accepting ``chain A`` for ``chainID A``."""
+    return universe.select_atoms(
+        *(selection_phrase(phrase) for phrase in phrases), **kwargs
+    )
