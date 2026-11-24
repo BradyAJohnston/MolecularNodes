@@ -4,7 +4,6 @@ import bpy
 import MDAnalysis as mda
 import numpy as np
 import pytest
-from databpy.nodes import get_input, get_output
 from MDAnalysis.tests.datafiles import DCD, GRO, PSF, XTC
 from nodebpy.nodes.geometry import (
     Compare,
@@ -30,6 +29,7 @@ from molecularnodes.nodes._utils import (
     custom_boolean_iswitch,
     custom_color_iswitch,
     get_final_style_nodes,
+    get_output,
 )
 from molecularnodes.nodes.geometry import (
     AnimateAction,
@@ -273,7 +273,7 @@ def test_node_setup(fetch):
     fetch("4ozs").add_style("spheres")
     tree = bpy.data.node_groups["MN_4ozs"]
     assert interface_socket(tree, "Atoms").name == "Atoms"
-    assert list(get_input(tree).outputs.keys()) == ["Atoms", ""]
+    assert list(tree.nodes["Group Input"].outputs.keys()) == ["Atoms", ""]
     assert list(get_output(tree).inputs.keys()) == ["Geometry", ""]
 
 
