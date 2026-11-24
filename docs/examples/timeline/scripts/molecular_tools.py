@@ -1,0 +1,110 @@
+"""Residue styling, a surface, a live ruler, and the pieces that are not here yet.
+
+After ProteinMotion's ``examples/molecular_tools.py`` (2K39). Electrostatic
+contact rulers need the planned ``Coulomb Contacts`` node (hydrogen bonds are
+in ``alpha_helix_hbonds.py``); the Cα distance ruler is the ``com_distance``
+annotation, which follows the ensemble as it plays.
+"""
+
+from _common import (
+    CYAN,
+    GOLD,
+    INK,
+    align_frames,
+    callout,
+    make_canvas,
+    render,
+    show,
+    switch,
+    title,
+)
+import molecularnodes as mn
+
+canvas = make_canvas()
+protein = mn.Molecule.fetch("2K39")
+align_frames(protein, "name CA and resid 1-70")
+helix, strand = "resid 23-34", "resid 2-7"
+rest = f"protein and not ({helix} or {strand})"
+protein.set_color("#8299ad")
+protein.add_style("cartoon", selection=f"{helix} or {strand}")
+protein.add_style("cartoon", selection=rest)
+protein.add_style("ball_and_stick", selection="protein")
+protein.add_style("surface", selection="protein")
+cartoon, faint, sticks, surface = list(protein.styles)
+canvas.look_at(protein, viewpoint=(70, 0, 35), margin=0.25)
+
+heading = title(protein, "Color is part of the story.", size=64)
+note = title(
+    protein,
+    "Residue colors · local transparency",
+    position=(0.065, 0.155),
+    size=26,
+    color=INK,
+)
+footer = title(
+    protein,
+    "Ubiquitin · 2K39 · interpolated conformers are not physical time",
+    position=(0.065, 0.93),
+    size=21,
+    color="#74869e",
+)
+helix_note = callout(
+    protein, helix, "α helix|Residues 23–34", offset=(-260, 40), size=36, color=CYAN
+)
+strand_note = callout(
+    protein, strand, "β strand|Residues 2–7", offset=(220, -60), size=36, color=GOLD
+)
+ruler = protein.annotations.add_com_distance(
+    selection1="resid 23 and name CA",
+    selection2="resid 34 and name CA",
+    text1="Cα 23",
+    text2="Cα 34",
+)
+ruler.visible = False
+surface_note = title(
+    protein,
+    "Surface · meshes follow the coordinates",
+    position=(0.065, 0.155),
+    size=26,
+    color=INK,
+)
+
+with canvas.timeline() as t:
+    t.set_visible([sticks, surface], False)
+    show(t, heading, note, footer)
+    # PM: Colorize(helix, CYAN, residue_delay=0.09), Colorize(strand, GOLD, ...);
+    # the colour blends in without the per-residue stagger
+    t.play(
+        [
+            t.recolor([cartoon, sticks, surface], CYAN, selection=helix),
+            t.recolor([cartoon, sticks, surface], GOLD, selection=strand),
+        ],
+        2.5,
+    )
+    show(t, helix_note, strand_note)
+    t.wait(1.2)
+    t.play(t.fade(faint, 0.12), 1.3)  # SetOpacity(rest, 0.12)
+    t.play(canvas.camera.orbit(20), 2)
+    t.play(t.fade(faint, 1.0), 1)
+    show(t, helix_note, strand_note, visible=False)
+    switch(t, [cartoon, faint, sticks, surface], [sticks])
+    show(t, ruler)
+    t.wait(1.5)
+    t.play(protein.play(0, 12), 3, easing="smooth")
+    show(t, ruler, note, visible=False)
+    switch(t, [cartoon, faint, sticks, surface], [surface])
+    show(t, surface_note)
+    t.play([protein.play(12, 24), canvas.camera.orbit(23)], 3, easing="smooth")
+    t.play(canvas.camera.orbit(23), 2)
+    t.wait(0.6)
+
+render(canvas, t, "molecular_tools_styling")
+
+# PM's second scene, InteractionsAndDistances: hydrogen-bond rulers with live
+# donor-acceptor distances and screened electrostatic contacts. Hydrogen bonds
+# are `mol.calculations.hbonds()` and the `Style HBonds` node (see
+# alpha_helix_hbonds.py); electrostatic contacts need an analysis node that does
+# not exist yet:
+#
+#   field = protein.measure.contacts(charges="formal", dielectric=80, screening_length=8)
+#   t.play(field.show(mode="2d", max_pairs=3), run_time=1.6)

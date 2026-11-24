@@ -47,6 +47,7 @@ import databpy as db
 import numpy as np
 from bpy.types import Object
 from MDAnalysis import AtomGroup, Universe
+from ...utils import select_atoms
 from ..utilities import _unique_aname
 from .helpers import _ag_to_bool
 
@@ -351,8 +352,8 @@ class SelectionManager:
         --------
         update_attributes : Calls this method to create missing AtomGroups.
         """
-        return self.universe.select_atoms(
-            item.string, updating=item.updating, periodic=item.periodic
+        return select_atoms(
+            self.universe, item.string, updating=item.updating, periodic=item.periodic
         )
 
     def update_attributes(self) -> None:

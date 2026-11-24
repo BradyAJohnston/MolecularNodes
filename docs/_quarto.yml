@@ -231,6 +231,7 @@ quartodoc:
     contents:
     - Canvas
     - scene.camera
+    - scene.timeline
     - scene.compositor.CompositorTree
     - scene.recorder.FrameRecorder
     - scene.world.WorldTree

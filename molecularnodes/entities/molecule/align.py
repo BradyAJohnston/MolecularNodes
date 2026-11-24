@@ -13,6 +13,7 @@ import biotite.structure as struc
 import MDAnalysis as mda
 import numpy as np
 from mathutils import Matrix
+from ...utils import select_atoms
 
 if TYPE_CHECKING:
     from .base import Molecule
@@ -83,7 +84,7 @@ def _as_single_chain(array: struc.AtomArray) -> struc.AtomArray:
 
 
 def _select(mol: "Molecule", selection: str, role: str) -> struc.AtomArray:
-    atoms = mol.universe.select_atoms(selection)
+    atoms = select_atoms(mol.universe, selection)
     if len(atoms) == 0:
         raise ValueError(f"The {role} selection '{selection}' matches no atoms")
     return atom_array_from_atoms(atoms)

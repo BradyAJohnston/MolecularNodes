@@ -1,0 +1,27 @@
+---
+title: "Molecular tools"
+description: "Recoloured regions, callouts, a faded context, a live Cα ruler and a surface."
+video: videos/molecular_tools_styling.mp4
+order: 10
+---
+
+{{< video videos/molecular_tools_styling.mp4 >}}
+
+Residue colours that blend in with `t.recolor`, callouts on 2K39, the rest of the chain
+faded with `t.fade`, a `com_distance` ruler between two Cα atoms that updates as the
+ensemble plays, and a surface that follows the coordinates.
+
+ProteinMotion's second scene has hydrogen-bond rulers, which are in the
+[alpha helix storyboard](alpha_helix_hbonds.qmd), and screened electrostatic contacts,
+which need a planned `Coulomb Contacts` node; it is left as a comment.
+
+After ProteinMotion's [`molecular_tools.py`](https://github.com/pdpppd/proteinmotion/blob/main/examples/molecular_tools.py).
+
+## Script
+
+Run it with `uv run python docs/examples/timeline/scripts/molecular_tools.py out_dir`; set
+`MN_EXAMPLES_QUICK=1` for a small, fast check. The script is included from the file:
+
+```{.python filename="scripts/molecular_tools.py"}
+{{< include scripts/molecular_tools.py >}}
+```

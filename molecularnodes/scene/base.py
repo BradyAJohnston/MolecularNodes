@@ -28,6 +28,7 @@ from .compositor import (
 )
 from .engines import EEVEE, Cycles
 from .recorder import _ANIMATION_FORMATS, FrameRecorder, _resolve_format, _write_gif
+from .timeline import Timeline
 from .world import WorldTree
 
 try:
@@ -1073,6 +1074,8 @@ class Canvas:
             if entity.name in self.scene.objects:
                 session.remove(entity.uuid)
 
+        # a timeline's camera rig goes too, leaving the camera where it was
+        self.camera.unrig()
         for obj in list(self.scene.objects):
             if obj.type in {"CAMERA", "LIGHT"}:
                 continue
@@ -1290,6 +1293,51 @@ class Canvas:
             frames_dir=frames_dir,
             overwrite=overwrite,
         )
+
+    def timeline(self, fps: int | None = None, start: int | None = None) -> Timeline:
+        """
+        Start a storyboard that compiles to keyframes on the scene.
+
+        Clips - camera moves from ``canvas.camera``, value tweens, trajectory
+        playback - are played in order with an easing and a run time, and the
+        timeline writes them as Blender keyframes. Nothing runs at render time:
+        the scene is left animated, so [](`~mn.Canvas.animation`) renders it
+        and it can be scrubbed and edited in Blender.
+
+        Parameters
+        ----------
+        fps : float, optional
+            Frame rate to set on the scene before timing anything.
+        start : int, optional
+            Scene frame the storyboard begins on; the scene's start frame when
+            left out.
+
+        Returns
+        -------
+        molecularnodes.scene.timeline.Timeline
+            Use as a context manager: leaving the block fits the scene's frame
+            range to what was played.
+
+        Examples
+        --------
+        ```{python}
+        import molecularnodes as mn
+
+        canvas = mn.Canvas(engine="CYCLES", resolution=(400, 300))
+        canvas.samples = 8
+        mol = mn.Molecule.fetch("4ozs").add_style("cartoon")
+        cartoon = mol.styles["Style Cartoon"]
+        canvas.look_at(mol, viewpoint="front")
+
+        with canvas.timeline(fps=24) as t:
+            t.play([canvas.camera.orbit(90), t.tween(cartoon.i.loop_radius, 1.0)], 2)
+            t.wait(0.5)
+            t.play(canvas.camera.focus(mol.get_view("resid 1-20"), fstop=1.4))
+        print(t)
+        display(canvas.snapshot(frame=t.frame_end))
+        ```
+        """
+        return Timeline(self, fps=fps, start=start)
 
     def snapshot(
         self,

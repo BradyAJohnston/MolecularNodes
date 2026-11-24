@@ -5,6 +5,7 @@ import numpy as np
 from MDAnalysis.analysis.dssp import DSSP, translate
 from MDAnalysis.analysis.results import Results
 from MDAnalysis.core.groups import AtomGroup, ResidueGroup
+from ...utils import select_atoms
 from ..base import EntityType
 
 if TYPE_CHECKING:
@@ -163,7 +164,7 @@ class DSSPCalculation:
 
     def _setup_dssp(self, selection: str) -> None:
         """Internal: Create the DSSP object for a selection and reset cached results"""
-        atoms = self._entity.universe.select_atoms(selection)
+        atoms = select_atoms(self._entity.universe, selection)
         # create before assigning so a failing selection leaves the old state intact
         dssp = DSSP(atoms)
         self._DSSP = dssp
@@ -305,7 +306,7 @@ class DSSPCalculation:
             atoms = self._dssp_atoms
             dssp = self._analysis()
         else:
-            atoms = universe.select_atoms(selection)
+            atoms = select_atoms(universe, selection)
             dssp = DSSP(atoms)
         results = dssp.run(frames=[universe.trajectory.frame]).results
         mask = np.isin(atoms.residues.resids, results.resids)

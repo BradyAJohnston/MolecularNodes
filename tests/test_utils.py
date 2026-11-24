@@ -162,3 +162,29 @@ def test_resolve_file_path(tmp_path):
     # a directory is not an acceptable file
     with pytest.raises(ValueError, match="Map file not found"):
         resolve_file_path(str(tmp_path), "Map file")
+
+
+@pytest.mark.parametrize(
+    "phrase, expected",
+    [
+        ("chain A", "chainID A"),
+        ("protein and chain  B", "protein and chainID  B"),
+        ("chainID A", "chainID A"),
+        ("resname CHAIN", "resname CHAIN"),
+    ],
+)
+def test_selection_phrase_accepts_chain(phrase, expected, monkeypatch):
+    from molecularnodes import utils
+
+    monkeypatch.setattr(utils, "_mda_has_chain_alias", lambda: False)
+    assert utils.selection_phrase(phrase) == expected
+    monkeypatch.setattr(utils, "_mda_has_chain_alias", lambda: True)
+    assert utils.selection_phrase(phrase) == phrase
+
+
+def test_select_atoms_accepts_chain():
+    import MDAnalysis as mda
+    from molecularnodes.utils import select_atoms
+
+    u = mda.Universe(data_dir / "1BNA.pdb")
+    assert len(select_atoms(u, "chain A")) == len(u.select_atoms("chainID A")) > 0
