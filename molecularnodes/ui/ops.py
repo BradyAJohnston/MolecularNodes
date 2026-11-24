@@ -1319,7 +1319,7 @@ class MN_OT_Swap_Style(Operator):
         if tree is None or self.name_node not in tree.nodes:
             self.report({"ERROR"}, "Style node to swap was not found")
             return {"CANCELLED"}
-        swap(tree.nodes[self.name_node], styles_mapping[self.style])
+        swap(tree.nodes[self.name_node], styles_mapping[self.style].create_group())
         return {"FINISHED"}
 
 

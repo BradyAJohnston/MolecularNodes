@@ -1,11 +1,9 @@
-from typing import Any, Iterable, List, Literal, cast
+from typing import Any, Iterable, List, Literal
 import bpy
 from bpy.types import GeometryNodeTree, Node
-from databpy.nodes import append_from_blend, get_output, swap_tree
 from nodebpy import TreeBuilder, arrange
 from nodebpy import geometry as g
 from .. import color
-from ..assets import MN_DATA_FILE
 from . import geometry as mng
 
 STYLE_NODE_MAPPING = {
@@ -21,44 +19,73 @@ STYLE_LITERALS = Literal[
     "spheres", "cartoon", "ribbon", "surface", "sticks", "ball_and_stick"
 ]
 
-# style keyword -> name of the node tree that implements it, used when swapping
-# an existing style node for a different style. Keys match the enum identifiers
-# in ui.style.STYLE_ITEMS and ui.ops.DENSITY_STYLE_ITEMS
+# style keyword -> node group that implements it, used when swapping an existing
+# style node for a different style. Keys match the enum identifiers in
+# ui.style.STYLE_ITEMS and ui.ops.DENSITY_STYLE_ITEMS
 styles_mapping = {
-    "spheres": "Style Spheres",
-    "cartoon": "Style Cartoon",
-    "sticks": "Style Sticks",
-    "ribbon": "Style Ribbon",
-    "surface": "Style Surface",
-    "ball_and_stick": "Style Ball and Stick",
-    "density_surface": "Density Style Surface",
-    "density_iso_surface": "Density Style ISO Surface",
-    "density_wire": "Density Style Wire",
+    **STYLE_NODE_MAPPING,
+    "density_surface": mng.DensityStyleSurface,
+    "density_iso_surface": mng.DensityStyleISOSurface,
+    "density_wire": mng.DensityStyleWire,
 }
 
 
-def append(name: str, link: bool = False) -> bpy.types.GeometryNodeTree:
-    "Append a GN node group from the MN data file"
-    GN_TREES_PATH = MN_DATA_FILE / "NodeTree"
-    tree = append_from_blend(name, filepath=str(GN_TREES_PATH), link=link)
-    return cast(bpy.types.GeometryNodeTree, tree)
+def get_output(tree: bpy.types.NodeTree) -> Node:
+    "The Group Output node of the tree"
+    return tree.nodes[bpy.app.translations.pgettext_data("Group Output")]
 
 
-def swap(node: bpy.types.Node, tree: str | bpy.types.NodeTree) -> None:
-    "Swap out the node's node_tree, maintaining the old socket connections"
+def swap(node: Node, tree: GeometryNodeTree) -> None:
+    """
+    Swap out the node's node_tree, keeping its links by socket name and its material.
+
+    Other inputs are reset to the defaults of the new tree.
+    """
     if not isinstance(node, bpy.types.GeometryNodeGroup):
         raise TypeError(
             f"Can only swap the tree of a GeometryNodeGroup, not {type(node).__name__}"
         )
-    if isinstance(tree, str):
-        try:
-            tree = bpy.data.node_groups[tree]
-        except KeyError:
-            tree = append(tree)
+    parent = node.id_data
+    assert isinstance(parent, bpy.types.NodeTree)
+
+    # links are removed before the swap, so Blender doesn't reconnect them itself
+    input_links: list[tuple[Any, str]] = []
+    for socket in node.inputs:
+        for link in socket.links or ():
+            input_links.append((link.from_socket, socket.name))
+            parent.links.remove(link)
+    output_links: list[tuple[str, Any]] = []
+    for socket in node.outputs:
+        for link in socket.links or ():
+            output_links.append((socket.name, link.to_socket))
+            parent.links.remove(link)
+    material = getattr(node.inputs.get("Material"), "default_value", None)
+
     # only change the label if it hasn't been customised away from the tree name
     if node.node_tree is not None and node.label == node.node_tree.name:
         node.label = tree.name
-    swap_tree(node=node, tree=cast(bpy.types.GeometryNodeTree, tree))
+    node.node_tree = tree
+    node.name = tree.name
+
+    for from_socket, name in input_links:
+        if name in node.inputs:
+            parent.links.new(from_socket, node.inputs[name])
+    for name, to_socket in output_links:
+        if name in node.outputs:
+            parent.links.new(node.outputs[name], to_socket)
+
+    assert tree.interface is not None
+    for item in tree.interface.items_tree:
+        if (
+            isinstance(item, bpy.types.NodeTreeInterfaceSocket)
+            and item.in_out == "INPUT"
+            and hasattr(item, "default_value")
+        ):
+            socket: Any = node.inputs[item.identifier]
+            socket.default_value = item.default_value
+    if material is not None and "Material" in node.inputs:
+        material_socket: Any = node.inputs["Material"]
+        material_socket.default_value = material
 
 
 def get_star_node(obj: bpy.types.Object) -> bpy.types.Node:
