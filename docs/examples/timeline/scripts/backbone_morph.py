@@ -23,14 +23,16 @@ with canvas.timeline() as t:
     t.wait(1)
     # PM: BackboneMorph(source, target, match=..., residue_delay=0.025, run_time=6)
     # t.play(source.morph(target, match, stagger=0.025), run_time=6)
-    t.play(spin(source, 40), run_time=3)
+    t.play(spin(source, 40), 3)
     t.play(
-        t.fade(source, 0.0),
-        t.fade(target, 1.0),
-        canvas.camera.look_at(target.get_view("chainID A"), margin=0.25),
-        run_time=1.5,
+        [
+            t.fade(source, 0.0),
+            t.fade(target, 1.0),
+            canvas.camera.look_at(target.get_view("chainID A"), margin=0.25),
+        ],
+        1.5,
     )
-    t.play(spin(target, 100), run_time=3)
+    t.play(spin(target, 100), 3)
     t.wait(0.5)
 
 render(canvas, t, "backbone_morph")

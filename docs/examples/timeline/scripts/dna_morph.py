@@ -26,15 +26,17 @@ with canvas.timeline() as t:
     show(t, caption, heading)
     t.wait(1)
     # PM: BackboneMorph(source, target, match=match, residue_delay=0.25, run_time=5)
-    t.play(spin(source, 60), run_time=2.5)
+    t.play(spin(source, 60), 2.5)
     t.play(
-        t.fade(source, 0.0),
-        t.fade(target.styles[0], 1.0),
-        canvas.camera.look_at(target.get_view("chainID A"), margin=0.2),
-        run_time=1.5,
+        [
+            t.fade(source, 0.0),
+            t.fade(target.styles[0], 1.0),
+            canvas.camera.look_at(target.get_view("chainID A"), margin=0.2),
+        ],
+        1.5,
     )
-    t.play(t.fade(sticks, 1.0), run_time=0.5)
-    t.play(canvas.camera.orbit(20), run_time=2)
+    t.play(t.fade(sticks, 1.0), 0.5)
+    t.play(canvas.camera.orbit(20), 2)
     t.wait(0.5)
 
 render(canvas, t, "dna_morph")

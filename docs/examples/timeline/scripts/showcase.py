@@ -41,15 +41,15 @@ canvas.look_at(protein, viewpoint=(75, 0, -20), margin=0.05)
 with canvas.timeline() as t:
     t.set_visible(protein, False)
     # PM: FadeIn(p)
-    t.play(t.fade(cartoon, 1.0), run_time=0.8)
-    t.play(spin(protein, 126), run_time=3.2)
+    t.play(t.fade(cartoon, 1.0), 0.8)
+    t.play(spin(protein, 126), 3.2)
     switch(t, [cartoon, ribbon, sticks], [ribbon])
-    t.play(spin(protein, 50, axis="x"), run_time=2)
+    t.play(spin(protein, 50, axis="x"), 2)
     switch(t, [cartoon, ribbon, sticks], [sticks])
-    t.play(canvas.camera.orbit(50), run_time=2)
+    t.play(canvas.camera.orbit(50), 2)
     switch(t, [cartoon, ribbon, sticks], [cartoon])
     # PM: Deform(p, stretch) then Morph(p, original) - needs Morph To Attribute
-    t.play(protein.play(0, 60), spin(protein, 85), run_time=4, easing="linear")
+    t.play([protein.play(0, 60), spin(protein, 85)], 4, easing="linear")
     t.wait(0.7)
 
 render(canvas, t, "showcase")
@@ -64,6 +64,6 @@ for offset, style in ((-3.6, "cartoon"), (0.0, "ribbon"), (3.6, "ball_and_stick"
     copies.append(mol)
 canvas.look_at(world_points(*copies), viewpoint="front", margin=0.1)
 with canvas.timeline() as t:
-    t.play(*(spin(mol, 360) for mol in copies), run_time=12, easing="linear")
+    t.play((spin(mol, 360) for mol in copies), 12, easing="linear")
 
 render(canvas, t, "showcase_gallery")

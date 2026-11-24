@@ -25,23 +25,24 @@ note = callout(
 with canvas.timeline() as t:
     t.play(
         canvas.camera.focus(protein.get_view(f"{helix} and name CA"), fstop=1.8),
-        run_time=0,
+        0,
     )
     show(t, label, note)  # PM: Write(label) - no write-on yet
     # PM: SetOpacity(context, 0.06); the context is its own style, faded
-    t.play(t.fade(context, 0.06), run_time=1)
-    t.play(canvas.camera.orbit(16), run_time=2)
+    t.play(t.fade(context, 0.06), 1)
+    t.play(canvas.camera.orbit(16), 2)
     t.wait(0.4)
     t.play(
-        canvas.camera.focus(far_region, fstop=1.2),
-        t.fade(context, 0.35),
-        run_time=1.4,
+        [canvas.camera.focus(far_region, fstop=1.2), t.fade(context, 0.35)],
+        1.4,
     )
     t.wait(0.4)
     t.play(
-        canvas.camera.focus(protein.get_view(f"{helix} and name CA"), fstop=1.8),
-        t.fade(context, 0.06),
-        run_time=1.2,
+        [
+            canvas.camera.focus(protein.get_view(f"{helix} and name CA"), fstop=1.8),
+            t.fade(context, 0.06),
+        ],
+        1.2,
     )
     t.wait(0.8)
 

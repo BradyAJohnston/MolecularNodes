@@ -61,7 +61,7 @@ that Blender's animation system should remain the engine.
 
 ```
 Timeline            cursor in seconds, fps from the canvas, start frame
-  .play(*clips, run_time=, easing=, at=)   clips run together; cursor advances past the longest
+  .play(clips, run_time, easing=, at=)     clips run together; cursor advances past the longest
   .wait(seconds)                           hold
   .set(target, value)                      instant step at the cursor
   .tween(target, value)                    clip factory; entity.play(a, b) and
@@ -285,8 +285,15 @@ State as of 2026-09-21, PR "Canvas timeline layer (design discussion + prototype
   returns early when no entity has annotations, so the compositor's annotation
   overlay keeps the previous scene's labels after `canvas.clear()`.
   `_common.clear_annotation_overlay` blanks the image as a workaround.
-- **Next steps**: `follow=True` on `Focus` (section 4); staggered fades and
-  recolours, either keyed or driven by `Animate Action` (undecided);
+- **Stagger (decided 2026-11-24)**: staggered fades and recolours go through
+  `Stagger Value`, because the stagger needs the per-atom attribute it spreads
+  over (`res_id`, `chain_id`, ...) and only the tree can read that. The
+  timeline keys `Stagger Value`'s `Value` from 0 to 1 and does not key the
+  fade or mix factor directly. The key itself has to be linear, so the easing
+  goes per element in an `Ease Value` after the stagger. If no stagger is
+  asked for, the clip keys the factor as it does now.
+- **Next steps**: `follow=True` on `Focus` (section 4); a `stagger=` argument
+  on `t.fade` and `t.recolor` (see above);
   `Morph To Attribute` and `Style Highlight` as the gallery's comments call
   for them; `label.write()`
   once text annotations have a `progress` property; user-facing docs for the

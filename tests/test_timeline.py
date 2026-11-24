@@ -84,7 +84,7 @@ def test_cursor_and_frames(canvas):
     with pytest.raises(ValueError):
         t.wait(-1)
     with pytest.raises(ValueError):
-        t.play()
+        t.play([])
 
 
 def test_context_fits_the_frame_range(canvas, cartoon_mol):
@@ -96,6 +96,28 @@ def test_context_fits_the_frame_range(canvas, cartoon_mol):
     assert canvas.frame_range == (1, 31)
     # rewound to the start so the scene shows the opening state
     assert canvas.frame == 1
+
+
+def test_play_takes_a_clip_or_an_iterable_of_clips(canvas):
+    cam = canvas.camera
+    t = canvas.timeline(fps=10)
+    t.play(cam.orbit(30), 0.5)
+    t.play([cam.orbit(30), cam.zoom(60)], 1)
+    t.play((clip for clip in (cam.orbit(30), cam.zoom(50))), 2, easing="linear")
+    assert len(t.entries) == 5
+    assert t.now == pytest.approx(3.5)
+
+
+def test_play_rejects_bad_clips_before_keying_anything(canvas):
+    cam = canvas.camera
+    t = canvas.timeline(fps=10)
+    with pytest.raises(ValueError, match="at least one clip"):
+        t.play(clip for clip in ())
+    with pytest.raises(TypeError, match="as a list"):
+        t.play(cam.orbit(30), cam.zoom(60))
+    with pytest.raises(TypeError, match="not a clip"):
+        t.play([cam.orbit(30), "zoom"])
+    assert not t.entries and t.now == 0
 
 
 # -- tweens on node sockets -------------------------------------------------
@@ -210,8 +232,7 @@ def test_two_clips_on_one_channel_conflict(canvas, cartoon_mol):
     t = canvas.timeline(fps=10)
     with pytest.raises(ValueError, match="already animates"):
         t.play(
-            t.tween(cartoon.i.loop_radius, 1.0),
-            t.tween(cartoon.i.loop_radius, 2.0),
+            [t.tween(cartoon.i.loop_radius, 1.0), t.tween(cartoon.i.loop_radius, 2.0)],
         )
 
 
@@ -231,8 +252,7 @@ def test_a_rejected_clip_writes_nothing(canvas, cartoon_mol):
     t = canvas.timeline(fps=10)
     with pytest.raises(ValueError, match="already animates"):
         t.play(
-            t.tween(cartoon.i.loop_radius, 1.0),
-            t.tween(cartoon.i.loop_radius, 2.0),
+            [t.tween(cartoon.i.loop_radius, 1.0), t.tween(cartoon.i.loop_radius, 2.0)],
         )
     # only the first tween's two keys, at the value it asked for
     points = keyframes(channel)
@@ -344,7 +364,7 @@ def test_look_at_on_a_rigged_camera(canvas, cartoon_mol):
 def test_clear_removes_the_rig_and_keeps_the_view(canvas, cartoon_mol):
     cam = canvas.camera
     with canvas.timeline(fps=10) as t:
-        t.play(cam.orbit(90), cam.zoom(80), run_time=1)
+        t.play([cam.orbit(90), cam.zoom(80)], run_time=1)
     pose = evaluated_matrix(canvas, 6)
     names = [cam.pivot.name, cam.target.name, cam.focus_point.name]
     canvas.clear()
@@ -434,7 +454,7 @@ def test_orbit_about_another_axis_is_sampled_and_continuous(canvas, cartoon_mol)
 
 def test_dolly_during_an_orbit_does_not_conflict(canvas, cartoon_mol):
     with canvas.timeline(fps=10) as t:
-        t.play(canvas.camera.orbit(90), canvas.camera.dolly(1.0), run_time=1)
+        t.play([canvas.camera.orbit(90), canvas.camera.dolly(1.0)], run_time=1)
     centre = np.array(canvas.camera.pivot.location)
     start, _ = camera_pose(canvas, 1)
     radius = np.linalg.norm(start - centre)
@@ -480,7 +500,7 @@ def test_dolly_and_zoom(canvas, cartoon_mol):
     start, _ = camera_pose(canvas, 1)
     forward = canvas.camera.basis[2].copy()
     with canvas.timeline(fps=10) as t:
-        t.play(canvas.camera.dolly(2.0), canvas.camera.zoom(85), run_time=1)
+        t.play([canvas.camera.dolly(2.0), canvas.camera.zoom(85)], run_time=1)
     end, _ = camera_pose(canvas, 11)
     assert np.allclose(end - start, forward * 2.0, atol=1e-5)
     assert canvas.camera.lens == pytest.approx(85)
@@ -564,7 +584,7 @@ def test_a_focus_pull_holds_the_framing(canvas, cartoon_mol):
     helix, far = mol.get_view("resid 5-19"), mol.get_view("resid 100-120")
     with canvas.timeline(fps=10) as t:
         # framing and focus share a play: they key different empties
-        t.play(cam.look_at(helix, margin=0.3), cam.focus(helix), run_time=1)
+        t.play([cam.look_at(helix, margin=0.3), cam.focus(helix)], run_time=1)
         t.play(cam.focus(far, fstop=1.4), run_time=1)
     framed = evaluated_matrix(canvas, 11)
     assert np.allclose(evaluated_matrix(canvas, 21), framed, atol=1e-6)

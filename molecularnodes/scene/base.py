@@ -1330,7 +1330,7 @@ class Canvas:
         canvas.look_at(mol, viewpoint="front")
 
         with canvas.timeline(fps=24) as t:
-            t.play(canvas.camera.orbit(90), t.tween(cartoon.i.loop_radius, 1.0), run_time=2)
+            t.play([canvas.camera.orbit(90), t.tween(cartoon.i.loop_radius, 1.0)], 2)
             t.wait(0.5)
             t.play(canvas.camera.focus(mol.get_view("resid 1-20"), fstop=1.4))
         print(t)

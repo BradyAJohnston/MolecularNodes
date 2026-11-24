@@ -33,7 +33,7 @@ def benchmark(copies: int, style: str, seconds: float, fps: int):
         margin=0.1,
     )
     with canvas.timeline() as t:
-        t.play(*(spin(m, 360) for m in molecules), run_time=seconds, easing="linear")
+        t.play((spin(m, 360) for m in molecules), seconds, easing="linear")
     started = time.perf_counter()
     t.render(output_dir() / f"benchmark_{copies}_{style}.mp4")
     elapsed = time.perf_counter() - started

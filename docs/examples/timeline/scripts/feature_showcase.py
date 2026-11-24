@@ -107,7 +107,7 @@ with canvas.timeline() as t:
     t.set_visible([ribbon, sticks, surface], False)
     heading(t, "Representations")
     show(t, identity, badges["Cartoon"])
-    t.play(canvas.camera.orbit(7), run_time=1.8)
+    t.play(canvas.camera.orbit(7), 1.8)
     last = badges["Cartoon"]
     for style, name in (
         (ribbon, "Ribbon"),
@@ -117,8 +117,8 @@ with canvas.timeline() as t:
         show(t, last, visible=False)
         switch(t, styles, [style])
         show(t, badges[name])
-        t.play(canvas.camera.orbit(7), run_time=1.9)
-        t.play(canvas.camera.orbit(5), run_time=1.1)
+        t.play(canvas.camera.orbit(7), 1.9)
+        t.play(canvas.camera.orbit(5), 1.1)
         last = badges[name]
     show(t, last, visible=False)
     switch(t, styles, [cartoon, cartoon_ctx])
@@ -128,28 +128,31 @@ with canvas.timeline() as t:
     # the colour blends in without the per-residue stagger
     regions = [cartoon, ribbon, sticks, surface]
     t.play(
-        t.recolor(regions, TEAL, selection=helix),
-        t.recolor(regions, GOLD, selection=lobe),
-        canvas.camera.orbit(7),
-        run_time=2.5,
+        [
+            t.recolor(regions, TEAL, selection=helix),
+            t.recolor(regions, GOLD, selection=lobe),
+            canvas.camera.orbit(7),
+        ],
+        2.5,
     )
-    t.play(t.fade(cartoon_ctx, 0.2), canvas.camera.orbit(6), run_time=2)
-    t.play(t.fade(cartoon_ctx, 1.0), canvas.camera.orbit(5), run_time=1.5)
+    t.play([t.fade(cartoon_ctx, 0.2), canvas.camera.orbit(6)], 2)
+    t.play([t.fade(cartoon_ctx, 1.0), canvas.camera.orbit(5)], 1.5)
 
     heading(t, "Focus + annotation")
     # PM: helix.highlight(style="sphere"), highlight(style="box") - no highlight style yet
     t.play(
-        canvas.camera.look_at(p.get_view(helix), margin=0.3),
-        t.fade(cartoon_ctx, 0.05),
-        run_time=2.8,
+        [
+            canvas.camera.look_at(p.get_view(helix), margin=0.3),
+            t.fade(cartoon_ctx, 0.05),
+        ],
+        2.8,
     )
     show(t, note)
-    t.play(canvas.camera.orbit(13), run_time=2.6)
+    t.play(canvas.camera.orbit(13), 2.6)
     show(t, note, visible=False)
     t.play(
-        canvas.camera.look_at(p, margin=0.35),
-        t.fade(cartoon_ctx, 1.0),
-        run_time=2.5,
+        [canvas.camera.look_at(p, margin=0.35), t.fade(cartoon_ctx, 1.0)],
+        2.5,
     )
 
     heading(t, "States")
@@ -171,13 +174,12 @@ nmr_identity = title(
 with canvas.timeline(start=t.frame_end + 1) as t2:
     show(t2, nmr_identity)
     t2.play(
-        nmr.play(0, nmr.universe.trajectory.n_frames - 1),
-        canvas.camera.orbit(14),
-        run_time=7,
+        [nmr.play(0, nmr.universe.trajectory.n_frames - 1), canvas.camera.orbit(14)],
+        7,
     )
     # PM: BackboneMorph(p, troponin, match=...) - planned Morph To Attribute node;
     # HydrogenBonds, Distance, Electrostatics - planned analysis nodes
-    t2.play(canvas.camera.orbit(10), run_time=2)
+    t2.play(canvas.camera.orbit(10), 2)
     t2.wait(1)
 
 render(canvas, t2, "feature_showcase_b")

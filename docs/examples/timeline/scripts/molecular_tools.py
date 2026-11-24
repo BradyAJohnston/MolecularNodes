@@ -75,25 +75,27 @@ with canvas.timeline() as t:
     # PM: Colorize(helix, CYAN, residue_delay=0.09), Colorize(strand, GOLD, ...);
     # the colour blends in without the per-residue stagger
     t.play(
-        t.recolor([cartoon, sticks, surface], CYAN, selection=helix),
-        t.recolor([cartoon, sticks, surface], GOLD, selection=strand),
-        run_time=2.5,
+        [
+            t.recolor([cartoon, sticks, surface], CYAN, selection=helix),
+            t.recolor([cartoon, sticks, surface], GOLD, selection=strand),
+        ],
+        2.5,
     )
     show(t, helix_note, strand_note)
     t.wait(1.2)
-    t.play(t.fade(faint, 0.12), run_time=1.3)  # SetOpacity(rest, 0.12)
-    t.play(canvas.camera.orbit(20), run_time=2)
-    t.play(t.fade(faint, 1.0), run_time=1)
+    t.play(t.fade(faint, 0.12), 1.3)  # SetOpacity(rest, 0.12)
+    t.play(canvas.camera.orbit(20), 2)
+    t.play(t.fade(faint, 1.0), 1)
     show(t, helix_note, strand_note, visible=False)
     switch(t, [cartoon, faint, sticks, surface], [sticks])
     show(t, ruler)
     t.wait(1.5)
-    t.play(protein.play(0, 12), run_time=3, easing="smooth")
+    t.play(protein.play(0, 12), 3, easing="smooth")
     show(t, ruler, note, visible=False)
     switch(t, [cartoon, faint, sticks, surface], [surface])
     show(t, surface_note)
-    t.play(protein.play(12, 24), canvas.camera.orbit(23), run_time=3, easing="smooth")
-    t.play(canvas.camera.orbit(23), run_time=2)
+    t.play([protein.play(12, 24), canvas.camera.orbit(23)], 3, easing="smooth")
+    t.play(canvas.camera.orbit(23), 2)
     t.wait(0.6)
 
 render(canvas, t, "molecular_tools_styling")

@@ -23,16 +23,16 @@ with canvas.timeline() as t:
     t.wait(0.5)
     # PM: PlayTrajectory(p, start=0, end=20, state_easing=smooth). The entity
     # interpolates between models when its `interpolate` property is on.
-    t.play(protein.play(0, 20), run_time=4, easing="smooth")
+    t.play(protein.play(0, 20), 4, easing="smooth")
     # PM: FadeIn(sphere), FadeIn(box) around the helix
-    t.play(canvas.camera.look_at(helix, margin=0.3), run_time=1.8)
-    t.play(protein.play(20, 35), run_time=4.5, easing="smooth")
-    t.play(canvas.camera.look_at(protein, margin=0.15), run_time=1.8)
+    t.play(canvas.camera.look_at(helix, margin=0.3), 1.8)
+    t.play(protein.play(20, 35), 4.5, easing="smooth")
+    t.play(canvas.camera.look_at(protein, margin=0.15), 1.8)
     # PM: FadeIn(halo), FadeIn(tail_box) around the tail
-    t.play(canvas.camera.look_at(tail, margin=0.3), run_time=1.8)
+    t.play(canvas.camera.look_at(tail, margin=0.3), 1.8)
     switch(t, [cartoon, sticks], [sticks])
-    t.play(protein.play(35, 45), run_time=5, easing="smooth")
-    t.play(canvas.camera.look_at(protein, margin=0.15), run_time=1.8)
+    t.play(protein.play(35, 45), 5, easing="smooth")
+    t.play(canvas.camera.look_at(protein, margin=0.15), 1.8)
     t.wait(0.5)
 
 render(canvas, t, "nmr_regions")

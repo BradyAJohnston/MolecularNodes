@@ -47,27 +47,22 @@ site = traj.get_view("resid 40-60")
 
 with canvas.timeline(fps=24) as t:
     # 0-1.5 s: settle into a wider framing from the side
-    t.play(
-        canvas.camera.look_at(traj, viewpoint=(70, 0, 35), margin=0.15), run_time=1.5
-    )
+    t.play(canvas.camera.look_at(traj, viewpoint=(70, 0, 35), margin=0.15), 1.5)
     # 1.5-4.5 s: sweep round while the ribbon fattens
     t.play(
-        canvas.camera.orbit(120, about=traj),
-        t.tween(ribbon.i.peptide_radius, 2.0),
-        run_time=3,
+        [canvas.camera.orbit(120, about=traj), t.tween(ribbon.i.peptide_radius, 2.0)],
+        3,
     )
     t.wait(0.25)
     # pull focus onto the site with a shallow depth of field and push in
     t.play(
-        canvas.camera.focus(site, fstop=0.8),
-        canvas.camera.dolly(1.5),
-        run_time=1.5,
+        [canvas.camera.focus(site, fstop=0.8), canvas.camera.dolly(1.5)],
+        1.5,
     )
     # play the trajectory while the label shrinks away
     t.play(
-        traj.play(0, 4),
-        t.tween((label, "text_size"), 8),
-        run_time=2,
+        [traj.play(0, 4), t.tween((label, "text_size"), 8)],
+        2,
     )
     t.wait(0.5)
 

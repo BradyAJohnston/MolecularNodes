@@ -1837,7 +1837,7 @@ class Molecule(MolecularEntity):
         ::
 
             with canvas.timeline(fps=24) as t:
-                t.play(traj.play(0, 100), canvas.camera.orbit(90), run_time=4)
+                t.play([traj.play(0, 100), canvas.camera.orbit(90)], 4)
         """
         from ...scene.timeline import Frames
 

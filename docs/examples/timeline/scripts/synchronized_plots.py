@@ -37,7 +37,7 @@ detail = title(protein, "2K39 · deposited model order", position=(0.05, 0.105),
 with canvas.timeline() as t:
     show(t, heading, detail)
     t.wait(0.5)
-    t.play(protein.play(0, u.trajectory.n_frames - 1), run_time=9, easing="linear")
+    t.play(protein.play(0, u.trajectory.n_frames - 1), 9, easing="linear")
     t.wait(0.5)
 
 render(canvas, t, "synchronized_plots")

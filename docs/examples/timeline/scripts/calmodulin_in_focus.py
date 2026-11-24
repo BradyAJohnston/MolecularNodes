@@ -89,91 +89,99 @@ ca = lambda sel: p.get_view(f"{sel} and name CA")  # noqa: E731
 with canvas.timeline() as t:
     t.set_visible([sticks, sticks_ctx, surface, ribbon], False)
     # 00-08: a wide reveal and an unhurried orbit
-    t.play(canvas.camera.focus(ca(helix), fstop=5.6), run_time=0)
+    t.play(canvas.camera.focus(ca(helix), fstop=5.6), 0)
     caption(t, "open")
     show(t, identity)
     t.wait(2)
-    t.play(canvas.camera.orbit(17), canvas.camera.zoom(54), run_time=6)
+    t.play([canvas.camera.orbit(17), canvas.camera.zoom(54)], 6)
     # 08-17: isolate one helix, keeping a translucent context
     caption(t, "helix")
     t.play(
-        canvas.camera.look_at(p.get_view(helix), margin=0.3),
-        canvas.camera.focus(ca(helix), fstop=3.5),
-        t.fade(cartoon_ctx, 0.1),
-        run_time=3,
+        [
+            canvas.camera.look_at(p.get_view(helix), margin=0.3),
+            canvas.camera.focus(ca(helix), fstop=3.5),
+            t.fade(cartoon_ctx, 0.1),
+        ],
+        3,
     )
     show(t, note)
-    t.play(canvas.camera.orbit(5), run_time=1.5)
-    t.play(canvas.camera.orbit(16), run_time=4.5)
+    t.play(canvas.camera.orbit(5), 1.5)
+    t.play(canvas.camera.orbit(16), 4.5)
     # 17-27: into an atomic view of the backbone
     caption(t, "inside")
     show(t, note, visible=False)
     t.play(
-        t.fade([cartoon, cartoon_ctx], 0.0),
-        t.fade(sticks, 1.0),
-        t.fade(sticks_ctx, 0.035),
-        canvas.camera.focus(ca(backbone), fstop=12),
-        canvas.camera.look_at(p.get_view(backbone), margin=0.05),
-        run_time=3,
+        [
+            t.fade([cartoon, cartoon_ctx], 0.0),
+            t.fade(sticks, 1.0),
+            t.fade(sticks_ctx, 0.035),
+            canvas.camera.focus(ca(backbone), fstop=12),
+            canvas.camera.look_at(p.get_view(backbone), margin=0.05),
+        ],
+        3,
     )
     # PM: HydrogenBonds(...).highlight(mode="3d") - see alpha_helix_hbonds.py
-    t.play(canvas.camera.orbit(6), run_time=2)
+    t.play(canvas.camera.orbit(6), 2)
     t.play(
-        canvas.camera.orbit(24),
-        canvas.camera.focus(ca("resid 11-14"), fstop=10),
-        run_time=5,
+        [canvas.camera.orbit(24), canvas.camera.focus(ca("resid 11-14"), fstop=10)],
+        5,
     )
     # 27-35: back out and establish two focus targets
     caption(t, "moving")
     t.play(
-        t.fade([sticks, sticks_ctx], 0.0),
-        t.fade([cartoon, cartoon_ctx], 1.0),
-        canvas.camera.look_at(p.get_view("protein"), margin=0.12),
-        canvas.camera.focus(ca(helix), fstop=3.2),
-        run_time=4,
+        [
+            t.fade([sticks, sticks_ctx], 0.0),
+            t.fade([cartoon, cartoon_ctx], 1.0),
+            canvas.camera.look_at(p.get_view("protein"), margin=0.12),
+            canvas.camera.focus(ca(helix), fstop=3.2),
+        ],
+        4,
     )
-    t.play(t.fade(cartoon_ctx, 0.24), canvas.camera.orbit(17), run_time=4)
+    t.play([t.fade(cartoon_ctx, 0.24), canvas.camera.orbit(17)], 4)
     # 35-45: hold the framing so the focus transfer is visible
     caption(t, "focus_a")
-    t.play(
-        canvas.camera.focus(ca(helix), fstop=1.4), canvas.camera.orbit(6), run_time=5
-    )
+    t.play([canvas.camera.focus(ca(helix), fstop=1.4), canvas.camera.orbit(6)], 5)
     caption(t, "focus_b")
     t.play(
-        canvas.camera.focus(ca(far_helix), fstop=1.4),
-        canvas.camera.orbit(6),
-        run_time=5,
+        [canvas.camera.focus(ca(far_helix), fstop=1.4), canvas.camera.orbit(6)],
+        5,
     )
     # 45-55: the surface, coloured by B factor
     caption(t, "surface")
     t.play(
-        t.fade([cartoon, cartoon_ctx], 0.0),
-        t.fade(surface, 1.0),
-        canvas.camera.look_at(p.get_view("protein"), margin=0.15),
-        canvas.camera.focus(ca(far_helix), fstop=5.6),
-        run_time=3,
+        [
+            t.fade([cartoon, cartoon_ctx], 0.0),
+            t.fade(surface, 1.0),
+            canvas.camera.look_at(p.get_view("protein"), margin=0.15),
+            canvas.camera.focus(ca(far_helix), fstop=5.6),
+        ],
+        3,
     )
     # PM: ColorLegend(scale, title="Cα B factor") - no legend annotation yet
-    t.play(canvas.camera.orbit(32), run_time=7)
+    t.play(canvas.camera.orbit(32), 7)
     # 55-68: back to the backbone, and a last focus pull
     caption(t, "back")
     t.play(
-        t.fade(surface, 0.0),
-        t.fade(ribbon, 1.0),
-        canvas.camera.look_at(p.get_view("protein"), margin=0.16),
-        canvas.camera.focus(ca(helix), fstop=3.5),
-        run_time=4,
+        [
+            t.fade(surface, 0.0),
+            t.fade(ribbon, 1.0),
+            canvas.camera.look_at(p.get_view("protein"), margin=0.16),
+            canvas.camera.focus(ca(helix), fstop=3.5),
+        ],
+        4,
     )
     caption(t, "end")
     t.play(
-        t.fade(ribbon, 0.0),
-        t.fade([cartoon, cartoon_ctx], 1.0),
-        canvas.camera.orbit(24),
-        canvas.camera.zoom(54),
-        canvas.camera.focus(ca(helix), fstop=2),
-        run_time=6,
+        [
+            t.fade(ribbon, 0.0),
+            t.fade([cartoon, cartoon_ctx], 1.0),
+            canvas.camera.orbit(24),
+            canvas.camera.zoom(54),
+            canvas.camera.focus(ca(helix), fstop=2),
+        ],
+        6,
     )
     # PM: FadeOut(p)
-    t.play(t.fade(p, 0.0), canvas.camera.orbit(3), run_time=3)
+    t.play([t.fade(p, 0.0), canvas.camera.orbit(3)], 3)
 
 render(canvas, t, "calmodulin_in_focus", frames=8)

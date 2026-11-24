@@ -49,13 +49,12 @@ def motion(canvas):
     cartoon, ribbon = list(p.styles)
     with canvas.timeline() as t:
         t.set_visible(p, False)
-        t.play(t.fade(cartoon, 1.0), run_time=0.8)  # PM: FadeIn(p)
-        t.play(spin(p, 180), run_time=3)
+        t.play(t.fade(cartoon, 1.0), 0.8)  # PM: FadeIn(p)
+        t.play(spin(p, 180), 3)
         switch(t, [cartoon, ribbon], [ribbon])
         t.play(
-            t.tween((p.object, "location"), (0.5, 0, 0)),
-            canvas.camera.orbit(34),
-            run_time=2,
+            [t.tween((p.object, "location"), (0.5, 0, 0)), canvas.camera.orbit(34)],
+            2,
         )
         t.wait(0.5)
     return t
@@ -72,7 +71,7 @@ def representations(canvas):
         t.wait(1)
         for style in styles[1:]:
             switch(t, styles, [style])
-            t.play(spin(p, 26), run_time=1.5)
+            t.play(spin(p, 26), 1.5)
     return t
 
 
@@ -82,9 +81,9 @@ def region_focus(canvas):
     p.set_color(GOLD, "resid 23-34")  # PM: helix.highlight(style="box")
     helix = p.get_view("resid 23-34")
     with canvas.timeline() as t:
-        t.play(canvas.camera.look_at(helix, margin=0.3), run_time=1.5)
-        t.play(canvas.camera.orbit(23), run_time=2)
-        t.play(canvas.camera.look_at(p, margin=0.05), run_time=1.5)
+        t.play(canvas.camera.look_at(helix, margin=0.3), 1.5)
+        t.play(canvas.camera.orbit(23), 2)
+        t.play(canvas.camera.look_at(p, margin=0.05), 1.5)
     return t
 
 
@@ -95,7 +94,7 @@ def highlights(canvas):
     p = ubiquitin(canvas)
     p.set_color(GOLD, "resid 23-34")
     with canvas.timeline() as t:
-        t.play(spin(p, 40), run_time=3)
+        t.play(spin(p, 40), 3)
     return t
 
 
@@ -122,9 +121,9 @@ def text_placement(canvas):
     with canvas.timeline() as t:
         show(t, heading, footer)
         t.wait(1)
-        t.play(t.tween((heading, "location"), (0.10, 0.65)), run_time=1)
+        t.play(t.tween((heading, "location"), (0.10, 0.65)), 1)
         # PM: title.animate.set_opacity(0.4) - labels have no opacity; shrink instead
-        t.play(t.tween((heading, "text_size"), design_pixels(50)), run_time=0.5)
+        t.play(t.tween((heading, "text_size"), design_pixels(50)), 0.5)
         t.wait(1)
     return t
 
@@ -143,7 +142,7 @@ def callout_scene(canvas):
     with canvas.timeline() as t:
         show(t, note)
         t.wait(1)
-        t.play(canvas.camera.orbit(29), run_time=3)
+        t.play(canvas.camera.orbit(29), 3)
         t.wait(1)
     return t
 
@@ -166,7 +165,7 @@ def residue_labels(canvas):
     with canvas.timeline() as t:
         show(t, *labels)
         t.wait(1)
-        t.play(canvas.camera.orbit(20), run_time=2)
+        t.play(canvas.camera.orbit(20), 2)
         t.wait(1)
     return t
 
@@ -181,7 +180,7 @@ def residue_colors(canvas):
     p.add_style("cartoon", selection="protein")
     canvas.look_at(p, viewpoint=(70, 0, 37), margin=0.05)
     with canvas.timeline() as t:
-        t.play(spin(p, 40), run_time=3)
+        t.play(spin(p, 40), 3)
     return t
 
 
@@ -195,9 +194,11 @@ def color_change(canvas):
     with canvas.timeline() as t:
         t.wait(1)
         t.play(
-            t.recolor(p, CYAN, selection="resid 23-34"),
-            t.recolor(p, GOLD, selection="resid 2-7"),
-            run_time=1.5,
+            [
+                t.recolor(p, CYAN, selection="resid 23-34"),
+                t.recolor(p, GOLD, selection="resid 2-7"),
+            ],
+            1.5,
         )
         t.wait(1)
     return t
@@ -213,9 +214,9 @@ def opacity(canvas):
     canvas.look_at(p, viewpoint=(70, 0, 37), margin=0.05)
     with canvas.timeline() as t:
         t.wait(0.5)
-        t.play(t.fade(helix, 0.1), run_time=2)  # SetOpacity(helix, 0.1)
+        t.play(t.fade(helix, 0.1), 2)  # SetOpacity(helix, 0.1)
         t.wait(0.7)
-        t.play(t.fade(helix, 1.0), run_time=1.5)
+        t.play(t.fade(helix, 1.0), 1.5)
         t.wait(0.5)
     return t
 
@@ -224,7 +225,7 @@ def opacity(canvas):
 def surface(canvas):
     p = ubiquitin(canvas, style="surface")
     with canvas.timeline() as t:
-        t.play(spin(p, 46), run_time=3)
+        t.play(spin(p, 46), 3)
     return t
 
 
@@ -242,7 +243,7 @@ def distances(canvas):
     with canvas.timeline() as t:
         show(t, ruler, heading)
         t.wait(1.5)
-        t.play(canvas.camera.orbit(20), run_time=2)
+        t.play(canvas.camera.orbit(20), 2)
         show(t, ruler, heading, visible=False)
         t.wait(0.5)
     return t
@@ -274,9 +275,9 @@ def hydrogen_bonds(canvas):
     with canvas.timeline() as t:
         t.set_visible(network, False)
         t.wait(0.5)
-        t.play(t.fade(network, 1.0), run_time=1)
+        t.play(t.fade(network, 1.0), 1)
         t.wait(0.5)
-        t.play(canvas.camera.orbit(34), run_time=3)
+        t.play(canvas.camera.orbit(34), 3)
         t.wait(1)
     return t
 
@@ -287,7 +288,7 @@ def charge_contacts(canvas):
     # planned Coulomb Contacts node. Nothing to animate yet; a still turntable.
     ubiquitin(canvas, style="ball_and_stick")
     with canvas.timeline() as t:
-        t.play(canvas.camera.orbit(29), run_time=3)
+        t.play(canvas.camera.orbit(29), 3)
         t.wait(1)
     return t
 
@@ -298,9 +299,9 @@ def deformation(canvas):
     # Attribute node. Scaling the object stands in for the stretch.
     p = ubiquitin(canvas, margin=0.05)
     with canvas.timeline() as t:
-        t.play(t.tween((p.object, "scale"), (1.4, 1, 1)), run_time=2)
+        t.play(t.tween((p.object, "scale"), (1.4, 1, 1)), 2)
         t.wait(0.5)
-        t.play(t.tween((p.object, "scale"), (1, 1, 1)), run_time=2)
+        t.play(t.tween((p.object, "scale"), (1, 1, 1)), 2)
         t.wait(0.5)
     return t
 
@@ -312,7 +313,7 @@ def nmr_states(canvas):
     p.add_style("cartoon", selection="protein")
     canvas.look_at(p, viewpoint=(70, 0, 37), margin=0.05)
     with canvas.timeline() as t:
-        t.play(p.play(0, 2), run_time=6, easing="smooth")
+        t.play(p.play(0, 2), 6, easing="smooth")
         t.wait(0.5)
     return t
 

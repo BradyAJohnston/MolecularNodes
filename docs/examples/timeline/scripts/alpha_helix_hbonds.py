@@ -157,30 +157,34 @@ with canvas.timeline() as t:
     show(t, heading, subtitle, footer)
     t.wait(1.8)
     # PM: hbonds.highlight(mode="3d")
-    t.play(t.fade(network, 1.0), run_time=0.6)
+    t.play(t.fade(network, 1.0), 0.6)
     show(t, count)
     t.wait(2)
-    t.play(canvas.camera.orbit(52), run_time=4)
+    t.play(canvas.camera.orbit(52), 4)
     t.wait(0.6)
     show(t, count, visible=False)
     t.play(
-        t.fade(network, 0.0),
-        t.fade(context, 0.06),  # SetOpacity(other, 0.06)
-        canvas.camera.look_at(turn, margin=0.3),
-        run_time=1.6,
+        [
+            t.fade(network, 0.0),
+            t.fade(context, 0.06),  # SetOpacity(other, 0.06)
+            canvas.camera.look_at(turn, margin=0.3),
+        ],
+        1.6,
     )
     show(t, bond, o_label, nh_label)
-    t.play(canvas.camera.orbit(15), run_time=3)
+    t.play(canvas.camera.orbit(15), 3)
     t.wait(1.2)
     show(t, bond, o_label, nh_label, visible=False)
     t.play(
-        t.fade(context, 1.0),
-        t.fade(network, 1.0),
-        canvas.camera.look_at(helix.get_view("all"), margin=0.15),
-        run_time=1.6,
+        [
+            t.fade(context, 1.0),
+            t.fade(network, 1.0),
+            canvas.camera.look_at(helix.get_view("all"), margin=0.15),
+        ],
+        1.6,
     )
     show(t, count)
-    t.play(canvas.camera.orbit(40), run_time=3)
+    t.play(canvas.camera.orbit(40), 3)
     t.wait(0.8)
 
 render(canvas, t, "alpha_helix_hbonds")

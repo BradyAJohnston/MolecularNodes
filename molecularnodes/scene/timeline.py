@@ -33,7 +33,7 @@ import warnings
 from abc import ABC, abstractmethod
 from contextlib import contextmanager
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Callable, Generator, Literal, Sequence, cast
+from typing import TYPE_CHECKING, Callable, Generator, Iterable, Literal, Sequence, cast
 import bpy
 import numpy as np
 from mathutils import Euler, Matrix, Vector
@@ -1159,10 +1159,10 @@ class Timeline:
 
         cartoon = mol.styles["Style Cartoon"]
         with canvas.timeline(fps=30) as t:
-            t.play(canvas.camera.look_at(mol, viewpoint="front"), run_time=1)
-            t.play(canvas.camera.orbit(90), t.tween(cartoon.i.loop_radius, 1.2), run_time=2)
+            t.play(canvas.camera.look_at(mol, viewpoint="front"), 1)
+            t.play([canvas.camera.orbit(90), t.tween(cartoon.i.loop_radius, 1.2)], 2)
             t.wait(0.5)
-            t.play(canvas.camera.focus(mol.get_view("resid 40-60"), fstop=2), run_time=1)
+            t.play(canvas.camera.focus(mol.get_view("resid 40-60"), fstop=2), 1)
         canvas.animation("story.mp4")
 
     A trajectory plays through its own clip, ``traj.play(0, 100)``, which
@@ -1217,8 +1217,9 @@ class Timeline:
 
     def play(
         self,
-        *clips: Clip,
+        clips: Clip | Iterable[Clip],
         run_time: float | None = None,
+        *,
         easing: str | None = None,
         at: float | None = None,
     ) -> "Timeline":
@@ -1227,8 +1228,8 @@ class Timeline:
 
         Parameters
         ----------
-        *clips : Clip
-            Clips to play at the same time.
+        clips : Clip | iterable of Clip
+            A clip, or several to play at the same time.
         run_time : float, optional
             Length in seconds for every clip given, overriding each clip's own.
         easing : str, optional
@@ -1246,16 +1247,20 @@ class Timeline:
             clip ends: clips on one property are played in time order. Nothing
             the clip would have written is kept.
         """
+        clips = [clips] if isinstance(clips, Clip) else list(clips)
         if not clips:
             raise ValueError("play() needs at least one clip.")
+        for clip in clips:
+            if not isinstance(clip, Clip):
+                raise TypeError(f"{clip!r} is not a clip.")
+        if isinstance(run_time, Clip):
+            raise TypeError("Pass clips to play together as a list: play([a, b]).")
         if easing is not None:
             easing = Easing.validate(easing)
         t0 = self._cursor if at is None else float(at)
         frame_start = self.to_frame(t0)
         longest = 0.0
         for clip in clips:
-            if not isinstance(clip, Clip):
-                raise TypeError(f"{clip!r} is not a clip.")
             length = clip.run_time if run_time is None else run_time
             frame_end = self.to_frame(t0 + length)
             # put the scene at the clip's first frame, so the clip sees the
@@ -1326,7 +1331,7 @@ class Timeline:
         ::
 
             with canvas.timeline() as t:
-                t.play(t.fade(mol.styles[0], 0.0), t.fade(mol.styles[1], 1.0))
+                t.play([t.fade(mol.styles[0], 0.0), t.fade(mol.styles[1], 1.0)])
         """
         pairs = [
             (Channel(_fade_node(node).inputs["Fade"], "default_value"), float(value))

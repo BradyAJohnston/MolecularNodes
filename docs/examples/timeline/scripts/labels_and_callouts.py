@@ -80,20 +80,22 @@ with canvas.timeline() as t:
     # PM: helix.highlight(style="sphere"), tail.highlight(style="atoms") - the
     # regions are recoloured instead
     t.play(
-        t.recolor(protein, GOLD, selection="resid 23-34"),
-        t.recolor(protein, CYAN, selection="resid 71-76"),
-        run_time=0.8,
+        [
+            t.recolor(protein, GOLD, selection="resid 23-34"),
+            t.recolor(protein, CYAN, selection="resid 71-76"),
+        ],
+        0.8,
     )
     t.wait(1.2)
-    t.play(protein.play(0, 16), canvas.camera.orbit(20), run_time=4, easing="smooth")
+    t.play([protein.play(0, 16), canvas.camera.orbit(20)], 4, easing="smooth")
     show(t, helix_note, tail_note, visible=False)
     t.wait(1.2)
     switch(t, [cartoon, sticks], [sticks])
     t.wait(0.3)
     show(t, *residue_labels)
-    t.play(t.recolor(protein, GOLD, selection="resid 8 44 70"), run_time=0.8)
+    t.play(t.recolor(protein, GOLD, selection="resid 8 44 70"), 0.8)
     t.wait(1.2)
-    t.play(protein.play(16, 36), canvas.camera.orbit(23), run_time=5, easing="smooth")
+    t.play([protein.play(16, 36), canvas.camera.orbit(23)], 5, easing="smooth")
     t.wait(1)
 
 render(canvas, t, "labels_and_callouts")

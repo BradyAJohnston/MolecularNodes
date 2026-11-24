@@ -38,10 +38,11 @@ def make_canvas(fps: int = 24, resolution=(960, 540)) -> mn.Canvas:
     if QUICK:
         resolution, fps = (320, 180), 6
     if ENGINE == "CYCLES":
-        engine = mn.scene.Cycles(samples=4 if QUICK else 64, device="CPU")
+        engine = mn.scene.Cycles(samples=4 if QUICK else 64)
     else:
         engine = mn.scene.EEVEE(samples=4 if QUICK else 32)
     canvas = mn.Canvas(engine, resolution=resolution)
+    canvas.view_transform = mn.scene.ViewTransform.KHRONOS
     canvas.compositor.device = "CPU"
     canvas.fps = fps
     canvas.background = BACKGROUND
@@ -112,7 +113,7 @@ def switch(timeline, styles, shown, run_time: float = 0.5) -> None:
         timeline.fade(style, 1.0 if any(style is s for s in shown) else 0.0)
         for style in styles
     ]
-    timeline.play(*clips, run_time=run_time)
+    timeline.play(clips, run_time)
 
 
 def align_frames(mol: mn.Molecule, selection: str = "name CA") -> None:

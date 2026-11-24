@@ -89,19 +89,21 @@ with canvas.timeline() as t:
     show(t, heading, detail)
     # PM: FadeIn(shell)
     t.play(
-        t.fade(shell, 1.0),
-        t.tween(shell.i.threshold, sigma(2.5)),
-        canvas.camera.orbit(14),
-        run_time=2,
+        [
+            t.fade(shell, 1.0),
+            t.tween(shell.i.threshold, sigma(2.5)),
+            canvas.camera.orbit(14),
+        ],
+        2,
     )
-    t.play(t.tween(shell.i.threshold, sigma(1.5)), run_time=1.5)
+    t.play(t.tween(shell.i.threshold, sigma(1.5)), 1.5)
     # PM: local.slice("z", 0.15, ...) then section.animate.set_slice(0.85)
     centre = np.array(box.location)
     t.set((box, "scale"), (full[0], full[1], 0.03 * full[2]))
     t.set((box, "location"), (centre[0], centre[1], z_low + 0.15 * z_span))
     t.play(
         t.tween((box, "location"), (centre[0], centre[1], z_low + 0.85 * z_span)),
-        run_time=3,
+        3,
     )
     t.set((box, "scale"), full)
     t.wait(0.5)

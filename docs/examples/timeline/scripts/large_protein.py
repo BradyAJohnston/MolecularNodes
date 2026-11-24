@@ -22,9 +22,9 @@ canvas.look_at(complex_, viewpoint=(80, 0, 17), margin=0.05)
 with canvas.timeline() as t:
     t.set_visible(sticks, False)
     t.wait(0.5)
-    t.play(spin(complex_, 180), run_time=4, easing="linear")
+    t.play(spin(complex_, 180), 4, easing="linear")
     switch(t, [cartoon, sticks], [sticks])
-    t.play(spin(complex_, 90), run_time=3, easing="linear")
+    t.play(spin(complex_, 90), 3, easing="linear")
     t.wait(0.5)
 
 render(canvas, t, "large_protein_complex")
@@ -35,6 +35,6 @@ subunit = mn.Molecule.fetch("1AON")
 subunit.add_style("cartoon", selection="chainID A")
 canvas.look_at(subunit, viewpoint=(80, 0, 17), margin=0.05)
 with canvas.timeline() as t:
-    t.play(spin(subunit, 360), run_time=6, easing="linear")
+    t.play(spin(subunit, 360), 6, easing="linear")
 
 render(canvas, t, "large_protein_subunit")
